@@ -24,9 +24,12 @@ module DataRefineryPlatform
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    # Only loads a smaller set of middleware suitable for API only apps.
-    # Middleware like session, flash, cookies can be added back manually.
-    # Skip views, helpers and assets when generating a new resource.
-    config.api_only = true
+    # Full-stack application with API capabilities
+    # Enable sessions, flash, cookies, and views for dashboard functionality
+    config.api_only = false
+    
+    # Asset pipeline configuration
+    config.assets.enabled = true
+    config.assets.version = '1.0'
   end
 end

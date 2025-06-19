@@ -7,10 +7,57 @@ gem "pg", "~> 1.1"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
-# gem "jbuilder"
+gem "jbuilder"
 
-# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
+# Asset Pipeline and Frontend
+gem "sprockets-rails"
+gem "importmap-rails"
+
+# Frontend and Styling
+gem "turbo-rails"
+gem "stimulus-rails"
+gem "tailwindcss-rails"
+gem "view_component"
+
+# Authentication and Authorization
+gem "devise"
+gem "pundit"
+gem "bcrypt", "~> 3.1.7"
+
+# API and HTTP clients
+gem "httparty"
+gem "faraday"
+gem "faraday-retry"
+gem "rack-cors"
+gem "rack-attack"
+
+# Background Jobs and Caching - Using Rails 8 native Solid gems
+
+# Data Processing and Analytics
+gem "activerecord-import"
+gem "kaminari"
+gem "ransack"
+gem "groupdate"
+gem "chartkick"
+
+# External API Integrations
+gem "shopify_api"
+gem "stripe"
+gem "google-analytics-data"
+gem "mailchimp_api_v3"
+
+# Encryption and Security
+gem "lockbox"
+gem "blind_index"
+gem "rbnacl"
+
+# Utilities
+gem "money-rails"
+gem "friendly_id"
+gem "paranoia"
+gem "paper_trail"
+gem "validate_url"
+gem "chronic"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
@@ -30,18 +77,45 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
-
-# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
-# gem "rack-cors"
+gem "image_processing", "~> 1.2"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
-  # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
-  gem "brakeman", require: false
+  # Testing framework
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "faker"
+  gem "webmock"
+  gem "vcr"
+  gem "timecop"
 
-  # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
+  # Code quality and security
+  gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false
+  gem "simplecov", require: false
+
+  # Database testing
+  gem "database_cleaner-active_record"
+end
+
+group :development do
+  # Development tools
+  gem "annotate"
+  gem "letter_opener"
+  gem "listen"
+  gem "spring"
+  gem "spring-watcher-listen"
+  
+  # Performance and profiling
+  gem "bullet"
+  gem "rack-mini-profiler"
+  gem "memory_profiler"
+  gem "stackprof"
+end
+
+group :test do
+  gem "shoulda-matchers"
+  gem "rails-controller-testing"
 end
