@@ -2,7 +2,8 @@ FactoryBot.define do
   factory :user do
     organization
     sequence(:email) { |n| "user#{n}@example.com" }
-    encrypted_password { BCrypt::Password.create('password123') }
+    password { 'password123' }
+    password_confirmation { 'password123' }
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
     role { 'member' }
@@ -28,6 +29,10 @@ FactoryBot.define do
 
     trait :unconfirmed do
       confirmed_at { nil }
+    end
+
+    trait :confirmed do
+      confirmed_at { 1.day.ago }
     end
 
     trait :invited do

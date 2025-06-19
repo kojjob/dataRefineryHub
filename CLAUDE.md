@@ -124,6 +124,22 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - **External APIs**: Use environment-specific configuration
 - **Deployment**: Kamal 2 configuration in config/deploy.yml
 
+## Rails Encryption Credentials
+When working with encrypted data models, use these credentials in `rails credentials:edit`:
+
+```yaml
+active_record_encryption:
+  primary_key: is1Z7xWcEJ8chpbiEvQSM8YUCtMUHtaf
+  deterministic_key: N4ExZWyQvG3P9dTvlKLR96H6ncXLTAmD
+  key_derivation_salt: 0fLCJKtKzZsh2VcFnz7Po34vc5DnpmV4
+```
+
+## Test Environment Setup
+- **RSpec**: Configured with FactoryBot and Shoulda Matchers
+- **Database Cleaner**: Ensures test isolation
+- **Timecop**: For time-based testing (add to Gemfile if needed)
+- **Encryption**: Tests use same credentials as development
+
 ## Documentation Requirements
 - **README.md**: Keep updated with setup and usage
 - **TODO.md**: Track development progress

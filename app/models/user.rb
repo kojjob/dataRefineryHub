@@ -1,4 +1,9 @@
 class User < ApplicationRecord
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable,
+         :confirmable, :trackable
   belongs_to :organization
   belongs_to :invited_by, class_name: 'User', optional: true
 
@@ -7,8 +12,22 @@ class User < ApplicationRecord
   has_many :audit_logs, dependent: :destroy
   has_many :sent_invitations, class_name: 'User', foreign_key: 'invited_by_id', dependent: :nullify
 
-  validates :email, presence: true, uniqueness: { scope: :organization_id },
+  # Devise validations with organization scope
+  validates :email, presence: true, uniqueness: { scope: :organization_id, case_sensitive: false },
             format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :password, presence: true, length: { minimum: 6 }, confirmation: true, if: :password_required?
+  
+  # Override Devise's find_for_authentication to support organization-scoped email
+  def self.find_for_authentication(warden_conditions)
+    conditions = warden_conditions.dup
+    if (email = conditions.delete(:email))
+      # For now, just use the standard Devise behavior
+      # In production, you might want to add organization context here
+      where(conditions.to_h).where(["lower(email) = :value", { value: email.downcase }]).first
+    else
+      where(conditions.to_h).first
+    end
+  end
   validates :first_name, presence: true, length: { minimum: 1, maximum: 50 }
   validates :last_name, presence: true, length: { minimum: 1, maximum: 50 }
   validates :role, inclusion: { in: ROLES }
@@ -96,6 +115,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def password_required?
+    !persisted? || !password.nil? || !password_confirmation.nil?
+  end
 
   def set_default_role
     self.role ||= 'member'

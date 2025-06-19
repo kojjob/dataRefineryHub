@@ -11,6 +11,8 @@ require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'shoulda/matchers'
 require 'factory_bot_rails'
+require 'timecop'
+require 'pundit/rspec'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -52,6 +54,11 @@ RSpec.configure do |config|
 
   # Include Factory Bot syntax methods
   config.include FactoryBot::Syntax::Methods
+  
+  # Clean up Timecop after each test
+  config.after(:each) do
+    Timecop.return
+  end
 
   # RSpec Rails uses metadata to mix in different behaviours to your tests,
   # for example enabling you to call `get` and `post` in request specs. e.g.:
