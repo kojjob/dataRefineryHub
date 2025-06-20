@@ -1,0 +1,184 @@
+<% content_for :title, "Audit Logs" %>
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold leading-6 text-gray-900">Audit Logs</h1>
+      <p class="mt-2 text-sm text-gray-700">Track all actions and changes within your organization.</p>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <%= link_to organization_path, class: "block rounded-md bg-gray-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-gray-500" do %>
+        ← Back to Organization
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="mt-8">
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl p-6">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+        <div>
+          <label for="action-filter" class="block text-sm font-medium leading-6 text-gray-900">Action Type</label>
+          <select id="action-filter" name="action" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+            <option value="">All Actions</option>
+            <option value="create">Create</option>
+            <option value="update">Update</option>
+            <option value="delete">Delete</option>
+            <option value="login">Login</option>
+            <option value="logout">Logout</option>
+          </select>
+        </div>
+        <div>
+          <label for="resource-filter" class="block text-sm font-medium leading-6 text-gray-900">Resource Type</label>
+          <select id="resource-filter" name="resource_type" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+            <option value="">All Resources</option>
+            <option value="User">Users</option>
+            <option value="DataSource">Data Sources</option>
+            <option value="Organization">Organization</option>
+            <option value="ExtractionJob">Extraction Jobs</option>
+          </select>
+        </div>
+        <div>
+          <label for="date-from" class="block text-sm font-medium leading-6 text-gray-900">From Date</label>
+          <input type="date" id="date-from" name="date_from" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        </div>
+        <div>
+          <label for="date-to" class="block text-sm font-medium leading-6 text-gray-900">To Date</label>
+          <input type="date" id="date-to" name="date_to" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        </div>
+      </div>
+      <div class="mt-4 flex gap-3">
+        <button type="button" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+          Apply Filters
+        </button>
+        <button type="button" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+          Clear
+        </button>
+        <button type="button" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+          Export CSV
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit Logs Table -->
+  <div class="mt-8">
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-base font-semibold leading-6 text-gray-900">Recent Activity</h3>
+      </div>
+      
+      <% if defined?(@audit_logs) && @audit_logs.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Timestamp</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">User</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Action</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Resource</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Details</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">IP Address</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% @audit_logs.each do |log| %>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <%= log.performed_at.strftime("%m/%d/%y %l:%M %p") %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="flex-shrink-0 h-8 w-8">
+                        <div class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center">
+                          <span class="text-xs font-medium text-gray-700">
+                            <%= log.user&.first_name&.first || 'S' %>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="ml-3">
+                        <div class="text-sm font-medium text-gray-900">
+                          <%= log.user&.first_name || 'System' %> <%= log.user&.last_name %>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                          <%= log.user&.email || 'system@datarefinery.com' %>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center rounded-md bg-<%= 
+                      case log.action
+                      when 'create' then 'green'
+                      when 'update' then 'blue'
+                      when 'delete' then 'red'
+                      when 'login' then 'indigo'
+                      else 'gray'
+                      end
+                    %>-50 px-2 py-1 text-xs font-medium text-<%= 
+                      case log.action
+                      when 'create' then 'green'
+                      when 'update' then 'blue'
+                      when 'delete' then 'red'
+                      when 'login' then 'indigo'
+                      else 'gray'
+                      end
+                    %>-700 ring-1 ring-inset ring-<%= 
+                      case log.action
+                      when 'create' then 'green'
+                      when 'update' then 'blue'
+                      when 'delete' then 'red'
+                      when 'login' then 'indigo'
+                      else 'gray'
+                      end
+                    %>-600/20">
+                      <%= log.action.humanize %>
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <%= log.resource_type %>
+                    <% if log.resource_id %>
+                      <span class="text-gray-500">#<%= log.resource_id %></span>
+                    <% end %>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
+                    <%= log.details || 'No additional details' %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= log.ip_address || 'N/A' %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Pagination placeholder -->
+        <div class="px-6 py-4 border-t border-gray-200">
+          <div class="flex items-center justify-between">
+            <div class="text-sm text-gray-700">
+              Showing <span class="font-medium">1</span> to <span class="font-medium"><%= @audit_logs.count %></span> of 
+              <span class="font-medium"><%= @audit_logs.count %></span> results
+            </div>
+            <div class="flex gap-2">
+              <button type="button" class="relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0">
+                Previous
+              </button>
+              <button type="button" class="relative ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0">
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <div class="px-6 py-12 text-center">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-semibold text-gray-900">No audit logs found</h3>
+          <p class="mt-1 text-sm text-gray-500">Activity logs will appear here as actions are performed within your organization.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,177 @@
+<% content_for :title, "Usage Statistics" %>
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold leading-6 text-gray-900">Usage Statistics</h1>
+      <p class="mt-2 text-sm text-gray-700">Monitor your organization's data usage and plan limits.</p>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <%= link_to organization_path, class: "block rounded-md bg-gray-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-gray-500" do %>
+        ← Back to Organization
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Statistics Overview -->
+  <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    
+    <!-- Total Records -->
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <p class="text-sm font-medium text-gray-500">Total Records</p>
+          <p class="text-2xl font-semibold text-gray-900"><%= number_with_delimiter(@stats[:total_records]) %></p>
+        </div>
+      </div>
+      <div class="mt-4">
+        <div class="flex items-center text-sm">
+          <% usage_percentage = @organization.monthly_data_limit == Float::INFINITY ? 0 : (@stats[:total_records].to_f / @organization.monthly_data_limit * 100) %>
+          <span class="text-<%= usage_percentage > 80 ? 'red' : usage_percentage > 60 ? 'yellow' : 'green' %>-600 font-medium">
+            <%= usage_percentage.round(1) %>% of limit
+          </span>
+        </div>
+        <div class="mt-2 w-full bg-gray-200 rounded-full h-1.5">
+          <div class="bg-<%= usage_percentage > 80 ? 'red' : usage_percentage > 60 ? 'yellow' : 'blue' %>-600 h-1.5 rounded-full" style="width: <%= [usage_percentage, 100].min %>%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Calls -->
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-600">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <p class="text-sm font-medium text-gray-500">API Calls This Month</p>
+          <p class="text-2xl font-semibold text-gray-900"><%= number_with_delimiter(@stats[:api_calls_this_month]) %></p>
+        </div>
+      </div>
+      <div class="mt-4">
+        <div class="flex items-center text-sm">
+          <% api_usage_percentage = @organization.monthly_api_requests_limit == Float::INFINITY ? 0 : (@stats[:api_calls_this_month].to_f / @organization.monthly_api_requests_limit * 100) %>
+          <span class="text-<%= api_usage_percentage > 80 ? 'red' : api_usage_percentage > 60 ? 'yellow' : 'green' %>-600 font-medium">
+            <%= api_usage_percentage.round(1) %>% of limit
+          </span>
+        </div>
+        <div class="mt-2 w-full bg-gray-200 rounded-full h-1.5">
+          <div class="bg-<%= api_usage_percentage > 80 ? 'red' : api_usage_percentage > 60 ? 'yellow' : 'green' %>-600 h-1.5 rounded-full" style="width: <%= [api_usage_percentage, 100].min %>%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Storage Used -->
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-600">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3V6a3 3 0 013-3h13.5a3 3 0 013 3v5.25a3 3 0 01-3 3m-16.5 0a3 3 0 013-3h13.5a3 3 0 013 3v5.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3v-5.25z" />
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <p class="text-sm font-medium text-gray-500">Storage Used</p>
+          <p class="text-2xl font-semibold text-gray-900"><%= @stats[:storage_used] %> MB</p>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-sm text-gray-500">Data storage usage</span>
+      </div>
+    </div>
+
+    <!-- Active Integrations -->
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-600">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <p class="text-sm font-medium text-gray-500">Active Integrations</p>
+          <p class="text-2xl font-semibold text-gray-900"><%= @stats[:active_integrations] %></p>
+        </div>
+      </div>
+      <div class="mt-4">
+        <div class="flex items-center text-sm">
+          <% integration_usage = @organization.max_data_sources == Float::INFINITY ? 0 : (@stats[:active_integrations].to_f / @organization.max_data_sources * 100) %>
+          <span class="text-<%= integration_usage > 80 ? 'red' : integration_usage > 60 ? 'yellow' : 'green' %>-600 font-medium">
+            <%= integration_usage.round(1) %>% of limit
+          </span>
+        </div>
+        <div class="mt-2 w-full bg-gray-200 rounded-full h-1.5">
+          <div class="bg-<%= integration_usage > 80 ? 'red' : integration_usage > 60 ? 'yellow' : 'orange' %>-600 h-1.5 rounded-full" style="width: <%= [integration_usage, 100].min %>%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Plan Details -->
+  <div class="mt-8">
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-base font-semibold leading-6 text-gray-900">Current Plan: <%= @organization.plan.humanize %></h3>
+      </div>
+      <div class="px-6 py-6">
+        <dl class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-3">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Monthly Data Limit</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">
+              <%= @organization.monthly_data_limit == Float::INFINITY ? "Unlimited" : number_with_delimiter(@organization.monthly_data_limit) %> records
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Monthly API Requests</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">
+              <%= @organization.monthly_api_requests_limit == Float::INFINITY ? "Unlimited" : number_with_delimiter(@organization.monthly_api_requests_limit) %> requests
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Maximum Data Sources</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">
+              <%= @organization.max_data_sources == Float::INFINITY ? "Unlimited" : @organization.max_data_sources %> integrations
+            </dd>
+          </div>
+        </dl>
+        
+        <% unless @organization.enterprise_plan? %>
+          <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">Need more capacity?</h3>
+                <div class="mt-2 text-sm text-blue-700">
+                  <p>Upgrade your plan to get higher limits and additional features.</p>
+                </div>
+                <div class="mt-4">
+                  <%= link_to billing_organization_path, class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500" do %>
+                    View Upgrade Options
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
