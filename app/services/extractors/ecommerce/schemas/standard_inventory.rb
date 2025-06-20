@@ -46,7 +46,7 @@ class StandardInventory
   attribute :last_count_at, :datetime
   
   # Additional platform-specific data
-  attribute :platform_data, :json
+  attribute :platform_data
 
   # Validations
   validates :external_id, presence: true

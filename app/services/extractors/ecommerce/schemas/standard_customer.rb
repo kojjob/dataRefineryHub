@@ -34,8 +34,8 @@ class StandardCustomer
   attribute :tags, :string # comma-separated tags
   
   # Address information (as nested hash)
-  attribute :default_address, :json
-  attribute :addresses, :json # array of address hashes
+  attribute :default_address
+  attribute :addresses # array of address hashes
   
   # Order history references
   attribute :first_order_id, :string
@@ -48,7 +48,7 @@ class StandardCustomer
   attribute :last_order_at, :datetime
   
   # Additional platform-specific data
-  attribute :platform_data, :json
+  attribute :platform_data
 
   # Validations
   validates :external_id, presence: true

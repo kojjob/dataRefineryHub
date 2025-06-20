@@ -43,14 +43,14 @@ class StandardOrder
   attribute :landing_site, :string
   
   # Addresses (as nested hashes)
-  attribute :billing_address, :json
-  attribute :shipping_address, :json
+  attribute :billing_address
+  attribute :shipping_address
   
   # Line items (array of StandardLineItem hashes)
-  attribute :line_items, :json
+  attribute :line_items
   
   # Additional platform-specific data
-  attribute :platform_data, :json
+  attribute :platform_data
 
   # Validations
   validates :external_id, presence: true

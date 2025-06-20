@@ -5,7 +5,12 @@ class ExtractorFactory
 
   # Registry of available extractors
   EXTRACTORS = {
-    'shopify' => 'ShopifyExtractor',
+    # E-commerce platforms - use generic EcommerceExtractor with adapters
+    'shopify' => 'ConcreteEcommerceExtractor',
+    'woocommerce' => 'ConcreteEcommerceExtractor',
+    'amazon_seller_central' => 'ConcreteEcommerceExtractor',
+    
+    # Other platform-specific extractors
     'quickbooks' => 'QuickbooksExtractor',
     'google_analytics' => 'GoogleAnalyticsExtractor',
     'stripe' => 'StripeExtractor',
@@ -14,9 +19,7 @@ class ExtractorFactory
     'hubspot' => 'HubspotExtractor',
     'google_ads' => 'GoogleAdsExtractor',
     'facebook_ads' => 'FacebookAdsExtractor',
-    'woocommerce' => 'WoocommerceExtractor',
     'salesforce' => 'SalesforceExtractor',
-    'amazon_seller_central' => 'AmazonSellerCentralExtractor',
     'custom_api' => 'CustomApiExtractor'
   }.freeze
 

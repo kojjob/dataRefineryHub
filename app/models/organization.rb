@@ -7,6 +7,8 @@ class Organization < ApplicationRecord
 
   has_many :users, dependent: :destroy
   has_many :data_sources, dependent: :destroy
+  has_many :extraction_jobs, through: :data_sources
+  has_many :raw_data_records, through: :data_sources
   has_many :dashboards, dependent: :destroy
   has_many :api_keys, dependent: :destroy
   has_many :audit_logs, dependent: :destroy

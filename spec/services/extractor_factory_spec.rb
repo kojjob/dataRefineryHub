@@ -6,10 +6,11 @@ RSpec.describe ExtractorFactory, type: :service do
 
   describe '.create_extractor' do
     context 'when source type is supported' do
-      it 'creates ShopifyExtractor for shopify source' do
+      it 'creates ConcreteEcommerceExtractor for shopify source' do
         extractor = ExtractorFactory.create_extractor(shopify_data_source)
-        expect(extractor).to be_a(ShopifyExtractor)
+        expect(extractor).to be_a(ConcreteEcommerceExtractor)
         expect(extractor.data_source).to eq(shopify_data_source)
+        expect(extractor.adapter).to be_a(ShopifyAdapter)
       end
     end
 

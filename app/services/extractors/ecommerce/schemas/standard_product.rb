@@ -31,11 +31,11 @@ class StandardProduct
   attribute :seo_description, :string
   
   # Variants information (as nested arrays)
-  attribute :variants, :json
-  attribute :options, :json # Size, Color, etc.
+  attribute :variants
+  attribute :options # Size, Color, etc.
   
   # Images (as nested array)
-  attribute :images, :json
+  attribute :images
   
   # Pricing (base product pricing)
   attribute :price, :decimal
@@ -54,7 +54,7 @@ class StandardProduct
   attribute :published_at, :datetime
   
   # Additional platform-specific data
-  attribute :platform_data, :json
+  attribute :platform_data
 
   # Validations
   validates :external_id, presence: true

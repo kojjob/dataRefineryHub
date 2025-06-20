@@ -135,7 +135,7 @@ class BaseExtractor
     else
       ExtractionJob.create!(
         data_source: data_source,
-        status: :pending,
+        status: 'queued',
         started_at: Time.current
       )
     end
@@ -146,21 +146,20 @@ class BaseExtractor
     
     attributes = { status: status }
     
-    case status
-    when :running
+    case status.to_s
+    when 'running'
       attributes[:started_at] = Time.current
-    when :completed
+    when 'completed'
       attributes[:completed_at] = Time.current
-      attributes[:succeeded_at] = Time.current
       data_source.update!(
         last_sync_at: Time.current,
         next_sync_at: calculate_next_sync,
-        status: :connected
+        status: 'connected'
       )
-    when :failed
-      attributes[:failed_at] = Time.current
-      attributes[:error_message] = metadata[:error_message]
-      data_source.update!(status: :error)
+    when 'failed'
+      attributes[:completed_at] = Time.current
+      attributes[:error_details] = metadata
+      data_source.update!(status: 'error')
     end
     
     attributes[:metadata] = extraction_job.metadata.merge(metadata) if metadata.present?

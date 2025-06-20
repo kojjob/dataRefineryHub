@@ -9,6 +9,16 @@ module ApplicationHelper
     end
   end
 
+  def enhanced_nav_link_classes(section)
+    base_classes = "group flex items-center gap-x-3 rounded-xl p-3 text-sm leading-6 font-medium transition-all duration-200 hover:bg-white hover:shadow-md border border-transparent hover:border-gray-200"
+    
+    if current_page_section == section
+      "#{base_classes} bg-white shadow-md border-gray-200 text-gray-900"
+    else
+      "#{base_classes} text-gray-700 hover:text-gray-900"
+    end
+  end
+
   def current_page_section
     # Determine current section based on controller and action
     case controller_name
@@ -22,6 +32,12 @@ module ApplicationHelper
       'analytics'
     when 'customers', 'processed_customers'
       'customers'
+    when 'orders'
+      'orders'
+    when 'products'
+      'products'
+    when 'inventory'
+      'inventory'
     when 'reports'
       'reports'
     when 'integrations'
@@ -33,7 +49,17 @@ module ApplicationHelper
     when 'billing_subscriptions'
       'billing'
     else
-      controller_name
+      # Handle platform-specific sections
+      case params[:platform] || request.path
+      when /shopify/
+        'shopify'
+      when /woocommerce/
+        'woocommerce'
+      when /amazon/
+        'amazon'
+      else
+        controller_name
+      end
     end
   end
 
