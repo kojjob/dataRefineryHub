@@ -121,11 +121,18 @@ class User < ApplicationRecord
   end
 
   def set_default_role
-    self.role ||= 'member'
+    # Only set default role if role is blank/nil or explicitly 'member'
+    # This allows for explicit role assignment while still handling first user logic
+    if role.blank?
+      self.role = 'member'
+    end
     
-    # First user in organization becomes owner
-    if organization&.users&.empty?
-      self.role = 'owner'
+    # Check if this is the first user in the organization and should be owner
+    if organization_id.present? && (role.blank? || role == 'member')
+      existing_users_count = User.where(organization_id: organization_id).count
+      if existing_users_count == 0
+        self.role = 'owner'
+      end
     end
   end
 

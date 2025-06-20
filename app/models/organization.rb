@@ -2,7 +2,7 @@ class Organization < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
 
-  PLANS = %w[trial starter growth scale enterprise].freeze
+  PLANS = %w[free_trial starter growth scale enterprise].freeze
   STATUSES = %w[active suspended cancelled trial].freeze
 
   has_many :users, dependent: :destroy
@@ -21,6 +21,10 @@ class Organization < ApplicationRecord
 
   before_validation :set_defaults, on: :create
   before_validation :normalize_name
+
+  def free_trial_plan?
+    plan == 'free_trial'
+  end
 
   def starter_plan?
     plan == 'starter'
@@ -48,6 +52,7 @@ class Organization < ApplicationRecord
 
   def monthly_data_limit
     case plan
+    when 'free_trial' then 10_000
     when 'starter' then 100_000
     when 'growth' then 500_000
     when 'scale' then 2_000_000
@@ -58,6 +63,7 @@ class Organization < ApplicationRecord
 
   def monthly_api_requests_limit
     case plan
+    when 'free_trial' then 1_000
     when 'starter' then 10_000
     when 'growth' then 50_000
     when 'scale' then 200_000
@@ -68,6 +74,7 @@ class Organization < ApplicationRecord
 
   def max_users
     case plan
+    when 'free_trial' then 2
     when 'starter' then 5
     when 'growth' then 20
     when 'scale' then 100
@@ -78,6 +85,7 @@ class Organization < ApplicationRecord
 
   def max_data_sources
     case plan
+    when 'free_trial' then 2
     when 'starter' then 5
     when 'growth' then 15
     when 'scale' then 50
@@ -97,7 +105,7 @@ class Organization < ApplicationRecord
   private
 
   def set_defaults
-    self.plan ||= 'trial'
+    self.plan ||= 'free_trial'
     self.status ||= 'trial'
     self.plan_limits ||= {}
     self.settings ||= {}
