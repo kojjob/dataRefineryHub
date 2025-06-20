@@ -19,7 +19,7 @@ RSpec.describe Organization, type: :model do
     before { Organization.delete_all }
     
     let!(:active_org) { create(:organization, status: 'active', plan: 'growth') }
-    let!(:trial_org) { create(:organization, status: 'trial', plan: 'trial') }
+    let!(:trial_org) { create(:organization, status: 'trial', plan: 'free_trial') }
     let!(:starter_org) { create(:organization, plan: 'starter', status: 'suspended') }
     let!(:growth_org) { create(:organization, plan: 'growth', status: 'suspended') }
 
@@ -129,9 +129,9 @@ RSpec.describe Organization, type: :model do
 
   describe 'callbacks' do
     describe 'on create' do
-      it 'sets default plan to trial' do
+      it 'sets default plan to free_trial' do
         org = Organization.create!(name: 'Test Org')
-        expect(org.plan).to eq('trial')
+        expect(org.plan).to eq('free_trial')
       end
 
       it 'sets default status to trial' do

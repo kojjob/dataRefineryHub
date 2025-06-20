@@ -83,7 +83,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_222500) do
   create_table "organizations", force: :cascade do |t|
     t.string "name", null: false
     t.string "slug"
-    t.string "plan", default: "trial", null: false
+    t.string "plan", default: "free_trial", null: false
     t.json "plan_limits", default: {}
     t.json "settings", default: {}
     t.string "stripe_customer_id"
