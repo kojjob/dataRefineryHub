@@ -1,0 +1,302 @@
+<% content_for :title, "Add Data Source" %>
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold leading-6 text-gray-900">Add Data Source</h1>
+      <p class="mt-2 text-sm text-gray-700">Connect a new data source to start importing your business data.</p>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <%= link_to data_sources_path, class: "block rounded-md bg-gray-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-gray-500" do %>
+        ← Back to Data Sources
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <%= form_with model: @data_source, local: true, class: "space-y-8" do |form| %>
+      
+      <!-- Source Type Selection -->
+      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-base font-semibold leading-6 text-gray-900">Choose Data Source Type</h3>
+        </div>
+        <div class="px-6 py-6">
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            
+            <!-- Shopify -->
+            <label class="relative flex cursor-pointer rounded-lg border border-gray-300 p-4 focus:outline-none hover:border-indigo-500">
+              <%= form.radio_button :source_type, 'shopify', class: "sr-only", data: { source_type: 'shopify' } %>
+              <div class="flex flex-1">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-green-600">
+                  <span class="text-lg font-bold text-white">S</span>
+                </div>
+                <div class="ml-4 flex-1">
+                  <h4 class="text-lg font-medium text-gray-900">Shopify</h4>
+                  <p class="text-sm text-gray-500">Connect your Shopify store to import orders, customers, and products.</p>
+                </div>
+              </div>
+              <div class="absolute -inset-px rounded-lg border-2 pointer-events-none opacity-0 peer-checked:opacity-100 peer-checked:border-indigo-600"></div>
+            </label>
+
+            <!-- WooCommerce -->
+            <label class="relative flex cursor-pointer rounded-lg border border-gray-300 p-4 focus:outline-none hover:border-indigo-500">
+              <%= form.radio_button :source_type, 'woocommerce', class: "sr-only", data: { source_type: 'woocommerce' } %>
+              <div class="flex flex-1">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-purple-600">
+                  <span class="text-lg font-bold text-white">W</span>
+                </div>
+                <div class="ml-4 flex-1">
+                  <h4 class="text-lg font-medium text-gray-900">WooCommerce</h4>
+                  <p class="text-sm text-gray-500">Import data from your WordPress WooCommerce store.</p>
+                </div>
+              </div>
+              <div class="absolute -inset-px rounded-lg border-2 pointer-events-none opacity-0 peer-checked:opacity-100 peer-checked:border-indigo-600"></div>
+            </label>
+
+            <!-- Amazon Seller Central -->
+            <label class="relative flex cursor-pointer rounded-lg border border-gray-300 p-4 focus:outline-none hover:border-indigo-500">
+              <%= form.radio_button :source_type, 'amazon_seller_central', class: "sr-only", data: { source_type: 'amazon_seller_central' } %>
+              <div class="flex flex-1">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-orange-600">
+                  <span class="text-lg font-bold text-white">A</span>
+                </div>
+                <div class="ml-4 flex-1">
+                  <h4 class="text-lg font-medium text-gray-900">Amazon Seller</h4>
+                  <p class="text-sm text-gray-500">Connect Amazon Seller Central for orders and inventory data.</p>
+                </div>
+              </div>
+              <div class="absolute -inset-px rounded-lg border-2 pointer-events-none opacity-0 peer-checked:opacity-100 peer-checked:border-indigo-600"></div>
+            </label>
+
+            <!-- QuickBooks -->
+            <label class="relative flex cursor-pointer rounded-lg border border-gray-300 p-4 focus:outline-none hover:border-indigo-500">
+              <%= form.radio_button :source_type, 'quickbooks', class: "sr-only", data: { source_type: 'quickbooks' } %>
+              <div class="flex flex-1">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-blue-600">
+                  <span class="text-lg font-bold text-white">Q</span>
+                </div>
+                <div class="ml-4 flex-1">
+                  <h4 class="text-lg font-medium text-gray-900">QuickBooks</h4>
+                  <p class="text-sm text-gray-500">Import financial data and customer information from QuickBooks.</p>
+                </div>
+              </div>
+              <div class="absolute -inset-px rounded-lg border-2 pointer-events-none opacity-0 peer-checked:opacity-100 peer-checked:border-indigo-600"></div>
+            </label>
+
+            <!-- Stripe -->
+            <label class="relative flex cursor-pointer rounded-lg border border-gray-300 p-4 focus:outline-none hover:border-indigo-500">
+              <%= form.radio_button :source_type, 'stripe', class: "sr-only", data: { source_type: 'stripe' } %>
+              <div class="flex flex-1">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-indigo-600">
+                  <span class="text-lg font-bold text-white">S</span>
+                </div>
+                <div class="ml-4 flex-1">
+                  <h4 class="text-lg font-medium text-gray-900">Stripe</h4>
+                  <p class="text-sm text-gray-500">Connect Stripe for payment and subscription data.</p>
+                </div>
+              </div>
+              <div class="absolute -inset-px rounded-lg border-2 pointer-events-none opacity-0 peer-checked:opacity-100 peer-checked:border-indigo-600"></div>
+            </label>
+
+            <!-- More coming soon -->
+            <div class="relative flex rounded-lg border border-dashed border-gray-300 p-4 opacity-50">
+              <div class="flex flex-1">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gray-400">
+                  <span class="text-lg font-bold text-white">+</span>
+                </div>
+                <div class="ml-4 flex-1">
+                  <h4 class="text-lg font-medium text-gray-900">More platforms</h4>
+                  <p class="text-sm text-gray-500">Additional integrations coming soon.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic Information -->
+      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-base font-semibold leading-6 text-gray-900">Basic Information</h3>
+        </div>
+        <div class="px-6 py-6">
+          <% if @data_source.errors.any? %>
+            <div class="mb-6 rounded-md bg-red-50 p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800">There were errors with your submission:</h3>
+                  <div class="mt-2 text-sm text-red-700">
+                    <ul role="list" class="list-disc space-y-1 pl-5">
+                      <% @data_source.errors.full_messages.each do |message| %>
+                        <li><%= message %></li>
+                      <% end %>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
+            <!-- Name -->
+            <div class="sm:col-span-4">
+              <%= form.label :name, class: "block text-sm font-medium leading-6 text-gray-900" %>
+              <div class="mt-2">
+                <%= form.text_field :name, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", placeholder: "e.g., My Shopify Store" %>
+              </div>
+              <p class="mt-2 text-sm text-gray-500">A descriptive name for this data source.</p>
+            </div>
+
+            <!-- Description -->
+            <div class="sm:col-span-6">
+              <%= form.label :description, class: "block text-sm font-medium leading-6 text-gray-900" %>
+              <div class="mt-2">
+                <%= form.text_area :description, rows: 3, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", placeholder: "Optional description for this data source" %>
+              </div>
+            </div>
+
+            <!-- Sync Frequency -->
+            <div class="sm:col-span-3">
+              <%= form.label :sync_frequency, class: "block text-sm font-medium leading-6 text-gray-900" %>
+              <div class="mt-2">
+                <%= form.select :sync_frequency, 
+                    options_for_select([
+                      ['Real-time', 'realtime'],
+                      ['Hourly', 'hourly'],
+                      ['Daily', 'daily'],
+                      ['Weekly', 'weekly'],
+                      ['Monthly', 'monthly']
+                    ], 'daily'),
+                    {},
+                    { class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" } %>
+              </div>
+              <p class="mt-2 text-sm text-gray-500">How often to sync data from this source.</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Configuration Section (Dynamic based on source type) -->
+      <div id="configuration-section" class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl" style="display: none;">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-base font-semibold leading-6 text-gray-900">Connection Configuration</h3>
+        </div>
+        <div class="px-6 py-6">
+          <div id="configuration-fields">
+            <!-- Dynamic configuration fields will be inserted here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex items-center justify-end gap-x-6">
+        <%= link_to data_sources_path, class: "text-sm font-semibold leading-6 text-gray-900 hover:text-gray-700" do %>
+          Cancel
+        <% end %>
+        <%= form.submit "Create Data Source", class: "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const sourceTypeRadios = document.querySelectorAll('input[name="data_source[source_type]"]');
+  const configSection = document.getElementById('configuration-section');
+  const configFields = document.getElementById('configuration-fields');
+
+  const configTemplates = {
+    shopify: `
+      <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
+        <div>
+          <label class="block text-sm font-medium leading-6 text-gray-900">Shop Domain</label>
+          <div class="mt-2">
+            <input type="text" name="data_source[config][shop_domain]" placeholder="your-shop.myshopify.com" 
+                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium leading-6 text-gray-900">Access Token</label>
+          <div class="mt-2">
+            <input type="password" name="data_source[config][access_token]" placeholder="Your Shopify access token" 
+                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+          </div>
+        </div>
+      </div>
+    `,
+    woocommerce: `
+      <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
+        <div>
+          <label class="block text-sm font-medium leading-6 text-gray-900">Site URL</label>
+          <div class="mt-2">
+            <input type="url" name="data_source[config][site_url]" placeholder="https://yourstore.com" 
+                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium leading-6 text-gray-900">Consumer Key</label>
+          <div class="mt-2">
+            <input type="text" name="data_source[config][consumer_key]" placeholder="ck_xxxxxxxxxxxxxxxx" 
+                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium leading-6 text-gray-900">Consumer Secret</label>
+          <div class="mt-2">
+            <input type="password" name="data_source[config][consumer_secret]" placeholder="cs_xxxxxxxxxxxxxxxx" 
+                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+          </div>
+        </div>
+      </div>
+    `,
+    amazon_seller_central: `
+      <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
+        <div>
+          <label class="block text-sm font-medium leading-6 text-gray-900">Marketplace ID</label>
+          <div class="mt-2">
+            <input type="text" name="data_source[config][marketplace_id]" placeholder="ATVPDKIKX0DER" 
+                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium leading-6 text-gray-900">Seller ID</label>
+          <div class="mt-2">
+            <input type="text" name="data_source[config][seller_id]" placeholder="Your Amazon Seller ID" 
+                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium leading-6 text-gray-900">Access Key ID</label>
+          <div class="mt-2">
+            <input type="text" name="data_source[config][access_key_id]" placeholder="Your AWS Access Key ID" 
+                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium leading-6 text-gray-900">Secret Access Key</label>
+          <div class="mt-2">
+            <input type="password" name="data_source[config][secret_access_key]" placeholder="Your AWS Secret Access Key" 
+                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+          </div>
+        </div>
+      </div>
+    `
+  };
+
+  sourceTypeRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      if (this.checked && configTemplates[this.value]) {
+        configFields.innerHTML = configTemplates[this.value];
+        configSection.style.display = 'block';
+      }
+    });
+  });
+});
+</script>

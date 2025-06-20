@@ -1,0 +1,51 @@
+<div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
+  <div>
+    <label class="block text-sm font-medium leading-6 text-gray-900">Site URL</label>
+    <div class="mt-2">
+      <input type="url" 
+             name="data_source[config][site_url]" 
+             value="<%= data_source.configuration.dig('site_url') %>"
+             placeholder="https://yourstore.com" 
+             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+    </div>
+    <p class="mt-2 text-sm text-gray-500">Your WooCommerce store URL</p>
+  </div>
+  
+  <div>
+    <label class="block text-sm font-medium leading-6 text-gray-900">Consumer Key</label>
+    <div class="mt-2">
+      <input type="text" 
+             name="data_source[config][consumer_key]" 
+             value="<%= data_source.configuration.dig('consumer_key') %>"
+             placeholder="ck_xxxxxxxxxxxxxxxx" 
+             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+    </div>
+    <p class="mt-2 text-sm text-gray-500">WooCommerce REST API consumer key</p>
+  </div>
+  
+  <div>
+    <label class="block text-sm font-medium leading-6 text-gray-900">Consumer Secret</label>
+    <div class="mt-2">
+      <input type="password" 
+             name="data_source[config][consumer_secret]" 
+             value="<%= data_source.configuration.dig('consumer_secret') %>"
+             placeholder="cs_xxxxxxxxxxxxxxxx" 
+             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+    </div>
+    <p class="mt-2 text-sm text-gray-500">WooCommerce REST API consumer secret</p>
+  </div>
+  
+  <div>
+    <label class="block text-sm font-medium leading-6 text-gray-900">API Version</label>
+    <div class="mt-2">
+      <select name="data_source[config][api_version]" 
+              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        <% current_version = data_source.configuration.dig('api_version') || 'v3' %>
+        <% %w[v3 v2 v1].each do |version| %>
+          <option value="<%= version %>" <%= 'selected' if current_version == version %>><%= version %></option>
+        <% end %>
+      </select>
+    </div>
+    <p class="mt-2 text-sm text-gray-500">WooCommerce REST API version</p>
+  </div>
+</div>

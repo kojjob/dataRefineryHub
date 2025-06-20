@@ -1,0 +1,185 @@
+<% content_for :title, "Edit #{@data_source.name}" %>
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold leading-6 text-gray-900">Edit Data Source</h1>
+      <p class="mt-2 text-sm text-gray-700">Update the configuration and settings for your data source.</p>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <%= link_to @data_source, class: "block rounded-md bg-gray-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-gray-500" do %>
+        Cancel
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <%= form_with model: @data_source, local: true, class: "space-y-8" do |form| %>
+      
+      <!-- Basic Information -->
+      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-base font-semibold leading-6 text-gray-900">Basic Information</h3>
+        </div>
+        <div class="px-6 py-6">
+          <% if @data_source.errors.any? %>
+            <div class="mb-6 rounded-md bg-red-50 p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800">There were errors with your submission:</h3>
+                  <div class="mt-2 text-sm text-red-700">
+                    <ul role="list" class="list-disc space-y-1 pl-5">
+                      <% @data_source.errors.full_messages.each do |message| %>
+                        <li><%= message %></li>
+                      <% end %>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
+            
+            <!-- Source Type (Read-only) -->
+            <div class="sm:col-span-3">
+              <label class="block text-sm font-medium leading-6 text-gray-900">Source Type</label>
+              <div class="mt-2">
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-md">
+                  <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-<%= 
+                    case @data_source.source_type
+                    when 'shopify' then 'green'
+                    when 'woocommerce' then 'purple'
+                    when 'amazon_seller_central' then 'orange'
+                    when 'quickbooks' then 'blue'
+                    when 'stripe' then 'indigo'
+                    else 'gray'
+                    end
+                  %>-600 text-white">
+                    <span class="text-sm font-bold">
+                      <%= @data_source.source_type.first.upcase %>
+                    </span>
+                  </div>
+                  <span class="text-sm text-gray-900"><%= @data_source.source_type.humanize %></span>
+                </div>
+              </div>
+              <p class="mt-2 text-sm text-gray-500">Source type cannot be changed after creation.</p>
+            </div>
+
+            <!-- Status -->
+            <div class="sm:col-span-3">
+              <%= form.label :status, class: "block text-sm font-medium leading-6 text-gray-900" %>
+              <div class="mt-2">
+                <%= form.select :status,
+                    options_for_select([
+                      ['Connected', 'connected'],
+                      ['Syncing', 'syncing'],
+                      ['Error', 'error'],
+                      ['Disconnected', 'disconnected']
+                    ], @data_source.status),
+                    {},
+                    { class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" } %>
+              </div>
+            </div>
+
+            <!-- Name -->
+            <div class="sm:col-span-4">
+              <%= form.label :name, class: "block text-sm font-medium leading-6 text-gray-900" %>
+              <div class="mt-2">
+                <%= form.text_field :name, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="sm:col-span-6">
+              <%= form.label :description, class: "block text-sm font-medium leading-6 text-gray-900" %>
+              <div class="mt-2">
+                <%= form.text_area :description, rows: 3, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+              </div>
+            </div>
+
+            <!-- Sync Frequency -->
+            <div class="sm:col-span-3">
+              <%= form.label :sync_frequency, class: "block text-sm font-medium leading-6 text-gray-900" %>
+              <div class="mt-2">
+                <%= form.select :sync_frequency, 
+                    options_for_select([
+                      ['Real-time', 'realtime'],
+                      ['Hourly', 'hourly'],
+                      ['Daily', 'daily'],
+                      ['Weekly', 'weekly'],
+                      ['Monthly', 'monthly']
+                    ], @data_source.sync_frequency),
+                    {},
+                    { class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" } %>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Configuration -->
+      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-base font-semibold leading-6 text-gray-900">Connection Configuration</h3>
+        </div>
+        <div class="px-6 py-6">
+          <div id="configuration-fields">
+            <%= render partial: "configuration_#{@data_source.source_type}", locals: { form: form, data_source: @data_source } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connection Test Results -->
+      <% if @data_source.last_connection_test_at.present? %>
+        <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">Last Connection Test</h3>
+          </div>
+          <div class="px-6 py-6">
+            <div class="flex items-center gap-4">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-<%= @data_source.connected? ? 'green' : 'red' %>-600">
+                <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <% if @data_source.connected? %>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <% else %>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                  <% end %>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-900">
+                  <%= @data_source.connected? ? 'Connection successful' : 'Connection failed' %>
+                </p>
+                <p class="text-sm text-gray-500">
+                  Tested <%= time_ago_in_words(@data_source.last_connection_test_at) %> ago
+                </p>
+              </div>
+            </div>
+            
+            <% if @data_source.connection_error.present? %>
+              <div class="mt-4 p-4 bg-red-50 rounded-lg">
+                <h4 class="text-sm font-medium text-red-800">Connection Error</h4>
+                <p class="mt-1 text-sm text-red-700"><%= @data_source.connection_error %></p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Submit Button -->
+      <div class="flex items-center justify-end gap-x-6">
+        <%= link_to @data_source, class: "text-sm font-semibold leading-6 text-gray-900 hover:text-gray-700" do %>
+          Cancel
+        <% end %>
+        <%= form.submit "Update Data Source", class: "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
+      </div>
+    <% end %>
+  </div>
+</div>

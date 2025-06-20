@@ -1,0 +1,213 @@
+<% content_for :title, "Data Sources" %>
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold leading-6 text-gray-900">Data Sources</h1>
+      <p class="mt-2 text-sm text-gray-700">Connect and manage your business data integrations.</p>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <%= link_to new_data_source_path, class: "block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
+        Add Data Source
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-600">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <p class="text-sm font-medium text-gray-500">Connected</p>
+          <p class="text-2xl font-semibold text-gray-900"><%= @connected_sources.count %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <p class="text-sm font-medium text-gray-500">Syncing</p>
+          <p class="text-2xl font-semibold text-gray-900"><%= @syncing_sources.count %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <p class="text-sm font-medium text-gray-500">Error</p>
+          <p class="text-2xl font-semibold text-gray-900"><%= @error_sources.count %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <p class="text-sm font-medium text-gray-500">Total Sources</p>
+          <p class="text-2xl font-semibold text-gray-900"><%= @data_sources.count %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Sources List -->
+  <div class="mt-8">
+    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-base font-semibold leading-6 text-gray-900">All Data Sources</h3>
+      </div>
+      
+      <% if @data_sources.any? %>
+        <ul role="list" class="divide-y divide-gray-200">
+          <% @data_sources.each do |data_source| %>
+            <li class="px-6 py-4 hover:bg-gray-50">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <!-- Source Icon -->
+                  <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-<%= 
+                    case data_source.source_type
+                    when 'shopify' then 'green'
+                    when 'woocommerce' then 'purple'
+                    when 'amazon_seller_central' then 'orange'
+                    when 'quickbooks' then 'blue'
+                    when 'stripe' then 'indigo'
+                    else 'gray'
+                    end
+                  %>-600 text-white">
+                    <span class="text-sm font-bold">
+                      <%= data_source.source_type.first.upcase %>
+                    </span>
+                  </div>
+                  
+                  <!-- Source Details -->
+                  <div class="ml-4">
+                    <div class="flex items-center gap-3">
+                      <h4 class="text-lg font-medium text-gray-900">
+                        <%= link_to data_source.name, data_source, class: "hover:text-indigo-600" %>
+                      </h4>
+                      <span class="inline-flex items-center rounded-md bg-<%= 
+                        case data_source.status
+                        when 'connected' then 'green'
+                        when 'syncing' then 'blue'
+                        when 'error' then 'red'
+                        when 'disconnected' then 'gray'
+                        else 'gray'
+                        end
+                      %>-50 px-2 py-1 text-xs font-medium text-<%= 
+                        case data_source.status
+                        when 'connected' then 'green'
+                        when 'syncing' then 'blue'
+                        when 'error' then 'red'
+                        when 'disconnected' then 'gray'
+                        else 'gray'
+                        end
+                      %>-700 ring-1 ring-inset ring-<%= 
+                        case data_source.status
+                        when 'connected' then 'green'
+                        when 'syncing' then 'blue'
+                        when 'error' then 'red'
+                        when 'disconnected' then 'gray'
+                        else 'gray'
+                        end
+                      %>-600/20">
+                        <%= data_source.status.humanize %>
+                      </span>
+                    </div>
+                    <div class="mt-1 flex items-center gap-6 text-sm text-gray-500">
+                      <span><%= data_source.source_type.humanize %></span>
+                      <span>
+                        <%= pluralize(data_source.raw_data_records.count, 'record') %>
+                      </span>
+                      <span>
+                        Last sync: <%= data_source.extraction_jobs.completed.last&.completed_at&.strftime("%m/%d/%y %l:%M %p") || 'Never' %>
+                      </span>
+                    </div>
+                    <% if data_source.description.present? %>
+                      <p class="mt-1 text-sm text-gray-600"><%= data_source.description %></p>
+                    <% end %>
+                  </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="flex items-center gap-2">
+                  <% if data_source.connected? %>
+                    <%= link_to sync_now_data_source_path(data_source), method: :post, 
+                        class: "inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
+                        data: { confirm: "Are you sure you want to trigger a manual sync?" } do %>
+                      <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M15.312 11.424a5.5 5.5 0 01-9.201 2.466l-.312-.311h2.433a.75.75 0 000-1.5H3.989a.75.75 0 00-.75.75v4.242a.75.75 0 001.5 0v-2.43l.31.31a7 7 0 0011.712-3.138.75.75 0 00-1.449-.39zm1.23-3.723a.75.75 0 00.219-.53V2.929a.75.75 0 00-1.5 0V5.36l-.31-.31A7 7 0 003.239 8.188a.75.75 0 101.448.389A5.5 5.5 0 0113.89 6.11l.311.31h-2.432a.75.75 0 000 1.5h4.243a.75.75 0 00.53-.219z" clip-rule="evenodd" />
+                      </svg>
+                      Sync Now
+                    <% end %>
+                  <% end %>
+                  
+                  <%= link_to test_connection_data_source_path(data_source), method: :post,
+                      class: "inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
+                    <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.53 10.96a.75.75 0 00-1.06 1.061l1.5 1.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                    </svg>
+                    Test
+                  <% end %>
+                  
+                  <%= link_to edit_data_source_path(data_source), 
+                      class: "inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
+                    <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z" />
+                    </svg>
+                    Edit
+                  <% end %>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="px-6 py-12 text-center">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+          </svg>
+          <h3 class="mt-2 text-sm font-semibold text-gray-900">No data sources</h3>
+          <p class="mt-1 text-sm text-gray-500">Get started by connecting your first data source.</p>
+          <div class="mt-6">
+            <%= link_to new_data_source_path, class: "inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
+              <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+              </svg>
+              Add Data Source
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

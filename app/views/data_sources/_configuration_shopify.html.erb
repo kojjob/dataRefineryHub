@@ -1,0 +1,39 @@
+<div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
+  <div>
+    <label class="block text-sm font-medium leading-6 text-gray-900">Shop Domain</label>
+    <div class="mt-2">
+      <input type="text" 
+             name="data_source[config][shop_domain]" 
+             value="<%= data_source.configuration.dig('shop_domain') %>"
+             placeholder="your-shop.myshopify.com" 
+             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+    </div>
+    <p class="mt-2 text-sm text-gray-500">Your Shopify store domain (e.g., mystore.myshopify.com)</p>
+  </div>
+  
+  <div>
+    <label class="block text-sm font-medium leading-6 text-gray-900">Access Token</label>
+    <div class="mt-2">
+      <input type="password" 
+             name="data_source[config][access_token]" 
+             value="<%= data_source.configuration.dig('access_token') %>"
+             placeholder="Your Shopify access token" 
+             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+    </div>
+    <p class="mt-2 text-sm text-gray-500">Private app access token from your Shopify admin</p>
+  </div>
+  
+  <div>
+    <label class="block text-sm font-medium leading-6 text-gray-900">API Version</label>
+    <div class="mt-2">
+      <select name="data_source[config][api_version]" 
+              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        <% current_version = data_source.configuration.dig('api_version') || '2024-01' %>
+        <% %w[2024-01 2023-10 2023-07 2023-04].each do |version| %>
+          <option value="<%= version %>" <%= 'selected' if current_version == version %>><%= version %></option>
+        <% end %>
+      </select>
+    </div>
+    <p class="mt-2 text-sm text-gray-500">Shopify API version to use</p>
+  </div>
+</div>
