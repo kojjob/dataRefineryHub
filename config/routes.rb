@@ -8,6 +8,9 @@ Rails.application.routes.draw do
   # Dashboard
   get "dashboard", to: "dashboard#index"
   
+  # Analytics
+  get "analytics", to: "analytics#index"
+  
   # Organization management
   resource :organization, only: [:show, :edit, :update] do
     member do
