@@ -107,26 +107,54 @@ class DataSource < ApplicationRecord
     )
   end
 
-  def extractor_class
-    "#{source_type.camelize}Extractor".constantize
-  rescue NameError
-    nil
-  end
-
-  def has_valid_credentials?
-    return false if credentials.blank?
-    
-    extractor_class&.valid_credentials?(credentials)
-  rescue
-    false
+  # Extractor integration methods
+  def create_extractor
+    ExtractorFactory.create_extractor(self)
   end
 
   def test_connection
-    return false unless has_valid_credentials?
+    ExtractorFactory.test_connection(self)
+  end
+
+  def extract_data(job_id: nil)
+    ExtractorFactory.extract_data(self, job_id: job_id)
+  end
+
+  def extraction_stats
+    ExtractorFactory.extraction_stats(self)
+  end
+
+  def extractor_supported?
+    ExtractorFactory.supported_source_type?(source_type)
+  end
+
+  def extractor_implemented?
+    return false unless extractor_supported?
     
-    extractor_class.new(self).test_connection
-  rescue
-    false
+    metadata = ExtractorFactory.extractor_metadata[source_type]
+    metadata&.dig(:implemented) || false
+  end
+
+  def supports_realtime?
+    return false unless extractor_implemented?
+    
+    metadata = ExtractorFactory.extractor_metadata[source_type]
+    metadata&.dig(:supports_realtime) || false
+  end
+
+  def sync_now!
+    return false unless can_sync?
+    
+    ExtractionJobProcessor.perform_later(id)
+    true
+  end
+
+  def configuration
+    config || {}
+  end
+
+  def configuration=(new_config)
+    self.config = new_config.is_a?(String) ? JSON.parse(new_config) : new_config
   end
 
   def source_display_name
