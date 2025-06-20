@@ -1,0 +1,315 @@
+<% content_for :page_title, "Dashboard" %>
+
+<!-- Dashboard Header -->
+<div class="border-b border-gray-200 pb-5 mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h3 class="text-base font-semibold leading-6 text-gray-900">
+        Welcome back, <%= current_user.first_name %>! 👋
+      </h3>
+      <p class="mt-2 max-w-4xl text-sm text-gray-500">
+        Here's what's happening with your data pipeline today.
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+        Export Report
+      </button>
+      <%= link_to new_data_source_path, 
+          class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" do %>
+        <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+        </svg>
+        Add Data Source
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Key Metrics Cards -->
+<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+  <!-- Total Data Sources -->
+  <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow border border-gray-100 hover:shadow-md transition-shadow">
+    <div class="flex items-center">
+      <div class="flex-shrink-0">
+        <div class="flex h-8 w-8 items-center justify-center rounded-md bg-blue-500">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="ml-5 w-0 flex-1">
+        <dl>
+          <dt class="text-sm font-medium text-gray-500 truncate">Data Sources</dt>
+          <dd class="flex items-baseline">
+            <div class="text-2xl font-semibold text-gray-900"><%= @stats[:total_data_sources] %></div>
+            <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
+              <svg class="h-4 w-4 flex-shrink-0 self-center text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04L10 3.26l5.79 5.47a.75.75 0 01-1.08 1.04L10.75 5.612V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+              </svg>
+              <span class="sr-only">Increased by</span>
+              12%
+            </div>
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connected Sources -->
+  <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow border border-gray-100 hover:shadow-md transition-shadow">
+    <div class="flex items-center">
+      <div class="flex-shrink-0">
+        <div class="flex h-8 w-8 items-center justify-center rounded-md bg-green-500">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="ml-5 w-0 flex-1">
+        <dl>
+          <dt class="text-sm font-medium text-gray-500 truncate">Connected</dt>
+          <dd class="flex items-baseline">
+            <div class="text-2xl font-semibold text-gray-900"><%= @stats[:connected_sources] %></div>
+            <div class="ml-2 text-sm font-medium text-gray-500">of <%= @stats[:total_data_sources] %></div>
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- Total Records -->
+  <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow border border-gray-100 hover:shadow-md transition-shadow">
+    <div class="flex items-center">
+      <div class="flex-shrink-0">
+        <div class="flex h-8 w-8 items-center justify-center rounded-md bg-purple-500">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="ml-5 w-0 flex-1">
+        <dl>
+          <dt class="text-sm font-medium text-gray-500 truncate">Total Records</dt>
+          <dd class="flex items-baseline">
+            <div class="text-2xl font-semibold text-gray-900"><%= number_with_delimiter(@stats[:total_records]) %></div>
+            <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
+              <svg class="h-4 w-4 flex-shrink-0 self-center text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04L10 3.26l5.79 5.47a.75.75 0 01-1.08 1.04L10.75 5.612V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+              </svg>
+              <span class="sr-only">Increased by</span>
+              8.2%
+            </div>
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- Last Sync -->
+  <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow border border-gray-100 hover:shadow-md transition-shadow">
+    <div class="flex items-center">
+      <div class="flex-shrink-0">
+        <div class="flex h-8 w-8 items-center justify-center rounded-md bg-cyan-500">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="ml-5 w-0 flex-1">
+        <dl>
+          <dt class="text-sm font-medium text-gray-500 truncate">Last Sync</dt>
+          <dd>
+            <div class="text-lg font-semibold text-gray-900">
+              <%= @stats[:last_sync] ? time_ago_in_words(@stats[:last_sync]) + " ago" : "Never" %>
+            </div>
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+  <!-- Data Sources Status (2/3 width) -->
+  <div class="lg:col-span-2">
+    <div class="bg-white overflow-hidden shadow rounded-lg border border-gray-200">
+      <div class="px-6 py-5 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Data Sources</h3>
+          <%= link_to data_sources_path, class: "text-sm font-medium text-blue-600 hover:text-blue-500" do %>
+            View all
+            <span aria-hidden="true"> →</span>
+          <% end %>
+        </div>
+      </div>
+      <div class="px-6 py-4">
+        <% if @data_sources.any? %>
+          <div class="space-y-4">
+            <% @data_sources.limit(5).each do |data_source| %>
+              <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <!-- Dynamic icon based on source type -->
+                    <div class="h-10 w-10 rounded-lg <%= case data_source.source_type
+                      when 'shopify' then 'bg-green-100'
+                      when 'stripe' then 'bg-purple-100'
+                      when 'google_analytics' then 'bg-orange-100'
+                      when 'quickbooks' then 'bg-blue-100'
+                      when 'mailchimp' then 'bg-yellow-100'
+                      else 'bg-gray-100'
+                      end %> flex items-center justify-center">
+                      <span class="text-sm font-medium <%= case data_source.source_type
+                        when 'shopify' then 'text-green-600'
+                        when 'stripe' then 'text-purple-600'
+                        when 'google_analytics' then 'text-orange-600'
+                        when 'quickbooks' then 'text-blue-600'
+                        when 'mailchimp' then 'text-yellow-600'
+                        else 'text-gray-600'
+                        end %>">
+                        <%= data_source.source_type.first(2).upcase %>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900"><%= data_source.name %></div>
+                    <div class="text-sm text-gray-500 capitalize"><%= data_source.source_type.humanize %></div>
+                  </div>
+                </div>
+                <div class="flex items-center">
+                  <!-- Status badge -->
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= case data_source.status
+                    when 'connected' then 'bg-green-100 text-green-800'
+                    when 'syncing' then 'bg-blue-100 text-blue-800'
+                    when 'error' then 'bg-red-100 text-red-800'
+                    else 'bg-gray-100 text-gray-800'
+                    end %>">
+                    <%= data_source.status.humanize %>
+                  </span>
+                  <div class="ml-4 text-sm text-gray-500">
+                    <%= data_source.last_sync_at ? time_ago_in_words(data_source.last_sync_at) + " ago" : "Never synced" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <!-- Empty state -->
+          <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">No data sources</h3>
+            <p class="mt-1 text-sm text-gray-500">Get started by connecting your first data source.</p>
+            <div class="mt-6">
+              <%= link_to new_data_source_path, 
+                  class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500" do %>
+                <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                </svg>
+                Connect Data Source
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity (1/3 width) -->
+  <div class="lg:col-span-1">
+    <div class="bg-white overflow-hidden shadow rounded-lg border border-gray-200">
+      <div class="px-6 py-5 border-b border-gray-200">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Activity</h3>
+      </div>
+      <div class="px-6 py-4">
+        <div class="flow-root">
+          <ul role="list" class="-mb-8">
+            <% @recent_jobs.each_with_index do |job, index| %>
+              <li>
+                <div class="relative pb-8 <%= 'pb-0' if index == @recent_jobs.count - 1 %>">
+                  <% unless index == @recent_jobs.count - 1 %>
+                    <span class="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                  <% end %>
+                  <div class="relative flex space-x-3">
+                    <div>
+                      <span class="h-8 w-8 rounded-full <%= case job.status
+                        when 'completed' then 'bg-green-500'
+                        when 'running' then 'bg-blue-500'
+                        when 'failed' then 'bg-red-500'
+                        else 'bg-gray-400'
+                        end %> flex items-center justify-center ring-8 ring-white">
+                        <% case job.status %>
+                        <% when 'completed' %>
+                          <svg class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                          </svg>
+                        <% when 'running' %>
+                          <svg class="h-5 w-5 text-white animate-spin" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                          </svg>
+                        <% else %>
+                          <svg class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                          </svg>
+                        <% end %>
+                      </span>
+                    </div>
+                    <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+                      <div>
+                        <p class="text-sm text-gray-900">
+                          Data sync from <span class="font-medium"><%= job.data_source.name %></span>
+                          <span class="font-medium text-gray-900"><%= job.status.humanize.downcase %></span>
+                        </p>
+                        <p class="text-sm text-gray-500">
+                          <%= number_with_delimiter(job.records_processed) %> records processed
+                        </p>
+                      </div>
+                      <div class="whitespace-nowrap text-right text-sm text-gray-500">
+                        <time><%= time_ago_in_words(job.created_at) %> ago</time>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            <% end %>
+            
+            <% if @recent_jobs.empty? %>
+              <li class="text-center py-8">
+                <div class="text-sm text-gray-500">No recent activity</div>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="mt-8">
+  <div class="bg-gradient-to-r from-blue-500 to-cyan-600 rounded-lg p-6 text-white">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-lg font-semibold">Ready to dive deeper?</h3>
+        <p class="mt-2 text-blue-100">Explore your analytics, set up automations, or invite team members.</p>
+      </div>
+      <div class="flex space-x-3">
+        <%= link_to "#", 
+            class: "inline-flex items-center rounded-md bg-white bg-opacity-20 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-opacity-30" do %>
+          View Analytics
+        <% end %>
+        <% if current_user.can_manage_users? %>
+          <%= link_to users_path, 
+              class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-blue-600 shadow-sm hover:bg-gray-50" do %>
+            Invite Team
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<footer class="bg-white border-t border-gray-200 mt-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      
+      <!-- Company Info -->
+      <div class="md:col-span-2">
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg">
+            <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <span class="text-lg font-bold text-gray-900">DataReflow</span>
+        </div>
+        
+        <p class="text-gray-600 mb-4 max-w-md">
+          Transforming business data into actionable insights for growing companies worldwide.
+        </p>
+        
+        <div class="flex space-x-4">
+          <a href="/status" class="inline-flex items-center text-sm text-gray-500 hover:text-gray-700">
+            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+            All systems operational
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div>
+        <h3 class="text-sm font-semibold text-gray-900 mb-4">Quick Links</h3>
+        <ul class="space-y-3">
+          <li><%= link_to "Dashboard", dashboard_path, class: "text-sm text-gray-600 hover:text-gray-900" %></li>
+          <li><%= link_to "Data Sources", '#', class: "text-sm text-gray-600 hover:text-gray-900" %></li>
+          <li><%= link_to "Analytics", '#', class: "text-sm text-gray-600 hover:text-gray-900" %></li>
+          <li><%= link_to "Reports", '#', class: "text-sm text-gray-600 hover:text-gray-900" %></li>
+          <li><%= link_to "Integrations", '#', class: "text-sm text-gray-600 hover:text-gray-900" %></li>
+        </ul>
+      </div>
+
+      <!-- Support -->
+      <div>
+        <h3 class="text-sm font-semibold text-gray-900 mb-4">Support</h3>
+        <ul class="space-y-3">
+          <li><a href="/help" class="text-sm text-gray-600 hover:text-gray-900">Help Center</a></li>
+          <li><a href="/docs" class="text-sm text-gray-600 hover:text-gray-900">Documentation</a></li>
+          <li><a href="/api/docs" class="text-sm text-gray-600 hover:text-gray-900">API Reference</a></li>
+          <li><a href="/contact" class="text-sm text-gray-600 hover:text-gray-900">Contact Support</a></li>
+          <li><a href="/community" class="text-sm text-gray-600 hover:text-gray-900">Community</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom section -->
+    <div class="mt-8 pt-6 border-t border-gray-200">
+      <div class="md:flex md:items-center md:justify-between">
+        <div class="flex space-x-6 md:order-2">
+          <a href="/privacy" class="text-sm text-gray-500 hover:text-gray-700">Privacy</a>
+          <a href="/terms" class="text-sm text-gray-500 hover:text-gray-700">Terms</a>
+          <a href="/security" class="text-sm text-gray-500 hover:text-gray-700">Security</a>
+        </div>
+        <p class="text-sm text-gray-500 md:order-1 mt-4 md:mt-0">
+          &copy; <%= Date.current.year %> DataReflow. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
