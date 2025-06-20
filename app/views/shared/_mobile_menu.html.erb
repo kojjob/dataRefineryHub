@@ -218,7 +218,7 @@
                   Help & Support
                 </a>
                 
-                <%= link_to destroy_user_session_path, method: :delete, class: "group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium text-red-700 hover:text-red-800 hover:bg-red-50 transition-colors duration-200" do %>
+                <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium text-red-700 hover:text-red-800 hover:bg-red-50 transition-colors duration-200" do %>
                   <svg class="h-5 w-5 shrink-0 text-red-400 group-hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                   </svg>
