@@ -17,8 +17,8 @@ Rails.application.routes.draw do
     end
   end
   
-  # User management
-  resources :users do
+  # User management - constrain ID to numeric to avoid conflicts with Devise routes
+  resources :users, constraints: { id: /\d+/ } do
     member do
       patch :change_role
     end
