@@ -2,11 +2,15 @@ require 'rails_helper'
 
 RSpec.describe BaseExtractor, type: :service do
   let(:organization) { create(:organization) }
-  let(:data_source) { create(:data_source, organization: organization, source_type: 'test') }
+  let(:data_source) { create(:data_source, organization: organization, source_type: 'shopify') }
   
   # Create a test extractor class for testing
   let(:test_extractor_class) do
     Class.new(BaseExtractor) do
+      def self.name
+        'TestExtractor'
+      end
+      
       def validate_connection
         # Mock implementation
         true
@@ -30,6 +34,10 @@ RSpec.describe BaseExtractor, type: :service do
       class << self
         def required_fields
           %w[id name created_at]
+        end
+        
+        def supported_source_type
+          'test'
         end
       end
     end
@@ -268,7 +276,7 @@ RSpec.describe BaseExtractor, type: :service do
   describe 'class methods' do
     describe '.supported_source_type' do
       it 'returns source type based on class name' do
-        expect(test_extractor_class.supported_source_type).to eq('test_extractor')
+        expect(test_extractor_class.supported_source_type).to eq('test')
       end
     end
 
