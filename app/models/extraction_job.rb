@@ -55,6 +55,18 @@ class ExtractionJob < ApplicationRecord
   def can_cancel?
     queued? || running? || retrying?
   end
+  
+  def can_be_retried?
+    failed? && retry_count < max_retries
+  end
+  
+  def can_be_cancelled?
+    queued? || running? || retrying?
+  end
+  
+  def can_be_deleted?
+    completed? || failed? || cancelled?
+  end
 
   def duration
     return nil unless started_at
