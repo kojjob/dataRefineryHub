@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :change_role]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :change_role, :remove_avatar]
   
   def index
     @users = policy_scope(User).includes(:organization)
@@ -60,6 +60,17 @@ class UsersController < ApplicationController
     end
   end
 
+  def remove_avatar
+    authorize @user
+    
+    if @user.avatar.attached?
+      @user.avatar.purge
+      redirect_to edit_user_path(@user), notice: 'Profile photo removed successfully.'
+    else
+      redirect_to edit_user_path(@user), alert: 'No profile photo to remove.'
+    end
+  end
+
   private
 
   def set_user
@@ -67,6 +78,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :first_name, :last_name, :role)
+    params.require(:user).permit(:email, :first_name, :last_name, :role, :avatar, :password, :password_confirmation)
   end
 end

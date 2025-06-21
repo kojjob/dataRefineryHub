@@ -15,28 +15,41 @@ class BaseExtractor
   def initialize(data_source)
     @data_source = data_source
     @logger = Rails.logger
-    @circuit_breaker = CircuitBreaker.new
+    @error_handler = EnhancedErrorHandlerService.new(
+      context: "#{data_source.source_type}_extractor",
+      circuit_breaker_config: {
+        failure_threshold: 3,
+        timeout_period: 120,
+        exponential_backoff: true
+      }
+    )
+    @batch_processor = BatchProcessingService.new(:extraction)
+    @data_validator = DataQualityValidationService.new
   end
 
   # Main extraction workflow - template method pattern
   def extract_data(job_id: nil)
     @extraction_job = find_or_create_job(job_id)
     
-    begin
+    @error_handler.execute_with_protection(
+      "extract_data_#{@data_source.source_type}",
+      max_attempts: 3,
+      strategy: :exponential
+    ) do
       update_job_status(:running)
       validate_connection
       
-      extracted_data = perform_extraction
-      validated_data = validate_data(extracted_data)
+      extracted_data = perform_extraction_with_batching
+      validated_data = validate_data_quality(extracted_data)
       
       save_raw_data(validated_data)
       update_job_status(:completed)
       
       validated_data
-    rescue => error
-      handle_extraction_error(error)
-      raise
     end
+  rescue => error
+    handle_extraction_error(error)
+    raise
   end
 
   # Test connection without full extraction
@@ -76,7 +89,68 @@ class BaseExtractor
     raw_data
   end
 
-  # Data validation with business rules
+  # Enhanced data extraction with batching support
+  def perform_extraction_with_batching
+    raw_data = perform_extraction
+    
+    # Process large datasets in batches for memory efficiency
+    if raw_data.respond_to?(:size) && raw_data.size > 1000
+      @logger.info "Processing #{raw_data.size} records in batches"
+      
+      processed_data = @batch_processor.process_in_batches(raw_data) do |batch, batch_number|
+        @logger.debug "Processing extraction batch #{batch_number} (#{batch.size} records)"
+        normalize_batch_data(batch)
+      end
+      
+      processed_data.flatten
+    else
+      normalize_data(raw_data)
+    end
+  end
+
+  # Enhanced data validation with quality metrics
+  def validate_data_quality(data)
+    return data if data.empty?
+    
+    # Get validation rules for this data source type
+    validation_context = @data_source.source_type.to_s
+    
+    # Perform comprehensive data quality validation
+    validation_result = @data_validator.validate_data(
+      data,
+      context: validation_context
+    )
+    
+    # Log validation results
+    if validation_result.valid?
+      @logger.info "Data validation passed: #{data.size} records validated successfully"
+    else
+      @logger.warn "Data validation issues found: #{validation_result.error_count} errors in #{data.size} records"
+      @logger.warn "Quality score: #{validation_result.quality_score}%"
+      
+      # Log top validation errors
+      validation_result.errors.first(5).each do |error|
+        @logger.warn "Validation error: #{error.message} (Field: #{error.field}, Severity: #{error.severity})"
+      end
+    end
+    
+    # Store validation metrics for monitoring
+    store_validation_metrics(validation_result)
+    
+    # Return valid records only, or all records based on configuration
+    if should_filter_invalid_records?
+      validation_result.valid_records
+    else
+      data
+    end
+  end
+
+  # Batch normalization for performance
+  def normalize_batch_data(batch)
+    batch.map { |record| normalize_data(record) }.compact
+  end
+
+  # Data validation with business rules (legacy method for compatibility)
   def validate_data(data)
     return [] if data.blank?
     
@@ -294,7 +368,48 @@ class BaseExtractor
 
   private
 
-  # Simple circuit breaker implementation
+  # Store validation metrics for monitoring and analysis
+  def store_validation_metrics(validation_result)
+    return unless @extraction_job
+    
+    # Store metrics in extraction job for later analysis
+    metrics_data = {
+      quality_score: validation_result.quality_score,
+      error_count: validation_result.error_count,
+      validation_summary: validation_result.quality_report,
+      timestamp: Time.current
+    }
+    
+    # Update extraction job with validation metrics
+    @extraction_job.update(
+      metadata: (@extraction_job.metadata || {}).merge(
+        validation_metrics: metrics_data
+      )
+    )
+  rescue => error
+    @logger.error "Failed to store validation metrics: #{error.message}"
+  end
+
+  # Configuration for filtering invalid records
+  def should_filter_invalid_records?
+    # Check data source configuration or use default
+    @data_source.configuration&.dig('filter_invalid_records') || false
+  end
+
+  # Get comprehensive extraction metrics including new enhancements
+  def enhanced_extraction_stats
+    base_stats = extraction_stats
+    
+    # Add enhanced metrics
+    base_stats.merge(
+      error_handler_metrics: @error_handler&.metrics,
+      batch_processing_metrics: @batch_processor&.processing_metrics,
+      data_validation_stats: @data_validator&.validation_statistics
+    )
+  end
+
+  # Legacy circuit breaker implementation (kept for backward compatibility)
+  # Note: This is now replaced by the enhanced CircuitBreakerService
   class CircuitBreaker
     class CircuitBreakerOpenError < StandardError; end
 

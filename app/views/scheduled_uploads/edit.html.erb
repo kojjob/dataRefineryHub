@@ -1,0 +1,124 @@
+<% content_for :title, "Edit #{@scheduled_upload.name} - #{@data_source.name}" %>
+
+<div class="bg-white shadow-sm border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-6">
+      <nav class="flex" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-4">
+          <li>
+            <%= link_to data_sources_path, class: "text-gray-500 hover:text-gray-700" do %>
+              Data Sources
+            <% end %>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+              <%= link_to @data_source.name, @data_source, class: "ml-4 text-gray-500 hover:text-gray-700" %>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+              <%= link_to "Scheduled Uploads", data_source_scheduled_uploads_path(@data_source), class: "ml-4 text-gray-500 hover:text-gray-700" %>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+              <%= link_to @scheduled_upload.name, [@data_source, @scheduled_upload], class: "ml-4 text-gray-500 hover:text-gray-700" %>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span class="ml-4 text-gray-900 font-medium">Edit</span>
+            </div>
+          </li>
+        </ol>
+      </nav>
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Edit Scheduled Upload</h1>
+          <p class="mt-1 text-sm text-gray-500">Update the configuration for "<%= @scheduled_upload.name %>"</p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @scheduled_upload.active? ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
+            <%= @scheduled_upload.active? ? 'Active' : 'Inactive' %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Current Status -->
+  <% recent_log = @scheduled_upload.upload_logs.order(started_at: :desc).first %>
+  <% if recent_log %>
+    <div class="bg-white shadow rounded-lg p-6 mb-8">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Current Status</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <% case recent_log.status %>
+            <% when 'completed' %>
+              <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                <svg class="h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            <% when 'completed_with_errors' %>
+              <div class="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center">
+                <svg class="h-5 w-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            <% when 'failed' %>
+              <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
+                <svg class="h-5 w-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            <% else %>
+              <div class="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
+                <svg class="h-5 w-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            <% end %>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-900">Last Execution</p>
+            <p class="text-sm text-gray-500"><%= recent_log.status.humanize %> • <%= time_ago_in_words(recent_log.started_at) %> ago</p>
+          </div>
+        </div>
+        
+        <div>
+          <p class="text-sm font-medium text-gray-900">Files Processed</p>
+          <p class="text-sm text-gray-500"><%= recent_log.files_processed || 0 %> files</p>
+        </div>
+        
+        <div>
+          <p class="text-sm font-medium text-gray-900">Next Run</p>
+          <p class="text-sm text-gray-500">
+            <% if @scheduled_upload.active? && @scheduled_upload.next_run_at %>
+              <%= time_ago_in_words(@scheduled_upload.next_run_at) %> from now
+            <% else %>
+              Not scheduled
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%= render 'form', scheduled_upload: @scheduled_upload %>
+</div>

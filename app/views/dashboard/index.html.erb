@@ -1,10 +1,20 @@
 <% content_for :page_title, "Dashboard" %>
 
-<!-- Real-time Dashboard Container -->
-<div data-controller="realtime-dashboard" class="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
+<!-- Premium Real-time Dashboard Container with Glass Morphism -->
+<div data-controller="realtime-dashboard" class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 relative overflow-hidden">
+  <!-- Animated background elements -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-purple-600/10 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute top-1/3 -left-32 w-80 h-80 bg-gradient-to-br from-emerald-400/10 to-teal-600/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+    <div class="absolute bottom-0 right-1/3 w-64 h-64 bg-gradient-to-br from-purple-400/10 to-pink-600/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 4s;"></div>
+  </div>
 
-<!-- Enhanced Dashboard Header with Modern Design -->
-<div class="relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 rounded-3xl border border-gray-200/30 p-10 mb-10 shadow-xl">
+<!-- Premium Dashboard Header with Glass Morphism and Advanced Animations -->
+<div class="relative overflow-hidden bg-white/40 backdrop-blur-2xl rounded-4xl border border-white/20 p-12 mb-12 shadow-2xl hover:shadow-3xl transition-all duration-700 group">
+  <!-- Premium gradient overlay -->
+  <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-80"></div>
+  <!-- Shimmer effect -->
+  <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer group-hover:animate-shimmer-fast"></div>
   <!-- Animated background elements -->
   <div class="absolute inset-0">
     <div class="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%236366f1\" fill-opacity=\"0.03\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"1.5\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
@@ -15,17 +25,20 @@
   <div class="relative">
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
       <div class="flex-1">
-        <div class="flex items-center gap-4 mb-6">
-          <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 shadow-2xl ring-4 ring-white/50">
-            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
+        <div class="flex items-center gap-6 mb-8">
+          <div class="relative group/icon">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl blur-xl opacity-30 group-hover/icon:opacity-50 transition-opacity duration-500"></div>
+            <div class="relative flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 shadow-2xl ring-4 ring-white/30 group-hover/icon:scale-110 group-hover/icon:rotate-3 transition-all duration-500">
+              <svg class="h-10 w-10 text-white group-hover/icon:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
           </div>
           <div>
-            <h1 class="text-4xl font-black bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-2">
+            <h1 class="text-5xl font-black bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-3 tracking-tight">
               Welcome back, <%= current_user.first_name %>!
             </h1>
-            <p class="text-xl text-gray-600 font-medium">Data Refinery Dashboard</p>
+            <p class="text-2xl text-gray-700 font-medium bg-gradient-to-r from-gray-600 to-gray-800 bg-clip-text text-transparent">Data Refinery Dashboard</p>
           </div>
         </div>
         
@@ -76,111 +89,134 @@
   </div>
 </div>
 
-<!-- Enhanced Key Metrics Cards with Modern Design -->
-<div class="grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-4 mb-12">
-  <!-- Total Data Sources -->
-  <div class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-50 via-blue-50/50 to-blue-100/30 p-8 shadow-2xl border border-blue-200/30 hover:shadow-blue-200/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
-    <!-- Floating background decoration -->
-    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-400/10 to-blue-600/10 rounded-full blur-2xl transform translate-x-8 -translate-y-8"></div>
-    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<!-- Premium Key Metrics Cards with Glass Morphism and Advanced Animations -->
+<div class="relative z-10 grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-4 mb-12">
+  <!-- Total Data Sources - Premium Card -->
+  <div class="group premium-card relative overflow-hidden rounded-4xl bg-white/30 backdrop-blur-2xl p-8 shadow-2xl border border-white/20 hover:shadow-blue-200/50 hover:shadow-4xl hover:-translate-y-3 transition-all duration-700 animate-float">
+    <!-- Premium floating decorations -->
+    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl transform translate-x-12 -translate-y-12 group-hover:scale-150 transition-all duration-700"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100 group-hover:animate-shimmer transition-opacity duration-500"></div>
     
     <div class="relative">
       <div class="flex items-start justify-between mb-6">
-        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 shadow-2xl shadow-blue-500/25 group-hover:shadow-blue-500/40 group-hover:scale-110 transition-all duration-500 ring-4 ring-blue-100/50">
-          <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-          </svg>
+        <div class="relative group/icon-metric">
+          <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"></div>
+          <div class="relative flex h-18 w-18 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 shadow-2xl shadow-blue-500/30 group-hover:shadow-blue-500/50 group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 ring-4 ring-white/40 animate-pulse-glow">
+            <svg class="h-10 w-10 text-white group-hover/icon-metric:scale-110 group-hover/icon-metric:rotate-12 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+            </svg>
+          </div>
         </div>
-        <div class="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 text-xs font-bold rounded-2xl border border-emerald-200/50 shadow-lg">
-          <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+        <div class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-100/80 to-green-100/80 backdrop-blur-sm text-emerald-700 text-xs font-bold rounded-2xl border border-emerald-200/50 shadow-lg group-hover:scale-105 transition-all duration-300">
+          <svg class="h-3 w-3 animate-bounce" viewBox="0 0 20 20" fill="currentColor" style="animation-delay: 0.5s;">
             <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04L10 3.26l5.79 5.47a.75.75 0 01-1.08 1.04L10.75 5.612V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
           </svg>
           +12%
         </div>
       </div>
       <div>
-        <p class="text-sm font-bold text-blue-700 uppercase tracking-wide mb-2">Data Sources</p>
-        <p class="text-4xl font-black text-gray-900 mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent" data-realtime-dashboard-target="totalDataSources"><%= @stats[:total_data_sources] %></p>
-        <p class="text-sm text-gray-600 font-medium">Total connected sources</p>
+        <p class="text-sm font-bold text-blue-800/80 uppercase tracking-wider mb-3">Data Sources</p>
+        <p class="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent group-hover:scale-110 transition-all duration-500 animate-counter-bounce" data-realtime-dashboard-target="totalDataSources"><%= @stats[:total_data_sources] %></p>
+        <p class="text-sm text-gray-700/80 font-medium">Total connected sources</p>
       </div>
     </div>
   </div>
 
-  <!-- Connected Sources -->
-  <div class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-50 via-emerald-50/50 to-green-100/30 p-8 shadow-2xl border border-emerald-200/30 hover:shadow-emerald-200/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
-    <!-- Floating background decoration -->
-    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-400/10 to-green-600/10 rounded-full blur-2xl transform translate-x-8 -translate-y-8"></div>
-    <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-green-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+  <!-- Connected Sources - Premium Card -->
+  <div class="group premium-card relative overflow-hidden rounded-4xl bg-white/30 backdrop-blur-2xl p-8 shadow-2xl border border-white/20 hover:shadow-emerald-200/50 hover:shadow-4xl hover:-translate-y-3 transition-all duration-700 animate-float-delayed">
+    <!-- Premium floating decorations -->
+    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-600/20 rounded-full blur-3xl transform translate-x-12 -translate-y-12 group-hover:scale-150 transition-all duration-700"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-green-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100 group-hover:animate-shimmer transition-opacity duration-500"></div>
     
     <div class="relative">
       <div class="flex items-start justify-between mb-6">
-        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-green-600 shadow-2xl shadow-emerald-500/25 group-hover:shadow-emerald-500/40 group-hover:scale-110 transition-all duration-500 ring-4 ring-emerald-100/50">
-          <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-          </svg>
+        <div class="relative group/icon-connected">
+          <div class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"></div>
+          <div class="relative flex h-18 w-18 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-500 via-green-600 to-teal-600 shadow-2xl shadow-emerald-500/30 group-hover:shadow-emerald-500/50 group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 ring-4 ring-white/40">
+            <svg class="h-10 w-10 text-white group-hover/icon-connected:scale-110 group-hover/icon-connected:rotate-12 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
         </div>
-        <div class="w-20 h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
-          <div class="h-full bg-gradient-to-r from-emerald-500 to-green-600 rounded-full transition-all duration-1000 shadow-lg" style="width: <%= @stats[:total_data_sources] > 0 ? (@stats[:connected_sources].to_f / @stats[:total_data_sources] * 100).round : 0 %>%"></div>
+        <div class="w-24 h-4 bg-gray-200/50 backdrop-blur-sm rounded-full overflow-hidden shadow-inner border border-white/30">
+          <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full transition-all duration-1000 shadow-lg progress-bar group-hover:animate-gradient" style="width: <%= @stats[:total_data_sources] > 0 ? (@stats[:connected_sources].to_f / @stats[:total_data_sources] * 100).round : 0 %>%"></div>
         </div>
       </div>
       <div>
-        <p class="text-sm font-bold text-emerald-700 uppercase tracking-wide mb-2">Connected</p>
-        <p class="text-4xl font-black text-gray-900 mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent" data-realtime-dashboard-target="connectedSources"><%= @stats[:connected_sources] %></p>
-        <p class="text-xs text-gray-600">of <%= @stats[:total_data_sources] %> sources active</p>
+        <p class="text-sm font-bold text-emerald-800/80 uppercase tracking-wider mb-3">Connected</p>
+        <p class="text-5xl font-black mb-4 bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 bg-clip-text text-transparent group-hover:scale-110 transition-all duration-500 animate-counter-bounce" data-realtime-dashboard-target="connectedSources"><%= @stats[:connected_sources] %></p>
+        <p class="text-sm text-gray-700/80 font-medium">of <%= @stats[:total_data_sources] %> sources active</p>
       </div>
     </div>
   </div>
 
-  <!-- Total Records -->
-  <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 p-6 shadow-lg border border-purple-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300">
-    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+  <!-- Total Records - Premium Card -->
+  <div class="group premium-card relative overflow-hidden rounded-4xl bg-white/30 backdrop-blur-2xl p-8 shadow-2xl border border-white/20 hover:shadow-purple-200/50 hover:shadow-4xl hover:-translate-y-3 transition-all duration-700 animate-float-delayed-2">
+    <!-- Premium floating decorations -->
+    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-600/20 rounded-full blur-3xl transform translate-x-12 -translate-y-12 group-hover:scale-150 transition-all duration-700"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100 group-hover:animate-shimmer transition-opacity duration-500"></div>
     <div class="relative">
       <div class="flex items-center justify-between mb-4">
-        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-          <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-          </svg>
+        <div class="relative group/icon-records">
+          <div class="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-600 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"></div>
+          <div class="relative flex h-18 w-18 items-center justify-center rounded-3xl bg-gradient-to-br from-purple-500 via-purple-600 to-pink-600 shadow-2xl shadow-purple-500/30 group-hover:shadow-purple-500/50 group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 ring-4 ring-white/40">
+            <svg class="h-10 w-10 text-white group-hover/icon-records:scale-110 group-hover/icon-records:rotate-12 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+          </div>
         </div>
-        <div class="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-          <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+        <div class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-100/80 to-emerald-100/80 backdrop-blur-sm text-green-700 text-xs font-bold rounded-2xl border border-green-200/50 shadow-lg group-hover:scale-105 transition-all duration-300">
+          <svg class="h-3 w-3 animate-bounce" viewBox="0 0 20 20" fill="currentColor" style="animation-delay: 1s;">
             <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04L10 3.26l5.79 5.47a.75.75 0 01-1.08 1.04L10.75 5.612V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
           </svg>
           +8.2%
         </div>
       </div>
       <div>
-        <p class="text-sm font-medium text-purple-700 mb-1">Total Records</p>
-        <p class="text-3xl font-bold text-gray-900 mb-2"><%= number_with_delimiter(@stats[:total_records]) %></p>
-        <p class="text-xs text-gray-600">Records processed</p>
+        <p class="text-sm font-bold text-purple-800/80 uppercase tracking-wider mb-3">Total Records</p>
+        <p class="text-5xl font-black mb-4 bg-gradient-to-r from-purple-600 via-pink-600 to-violet-600 bg-clip-text text-transparent group-hover:scale-110 transition-all duration-500 animate-counter-bounce"><%= number_with_delimiter(@stats[:total_records]) %></p>
+        <p class="text-sm text-gray-700/80 font-medium">Records processed</p>
       </div>
     </div>
    </div>
 
-  <!-- Last Sync -->
-  <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-50 to-cyan-100 p-6 shadow-lg border border-cyan-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300">
-    <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+  <!-- Last Sync - Premium Card -->
+  <div class="group premium-card relative overflow-hidden rounded-4xl bg-white/30 backdrop-blur-2xl p-8 shadow-2xl border border-white/20 hover:shadow-cyan-200/50 hover:shadow-4xl hover:-translate-y-3 transition-all duration-700 animate-float">
+    <!-- Premium floating decorations -->
+    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-cyan-400/20 to-blue-600/20 rounded-full blur-3xl transform translate-x-12 -translate-y-12 group-hover:scale-150 transition-all duration-700"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100 group-hover:animate-shimmer transition-opacity duration-500"></div>
     <div class="relative">
       <div class="flex items-center justify-between mb-4">
-        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-          <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
+        <div class="relative group/icon-sync">
+          <div class="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"></div>
+          <div class="relative flex h-18 w-18 items-center justify-center rounded-3xl bg-gradient-to-br from-cyan-500 via-cyan-600 to-blue-600 shadow-2xl shadow-cyan-500/30 group-hover:shadow-cyan-500/50 group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 ring-4 ring-white/40">
+            <svg class="h-10 w-10 text-white group-hover/icon-sync:scale-110 group-hover/icon-sync:rotate-12 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
         </div>
-        <div class="flex items-center gap-1 px-2 py-1 <%= @stats[:last_sync] ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' %> text-xs font-semibold rounded-full">
-          <div class="h-2 w-2 <%= @stats[:last_sync] ? 'bg-green-500' : 'bg-gray-400' %> rounded-full"></div>
+        <div class="flex items-center gap-2 px-4 py-2 <%= @stats[:last_sync] ? 'bg-gradient-to-r from-green-100/80 to-emerald-100/80 text-green-700' : 'bg-gradient-to-r from-gray-100/80 to-gray-200/80 text-gray-600' %> backdrop-blur-sm text-xs font-bold rounded-2xl border <%= @stats[:last_sync] ? 'border-green-200/50' : 'border-gray-200/50' %> shadow-lg group-hover:scale-105 transition-all duration-300">
+          <div class="h-2 w-2 <%= @stats[:last_sync] ? 'bg-green-500 status-indicator connected' : 'bg-gray-400 status-indicator' %> rounded-full <%= @stats[:last_sync] ? 'animate-pulse' : '' %>"></div>
           <%= @stats[:last_sync] ? 'Active' : 'Inactive' %>
         </div>
       </div>
       <div>
-        <p class="text-sm font-medium text-cyan-700 mb-1">Last Sync</p>
-        <p class="text-3xl font-bold text-gray-900 mb-2">
+        <p class="text-sm font-bold text-cyan-800/80 uppercase tracking-wider mb-3">Last Sync</p>
+        <p class="text-5xl font-black mb-4 bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent group-hover:scale-110 transition-all duration-500 animate-counter-bounce">
           <%= @stats[:last_sync] ? time_ago_in_words(@stats[:last_sync]) : "Never" %>
         </p>
-        <p class="text-xs text-gray-600"><%= @stats[:last_sync] ? 'ago' : 'No sync performed' %></p>
+        <p class="text-sm text-gray-700/80 font-medium"><%= @stats[:last_sync] ? 'ago' : 'No sync performed' %></p>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Data Quality Monitoring Widget -->
+<%= render 'data_quality_widget' %>
 
 <!-- E-commerce Analytics Section -->
 <%= render 'ecommerce_analytics' %>

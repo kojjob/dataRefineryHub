@@ -74,6 +74,80 @@
             </div>
           <% end %>
 
+          <!-- Profile Avatar Section -->
+          <div class="mb-8">
+            <div class="flex items-center gap-6">
+              <div class="relative group">
+                <% if @user.has_avatar? %>
+                  <%= image_tag @user.avatar_url(:medium), class: "h-24 w-24 rounded-2xl object-cover ring-4 ring-indigo-100 shadow-xl group-hover:ring-indigo-200 transition-all duration-300" %>
+                <% else %>
+                  <div class="h-24 w-24 rounded-2xl bg-gradient-to-br from-indigo-500 via-blue-600 to-purple-600 flex items-center justify-center ring-4 ring-indigo-100 shadow-xl group-hover:ring-indigo-200 transition-all duration-300">
+                    <span class="text-2xl font-bold text-white"><%= @user.initials %></span>
+                  </div>
+                <% end %>
+                <!-- Upload overlay -->
+                <div class="absolute inset-0 bg-black/40 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+                  <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                  </svg>
+                </div>
+              </div>
+              
+              <div class="flex-1">
+                <div class="mb-4">
+                  <%= form.label :avatar, "Profile Photo", class: "block text-sm font-bold leading-6 text-gray-900 mb-2" %>
+                  <p class="text-sm text-gray-600 font-medium mb-4">Upload a professional profile photo. JPG, PNG, or GIF up to 5MB.</p>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                  <div class="relative">
+                    <%= form.file_field :avatar, 
+                        accept: "image/*",
+                        class: "hidden", 
+                        id: "avatar_upload",
+                        data: { 
+                          controller: "avatar-upload",
+                          action: "change->avatar-upload#handleFileSelect"
+                        } %>
+                    <label for="avatar_upload" class="cursor-pointer inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-indigo-50 to-blue-50 text-indigo-700 font-bold rounded-2xl border-2 border-indigo-200 hover:border-indigo-300 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-blue-100 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 group">
+                      <svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                      </svg>
+                      <span>Choose Photo</span>
+                    </label>
+                  </div>
+                  
+                  <% if @user.has_avatar? %>
+                    <%= link_to remove_avatar_user_path(@user), 
+                        class: "inline-flex items-center gap-2 px-4 py-3 text-red-600 font-bold rounded-2xl border-2 border-red-200 hover:border-red-300 hover:bg-red-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5",
+                        data: { 
+                          turbo_method: :delete,
+                          confirm: "Are you sure you want to remove the profile photo?"
+                        } do %>
+                      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                      </svg>
+                      Remove
+                    <% end %>
+                  <% end %>
+                </div>
+                
+                <div data-avatar-upload-target="preview" class="hidden mt-4">
+                  <div class="relative inline-block">
+                    <img data-avatar-upload-target="previewImage" class="h-20 w-20 rounded-xl object-cover ring-2 ring-green-200 shadow-lg" />
+                    <div class="absolute -top-2 -right-2 h-6 w-6 bg-green-500 rounded-full flex items-center justify-center">
+                      <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p class="mt-2 text-sm text-green-600 font-semibold">New photo selected - save to update</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-6">
             
             <!-- First Name -->

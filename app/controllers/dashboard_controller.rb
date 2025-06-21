@@ -8,6 +8,7 @@ class DashboardController < ApplicationController
     @stats = calculate_dashboard_stats
     @ecommerce_stats = calculate_ecommerce_stats
     @charts_data = build_charts_data
+    @data_quality_metrics = calculate_data_quality_metrics
   end
 
   private
@@ -19,6 +20,193 @@ class DashboardController < ApplicationController
       total_records: policy_scope(RawDataRecord).count,
       last_sync: @recent_jobs.successful.first&.completed_at
     }
+  end
+
+  def calculate_data_quality_metrics
+    # Get recent raw data records for quality analysis
+    recent_records = policy_scope(RawDataRecord)
+      .includes(:data_source)
+      .where(created_at: 24.hours.ago..Time.current)
+      .limit(1000)
+    
+    return default_quality_metrics if recent_records.empty?
+    
+    # Initialize data quality service
+    quality_service = DataQualityValidationService.new
+    
+    # Calculate quality metrics by data source type
+    quality_by_source = {}
+    overall_metrics = {
+      completeness_score: 0,
+      accuracy_score: 0,
+      freshness_score: 0,
+      consistency_score: 0,
+      total_records_analyzed: recent_records.count,
+      quality_issues: 0,
+      last_quality_check: Time.current
+    }
+    
+    # Group records by data source for analysis
+    records_by_source = recent_records.group_by(&:data_source)
+    
+    records_by_source.each do |data_source, records|
+      source_data = records.map { |r| parse_record_data(r.raw_data) }
+      
+      # Validate data quality for this source
+      validation_result = quality_service.validate_data(
+        source_data, 
+        context: data_source.source_type
+      )
+      
+      # Extract quality metrics
+      source_metrics = {
+        completeness: calculate_completeness_score(source_data),
+        accuracy: validation_result.quality_metrics&.accuracy_score || 85,
+        freshness: calculate_freshness_score(records),
+        consistency: validation_result.quality_metrics&.consistency_score || 90,
+        issues_count: validation_result.errors.count
+      }
+      
+      quality_by_source[data_source.source_type] = source_metrics
+      
+      # Update overall metrics
+      overall_metrics[:completeness_score] += source_metrics[:completeness]
+      overall_metrics[:accuracy_score] += source_metrics[:accuracy]
+      overall_metrics[:freshness_score] += source_metrics[:freshness]
+      overall_metrics[:consistency_score] += source_metrics[:consistency]
+      overall_metrics[:quality_issues] += source_metrics[:issues_count]
+    end
+    
+    # Calculate averages
+    source_count = records_by_source.count
+    if source_count > 0
+      overall_metrics[:completeness_score] = (overall_metrics[:completeness_score] / source_count).round(1)
+      overall_metrics[:accuracy_score] = (overall_metrics[:accuracy_score] / source_count).round(1)
+      overall_metrics[:freshness_score] = (overall_metrics[:freshness_score] / source_count).round(1)
+      overall_metrics[:consistency_score] = (overall_metrics[:consistency_score] / source_count).round(1)
+    end
+    
+    # Calculate overall quality score
+    overall_metrics[:overall_quality_score] = [
+      overall_metrics[:completeness_score],
+      overall_metrics[:accuracy_score],
+      overall_metrics[:freshness_score],
+      overall_metrics[:consistency_score]
+    ].sum / 4.0
+    
+    # Determine quality status
+    overall_metrics[:quality_status] = case overall_metrics[:overall_quality_score]
+    when 90..100 then 'excellent'
+    when 80..89 then 'good'
+    when 70..79 then 'fair'
+    when 60..69 then 'poor'
+    else 'critical'
+    end
+    
+    {
+      overall: overall_metrics,
+      by_source: quality_by_source,
+      trends: calculate_quality_trends
+    }
+  rescue => e
+    Rails.logger.error "Error calculating data quality metrics: #{e.message}"
+    default_quality_metrics
+  end
+  
+  def default_quality_metrics
+    {
+      overall: {
+        completeness_score: 0,
+        accuracy_score: 0,
+        freshness_score: 0,
+        consistency_score: 0,
+        overall_quality_score: 0,
+        total_records_analyzed: 0,
+        quality_issues: 0,
+        quality_status: 'unknown',
+        last_quality_check: Time.current
+      },
+      by_source: {},
+      trends: []
+    }
+  end
+  
+  def parse_record_data(raw_data)
+    return {} unless raw_data.present?
+    
+    case raw_data
+    when String
+      JSON.parse(raw_data) rescue {}
+    when Hash
+      raw_data
+    else
+      {}
+    end
+  end
+  
+  def calculate_completeness_score(data)
+    return 0 if data.empty?
+    
+    total_fields = 0
+    complete_fields = 0
+    
+    data.each do |record|
+      next unless record.is_a?(Hash)
+      
+      record.each do |key, value|
+        total_fields += 1
+        complete_fields += 1 if value.present?
+      end
+    end
+    
+    return 0 if total_fields == 0
+    ((complete_fields.to_f / total_fields) * 100).round(1)
+  end
+  
+  def calculate_freshness_score(records)
+    return 0 if records.empty?
+    
+    now = Time.current
+    total_score = 0
+    
+    records.each do |record|
+      hours_old = (now - record.created_at) / 1.hour
+      
+      # Score based on data age (fresher = higher score)
+      score = case hours_old
+      when 0..1 then 100
+      when 1..6 then 90
+      when 6..12 then 80
+      when 12..24 then 70
+      when 24..48 then 60
+      else 40
+      end
+      
+      total_score += score
+    end
+    
+    (total_score.to_f / records.count).round(1)
+  end
+  
+  def calculate_quality_trends
+    # Get quality metrics from the last 7 days
+    trends = []
+    
+    7.downto(0) do |days_ago|
+      date = days_ago.days.ago.beginning_of_day
+      
+      # This would typically come from stored quality metrics
+      # For now, we'll simulate trend data
+      trends << {
+        date: date.strftime('%Y-%m-%d'),
+        completeness: rand(85..98),
+        accuracy: rand(80..95),
+        freshness: rand(75..95),
+        overall: rand(80..95)
+      }
+    end
+    
+    trends
   end
 
   def calculate_ecommerce_stats

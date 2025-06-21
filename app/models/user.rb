@@ -11,6 +11,12 @@ class User < ApplicationRecord
 
   has_many :audit_logs, dependent: :destroy
   has_many :sent_invitations, class_name: 'User', foreign_key: 'invited_by_id', dependent: :nullify
+  
+  # Active Storage associations
+  has_one_attached :avatar do |attachable|
+    attachable.variant :thumb, resize_to_limit: [100, 100]
+    attachable.variant :medium, resize_to_limit: [300, 300]
+  end
 
   # Devise validations with organization scope
   validates :email, presence: true, uniqueness: { scope: :organization_id, case_sensitive: false },
@@ -31,6 +37,9 @@ class User < ApplicationRecord
   validates :first_name, presence: true, length: { minimum: 1, maximum: 50 }
   validates :last_name, presence: true, length: { minimum: 1, maximum: 50 }
   validates :role, inclusion: { in: ROLES }
+  
+  # Avatar validations
+  validate :acceptable_avatar
 
   scope :by_role, ->(role) { where(role: role) }
   scope :confirmed, -> { where.not(confirmed_at: nil) }
@@ -96,6 +105,23 @@ class User < ApplicationRecord
     owner? || admin?
   end
 
+  def avatar_url(variant = :thumb)
+    return nil unless avatar.attached?
+    
+    if variant == :original
+      Rails.application.routes.url_helpers.rails_blob_url(avatar, only_path: true)
+    else
+      Rails.application.routes.url_helpers.rails_representation_url(avatar.variant(variant), only_path: true)
+    end
+  rescue => e
+    Rails.logger.error "Error generating avatar URL: #{e.message}"
+    nil
+  end
+
+  def has_avatar?
+    avatar.attached?
+  end
+
   def role_hierarchy_level
     case role
     when 'owner' then 4
@@ -138,5 +164,18 @@ class User < ApplicationRecord
 
   def normalize_email
     self.email = email&.downcase&.strip
+  end
+
+  def acceptable_avatar
+    return unless avatar.attached?
+
+    acceptable_types = ["image/jpeg", "image/jpg", "image/png", "image/gif"]
+    unless acceptable_types.include?(avatar.blob.content_type)
+      errors.add(:avatar, "must be a JPEG, PNG, or GIF")
+    end
+
+    unless avatar.blob.byte_size <= 5.megabytes
+      errors.add(:avatar, "must be less than 5MB")
+    end
   end
 end

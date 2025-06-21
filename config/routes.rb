@@ -24,15 +24,33 @@ Rails.application.routes.draw do
   resources :users, constraints: { id: /\d+/ } do
     member do
       patch :change_role
+      delete :remove_avatar
     end
   end
   
   # Data sources
   resources :data_sources do
-    member do
+    collection do
       post :test_connection
-      post :sync_now
     end
+    
+    member do
+      post :sync_now
+      post :process_files
+      get 'preview_file/:file_id', action: :preview_file, as: :preview_file
+      get 'analyze_file/:file_id', action: :analyze_file, as: :analyze_file
+    end
+    
+    # Scheduled uploads
+    resources :scheduled_uploads do
+      member do
+        patch :toggle_status
+        post :execute_now
+      end
+    end
+    
+    # Logs for all scheduled uploads in a data source
+    get 'scheduled_uploads_logs', to: 'scheduled_uploads#logs', as: :scheduled_uploads_logs
   end
   
   # API Routes
@@ -67,6 +85,16 @@ Rails.application.routes.draw do
             post :retry
             post :cancel
           end
+        end
+        
+        # Scheduled uploads API
+        resources :scheduled_uploads, only: [:index, :show, :create, :update, :destroy] do
+          member do
+            patch :toggle_status
+            post :execute_now
+          end
+          
+          resources :upload_logs, only: [:index, :show]
         end
       end
       

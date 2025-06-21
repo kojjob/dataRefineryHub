@@ -4,7 +4,7 @@ class DataSource < ApplicationRecord
   SOURCE_TYPES = %w[
     shopify quickbooks google_analytics stripe mailchimp
     zendesk hubspot google_ads facebook_ads woocommerce
-    salesforce amazon_seller_central custom_api
+    salesforce amazon_seller_central custom_api file_upload
   ].freeze
 
   STATUSES = %w[connected disconnected syncing error].freeze
@@ -12,6 +12,10 @@ class DataSource < ApplicationRecord
 
   has_many :extraction_jobs, dependent: :destroy
   has_many :raw_data_records, dependent: :destroy
+  has_many :scheduled_uploads, dependent: :destroy
+  has_many_attached :uploaded_files do |attachable|
+    attachable.variant :preview, resize_to_limit: [300, 300]
+  end
 
   encrypts :credentials, deterministic: false
 
@@ -20,6 +24,9 @@ class DataSource < ApplicationRecord
   validates :status, inclusion: { in: STATUSES }
   validates :sync_frequency, inclusion: { in: SYNC_FREQUENCIES }
   validates :name, uniqueness: { scope: :organization_id }
+  
+  # File upload validations
+  validate :acceptable_uploaded_files
 
   scope :connected, -> { where(status: 'connected') }
   scope :by_type, ->(type) { where(source_type: type) }
@@ -62,6 +69,28 @@ class DataSource < ApplicationRecord
 
   def can_sync?
     connected? && !syncing?
+  end
+
+  def file_upload_source?
+    source_type == 'file_upload'
+  end
+
+  def has_uploaded_files?
+    uploaded_files.attached?
+  end
+
+  def supported_file_types
+    %w[text/csv application/vnd.ms-excel application/vnd.openxmlformats-officedocument.spreadsheetml.sheet application/json text/plain]
+  end
+
+  def file_type_display_names
+    {
+      'text/csv' => 'CSV',
+      'application/vnd.ms-excel' => 'Excel (XLS)',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel (XLSX)',
+      'application/json' => 'JSON',
+      'text/plain' => 'Text'
+    }
   end
 
   def sync_interval
@@ -164,6 +193,7 @@ class DataSource < ApplicationRecord
     when 'google_ads' then 'Google Ads'
     when 'amazon_seller_central' then 'Amazon Seller Central'
     when 'custom_api' then 'Custom API'
+    when 'file_upload' then 'File Upload'
     else source_type.humanize
     end
   end
@@ -178,5 +208,19 @@ class DataSource < ApplicationRecord
 
   def normalize_name
     self.name = name&.strip
+  end
+
+  def acceptable_uploaded_files
+    return unless uploaded_files.attached?
+
+    uploaded_files.each do |file|
+      unless supported_file_types.include?(file.content_type)
+        errors.add(:uploaded_files, "#{file.filename} must be a CSV, Excel, JSON, or text file")
+      end
+
+      unless file.byte_size <= 50.megabytes
+        errors.add(:uploaded_files, "#{file.filename} must be less than 50MB")
+      end
+    end
   end
 end

@@ -1,0 +1,274 @@
+# ETL Pipeline Configuration
+# This file contains all configuration settings for the enhanced ETL pipeline
+
+default: &default
+  # Circuit Breaker Configuration
+  circuit_breaker:
+    extraction:
+      failure_threshold: 5
+      success_threshold: 3
+      timeout: 300 # 5 minutes
+      exponential_backoff_base: 2
+      max_backoff: 3600 # 1 hour
+      jitter: true
+    
+    transformation:
+      failure_threshold: 3
+      success_threshold: 2
+      timeout: 300 # 5 minutes
+      exponential_backoff_base: 2
+      max_backoff: 1800 # 30 minutes
+      jitter: true
+  
+  # Error Handling Configuration
+  error_handling:
+    retry_strategies:
+      default: exponential
+      rate_limit: linear
+      authentication: fixed
+    
+    retry_limits:
+      transient_errors: 5
+      rate_limit_errors: 3
+      authentication_errors: 2
+      permanent_errors: 0
+    
+    dead_letter_queue:
+      enabled: true
+      max_retries: 10
+      retention_days: 30
+  
+  # Batch Processing Configuration
+  batch_processing:
+    extraction:
+      default_size: 1000
+      max_size: 5000
+      min_size: 100
+    
+    transformation:
+      default_size: 500
+      max_size: 2000
+      min_size: 50
+    
+    validation:
+      default_size: 200
+      max_size: 1000
+      min_size: 25
+    
+    storage:
+      default_size: 1000
+      max_size: 3000
+      min_size: 100
+    
+    # Adaptive batch sizing
+    adaptive_sizing:
+      enabled: true
+      performance_threshold: 0.8 # seconds per record
+      memory_threshold: 0.7 # 70% of available memory
+      adjustment_factor: 0.2 # 20% adjustment
+  
+  # Data Quality Validation Configuration
+  data_quality:
+    validation_rules:
+      presence:
+        enabled: true
+        required_fields: []
+      
+      format:
+        enabled: true
+        email_validation: true
+        phone_validation: true
+        url_validation: true
+      
+      range:
+        enabled: true
+        numeric_ranges: {}
+        date_ranges: {}
+      
+      uniqueness:
+        enabled: true
+        check_within_batch: true
+        check_across_batches: false
+      
+      referential_integrity:
+        enabled: true
+        foreign_key_checks: true
+      
+      data_type:
+        enabled: true
+        strict_typing: false
+      
+      business_rules:
+        enabled: true
+        custom_validators: []
+      
+      statistical:
+        enabled: true
+        outlier_detection: true
+        distribution_checks: false
+    
+    quality_thresholds:
+      completeness: 0.95 # 95%
+      accuracy: 0.90 # 90%
+      consistency: 0.85 # 85%
+      validity: 0.90 # 90%
+      uniqueness: 0.98 # 98%
+      timeliness: 0.80 # 80%
+      integrity: 0.95 # 95%
+    
+    reporting:
+      enabled: true
+      detailed_errors: true
+      quality_metrics: true
+      trend_analysis: false
+  
+  # Performance and Monitoring
+  performance:
+    monitoring:
+      enabled: true
+      metrics_collection: true
+      performance_logging: true
+    
+    memory_management:
+      gc_after_batch: true
+      memory_limit_mb: 1024
+      cleanup_frequency: 10 # batches
+    
+    timeouts:
+      extraction_timeout: 1800 # 30 minutes
+      transformation_timeout: 900 # 15 minutes
+      validation_timeout: 300 # 5 minutes
+  
+  # Logging Configuration
+  logging:
+    level: info
+    structured_logging: true
+    include_metrics: true
+    log_batch_progress: true
+    log_validation_details: false
+
+# Orchestration configuration
+orchestration:
+  max_concurrent_pipelines: 5
+  pipeline_timeout: 2.hours
+  dependency_check_interval: 30.seconds
+  execution_cleanup_days: 90
+  retry_failed_pipelines: true
+  max_pipeline_retries: 3
+  pipeline_retry_delay: 5.minutes
+
+# Monitoring configuration
+monitoring:
+  enabled: true
+  metrics_retention_days: 30
+  health_check_interval: 1.minute
+  alert_thresholds:
+    error_rate_threshold: 0.1
+    min_success_rate: 0.8
+    max_extraction_duration: 30.minutes
+    max_transformation_duration: 45.minutes
+    quality_threshold: 0.7
+    min_hourly_throughput: 100
+  memory_threshold_mb: 1024
+  disk_usage_threshold: 90
+  performance_tracking:
+    enabled: true
+    sample_rate: 1.0
+    detailed_metrics: true
+
+development:
+  <<: *default
+  logging:
+    level: debug
+    structured_logging: true
+    include_metrics: true
+    log_batch_progress: true
+    log_validation_details: true
+  
+  batch_processing:
+    extraction:
+      default_size: 100
+      max_size: 500
+    transformation:
+      default_size: 50
+      max_size: 200
+    validation:
+      default_size: 25
+      max_size: 100
+  
+  performance:
+    timeouts:
+      extraction_timeout: 300 # 5 minutes
+      transformation_timeout: 180 # 3 minutes
+      validation_timeout: 60 # 1 minute
+
+test:
+  <<: *default
+  circuit_breaker:
+    extraction:
+      failure_threshold: 2
+      timeout: 10
+    transformation:
+      failure_threshold: 2
+      timeout: 10
+  
+  batch_processing:
+    extraction:
+      default_size: 10
+      max_size: 50
+    transformation:
+      default_size: 5
+      max_size: 25
+    validation:
+      default_size: 5
+      max_size: 25
+  
+  data_quality:
+    quality_thresholds:
+      completeness: 0.80
+      accuracy: 0.75
+      consistency: 0.70
+      validity: 0.75
+      uniqueness: 0.90
+      timeliness: 0.60
+      integrity: 0.80
+  
+  logging:
+    level: debug
+    log_validation_details: true
+
+production:
+  <<: *default
+  circuit_breaker:
+    extraction:
+      failure_threshold: 10
+      success_threshold: 5
+      timeout: 600 # 10 minutes
+    transformation:
+      failure_threshold: 5
+      success_threshold: 3
+      timeout: 600 # 10 minutes
+  
+  batch_processing:
+    extraction:
+      default_size: 2000
+      max_size: 10000
+    transformation:
+      default_size: 1000
+      max_size: 5000
+    validation:
+      default_size: 500
+      max_size: 2000
+  
+  performance:
+    memory_management:
+      memory_limit_mb: 4096
+    timeouts:
+      extraction_timeout: 3600 # 1 hour
+      transformation_timeout: 1800 # 30 minutes
+      validation_timeout: 600 # 10 minutes
+  
+  logging:
+    level: info
+    log_validation_details: false
+    log_batch_progress: false

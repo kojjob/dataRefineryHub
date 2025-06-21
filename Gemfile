@@ -40,6 +40,12 @@ gem "ransack"
 gem "groupdate"
 gem "chartkick"
 
+# File Processing
+gem "roo"           # Excel and CSV parsing
+gem "roo-xls"       # Legacy Excel support
+gem "creek"         # Streaming Excel parsing for large files
+gem "smarter_csv"   # Advanced CSV parsing
+
 # External API Integrations
 gem "shopify_api"
 gem "stripe"

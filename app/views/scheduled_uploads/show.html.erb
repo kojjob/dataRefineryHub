@@ -1,0 +1,407 @@
+<% content_for :title, "#{@scheduled_upload.name} - #{@data_source.name}" %>
+
+<div class="bg-white shadow-sm border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-6">
+      <nav class="flex" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-4">
+          <li>
+            <%= link_to data_sources_path, class: "text-gray-500 hover:text-gray-700" do %>
+              Data Sources
+            <% end %>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+              <%= link_to @data_source.name, @data_source, class: "ml-4 text-gray-500 hover:text-gray-700" %>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+              <%= link_to "Scheduled Uploads", data_source_scheduled_uploads_path(@data_source), class: "ml-4 text-gray-500 hover:text-gray-700" %>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span class="ml-4 text-gray-900 font-medium"><%= @scheduled_upload.name %></span>
+            </div>
+          </li>
+        </ol>
+      </nav>
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900"><%= @scheduled_upload.name %></h1>
+          <div class="mt-1 flex items-center space-x-4">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @scheduled_upload.active? ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
+              <%= @scheduled_upload.active? ? 'Active' : 'Inactive' %>
+            </span>
+            <span class="text-sm text-gray-500">Runs <%= @scheduled_upload.frequency.humanize.downcase %></span>
+            <% if @scheduled_upload.active? && @scheduled_upload.next_run_at %>
+              <span class="text-sm text-gray-500">Next: <%= time_ago_in_words(@scheduled_upload.next_run_at) %> from now</span>
+            <% end %>
+          </div>
+          <% if @scheduled_upload.description.present? %>
+            <p class="mt-2 text-sm text-gray-600"><%= @scheduled_upload.description %></p>
+          <% end %>
+        </div>
+        <div class="flex items-center space-x-3">
+          <% if @scheduled_upload.active? %>
+            <%= link_to execute_now_data_source_scheduled_upload_path(@data_source, @scheduled_upload), 
+                        method: :post,
+                        class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
+                        data: { confirm: 'Are you sure you want to execute this scheduled upload now?' } do %>
+              <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m6-6V7a2 2 0 00-2-2H5a2 2 0 00-2 2v3m2 4h10a2 2 0 002-2v-3a2 2 0 00-2-2H5a2 2 0 00-2 2v3z" />
+              </svg>
+              Run Now
+            <% end %>
+          <% end %>
+          
+          <%= link_to toggle_status_data_source_scheduled_upload_path(@data_source, @scheduled_upload), 
+                      method: :patch,
+                      class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+            <% if @scheduled_upload.active? %>
+              <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Deactivate
+            <% else %>
+              <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m6-6V7a2 2 0 00-2-2H5a2 2 0 00-2 2v3m2 4h10a2 2 0 002-2v-3a2 2 0 00-2-2H5a2 2 0 00-2 2v3z" />
+              </svg>
+              Activate
+            <% end %>
+          <% end %>
+          
+          <%= link_to edit_data_source_scheduled_upload_path(@data_source, @scheduled_upload), 
+                      class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Statistics -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Total Executions</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @scheduled_upload.upload_logs.count %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Success Rate</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= number_to_percentage(@success_rate, precision: 1) %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Files Processed</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @scheduled_upload.upload_logs.sum(:files_processed) || 0 %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Created</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @scheduled_upload.created_at.strftime('%b %d, %Y') %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Configuration Details -->
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+    <div class="px-4 py-5 sm:px-6">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Configuration</h3>
+      <p class="mt-1 max-w-2xl text-sm text-gray-500">Scheduled upload settings and parameters.</p>
+    </div>
+    <div class="border-t border-gray-200">
+      <dl>
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Frequency</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @scheduled_upload.frequency.humanize %></dd>
+        </div>
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">File Pattern</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <% if @scheduled_upload.file_pattern.present? %>
+              <code class="bg-gray-100 px-2 py-1 rounded text-sm"><%= @scheduled_upload.file_pattern %></code>
+            <% else %>
+              <span class="text-gray-500">All supported files</span>
+            <% end %>
+          </dd>
+        </div>
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Max File Age</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <% if @scheduled_upload.max_file_age_hours.present? %>
+              <%= pluralize(@scheduled_upload.max_file_age_hours, 'hour') %>
+            <% else %>
+              <span class="text-gray-500">No limit</span>
+            <% end %>
+          </dd>
+        </div>
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Processing Options</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <div class="space-y-1">
+              <div class="flex items-center">
+                <% if @scheduled_upload.delete_after_processing? %>
+                  <svg class="h-4 w-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  <span>Delete files after processing</span>
+                <% else %>
+                  <svg class="h-4 w-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                  </svg>
+                  <span class="text-gray-500">Keep files after processing</span>
+                <% end %>
+              </div>
+              <div class="flex items-center">
+                <% if @scheduled_upload.retry_failed_files? %>
+                  <svg class="h-4 w-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  <span>Retry failed files</span>
+                <% else %>
+                  <svg class="h-4 w-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                  </svg>
+                  <span class="text-gray-500">Don't retry failed files</span>
+                <% end %>
+              </div>
+            </div>
+          </dd>
+        </div>
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Notifications</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <% if @scheduled_upload.notification_emails.present? %>
+              <div class="mb-2">
+                <span class="text-sm font-medium">Email:</span>
+                <span class="ml-1"><%= @scheduled_upload.notification_emails %></span>
+              </div>
+            <% end %>
+            <% if @scheduled_upload.webhook_url.present? %>
+              <div>
+                <span class="text-sm font-medium">Webhook:</span>
+                <span class="ml-1 text-blue-600"><%= @scheduled_upload.webhook_url %></span>
+              </div>
+            <% end %>
+            <% if @scheduled_upload.notification_emails.blank? && @scheduled_upload.webhook_url.blank? %>
+              <span class="text-gray-500">No notifications configured</span>
+            <% end %>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <!-- Recent Executions -->
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Executions</h3>
+      <p class="mt-1 max-w-2xl text-sm text-gray-500">Latest execution logs and results.</p>
+    </div>
+    
+    <% if @upload_logs.any? %>
+      <ul class="divide-y divide-gray-200">
+        <% @upload_logs.each do |log| %>
+          <li class="px-4 py-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <% case log.status %>
+                  <% when 'completed' %>
+                    <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <svg class="h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                  <% when 'completed_with_errors' %>
+                    <div class="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center">
+                      <svg class="h-5 w-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                  <% when 'failed' %>
+                    <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
+                      <svg class="h-5 w-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                  <% else %>
+                    <div class="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
+                      <svg class="h-5 w-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="ml-4">
+                  <div class="flex items-center">
+                    <p class="text-sm font-medium text-gray-900"><%= log.status.humanize %></p>
+                    <span class="ml-2 text-sm text-gray-500">•</span>
+                    <span class="ml-2 text-sm text-gray-500"><%= log.started_at.strftime('%b %d, %Y at %I:%M %p') %></span>
+                  </div>
+                  <div class="mt-1 flex items-center text-sm text-gray-500">
+                    <span>Duration: <%= log.duration_in_words %></span>
+                    <span class="mx-2">•</span>
+                    <span>Files: <%= log.files_processed || 0 %> processed</span>
+                    <% if log.files_failed && log.files_failed > 0 %>
+                      <span class="mx-2">•</span>
+                      <span class="text-red-600"><%= log.files_failed %> failed</span>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="flex items-center space-x-2">
+                <% if log.details && log.details['errors'] && log.details['errors'].any? %>
+                  <button type="button" 
+                          class="text-red-600 hover:text-red-900 text-sm font-medium"
+                          onclick="toggleLogDetails('<%= log.id %>')">
+                    View Errors
+                  </button>
+                <% end %>
+                <% if log.details && log.details['processed_files'] && log.details['processed_files'].any? %>
+                  <button type="button" 
+                          class="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+                          onclick="toggleLogDetails('<%= log.id %>')">
+                    View Files
+                  </button>
+                <% end %>
+              </div>
+            </div>
+            
+            <!-- Expandable Details -->
+            <div id="log-details-<%= log.id %>" class="hidden mt-4 pl-12">
+              <% if log.details && log.details['processed_files'] && log.details['processed_files'].any? %>
+                <div class="mb-4">
+                  <h4 class="text-sm font-medium text-gray-900 mb-2">Processed Files</h4>
+                  <div class="bg-gray-50 rounded-md p-3">
+                    <% log.details['processed_files'].each do |file| %>
+                      <div class="flex justify-between items-center py-1">
+                        <span class="text-sm text-gray-900"><%= file['file_name'] %></span>
+                        <span class="text-sm text-gray-500"><%= number_to_human_size(file['file_size']) if file['file_size'] %></span>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+              
+              <% if log.details && log.details['errors'] && log.details['errors'].any? %>
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900 mb-2">Errors</h4>
+                  <div class="bg-red-50 rounded-md p-3">
+                    <% log.details['errors'].each do |error| %>
+                      <div class="text-sm text-red-700 py-1"><%= error %></div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+      
+      <!-- Pagination -->
+      <% if @upload_logs.respond_to?(:current_page) %>
+        <div class="px-4 py-3 border-t border-gray-200">
+          <%= paginate @upload_logs, theme: 'twitter_bootstrap_4' %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No executions yet</h3>
+        <p class="mt-1 text-sm text-gray-500">This scheduled upload hasn't been executed yet.</p>
+        <% if @scheduled_upload.active? %>
+          <div class="mt-6">
+            <%= link_to execute_now_data_source_scheduled_upload_path(@data_source, @scheduled_upload), 
+                        method: :post,
+                        class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
+                        data: { confirm: 'Are you sure you want to execute this scheduled upload now?' } do %>
+              Run Now
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+function toggleLogDetails(logId) {
+  const details = document.getElementById('log-details-' + logId);
+  if (details.classList.contains('hidden')) {
+    details.classList.remove('hidden');
+  } else {
+    details.classList.add('hidden');
+  }
+}
+</script>

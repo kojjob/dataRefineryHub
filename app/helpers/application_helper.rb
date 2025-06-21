@@ -23,7 +23,11 @@ module ApplicationHelper
     # Determine current section based on controller and action
     case controller_name
     when 'dashboard'
-      'dashboard'
+      if params[:anchor] == 'data-quality'
+        'data_quality'
+      else
+        'dashboard'
+      end
     when 'data_sources'
       'data_sources'
     when 'extraction_jobs', 'transformation_jobs'

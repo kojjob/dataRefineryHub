@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_19_222500) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_21_141946) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "audit_logs", force: :cascade do |t|
     t.bigint "organization_id", null: false
@@ -96,6 +124,33 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_222500) do
     t.index ["stripe_customer_id"], name: "index_organizations_on_stripe_customer_id", unique: true
   end
 
+  create_table "pipeline_executions", force: :cascade do |t|
+    t.string "execution_id", null: false
+    t.string "pipeline_name", null: false
+    t.bigint "data_source_id"
+    t.bigint "user_id"
+    t.string "status", default: "pending", null: false
+    t.decimal "progress", precision: 5, scale: 2, default: "0.0"
+    t.string "current_stage"
+    t.datetime "started_at", null: false
+    t.datetime "completed_at"
+    t.text "error_message"
+    t.text "parameters"
+    t.text "result_summary"
+    t.text "error_details"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data_source_id", "status"], name: "index_pipeline_executions_on_data_source_id_and_status"
+    t.index ["data_source_id"], name: "index_pipeline_executions_on_data_source_id"
+    t.index ["execution_id"], name: "index_pipeline_executions_on_execution_id", unique: true
+    t.index ["pipeline_name", "status"], name: "index_pipeline_executions_on_pipeline_name_and_status"
+    t.index ["pipeline_name"], name: "index_pipeline_executions_on_pipeline_name"
+    t.index ["started_at", "status"], name: "index_pipeline_executions_on_started_at_and_status"
+    t.index ["started_at"], name: "index_pipeline_executions_on_started_at"
+    t.index ["status"], name: "index_pipeline_executions_on_status"
+    t.index ["user_id"], name: "index_pipeline_executions_on_user_id"
+  end
+
   create_table "raw_data_records", force: :cascade do |t|
     t.bigint "organization_id", null: false
     t.bigint "data_source_id", null: false
@@ -121,6 +176,32 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_222500) do
     t.index ["record_type"], name: "index_raw_data_records_on_record_type"
   end
 
+  create_table "scheduled_uploads", force: :cascade do |t|
+    t.bigint "data_source_id", null: false
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "frequency", default: "daily", null: false
+    t.boolean "active", default: true
+    t.datetime "next_run_at"
+    t.datetime "last_run_at"
+    t.string "file_pattern"
+    t.text "notification_emails"
+    t.string "webhook_url"
+    t.integer "max_file_age_hours"
+    t.boolean "delete_after_processing", default: false
+    t.boolean "retry_failed_files", default: true
+    t.json "configuration"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data_source_id", "active"], name: "index_scheduled_uploads_on_data_source_id_and_active"
+    t.index ["data_source_id"], name: "index_scheduled_uploads_on_data_source_id"
+    t.index ["frequency"], name: "index_scheduled_uploads_on_frequency"
+    t.index ["next_run_at"], name: "index_scheduled_uploads_on_next_run_at"
+    t.index ["user_id", "active"], name: "index_scheduled_uploads_on_user_id_and_active"
+    t.index ["user_id"], name: "index_scheduled_uploads_on_user_id"
+  end
+
   create_table "transformation_jobs", force: :cascade do |t|
     t.bigint "organization_id", null: false
     t.string "job_id", null: false
@@ -142,6 +223,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_222500) do
     t.index ["status", "started_at"], name: "index_transformation_jobs_on_status_and_started_at"
     t.index ["status"], name: "index_transformation_jobs_on_status"
     t.index ["transformation_type"], name: "index_transformation_jobs_on_transformation_type"
+  end
+
+  create_table "upload_logs", force: :cascade do |t|
+    t.bigint "scheduled_upload_id", null: false
+    t.string "status", default: "running", null: false
+    t.datetime "started_at", null: false
+    t.datetime "completed_at"
+    t.integer "files_processed", default: 0
+    t.integer "files_failed", default: 0
+    t.json "details"
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["scheduled_upload_id", "started_at"], name: "index_upload_logs_on_scheduled_upload_id_and_started_at"
+    t.index ["scheduled_upload_id"], name: "index_upload_logs_on_scheduled_upload_id"
+    t.index ["started_at"], name: "index_upload_logs_on_started_at"
+    t.index ["status", "started_at"], name: "index_upload_logs_on_status_and_started_at"
+    t.index ["status"], name: "index_upload_logs_on_status"
   end
 
   create_table "users", force: :cascade do |t|
@@ -178,14 +277,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_222500) do
     t.index ["role"], name: "index_users_on_role"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "audit_logs", "organizations"
   add_foreign_key "audit_logs", "users"
   add_foreign_key "data_sources", "organizations"
   add_foreign_key "extraction_jobs", "data_sources"
+  add_foreign_key "pipeline_executions", "data_sources"
+  add_foreign_key "pipeline_executions", "users"
   add_foreign_key "raw_data_records", "data_sources"
   add_foreign_key "raw_data_records", "extraction_jobs"
   add_foreign_key "raw_data_records", "organizations"
+  add_foreign_key "scheduled_uploads", "data_sources"
+  add_foreign_key "scheduled_uploads", "users"
   add_foreign_key "transformation_jobs", "organizations"
+  add_foreign_key "upload_logs", "scheduled_uploads"
   add_foreign_key "users", "organizations"
   add_foreign_key "users", "users", column: "invited_by_id"
 end

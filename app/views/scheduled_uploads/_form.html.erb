@@ -1,0 +1,168 @@
+<%= form_with(model: [@data_source, @scheduled_upload], local: true, class: "space-y-6") do |form| %>
+  <% if @scheduled_upload.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">There were errors with your submission:</h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <% @scheduled_upload.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Basic Information -->
+  <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+      <div class="md:col-span-1">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Basic Information</h3>
+        <p class="mt-1 text-sm text-gray-500">Configure the basic settings for your scheduled upload.</p>
+      </div>
+      <div class="mt-5 md:mt-0 md:col-span-2">
+        <div class="grid grid-cols-6 gap-6">
+          <div class="col-span-6">
+            <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :name, 
+                                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                                placeholder: "e.g., Daily Sales Data Import" %>
+          </div>
+
+          <div class="col-span-6">
+            <%= form.label :description, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_area :description, 
+                               rows: 3,
+                               class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                               placeholder: "Optional description of what this scheduled upload does..." %>
+          </div>
+
+          <div class="col-span-3">
+            <%= form.label :frequency, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :frequency, 
+                            options_for_select([
+                              ['Every 15 minutes', 'every_15_minutes'],
+                              ['Every 30 minutes', 'every_30_minutes'],
+                              ['Hourly', 'hourly'],
+                              ['Every 2 hours', 'every_2_hours'],
+                              ['Every 4 hours', 'every_4_hours'],
+                              ['Every 6 hours', 'every_6_hours'],
+                              ['Every 12 hours', 'every_12_hours'],
+                              ['Daily', 'daily'],
+                              ['Weekly', 'weekly'],
+                              ['Monthly', 'monthly']
+                            ], @scheduled_upload.frequency),
+                            {},
+                            { class: "mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" } %>
+          </div>
+
+          <div class="col-span-3">
+            <label class="block text-sm font-medium text-gray-700">Status</label>
+            <div class="mt-1">
+              <label class="inline-flex items-center">
+                <%= form.check_box :active, class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" %>
+                <span class="ml-2 text-sm text-gray-900">Active (enable automatic execution)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Processing Settings -->
+  <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+      <div class="md:col-span-1">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">File Processing</h3>
+        <p class="mt-1 text-sm text-gray-500">Configure how files should be discovered and processed.</p>
+      </div>
+      <div class="mt-5 md:mt-0 md:col-span-2">
+        <div class="grid grid-cols-6 gap-6">
+          <div class="col-span-6">
+            <%= form.label :file_pattern, "File Pattern", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :file_pattern, 
+                                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                                placeholder: "e.g., *.csv, sales_*.xlsx, data_#{Date.current.strftime('%Y%m%d')}_*.json" %>
+            <p class="mt-2 text-sm text-gray-500">
+              Use wildcards (*) to match multiple files. Leave empty to process all supported files.
+            </p>
+          </div>
+
+          <div class="col-span-3">
+            <%= form.label :max_file_age_hours, "Max File Age (hours)", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.number_field :max_file_age_hours, 
+                                  class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                                  placeholder: "24",
+                                  min: 1 %>
+            <p class="mt-1 text-sm text-gray-500">Only process files newer than this age</p>
+          </div>
+
+          <div class="col-span-3">
+            <label class="block text-sm font-medium text-gray-700">Processing Options</label>
+            <div class="mt-2 space-y-2">
+              <label class="inline-flex items-center">
+                <%= form.check_box :delete_after_processing, class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" %>
+                <span class="ml-2 text-sm text-gray-900">Delete files after processing</span>
+              </label>
+              <label class="inline-flex items-center">
+                <%= form.check_box :retry_failed_files, class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" %>
+                <span class="ml-2 text-sm text-gray-900">Retry failed files in next run</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications -->
+  <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+      <div class="md:col-span-1">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Notifications</h3>
+        <p class="mt-1 text-sm text-gray-500">Configure how you want to be notified about upload results.</p>
+      </div>
+      <div class="mt-5 md:mt-0 md:col-span-2">
+        <div class="grid grid-cols-6 gap-6">
+          <div class="col-span-6">
+            <%= form.label :notification_emails, "Email Notifications", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :notification_emails, 
+                                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                                placeholder: "email1@example.com, email2@example.com" %>
+            <p class="mt-2 text-sm text-gray-500">
+              Comma-separated list of email addresses to notify about upload results.
+            </p>
+          </div>
+
+          <div class="col-span-6">
+            <%= form.label :webhook_url, "Webhook URL", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.url_field :webhook_url, 
+                               class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                               placeholder: "https://your-app.com/webhooks/scheduled-upload" %>
+            <p class="mt-2 text-sm text-gray-500">
+              Optional webhook URL to receive POST notifications about upload results.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex justify-end space-x-3">
+    <%= link_to 'Cancel', 
+                @scheduled_upload.persisted? ? [@data_source, @scheduled_upload] : data_source_scheduled_uploads_path(@data_source),
+                class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    <%= form.submit @scheduled_upload.persisted? ? 'Update Scheduled Upload' : 'Create Scheduled Upload',
+                    class: "ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+  </div>
+<% end %>
