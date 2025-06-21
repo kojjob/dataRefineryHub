@@ -1,45 +1,45 @@
-<!-- Enhanced Modern Desktop Sidebar -->
-<div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-20 xl:w-80 lg:flex-col transition-all duration-300" id="desktop-sidebar">
-  <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-slate-50 to-white border-r border-gray-200/60 lg:px-3 xl:px-6 pb-4 shadow-xl">
+<!-- Enhanced Ultra-Modern Desktop Sidebar -->
+<div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-20 xl:w-84 lg:flex-col transition-all duration-300" id="desktop-sidebar">
+  <div class="flex grow flex-col gap-y-6 overflow-y-auto bg-gradient-to-b from-slate-50/80 via-white/90 to-gray-50/60 backdrop-blur-xl border-r border-gray-200/40 lg:px-3 xl:px-7 pb-6 shadow-2xl">
     
-    <!-- Enhanced Logo Section -->
-    <div class="flex h-20 shrink-0 items-center justify-center xl:justify-start border-b border-gray-100 mb-2">
-      <%= link_to dashboard_path, class: "group flex items-center space-x-3 transition-all duration-200 hover:scale-105" do %>
+    <!-- Enhanced Logo Section with Modern Glass Effect -->
+    <div class="flex h-24 shrink-0 items-center justify-center xl:justify-start border-b border-gray-200/30 mb-4">
+      <%= link_to dashboard_path, class: "group flex items-center space-x-4 transition-all duration-300 hover:scale-105" do %>
         <div class="relative">
-          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 shadow-lg group-hover:shadow-xl transition-all duration-300">
-            <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 shadow-2xl shadow-blue-500/25 group-hover:shadow-blue-500/40 group-hover:shadow-2xl transition-all duration-500 ring-4 ring-white/50">
+            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
             </svg>
           </div>
-          <div class="absolute -bottom-1 -right-1 h-4 w-4 bg-emerald-500 rounded-full border-2 border-white animate-pulse"></div>
+          <div class="absolute -bottom-1 -right-1 h-5 w-5 bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full border-3 border-white animate-pulse shadow-lg shadow-emerald-500/30"></div>
         </div>
         <div class="lg:hidden xl:block">
-          <span class="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">DataReflow</span>
-          <p class="text-xs text-gray-500 font-medium">E-commerce Intelligence</p>
+          <span class="text-2xl font-black bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">DataReflow</span>
+          <p class="text-sm text-gray-600 font-bold">E-commerce Intelligence</p>
         </div>
       <% end %>
     </div>
 
-    <!-- Status Overview Card (collapsed on lg, visible on xl) -->
-    <div class="lg:hidden xl:block mx-2 mb-4">
-      <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100/50">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-sm font-semibold text-gray-900">System Status</h3>
-          <div class="flex items-center gap-1">
-            <div class="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-xs text-green-700 font-medium">Operational</span>
+    <!-- Ultra-Modern Status Overview Card -->
+    <div class="lg:hidden xl:block mx-2 mb-6">
+      <div class="bg-gradient-to-br from-blue-50/80 via-indigo-50/60 to-purple-50/40 backdrop-blur-sm rounded-2xl p-5 border border-blue-200/40 shadow-xl shadow-blue-100/50">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-black text-gray-900 uppercase tracking-wide">System Status</h3>
+          <div class="flex items-center gap-2 px-3 py-1 bg-emerald-100/80 rounded-full border border-emerald-200/50">
+            <div class="h-2.5 w-2.5 bg-emerald-500 rounded-full animate-pulse shadow-lg shadow-emerald-500/30"></div>
+            <span class="text-xs text-emerald-800 font-bold">Live</span>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div class="text-center">
-            <div class="text-lg font-bold text-blue-600"><%= current_organization&.data_sources&.connected&.count || 0 %></div>
-            <div class="text-xs text-gray-600">Sources</div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="text-center bg-white/60 backdrop-blur-sm rounded-xl p-3 border border-white/40">
+            <div class="text-2xl font-black text-blue-600 mb-1"><%= current_organization&.data_sources&.connected&.count || 0 %></div>
+            <div class="text-xs text-gray-700 font-semibold uppercase tracking-wide">Sources</div>
           </div>
-          <div class="text-center">
-            <div class="text-lg font-bold text-emerald-600">
+          <div class="text-center bg-white/60 backdrop-blur-sm rounded-xl p-3 border border-white/40">
+            <div class="text-2xl font-black text-emerald-600 mb-1">
               <%= current_organization&.extraction_jobs&.where('extraction_jobs.created_at >= ?', 24.hours.ago)&.completed&.count || 0 %>
             </div>
-            <div class="text-xs text-gray-600">Syncs/24h</div>
+            <div class="text-xs text-gray-700 font-semibold uppercase tracking-wide">Syncs/24h</div>
           </div>
         </div>
       </div>
@@ -51,26 +51,26 @@
         
         <!-- Main Navigation -->
         <li>
-          <div class="text-xs font-semibold leading-6 text-gray-400 lg:hidden xl:block mb-3 px-2">
+          <div class="text-xs font-black leading-6 text-gray-500 lg:hidden xl:block mb-4 px-3 uppercase tracking-widest">
             OVERVIEW
           </div>
-          <ul role="list" class="-mx-2 space-y-2">
+          <ul role="list" class="-mx-2 space-y-3">
             
             <!-- Dashboard -->
             <li>
               <%= link_to dashboard_path, class: enhanced_nav_link_classes('dashboard') do %>
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg group-hover:shadow-xl transition-all duration-200">
-                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 text-white shadow-2xl shadow-blue-500/25 group-hover:shadow-blue-500/40 group-hover:scale-110 transition-all duration-500">
+                  <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                   </svg>
                 </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start">
-                  <span class="font-semibold text-gray-900">Dashboard</span>
-                  <span class="text-xs text-gray-500">Overview & metrics</span>
+                <div class="lg:hidden xl:flex xl:flex-col xl:items-start flex-1">
+                  <span class="font-black text-gray-900">Dashboard</span>
+                  <span class="text-xs text-gray-600 font-semibold">Overview & metrics</span>
                 </div>
                 <% if current_page?(dashboard_path) %>
-                  <div class="ml-auto">
-                    <div class="h-2 w-2 bg-blue-600 rounded-full"></div>
+                  <div class="ml-auto lg:hidden xl:block">
+                    <div class="h-3 w-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full shadow-lg shadow-blue-500/50"></div>
                   </div>
                 <% end %>
               <% end %>
@@ -79,18 +79,18 @@
             <!-- E-commerce Analytics -->
             <li>
               <%= link_to analytics_path, class: enhanced_nav_link_classes('analytics') do %>
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg group-hover:shadow-xl transition-all duration-200">
-                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-green-600 text-white shadow-2xl shadow-emerald-500/25 group-hover:shadow-emerald-500/40 group-hover:scale-110 transition-all duration-500">
+                  <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
                   </svg>
                 </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start">
-                  <span class="font-semibold text-gray-900">Analytics</span>
-                  <span class="text-xs text-gray-500">Deep insights & trends</span>
+                <div class="lg:hidden xl:flex xl:flex-col xl:items-start flex-1">
+                  <span class="font-black text-gray-900">Analytics</span>
+                  <span class="text-xs text-gray-600 font-semibold">Deep insights & trends</span>
                 </div>
                 <% if current_page?(analytics_path) %>
-                  <div class="ml-auto">
-                    <div class="h-2 w-2 bg-emerald-600 rounded-full"></div>
+                  <div class="ml-auto lg:hidden xl:block">
+                    <div class="h-3 w-3 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full shadow-lg shadow-emerald-500/50"></div>
                   </div>
                 <% end %>
               <% end %>

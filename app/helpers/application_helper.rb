@@ -10,10 +10,10 @@ module ApplicationHelper
   end
 
   def enhanced_nav_link_classes(section)
-    base_classes = "group flex items-center gap-x-3 rounded-xl p-3 text-sm leading-6 font-medium transition-all duration-200 hover:bg-white hover:shadow-md border border-transparent hover:border-gray-200"
+    base_classes = "group flex items-center gap-x-4 rounded-2xl p-4 text-sm leading-6 font-bold transition-all duration-300 hover:bg-white/80 hover:backdrop-blur-sm hover:shadow-xl border border-transparent hover:border-gray-200/50 hover:-translate-y-0.5"
     
     if current_page_section == section
-      "#{base_classes} bg-white shadow-md border-gray-200 text-gray-900"
+      "#{base_classes} bg-white/90 backdrop-blur-sm shadow-xl border-gray-200/60 text-gray-900 scale-105"
     else
       "#{base_classes} text-gray-700 hover:text-gray-900"
     end
