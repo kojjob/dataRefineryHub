@@ -95,8 +95,8 @@ Rails.application.routes.draw do
         
         # Export endpoints
         post :export_report
-        get :export_status/:job_id, action: :export_status
-        get :download_export/:job_id, action: :download_export
+        get 'export_status/:job_id', action: :export_status
+        get 'download_export/:job_id', action: :download_export
       end
       
       # Raw Data Access API
