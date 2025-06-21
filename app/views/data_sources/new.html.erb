@@ -1,4 +1,147 @@
 <% content_for :title, "Add New Data Source" %>
+<% content_for :breadcrumb do %>
+  <nav class="flex" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <%= link_to root_path, class: "inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600" do %>
+          <svg class="w-3 h-3 mr-2.5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+          </svg>
+          Dashboard
+        <% end %>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <svg class="w-3 h-3 text-gray-400 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+          <%= link_to data_sources_path, class: "ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2" do %>
+            Data Sources
+          <% end %>
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <svg class="w-3 h-3 text-gray-400 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+          <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Add New</span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+<% end %>
+
+<%# Configuration constants - moved from hard-coded values %>
+<% 
+  # Data source configurations
+  data_source_configs = {
+    shopify: {
+      name: 'Shopify',
+      description: 'Connect your Shopify store to sync products, orders, and customer data',
+      icon_color: 'text-green-600',
+      bg_color: 'bg-green-50',
+      border_color: 'border-green-200',
+      implemented: true,
+      supports_realtime: true,
+      fields: [
+        { name: 'shop_domain', label: 'Shop Domain', type: 'text', required: true, placeholder: 'your-shop-name', suffix: '.myshopify.com' },
+        { name: 'access_token', label: 'Access Token', type: 'password', required: true, placeholder: 'Enter your Shopify access token' }
+      ]
+    },
+    woocommerce: {
+      name: 'WooCommerce',
+      description: 'Connect your WooCommerce store to import products, orders, and analytics',
+      icon_color: 'text-purple-600',
+      bg_color: 'bg-purple-50',
+      border_color: 'border-purple-200',
+      implemented: true,
+      supports_realtime: false,
+      fields: [
+        { name: 'site_url', label: 'Site URL', type: 'url', required: true, placeholder: 'https://your-store.com' },
+        { name: 'consumer_key', label: 'Consumer Key', type: 'text', required: true, placeholder: 'ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
+        { name: 'consumer_secret', label: 'Consumer Secret', type: 'password', required: true, placeholder: 'cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' }
+      ]
+    },
+    amazon_seller_central: {
+      name: 'Amazon Seller Central',
+      description: 'Import your Amazon sales data, inventory, and performance metrics',
+      icon_color: 'text-orange-600',
+      bg_color: 'bg-orange-50',
+      border_color: 'border-orange-200',
+      implemented: true,
+      supports_realtime: false,
+      fields: [
+        { name: 'marketplace_id', label: 'Marketplace ID', type: 'text', required: true, placeholder: 'ATVPDKIKX0DER' },
+        { name: 'seller_id', label: 'Seller ID', type: 'text', required: true, placeholder: 'Your Amazon Seller ID' },
+        { name: 'access_key_id', label: 'Access Key ID', type: 'text', required: true, placeholder: 'AKIAIOSFODNN7EXAMPLE' },
+        { name: 'secret_access_key', label: 'Secret Access Key', type: 'password', required: true, placeholder: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY' }
+      ]
+    },
+    quickbooks: {
+      name: 'QuickBooks',
+      description: 'Sync your accounting data, invoices, and financial reports',
+      icon_color: 'text-blue-600',
+      bg_color: 'bg-blue-50',
+      border_color: 'border-blue-200',
+      implemented: false,
+      supports_realtime: false,
+      fields: []
+    },
+    stripe: {
+      name: 'Stripe',
+      description: 'Import payment data, transactions, and customer information',
+      icon_color: 'text-indigo-600',
+      bg_color: 'bg-indigo-50',
+      border_color: 'border-indigo-200',
+      implemented: false,
+      supports_realtime: true,
+      fields: []
+    },
+    file_upload: {
+      name: 'File Upload',
+      description: 'Upload CSV, Excel, JSON, or other data files directly',
+      icon_color: 'text-gray-600',
+      bg_color: 'bg-gray-50',
+      border_color: 'border-gray-200',
+      implemented: true,
+      supports_realtime: false,
+      fields: []
+    },
+    google_analytics: {
+      name: 'Google Analytics',
+      description: 'Connect your Google Analytics to import website traffic and user behavior data',
+      icon_color: 'text-orange-500',
+      bg_color: 'bg-orange-50',
+      border_color: 'border-orange-200',
+      implemented: false,
+      supports_realtime: true,
+      fields: []
+    }
+  }
+  
+  # Sync frequency options
+  sync_frequency_options = [
+    { value: 'realtime', label: 'Real-time', description: 'Sync data as it changes (when supported)' },
+    { value: 'hourly', label: 'Hourly', description: 'Sync every hour' },
+    { value: 'daily', label: 'Daily', description: 'Sync once per day' },
+    { value: 'weekly', label: 'Weekly', description: 'Sync once per week' },
+    { value: 'monthly', label: 'Monthly', description: 'Sync once per month' }
+  ]
+  
+  # File upload settings
+  file_upload_settings = {
+    max_size: 52428800, # 50MB
+    accepted_types: ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/json', 'text/plain'],
+    type_descriptions: {
+      'text/csv' => 'CSV files',
+      'application/vnd.ms-excel' => 'Excel files (.xls)',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel files (.xlsx)',
+      'application/json' => 'JSON files',
+      'text/plain' => 'Text files'
+    }
+  }
+%>
 
 <div class="min-h-screen bg-gray-50 py-8">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,270 +177,131 @@
         } 
       } do |form| %>
         
-        <!-- Step 1: Source Type Selection -->
+        <!-- Step 1: Data Source Selection -->
         <div data-data-source-wizard-target="step" data-step="1" class="p-6">
           <div class="mb-6">
             <h2 class="text-xl font-semibold text-gray-900 mb-2">Choose Your Data Source</h2>
-            <p class="text-gray-600">Select the platform or service you want to connect to your data pipeline.</p>
+            <p class="text-gray-600">Select the type of data source you want to connect to your platform.</p>
           </div>
 
-          <div data-controller="source-selector" 
-               data-source-selector-selected-value=""
-               data-connection-tester-source-type-value="">
-            
-            <!-- Search and Filter -->
-            <div class="mb-6">
-              <div class="relative">
-                <input type="text" 
-                       data-source-selector-target="searchInput"
-                       data-action="input->source-selector#search"
-                       placeholder="Search data sources..."
-                       class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          <!-- Data Source Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <% data_source_configs.each do |source_type, config| %>
+              <% next if source_type == :google_analytics %> <%# Move to coming soon section %>
+              <div class="relative cursor-pointer group" 
+                   data-controller="source-selector"
+                   data-source-type="<%= source_type %>"
+                   data-action="click->source-selector#selectSource">
+                <div class="border-2 border-gray-200 rounded-lg p-6 hover:border-<%= config[:border_color].split('-').last %> hover:shadow-md transition-all duration-200 group-hover:<%= config[:bg_color] %>">
+                  <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 <%= config[:bg_color] %> rounded-lg flex items-center justify-center mr-4">
+                      <% case source_type %>
+                      <% when :shopify %>
+                        <svg class="w-6 h-6 <%= config[:icon_color] %>" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M15.8 2.1c-.8-.1-1.4.6-1.4 1.4v.1c0 .8-.7 1.5-1.5 1.5s-1.5-.7-1.5-1.5v-.1c0-.8-.6-1.5-1.4-1.4C8.6 2.2 7.5 3.4 7.5 4.8v14.4c0 1.4 1.1 2.6 2.5 2.8.8.1 1.4-.6 1.4-1.4v-.1c0-.8.7-1.5 1.5-1.5s1.5.7 1.5 1.5v.1c0 .8.6 1.5 1.4 1.4 1.4-.2 2.5-1.4 2.5-2.8V4.8c.1-1.4-1-2.6-2.3-2.7z"/>
+                        </svg>
+                      <% when :woocommerce %>
+                        <svg class="w-6 h-6 <%= config[:icon_color] %>" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                      <% when :amazon_seller_central %>
+                        <svg class="w-6 h-6 <%= config[:icon_color] %>" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                      <% when :quickbooks %>
+                        <svg class="w-6 h-6 <%= config[:icon_color] %>" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                      <% when :stripe %>
+                        <svg class="w-6 h-6 <%= config[:icon_color] %>" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                      <% when :file_upload %>
+                        <svg class="w-6 h-6 <%= config[:icon_color] %>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                      <% end %>
+                    </div>
+                    <div>
+                      <h3 class="text-lg font-semibold text-gray-900"><%= config[:name] %></h3>
+                      <p class="text-sm text-gray-500">
+                        <% case source_type %>
+                        <% when :shopify, :woocommerce %>
+                          E-commerce platform
+                        <% when :amazon_seller_central %>
+                          Marketplace platform
+                        <% when :quickbooks %>
+                          Accounting software
+                        <% when :stripe %>
+                          Payment processor
+                        <% when :file_upload %>
+                          Direct file import
+                        <% end %>
+                      </p>
+                    </div>
+                  </div>
+                  <p class="text-gray-600 text-sm mb-4"><%= config[:description] %></p>
+                  <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= config[:implemented] ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                      <%= config[:implemented] ? 'Ready' : 'Coming Soon' %>
+                    </span>
+                    <span class="text-xs text-gray-400">
+                      <% if config[:supports_realtime] && config[:implemented] %>
+                        Real-time sync
+                      <% elsif source_type == :file_upload %>
+                        Manual upload
+                      <% else %>
+                        Scheduled sync
+                      <% end %>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Coming Soon Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Coming Soon</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="text-center p-4 bg-gray-50 rounded-lg">
+                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                  <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                   </svg>
                 </div>
+                <p class="text-sm font-medium text-gray-700">Google Analytics</p>
+              </div>
+              <div class="text-center p-4 bg-gray-50 rounded-lg">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                  <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                  </svg>
+                </div>
+                <p class="text-sm font-medium text-gray-700">Twitter</p>
+              </div>
+              <div class="text-center p-4 bg-gray-50 rounded-lg">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                  <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                </div>
+                <p class="text-sm font-medium text-gray-700">Facebook</p>
+              </div>
+              <div class="text-center p-4 bg-gray-50 rounded-lg">
+                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                  <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                  </svg>
+                </div>
+                <p class="text-sm font-medium text-gray-700">More...</p>
               </div>
             </div>
+          </div>
 
-            <!-- Category Filters -->
-            <div class="mb-6">
-              <div class="flex flex-wrap gap-2" data-source-selector-target="categoryFilters">
-                <button type="button" 
-                        data-action="click->source-selector#filterByCategory"
-                        data-category="all"
-                        class="px-3 py-1 text-sm font-medium rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200">
-                  All Sources
-                </button>
-                <button type="button" 
-                        data-action="click->source-selector#filterByCategory"
-                        data-category="ecommerce"
-                        class="px-3 py-1 text-sm font-medium rounded-full bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200">
-                  E-commerce
-                </button>
-                <button type="button" 
-                        data-action="click->source-selector#filterByCategory"
-                        data-category="financial"
-                        class="px-3 py-1 text-sm font-medium rounded-full bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200">
-                  Financial
-                </button>
-                <button type="button" 
-                        data-action="click->source-selector#filterByCategory"
-                        data-category="marketing"
-                        class="px-3 py-1 text-sm font-medium rounded-full bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200">
-                  Marketing
-                </button>
-                <button type="button" 
-                        data-action="click->source-selector#filterByCategory"
-                        data-category="data_import"
-                        class="px-3 py-1 text-sm font-medium rounded-full bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200">
-                  Data Import
-                </button>
-              </div>
-            </div>
-
-            <!-- Source Type Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" data-source-selector-target="sourceGrid">
-              
-              <!-- Shopify -->
-              <div class="relative border border-gray-200 rounded-lg p-4 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer"
-                   data-source-selector-target="sourceCard"
-                   data-category="ecommerce"
-                   data-source-type="shopify"
-                   data-status="available"
-                   data-action="click->source-selector#selectSource">
-                <div class="flex items-start space-x-3">
-                  <div class="flex-shrink-0">
-                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                      <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M14.8 5.2c-.2-.2-.4-.2-.6-.2s-.4.1-.6.2L12 6.8 10.4 5.2c-.2-.2-.4-.2-.6-.2s-.4.1-.6.2c-.3.3-.3.8 0 1.1L10.8 8 9.2 9.6c-.3.3-.3.8 0 1.1.2.2.4.2.6.2s.4-.1.6-.2L12 9.2l1.6 1.6c.2.2.4.2.6.2s.4-.1.6-.2c.3-.3.3-.8 0-1.1L13.2 8l1.6-1.6c.3-.4.3-.9 0-1.2z"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <h3 class="text-sm font-medium text-gray-900">Shopify</h3>
-                    <p class="text-sm text-gray-500 mt-1">Connect your Shopify store to sync orders, products, and customer data.</p>
-                    <div class="mt-2">
-                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Available
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <input type="radio" name="data_source[source_type]" value="shopify" class="sr-only">
-              </div>
-
-              <!-- WooCommerce -->
-              <div class="relative border border-gray-200 rounded-lg p-4 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer"
-                   data-source-selector-target="sourceCard"
-                   data-category="ecommerce"
-                   data-source-type="woocommerce"
-                   data-status="available"
-                   data-action="click->source-selector#selectSource">
-                <div class="flex items-start space-x-3">
-                  <div class="flex-shrink-0">
-                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                      <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <h3 class="text-sm font-medium text-gray-900">WooCommerce</h3>
-                    <p class="text-sm text-gray-500 mt-1">Sync data from your WooCommerce store including sales and inventory.</p>
-                    <div class="mt-2">
-                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Available
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <input type="radio" name="data_source[source_type]" value="woocommerce" class="sr-only">
-              </div>
-
-              <!-- Amazon Seller Central -->
-              <div class="relative border border-gray-200 rounded-lg p-4 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer"
-                   data-source-selector-target="sourceCard"
-                   data-category="ecommerce"
-                   data-source-type="amazon_seller_central"
-                   data-status="available"
-                   data-action="click->source-selector#selectSource">
-                <div class="flex items-start space-x-3">
-                  <div class="flex-shrink-0">
-                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                      <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <h3 class="text-sm font-medium text-gray-900">Amazon Seller Central</h3>
-                    <p class="text-sm text-gray-500 mt-1">Import sales data and inventory from Amazon Seller Central.</p>
-                    <div class="mt-2">
-                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Available
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <input type="radio" name="data_source[source_type]" value="amazon_seller_central" class="sr-only">
-              </div>
-
-              <!-- QuickBooks -->
-              <div class="relative border border-gray-200 rounded-lg p-4 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer"
-                   data-source-selector-target="sourceCard"
-                   data-category="financial"
-                   data-source-type="quickbooks"
-                   data-status="available"
-                   data-action="click->source-selector#selectSource">
-                <div class="flex items-start space-x-3">
-                  <div class="flex-shrink-0">
-                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <h3 class="text-sm font-medium text-gray-900">QuickBooks</h3>
-                    <p class="text-sm text-gray-500 mt-1">Sync financial data from QuickBooks for comprehensive reporting.</p>
-                    <div class="mt-2">
-                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Available
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <input type="radio" name="data_source[source_type]" value="quickbooks" class="sr-only">
-              </div>
-
-              <!-- Stripe -->
-              <div class="relative border border-gray-200 rounded-lg p-4 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer"
-                   data-source-selector-target="sourceCard"
-                   data-category="financial"
-                   data-source-type="stripe"
-                   data-status="available"
-                   data-action="click->source-selector#selectSource">
-                <div class="flex items-start space-x-3">
-                  <div class="flex-shrink-0">
-                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                      <svg class="w-6 h-6 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <h3 class="text-sm font-medium text-gray-900">Stripe</h3>
-                    <p class="text-sm text-gray-500 mt-1">Connect Stripe to analyze payment data and transaction trends.</p>
-                    <div class="mt-2">
-                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Available
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <input type="radio" name="data_source[source_type]" value="stripe" class="sr-only">
-              </div>
-
-              <!-- File Upload -->
-              <div class="relative border border-gray-200 rounded-lg p-4 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer"
-                   data-source-selector-target="sourceCard"
-                   data-category="data_import"
-                   data-source-type="file_upload"
-                   data-status="available"
-                   data-action="click->source-selector#selectSource">
-                <div class="flex items-start space-x-3">
-                  <div class="flex-shrink-0">
-                    <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <h3 class="text-sm font-medium text-gray-900">File Upload</h3>
-                    <p class="text-sm text-gray-500 mt-1">Upload CSV, Excel, JSON, or text files to import your data.</p>
-                    <div class="mt-2">
-                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Available
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <input type="radio" name="data_source[source_type]" value="file_upload" class="sr-only">
-              </div>
-
-              <!-- Coming Soon Sources -->
-              <div class="relative border border-gray-200 rounded-lg p-4 opacity-60 cursor-not-allowed"
-                   data-source-selector-target="sourceCard"
-                   data-category="marketing"
-                   data-source-type="google_analytics"
-                   data-status="coming_soon">
-                <div class="flex items-start space-x-3">
-                  <div class="flex-shrink-0">
-                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                      <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <h3 class="text-sm font-medium text-gray-900">Google Analytics</h3>
-                    <p class="text-sm text-gray-500 mt-1">Import website analytics and user behavior data.</p>
-                    <div class="mt-2">
-                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                        Coming Soon
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Selection Status -->
-            <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-md hidden" data-source-selector-target="selectionStatus">
+          <!-- Selection Display -->
+          <div data-source-selector-target="selection" class="hidden mt-6">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div class="flex items-center">
                 <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
@@ -335,13 +339,7 @@
             <div>
               <%= form.label :sync_frequency, class: "block text-sm font-medium text-gray-700 mb-2" %>
               <%= form.select :sync_frequency, 
-                    options_for_select([
-                      ['Real-time', 'real_time'],
-                      ['Hourly', 'hourly'],
-                      ['Daily', 'daily'],
-                      ['Weekly', 'weekly'],
-                      ['Monthly', 'monthly']
-                    ], 'daily'),
+                    options_for_select(sync_frequency_options.map { |option| [option[:label], option[:value]] }, 'daily'),
                     {},
                     { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" } %>
             </div>
@@ -385,8 +383,8 @@
           <!-- File Upload Section (for file_upload source type) -->
           <div id="file-upload-section" class="hidden">
             <div data-controller="file-upload"
-                 data-file-upload-max-size-value="52428800"
-                 data-file-upload-accepted-types-value='["text/csv", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/json", "text/plain"]'
+                 data-file-upload-max-size-value="<%= file_upload_settings[:max_size] %>"
+                 data-file-upload-accepted-types-value='<%= file_upload_settings[:accepted_types].to_json %>'
                  class="space-y-6">
               
               <!-- Enhanced Drop Zone -->
@@ -398,14 +396,14 @@
                 </svg>
                 <div class="mt-4">
                   <p class="text-lg font-medium text-gray-900 drop-text">Drag and drop files here, or click to select</p>
-                  <p class="text-sm text-gray-500 mt-2">Supports CSV, Excel, JSON, and text files up to 50MB</p>
+                  <p class="text-sm text-gray-500 mt-2">Supports <%= file_upload_settings[:type_descriptions].values.join(', ') %> up to <%= number_to_human_size(file_upload_settings[:max_size]) %></p>
                 </div>
               </div>
 
               <!-- Hidden File Input -->
               <input type="file" 
                      multiple 
-                     accept=".csv,.xlsx,.xls,.json,.txt"
+                     accept="<%= file_upload_settings[:accepted_types].map { |type| type.gsub('application/vnd.ms-excel', '.xls').gsub('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '.xlsx').gsub('text/csv', '.csv').gsub('application/json', '.json').gsub('text/plain', '.txt') }.join(',') %>"
                      data-file-upload-target="input"
                      data-action="change->file-upload#handleFiles"
                      class="hidden">
@@ -594,166 +592,160 @@
 </div>
 
 <!-- Dynamic Configuration Templates -->
-<script type="text/template" id="shopify-config-template">
-  <div class="space-y-6">
-    <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-          </svg>
-        </div>
-        <div class="ml-3">
-          <h3 class="text-sm font-medium text-blue-800">Shopify Connection</h3>
-          <div class="mt-2 text-sm text-blue-700">
-            <p>You'll need your Shopify store domain and a private app access token. <a href="#" class="underline">Learn how to create one</a>.</p>
+<% data_source_configs.each do |source_type, config| %>
+  <% next unless config[:implemented] %>
+  <script type="text/template" id="<%= source_type %>-config-template">
+    <div class="space-y-6">
+      <% case source_type %>
+      <% when :shopify %>
+        <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-blue-800">Shopify Connection</h3>
+              <div class="mt-2 text-sm text-blue-700">
+                <p>You'll need your Shopify store domain and a private app access token. <a href="#" class="underline">Learn how to create one</a>.</p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-    
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">Shop Domain *</label>
-      <div class="relative">
-        <input type="text" 
-               name="data_source[config][shop_domain]" 
-               placeholder="your-shop-name"
-               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-24">
-        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-          <span class="text-gray-500 text-sm">.myshopify.com</span>
-        </div>
-      </div>
-    </div>
-    
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">Access Token *</label>
-      <input type="password" 
-             name="data_source[config][access_token]" 
-             placeholder="Enter your Shopify access token"
-             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-    </div>
-  </div>
-</script>
-
-<script type="text/template" id="woocommerce-config-template">
-  <div class="space-y-6">
-    <div class="bg-purple-50 border border-purple-200 rounded-md p-4">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-          </svg>
-        </div>
-        <div class="ml-3">
-          <h3 class="text-sm font-medium text-purple-800">WooCommerce Connection</h3>
-          <div class="mt-2 text-sm text-purple-700">
-            <p>Connect to your WooCommerce store using REST API credentials. <a href="#" class="underline">Setup guide</a>.</p>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Shop Domain *</label>
+          <div class="relative">
+            <input type="text" 
+                   name="data_source[config][shop_domain]" 
+                   placeholder="your-shop-name"
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-24">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <span class="text-gray-500 text-sm">.myshopify.com</span>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-    
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">Site URL *</label>
-      <input type="url" 
-             name="data_source[config][site_url]" 
-             placeholder="https://your-store.com"
-             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-    </div>
-    
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">Consumer Key *</label>
-      <input type="text" 
-             name="data_source[config][consumer_key]" 
-             placeholder="ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-    </div>
-    
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">Consumer Secret *</label>
-      <input type="password" 
-             name="data_source[config][consumer_secret]" 
-             placeholder="cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-    </div>
-  </div>
-</script>
-
-<script type="text/template" id="amazon_seller_central-config-template">
-  <div class="space-y-6">
-    <div class="bg-orange-50 border border-orange-200 rounded-md p-4">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-          </svg>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Access Token *</label>
+          <input type="password" 
+                 name="data_source[config][access_token]" 
+                 placeholder="Enter your Shopify access token"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
         </div>
-        <div class="ml-3">
-          <h3 class="text-sm font-medium text-orange-800">Amazon Seller Central</h3>
-          <div class="mt-2 text-sm text-orange-700">
-            <p>Connect using your Amazon MWS or SP-API credentials. <a href="#" class="underline">API setup guide</a>.</p>
+      <% when :woocommerce %>
+        <div class="bg-purple-50 border border-purple-200 rounded-md p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-purple-800">WooCommerce Connection</h3>
+              <div class="mt-2 text-sm text-purple-700">
+                <p>Connect to your WooCommerce store using REST API credentials. <a href="#" class="underline">Setup guide</a>.</p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-    
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">Marketplace ID *</label>
-      <input type="text" 
-             name="data_source[config][marketplace_id]" 
-             placeholder="ATVPDKIKX0DER"
-             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-    </div>
-    
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">Seller ID *</label>
-      <input type="text" 
-             name="data_source[config][seller_id]" 
-             placeholder="Your Amazon Seller ID"
-             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-    </div>
-    
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">Access Key ID *</label>
-      <input type="text" 
-             name="data_source[config][access_key_id]" 
-             placeholder="AKIAIOSFODNN7EXAMPLE"
-             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-    </div>
-    
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">Secret Access Key *</label>
-      <input type="password" 
-             name="data_source[config][secret_access_key]" 
-             placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-    </div>
-  </div>
-</script>
-
-<script type="text/template" id="file_upload-config-template">
-  <div class="space-y-6">
-    <div class="bg-gray-50 border border-gray-200 rounded-md p-4">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-          </svg>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Site URL *</label>
+          <input type="url" 
+                 name="data_source[config][site_url]" 
+                 placeholder="https://your-store.com"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
         </div>
-        <div class="ml-3">
-          <h3 class="text-sm font-medium text-gray-800">File Upload</h3>
-          <div class="mt-2 text-sm text-gray-700">
-            <p>Upload your data files directly. Supported formats: CSV, Excel (.xlsx, .xls), JSON, and text files.</p>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Consumer Key *</label>
+          <input type="text" 
+                 name="data_source[config][consumer_key]" 
+                 placeholder="ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Consumer Secret *</label>
+          <input type="password" 
+                 name="data_source[config][consumer_secret]" 
+                 placeholder="cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+      <% when :amazon_seller_central %>
+        <div class="bg-orange-50 border border-orange-200 rounded-md p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-orange-800">Amazon Seller Central</h3>
+              <div class="mt-2 text-sm text-orange-700">
+                <p>Connect using your Amazon MWS or SP-API credentials. <a href="#" class="underline">API setup guide</a>.</p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Marketplace ID *</label>
+          <input type="text" 
+                 name="data_source[config][marketplace_id]" 
+                 placeholder="ATVPDKIKX0DER"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Seller ID *</label>
+          <input type="text" 
+                 name="data_source[config][seller_id]" 
+                 placeholder="Your Amazon Seller ID"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Access Key ID *</label>
+          <input type="text" 
+                 name="data_source[config][access_key_id]" 
+                 placeholder="AKIAIOSFODNN7EXAMPLE"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Secret Access Key *</label>
+          <input type="password" 
+                 name="data_source[config][secret_access_key]" 
+                 placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+      <% when :file_upload %>
+        <div class="bg-gray-50 border border-gray-200 rounded-md p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-gray-800">File Upload</h3>
+              <div class="mt-2 text-sm text-gray-700">
+                <p>Upload your data files directly. Supported formats: <%= file_upload_settings[:type_descriptions].values.join(', ') %>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-center text-gray-500">
+          <p>File upload configuration will be handled in the next step.</p>
+        </div>
+      <% end %>
     </div>
-    
-    <div class="text-center text-gray-500">
-      <p>File upload configuration will be handled in the next step.</p>
-    </div>
-  </div>
-</script>
+  </script>
+<% end %>
 
 <script>
   // Dynamic configuration loading
@@ -762,10 +754,34 @@
     const fileUploadSection = document.getElementById('file-upload-section')
     const apiPreviewSection = document.getElementById('api-preview-section')
     
+    // Available source types from Ruby configuration
+    const availableSourceTypes = <%= data_source_configs.select { |_, config| config[:implemented] }.keys.to_json.html_safe %>;
+    const dataSourceConfigs = <%= data_source_configs.to_json.html_safe %>;
+    const fileUploadSettings = <%= file_upload_settings.to_json.html_safe %>;
+    
     function loadConfiguration(sourceType) {
       const template = document.getElementById(`${sourceType}-config-template`)
-      if (template && configSection) {
+      if (template && configSection && availableSourceTypes.includes(sourceType)) {
         configSection.innerHTML = template.innerHTML
+      } else if (configSection) {
+        const sourceConfig = dataSourceConfigs[sourceType];
+        const sourceName = sourceConfig ? sourceConfig.name : sourceType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        configSection.innerHTML = `
+          <div class="text-center py-8 text-gray-500">
+            <div class="mb-4">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">${sourceName}</h3>
+            <p class="text-sm">Configuration for ${sourceName} is coming soon. We're working hard to bring you this integration!</p>
+            <div class="mt-4">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                Coming Soon
+              </span>
+            </div>
+          </div>
+        `;
       }
       
       // Show/hide appropriate preview sections
@@ -788,5 +804,38 @@
     document.addEventListener('source-selector:sourceSelected', function(event) {
       loadConfiguration(event.detail.sourceType)
     })
+    
+    // File upload handling with dynamic settings
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) {
+      fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          // Check file size
+          if (file.size > fileUploadSettings.max_size) {
+            alert(`File size exceeds maximum allowed size of ${(fileUploadSettings.max_size / (1024 * 1024)).toFixed(1)}MB`);
+            this.value = '';
+            return;
+          }
+          
+          // Check file type
+          const fileType = file.type;
+          const fileName = file.name.toLowerCase();
+          const isValidType = fileUploadSettings.accepted_types.some(type => {
+            if (type.includes('*')) {
+              const baseType = type.split('/')[0];
+              return fileType.startsWith(baseType);
+            }
+            return fileType === type;
+          });
+          
+          if (!isValidType) {
+            alert(`File type not supported. Please upload: ${Object.values(fileUploadSettings.type_descriptions).join(', ')}`);
+            this.value = '';
+            return;
+          }
+        }
+      });
+    }
   })
 </script>
