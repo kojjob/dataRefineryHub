@@ -4,7 +4,10 @@ Rails.application.routes.draw do
     sessions: 'users/sessions'
   }
 
-  root 'dashboard#index'
+  root 'landing#index'
+  
+  # Debug routes (remove in production)
+  get 'debug/session_info', to: 'debug#session_info' unless Rails.env.production?
 
   # Dashboard routes
   get 'dashboard', to: 'dashboard#index'

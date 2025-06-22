@@ -3,7 +3,7 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable,
-         :confirmable, :trackable
+         :confirmable, :trackable, :timeoutable
   belongs_to :organization
   belongs_to :invited_by, class_name: "User", optional: true
 

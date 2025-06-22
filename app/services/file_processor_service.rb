@@ -1,18 +1,24 @@
 class FileProcessorService
   include ActiveModel::Model
 
-  attr_accessor :data_source, :file, :user
+  attr_accessor :data_source, :file, :user, :extraction_job, :progress_callback
 
   SUPPORTED_EXTENSIONS = %w[.csv .xlsx .xls .json .txt .xml .parquet .tsv .yaml .yml].freeze
 
-  def initialize(data_source:, file:, user:)
+  def initialize(data_source:, user:, file: nil, extraction_job: nil, progress_callback: nil)
     @data_source = data_source
-    @file = file
+    @file = file || get_file_from_storage
     @user = user
+    @extraction_job = extraction_job
+    @progress_callback = progress_callback
+    @processed_count = 0
   end
 
   def process!
     validate_file!
+    
+    # Report parsing stage start
+    report_progress("parsing", 0, nil, "Starting file parsing...")
 
     case file_extension
     when ".csv"
@@ -116,29 +122,81 @@ class FileProcessorService
     end
   end
 
-  # CSV Processing
+  # CSV Processing with real-time progress tracking
   def process_csv_file
     records = []
+    total_rows = estimate_csv_rows
+    
+    report_progress("parsing", 0, total_rows, "Parsing CSV file...")
 
     begin
+      chunk_count = 0
       SmarterCSV.process(file_path, {
-        chunk_size: 100,
+        chunk_size: 1000, # Optimized for batch processing
         remove_empty_values: false,
-        strip_whitespace: false
+        strip_whitespace: false,
+        remove_zero_values: false,
+        convert_values_to_numeric: false # Preserve original data types
       }) do |chunk|
+        # Process validation stage
+        report_progress("validation", @processed_count, total_rows, "Validating data chunk #{chunk_count + 1}...")
+        
+        # Process each row in the chunk with enhanced validation
         chunk.each do |row_data|
-          records << create_raw_data_record(row_data, "csv_row")
+          validated_record = validate_and_create_record(row_data, "csv_row")
+          
+          if validated_record
+            records << validated_record
+          else
+            # Track validation failures for reporting
+            @validation_failures ||= []
+            @validation_failures << { row: @processed_count + 1, data: row_data }
+          end
+          
+          @processed_count += 1
+          
+          # Report progress every 100 records to avoid overwhelming the broadcast
+          if @processed_count % 100 == 0
+            report_progress("transformation", @processed_count, total_rows, "Processing record #{@processed_count} of #{total_rows}")
+          end
+        end
+        
+        chunk_count += 1
+      end
+      
+      # Final storage stage
+      report_progress("storage", @processed_count, total_rows, "Storing processed records...")
+      
+      # Batch save for performance - process in chunks to avoid memory issues
+      successful_records = records.compact
+      
+      # Process records in batches for better database performance
+      if successful_records.any?
+        successful_records.each_slice(500) do |batch|
+          RawDataRecord.transaction do
+            batch.each(&:save!) if batch.first&.new_record?
+          end
         end
       end
+      
+      report_progress("storage", @processed_count, total_rows, "File processing completed!")
+      
     rescue => e
       Rails.logger.error "CSV processing error: #{e.message}"
       raise FileProcessingError, "Failed to process CSV file: #{e.message}"
     end
 
+    # Run data validation if validation rules exist
+    validation_summary = run_data_validation(successful_records) if @data_source.validation_rules.present?
+    
     {
       total_records: records.length,
-      sample_data: records.first(5),
-      processing_summary: generate_processing_summary(records)
+      successful_records: successful_records.length,
+      failed_records: @validation_failures&.length || 0,
+      sample_data: successful_records.first(5),
+      processing_summary: generate_processing_summary(records),
+      validation_summary: validation_summary,
+      validation_failures: @validation_failures&.first(10) # Include first 10 failures for debugging
     }
   end
 
@@ -840,6 +898,112 @@ class FileProcessorService
       failed: failed_records,
       success_rate: records.empty? ? 0 : (successful_records.to_f / records.length * 100).round(2)
     }
+  end
+  
+  # Progress reporting helper
+  def report_progress(stage, processed_count, total_count, message = nil)
+    if @progress_callback.respond_to?(:call)
+      @progress_callback.call(stage, processed_count, total_count, message)
+    end
+  end
+  
+  # Get file from data source storage
+  def get_file_from_storage
+    storage_path = @data_source.configuration.dig("storage_path")
+    return nil unless storage_path && File.exist?(storage_path)
+    
+    # Create a file-like object that matches the expected interface
+    OpenStruct.new(
+      path: storage_path,
+      size: File.size(storage_path),
+      original_filename: File.basename(storage_path),
+      tempfile: OpenStruct.new(path: storage_path)
+    )
+  end
+  
+  # Estimate total rows for progress tracking
+  def estimate_csv_rows
+    return 1000 unless File.exist?(file_path)
+    
+    # Quick line count for CSV files
+    begin
+      line_count = 0
+      File.foreach(file_path) { line_count += 1 }
+      [line_count - 1, 1].max # Subtract 1 for header
+    rescue
+      1000 # Default fallback
+    end
+  end
+  
+  # Enhanced record validation and creation
+  def validate_and_create_record(data, record_type, metadata = {})
+    # Basic data validation
+    return nil if data.nil? || (data.is_a?(Hash) && data.empty?)
+    
+    # Data quality checks
+    quality_issues = []
+    
+    if data.is_a?(Hash)
+      # Check for missing required fields
+      if data.values.all?(&:blank?)
+        quality_issues << "Empty record"
+        return nil
+      end
+      
+      # Check for suspicious data patterns
+      data.each do |key, value|
+        if value.is_a?(String) && value.length > 10000
+          quality_issues << "Unusually long field: #{key}"
+        end
+      end
+    end
+    
+    # Create the record
+    begin
+      raw_data_record = create_raw_data_record(data, record_type, metadata.merge({
+        quality_issues: quality_issues,
+        validated_at: Time.current
+      }))
+      
+      raw_data_record
+    rescue => e
+      Rails.logger.warn "Failed to create record: #{e.message}"
+      nil
+    end
+  end
+  
+  # Run comprehensive data validation using DataValidationService
+  def run_data_validation(records)
+    return nil if records.empty? || !@data_source.validation_rules.present?
+    
+    begin
+      report_progress("validation", @processed_count, nil, "Running comprehensive data validation...")
+      
+      validator = DataValidationService.new(
+        data_source: @data_source,
+        validation_rules: @data_source.validation_rules,
+        user: @user
+      )
+      
+      validation_result = validator.validate
+      
+      # Broadcast validation results
+      if @progress_callback
+        broadcast_data = {
+          type: "validation_complete",
+          validation_summary: validation_result,
+          timestamp: Time.current.iso8601
+        }
+        
+        # This would be handled by the job's broadcast method
+        Rails.logger.info "Data validation completed: #{validation_result[:success] ? 'PASSED' : 'FAILED'}"
+      end
+      
+      validation_result
+    rescue => e
+      Rails.logger.error "Data validation failed: #{e.message}"
+      { success: false, error: e.message }
+    end
   end
 
   # Custom Error Classes

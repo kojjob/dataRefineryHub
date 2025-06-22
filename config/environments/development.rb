@@ -23,8 +23,8 @@ Rails.application.configure do
     config.action_controller.perform_caching = false
   end
 
-  # Change to :null_store to avoid any caching.
-  config.cache_store = :memory_store
+  # Use file store for better persistence in development
+  config.cache_store = :file_store, Rails.root.join('tmp', 'cache')
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
@@ -61,6 +61,12 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
+  
+  # Ensure cookies work properly in development
+  config.force_ssl = false
+  config.session_store :cookie_store, 
+    key: '_data_refinery_platform_session',
+    domain: :all
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
