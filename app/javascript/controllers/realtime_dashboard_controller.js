@@ -5,7 +5,8 @@ export default class extends Controller {
   static targets = [
     "totalDataSources", "connectedSources", "activeSyncs", "totalRecords",
     "recordsLastHour", "processingRate", "systemHealth", "successRate",
-    "recentActivity", "systemStatus", "alerts"
+    "recentActivity", "systemStatus", "alerts", "statusIndicator", "statusText", 
+    "uptime", "processingJobs", "storageUsed", "activityContainer"
   ]
 
   connect() {
