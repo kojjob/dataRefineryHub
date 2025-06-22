@@ -446,7 +446,7 @@ class DashboardController < ApplicationController
           icon_color: 'green',
           title: "#{job.data_source.source_type.humanize} sync completed",
           description: "#{job.records_processed || 0} records processed",
-          time: time_ago_in_words(job.completed_at),
+          time: time_ago_helper(job.completed_at),
           timestamp: job.completed_at
         }
       when 'failed'
@@ -455,7 +455,7 @@ class DashboardController < ApplicationController
           icon_color: 'red',
           title: "#{job.data_source.source_type.humanize} sync failed",
           description: job.error_message&.truncate(50) || "Processing error",
-          time: time_ago_in_words(job.completed_at || job.created_at),
+          time: time_ago_helper(job.completed_at || job.created_at),
           timestamp: job.completed_at || job.created_at
         }
       when 'running'
@@ -464,7 +464,7 @@ class DashboardController < ApplicationController
           icon_color: 'blue',
           title: "#{job.data_source.source_type.humanize} sync in progress",
           description: "#{job.progress_percentage || 0}% complete",
-          time: time_ago_in_words(job.started_at || job.created_at),
+          time: time_ago_helper(job.started_at || job.created_at),
           timestamp: job.started_at || job.created_at
         }
       end
@@ -478,7 +478,7 @@ class DashboardController < ApplicationController
         icon_color: 'blue',
         title: "New #{source.source_type.humanize} connected",
         description: source.name,
-        time: time_ago_in_words(source.created_at),
+        time: time_ago_helper(source.created_at),
         timestamp: source.created_at
       }
     end
@@ -490,7 +490,7 @@ class DashboardController < ApplicationController
         icon_color: 'green',
         title: "Data quality check completed",
         description: "Overall score: #{@data_quality_metrics[:overall][:overall_quality_score].round(1)}%",
-        time: time_ago_in_words(@data_quality_metrics[:overall][:last_quality_check]),
+        time: time_ago_helper(@data_quality_metrics[:overall][:last_quality_check]),
         timestamp: @data_quality_metrics[:overall][:last_quality_check]
       }
     end
@@ -529,5 +529,25 @@ class DashboardController < ApplicationController
       storage_used: "#{estimated_storage_gb} GB",
       last_updated: Time.current
     }
+  end
+  
+  def time_ago_helper(time)
+    return "unknown" unless time
+    
+    diff_seconds = Time.current - time
+    
+    case diff_seconds
+    when 0..59
+      "#{diff_seconds.to_i} seconds"
+    when 60..3599
+      minutes = (diff_seconds / 60).to_i
+      "#{minutes} minute#{'s' if minutes != 1}"
+    when 3600..86399
+      hours = (diff_seconds / 3600).to_i
+      "#{hours} hour#{'s' if hours != 1}"
+    else
+      days = (diff_seconds / 86400).to_i
+      "#{days} day#{'s' if days != 1}"
+    end
   end
 end
