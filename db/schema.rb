@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_21_141946) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_21_234454) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -62,6 +62,43 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_141946) do
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
   end
 
+  create_table "data_quality_reports", force: :cascade do |t|
+    t.bigint "data_source_id", null: false
+    t.decimal "overall_score", precision: 5, scale: 2, default: "0.0"
+    t.decimal "completeness_score", precision: 5, scale: 2, default: "0.0"
+    t.decimal "accuracy_score", precision: 5, scale: 2, default: "0.0"
+    t.decimal "consistency_score", precision: 5, scale: 2, default: "0.0"
+    t.decimal "validity_score", precision: 5, scale: 2, default: "0.0"
+    t.decimal "timeliness_score", precision: 5, scale: 2, default: "0.0"
+    t.integer "issues_count", default: 0
+    t.integer "total_records", default: 0
+    t.integer "valid_records", default: 0
+    t.json "report_data", default: {}
+    t.datetime "run_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.string "status", default: "pending"
+    t.string "validation_type", default: "full"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.text "error_message"
+    t.json "quality_metrics", default: {}
+    t.json "metadata", default: {}
+    t.integer "records_analyzed", default: 0
+    t.decimal "uniqueness_score", precision: 5, scale: 2, default: "0.0"
+    t.decimal "freshness_score", precision: 5, scale: 2, default: "0.0"
+    t.index ["data_source_id", "overall_score"], name: "idx_data_quality_reports_source_score"
+    t.index ["data_source_id", "run_at"], name: "index_data_quality_reports_on_data_source_id_and_run_at"
+    t.index ["data_source_id", "status"], name: "index_data_quality_reports_on_data_source_id_and_status"
+    t.index ["data_source_id"], name: "index_data_quality_reports_on_data_source_id"
+    t.index ["overall_score"], name: "index_data_quality_reports_on_overall_score"
+    t.index ["run_at"], name: "index_data_quality_reports_on_run_at"
+    t.index ["status"], name: "index_data_quality_reports_on_status"
+    t.index ["user_id"], name: "index_data_quality_reports_on_user_id"
+    t.index ["validation_type"], name: "index_data_quality_reports_on_validation_type"
+  end
+
   create_table "data_sources", force: :cascade do |t|
     t.bigint "organization_id", null: false
     t.string "name", null: false
@@ -77,9 +114,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_141946) do
     t.datetime "updated_at", null: false
     t.index ["next_sync_at"], name: "index_data_sources_on_next_sync_at"
     t.index ["organization_id", "name"], name: "index_data_sources_on_organization_id_and_name", unique: true
+    t.index ["organization_id", "source_type"], name: "idx_data_sources_org_type"
+    t.index ["organization_id", "status", "created_at"], name: "idx_data_sources_org_status_created"
     t.index ["organization_id"], name: "index_data_sources_on_organization_id"
     t.index ["source_type"], name: "index_data_sources_on_source_type"
     t.index ["status", "next_sync_at"], name: "index_data_sources_on_status_and_next_sync_at"
+    t.index ["status", "updated_at"], name: "idx_data_sources_status_updated"
     t.index ["status"], name: "index_data_sources_on_status"
   end
 
@@ -99,13 +139,39 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_141946) do
     t.json "extraction_metadata", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["data_source_id", "status", "updated_at"], name: "idx_extraction_jobs_source_status_updated"
     t.index ["data_source_id", "status"], name: "index_extraction_jobs_on_data_source_id_and_status"
     t.index ["data_source_id"], name: "index_extraction_jobs_on_data_source_id"
     t.index ["job_id"], name: "index_extraction_jobs_on_job_id", unique: true
     t.index ["next_retry_at"], name: "index_extraction_jobs_on_next_retry_at"
     t.index ["priority"], name: "index_extraction_jobs_on_priority"
+    t.index ["status", "created_at"], name: "idx_extraction_jobs_status_created"
     t.index ["status", "priority"], name: "index_extraction_jobs_on_status_and_priority"
     t.index ["status"], name: "index_extraction_jobs_on_status"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "organization_id", null: false
+    t.string "title", null: false
+    t.text "message", null: false
+    t.string "notification_type", null: false
+    t.datetime "read_at"
+    t.integer "priority", default: 0
+    t.json "metadata", default: {}
+    t.string "notifiable_type"
+    t.bigint "notifiable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable_type_and_notifiable_id"
+    t.index ["notification_type"], name: "index_notifications_on_notification_type"
+    t.index ["organization_id", "created_at"], name: "index_notifications_on_organization_id_and_created_at"
+    t.index ["organization_id", "notification_type"], name: "idx_notifications_org_type"
+    t.index ["organization_id"], name: "index_notifications_on_organization_id"
+    t.index ["priority"], name: "index_notifications_on_priority"
+    t.index ["user_id", "created_at"], name: "idx_notifications_user_created"
+    t.index ["user_id", "read_at"], name: "index_notifications_on_user_id_and_read_at"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -118,6 +184,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_141946) do
     t.string "status", default: "trial", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "timezone", default: "UTC"
+    t.string "phone"
+    t.text "address"
+    t.index ["created_at"], name: "idx_organizations_created"
     t.index ["plan"], name: "index_organizations_on_plan"
     t.index ["slug"], name: "index_organizations_on_slug", unique: true
     t.index ["status"], name: "index_organizations_on_status"
@@ -277,12 +347,38 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_141946) do
     t.index ["role"], name: "index_users_on_role"
   end
 
+  create_table "visualizations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "data_source_id", null: false
+    t.bigint "user_id", null: false
+    t.string "title", null: false
+    t.string "chart_type", null: false
+    t.string "x_column", null: false
+    t.string "y_column", null: false
+    t.string "aggregation", default: "sum", null: false
+    t.string "filter_column"
+    t.string "filter_value"
+    t.json "config", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data_source_id", "created_at"], name: "index_visualizations_on_data_source_id_and_created_at"
+    t.index ["data_source_id"], name: "index_visualizations_on_data_source_id"
+    t.index ["organization_id", "created_at"], name: "index_visualizations_on_organization_id_and_created_at"
+    t.index ["organization_id"], name: "index_visualizations_on_organization_id"
+    t.index ["user_id", "created_at"], name: "index_visualizations_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_visualizations_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "audit_logs", "organizations"
   add_foreign_key "audit_logs", "users"
+  add_foreign_key "data_quality_reports", "data_sources"
+  add_foreign_key "data_quality_reports", "users"
   add_foreign_key "data_sources", "organizations"
   add_foreign_key "extraction_jobs", "data_sources"
+  add_foreign_key "notifications", "organizations"
+  add_foreign_key "notifications", "users"
   add_foreign_key "pipeline_executions", "data_sources"
   add_foreign_key "pipeline_executions", "users"
   add_foreign_key "raw_data_records", "data_sources"
@@ -294,4 +390,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_141946) do
   add_foreign_key "upload_logs", "scheduled_uploads"
   add_foreign_key "users", "organizations"
   add_foreign_key "users", "users", column: "invited_by_id"
+  add_foreign_key "visualizations", "data_sources"
+  add_foreign_key "visualizations", "organizations"
+  add_foreign_key "visualizations", "users"
 end

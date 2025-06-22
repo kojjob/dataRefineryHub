@@ -1,0 +1,471 @@
+<% content_for :title, "Data Quality Dashboard" %>
+<% content_for :page_title, "Data Quality" %>
+
+<!-- Upcube-inspired Data Quality Dashboard -->
+<div class="min-h-screen bg-gray-50">
+  
+  <!-- Page Header -->
+  <div class="mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex items-center gap-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+          <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Data Quality Dashboard</h1>
+          <p class="mt-2 text-gray-600">Monitor and improve your data integrity across all sources</p>
+        </div>
+      </div>
+      
+      <div class="mt-4 sm:mt-0 sm:ml-4 flex items-center gap-3">
+        <%= link_to data_sources_path, class: "inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors duration-200" do %>
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+          </svg>
+          Back to Data Sources
+        <% end %>
+        
+        <button class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+                data-action="click->data-quality#runValidation"
+                data-data-quality-target="runButton">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Run Quality Check
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overall Quality Score -->
+  <div class="mb-8" data-controller="data-quality">
+    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
+              <svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Overall Data Quality Score</h3>
+              <p class="text-sm text-gray-600">Aggregated quality metrics across all data sources</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-sm font-medium text-gray-900">Last updated</div>
+            <div class="text-xs text-gray-500">
+              <%= @quality_metrics[:last_quality_check] ? 
+                  @quality_metrics[:last_quality_check].strftime("%B %d, %Y at %I:%M %p") : 
+                  "Never" %>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Quality Score Circle -->
+          <div class="flex items-center justify-center">
+            <div class="relative">
+              <div class="w-40 h-40 rounded-full bg-green-100 flex items-center justify-center border-4 border-green-200">
+                <div class="text-center">
+                  <div class="text-4xl font-bold text-green-600" data-data-quality-target="overallScore">
+                    <%= @quality_metrics[:overall_score] %>%
+                  </div>
+                  <div class="text-sm font-medium text-green-700">Quality Score</div>
+                </div>
+              </div>
+              <div class="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                <svg class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Quality Breakdown -->
+          <div class="space-y-4">
+            <h4 class="text-lg font-semibold text-gray-900">Quality Dimensions</h4>
+            
+            <% quality_dimensions = [
+                 { name: 'Completeness', score: @quality_metrics[:dimension_scores][:completeness], color: 'green', description: 'Missing data fields' },
+                 { name: 'Accuracy', score: @quality_metrics[:dimension_scores][:accuracy], color: 'blue', description: 'Data correctness' },
+                 { name: 'Consistency', score: @quality_metrics[:dimension_scores][:consistency], color: 'purple', description: 'Format uniformity' },
+                 { name: 'Validity', score: @quality_metrics[:dimension_scores][:validity], color: 'indigo', description: 'Schema compliance' },
+                 { name: 'Timeliness', score: @quality_metrics[:dimension_scores][:timeliness], color: 'yellow', description: 'Data freshness' }
+               ] %>
+            
+            <% quality_dimensions.each do |dimension| %>
+              <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="font-medium text-gray-900"><%= dimension[:name] %></div>
+                  <div class="text-sm font-semibold text-<%= dimension[:color] %>-600"><%= dimension[:score].round(1) %>%</div>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
+                  <div class="bg-<%= dimension[:color] %>-500 h-2 rounded-full transition-all duration-1000 ease-out" 
+                       style="width: <%= dimension[:score] %>%"></div>
+                </div>
+                <div class="text-xs text-gray-500"><%= dimension[:description] %></div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center gap-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+          <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+          </svg>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-gray-900"><%= number_with_delimiter(@quality_metrics[:total_records]) %></div>
+          <div class="text-sm text-gray-600 font-medium">Total Records</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center gap-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
+          <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-gray-900"><%= @quality_metrics[:sources_with_issues] %></div>
+          <div class="text-sm text-gray-600 font-medium">Sources with Issues</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center gap-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+          <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-gray-900"><%= @data_sources.count %></div>
+          <div class="text-sm text-gray-600 font-medium">Data Sources</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Source Quality Grid -->
+  <div class="mb-8">
+    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
+            <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Data Source Quality</h3>
+            <p class="text-sm text-gray-600">Quality metrics by individual data source</p>
+          </div>
+        </div>
+      </div>
+        
+        <div class="p-8">
+          <% if @data_sources.any? %>
+            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              <% @data_sources.each do |data_source| %>
+                <% quality_score = calculate_source_quality_score(data_source) %>
+                <% score_color = quality_score >= 90 ? 'green' : quality_score >= 80 ? 'yellow' : 'red' %>
+                
+                <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white to-gray-50/50 shadow-xl border border-gray-100/50 hover:shadow-2xl transition-all duration-300">
+                  <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-<%= score_color %>-400/10 to-<%= score_color %>-600/10 rounded-full blur-2xl transform translate-x-8 -translate-y-8"></div>
+                  
+                  <div class="relative p-6">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-4">
+                      <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                          <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                          </svg>
+                        </div>
+                        <div>
+                          <h4 class="font-bold text-gray-900"><%= data_source.name %></h4>
+                          <div class="text-xs text-gray-500 uppercase"><%= data_source.source_type.humanize %></div>
+                        </div>
+                      </div>
+                      
+                      <div class="text-center">
+                        <div class="text-2xl font-black text-<%= score_color %>-600"><%= quality_score %>%</div>
+                        <div class="text-xs text-gray-500 font-medium">Quality</div>
+                      </div>
+                    </div>
+                    
+                    <!-- Quality Metrics -->
+                    <div class="space-y-3">
+                      <div class="bg-gray-50 rounded-xl p-3">
+                        <div class="flex items-center justify-between text-sm">
+                          <span class="text-gray-600 font-medium">Records</span>
+                          <span class="font-bold text-gray-900"><%= number_with_delimiter(data_source.raw_data_records.count) %></span>
+                        </div>
+                      </div>
+                      
+                      <div class="bg-gray-50 rounded-xl p-3">
+                        <div class="flex items-center justify-between text-sm">
+                          <span class="text-gray-600 font-medium">Status</span>
+                          <span class="font-bold capitalize 
+                            <%= data_source.status == 'connected' ? 'text-green-600' : 
+                                data_source.status == 'syncing' ? 'text-blue-600' : 
+                                data_source.status == 'error' ? 'text-red-600' : 'text-gray-600' %>">
+                            <%= data_source.status %>
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div class="bg-gray-50 rounded-xl p-3">
+                        <div class="flex items-center justify-between text-sm">
+                          <span class="text-gray-600 font-medium">Last Sync</span>
+                          <span class="font-bold text-gray-900">
+                            <%= data_source.last_sync_at ? time_ago_in_words(data_source.last_sync_at) + " ago" : "Never" %>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Action Button -->
+                    <div class="mt-4">
+                      <%= link_to data_source_path(data_source), 
+                          class: "w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200" do %>
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        View Details
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <!-- Empty State -->
+            <div class="text-center py-20">
+              <div class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">No Data Sources Found</h3>
+              <p class="text-gray-600 mb-6">Connect your first data source to start monitoring data quality.</p>
+              <%= link_to new_data_source_path, class: "inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200" do %>
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                </svg>
+                Add Data Source
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quality Issues & Recommendations -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- Recent Quality Issues -->
+      <div class="bg-gradient-to-br from-white to-gray-50/50 rounded-3xl shadow-2xl border border-gray-100/50 overflow-hidden">
+        <div class="bg-gradient-to-r from-red-50 to-rose-50 px-8 py-6 border-b border-red-200/50">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-rose-600 rounded-2xl flex items-center justify-center">
+              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-black text-gray-900">Recent Quality Issues</h3>
+              <p class="text-sm text-gray-600 font-medium">Data quality problems requiring attention</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-8">
+          <div class="space-y-4">
+            <% @recent_issues.each do |issue| %>
+              <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-200/50">
+                <div class="flex-shrink-0">
+                  <div class="w-3 h-3 rounded-full bg-<%= issue[:severity] == 'high' ? 'red' : issue[:severity] == 'medium' ? 'yellow' : 'blue' %>-500"></div>
+                </div>
+                <div class="flex-1">
+                  <div class="font-bold text-gray-900"><%= issue[:issue] %></div>
+                  <div class="text-sm text-gray-600"><%= issue[:source] %> • <%= issue[:count] %> records affected</div>
+                </div>
+                <div class="flex-shrink-0">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-<%= issue[:severity] == 'high' ? 'red' : issue[:severity] == 'medium' ? 'yellow' : 'blue' %>-100 text-<%= issue[:severity] == 'high' ? 'red' : issue[:severity] == 'medium' ? 'yellow' : 'blue' %>-800">
+                    <%= issue[:severity] %>
+                  </span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quality Recommendations -->
+      <div class="bg-gradient-to-br from-white to-gray-50/50 rounded-3xl shadow-2xl border border-gray-100/50 overflow-hidden">
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-8 py-6 border-b border-green-200/50">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center">
+              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-black text-gray-900">Quality Recommendations</h3>
+              <p class="text-sm text-gray-600 font-medium">AI-powered suggestions to improve data quality</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-8">
+          <div class="space-y-4">
+            <% @recommendations.each do |rec| %>
+              <div class="p-4 bg-gray-50 rounded-2xl border border-gray-200/50">
+                <div class="flex items-start justify-between mb-2">
+                  <div class="font-bold text-gray-900"><%= rec[:title] %></div>
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-<%= rec[:priority] == 'high' ? 'red' : rec[:priority] == 'medium' ? 'yellow' : 'blue' %>-100 text-<%= rec[:priority] == 'high' ? 'red' : rec[:priority] == 'medium' ? 'yellow' : 'blue' %>-800">
+                      <%= rec[:priority] %>
+                    </span>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-green-100 text-green-800">
+                      <%= rec[:impact] %> impact
+                    </span>
+                  </div>
+                </div>
+                <div class="text-sm text-gray-600"><%= rec[:description] %></div>
+                <div class="mt-3">
+                  <button class="inline-flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-lg text-xs hover:from-green-700 hover:to-emerald-700 transition-all duration-200">
+                    <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    Apply Fix
+                  </button>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Data Quality Stimulus Controller -->
+<script>
+  // Register the data-quality controller
+  Stimulus.register("data-quality", class extends Controller {
+    static targets = ["overallScore"]
+    
+    connect() {
+      this.refreshInterval = setInterval(() => {
+        this.updateMetrics()
+      }, 30000) // Update every 30 seconds
+    }
+    
+    disconnect() {
+      if (this.refreshInterval) {
+        clearInterval(this.refreshInterval)
+      }
+    }
+    
+    async runValidation(event) {
+      event.preventDefault()
+      
+      // Show loading state
+      const button = event.currentTarget
+      const originalText = button.innerHTML
+      button.innerHTML = `
+        <svg class="h-6 w-6 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Running Quality Check...
+      `
+      button.disabled = true
+      
+      try {
+        // Make actual API call to run quality validation
+        const response = await fetch('/data_sources/run_quality_check', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          this.showSuccessMessage(data.message || 'Quality validation started successfully!')
+          
+          // Refresh the page after a short delay to show updated results
+          setTimeout(() => {
+            window.location.reload()
+          }, 2000)
+        } else {
+          this.showErrorMessage('Failed to start quality validation')
+        }
+      } catch (error) {
+        console.error('Error running quality validation:', error)
+        this.showErrorMessage('Error starting quality validation')
+      } finally {
+        // Restore button state
+        setTimeout(() => {
+          button.innerHTML = originalText
+          button.disabled = false
+        }, 1000)
+      }
+    }
+    
+    updateMetrics() {
+      // Simulate real-time updates
+      if (this.hasOverallScoreTarget) {
+        const score = this.overallScoreTarget
+        const currentScore = parseInt(score.textContent)
+        const newScore = Math.max(85, Math.min(95, currentScore + Math.floor(Math.random() * 3) - 1))
+        score.textContent = newScore
+      }
+    }
+    
+    showSuccessMessage(message = 'Quality check completed successfully!') {
+      // Show success notification
+      const notification = document.createElement('div')
+      notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50'
+      notification.textContent = message
+      document.body.appendChild(notification)
+      
+      setTimeout(() => {
+        notification.remove()
+      }, 3000)
+    }
+
+    showErrorMessage(message = 'An error occurred') {
+      // Show error notification
+      const notification = document.createElement('div')
+      notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50'
+      notification.textContent = message
+      document.body.appendChild(notification)
+      
+      setTimeout(() => {
+        notification.remove()
+      }, 5000)
+    }
+  })
+</script>

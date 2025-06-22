@@ -1,0 +1,485 @@
+<% content_for :title, "Data Quality - #{@data_source.name}" %>
+<% content_for :page_header do %>
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <%= link_to data_quality_index_path, class: "text-gray-400 hover:text-gray-600" do %>
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      <% end %>
+      <h1 class="text-2xl font-bold text-gray-900">Data Quality - <%= @data_source.name %></h1>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to "Run Validation", validate_data_quality_path(@data_source), 
+          method: :post,
+          class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+          data: { confirm: "Start data quality validation for #{@data_source.name}?" } %>
+      <%= link_to "Export Report", report_data_quality_path(@data_source, format: :pdf), 
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="data-quality-detail">
+  <!-- Data Source Info Header -->
+  <div class="source-info-section mb-6">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <div class="h-12 w-12 rounded-full <%= source_type_color(@data_source.source_type) %> flex items-center justify-center">
+            <span class="text-lg font-bold text-white">
+              <%= @data_source.source_type.first.upcase %>
+            </span>
+          </div>
+          <div>
+            <h2 class="text-xl font-semibold text-gray-900"><%= @data_source.name %></h2>
+            <p class="text-sm text-gray-600"><%= @data_source.source_type.humanize %></p>
+            <p class="text-xs text-gray-500 mt-1">
+              Last validation: <%= time_ago_in_words(@quality_metrics[:last_validation]) %> ago
+            </p>
+          </div>
+        </div>
+        <div class="text-right">
+          <% overall_score = (@quality_metrics[:completeness] + @quality_metrics[:accuracy] + @quality_metrics[:freshness] + @quality_metrics[:consistency]) / 4.0 %>
+          <div class="text-3xl font-bold <%= quality_score_color(overall_score) %>">
+            <%= overall_score.round(1) %>%
+          </div>
+          <div class="text-sm text-gray-600">Overall Quality Score</div>
+          <div class="mt-2">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= quality_status_badge_class(determine_quality_status(overall_score)) %>">
+              <%= determine_quality_status(overall_score).capitalize %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quality Metrics Grid -->
+  <div class="quality-metrics-grid mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Completeness -->
+      <div class="metric-card bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-medium text-gray-600">Completeness</h3>
+          <svg class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="text-2xl font-bold text-gray-900 mb-2">
+          <%= @quality_metrics[:completeness] %>%
+        </div>
+        <div class="bg-gray-200 rounded-full h-2 mb-2">
+          <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" 
+               style="width: <%= @quality_metrics[:completeness] %>%"></div>
+        </div>
+        <p class="text-xs text-gray-500">
+          Measures data field population
+        </p>
+      </div>
+
+      <!-- Accuracy -->
+      <div class="metric-card bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-medium text-gray-600">Accuracy</h3>
+          <svg class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="text-2xl font-bold text-gray-900 mb-2">
+          <%= @quality_metrics[:accuracy] %>%
+        </div>
+        <div class="bg-gray-200 rounded-full h-2 mb-2">
+          <div class="bg-green-500 h-2 rounded-full transition-all duration-300" 
+               style="width: <%= @quality_metrics[:accuracy] %>%"></div>
+        </div>
+        <p class="text-xs text-gray-500">
+          Correctness of data values
+        </p>
+      </div>
+
+      <!-- Freshness -->
+      <div class="metric-card bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-medium text-gray-600">Freshness</h3>
+          <svg class="h-5 w-5 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="text-2xl font-bold text-gray-900 mb-2">
+          <%= @quality_metrics[:freshness] %>%
+        </div>
+        <div class="bg-gray-200 rounded-full h-2 mb-2">
+          <div class="bg-yellow-500 h-2 rounded-full transition-all duration-300" 
+               style="width: <%= @quality_metrics[:freshness] %>%"></div>
+        </div>
+        <p class="text-xs text-gray-500">
+          Timeliness of data updates
+        </p>
+      </div>
+
+      <!-- Consistency -->
+      <div class="metric-card bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-medium text-gray-600">Consistency</h3>
+          <svg class="h-5 w-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+          </svg>
+        </div>
+        <div class="text-2xl font-bold text-gray-900 mb-2">
+          <%= @quality_metrics[:consistency] %>%
+        </div>
+        <div class="bg-gray-200 rounded-full h-2 mb-2">
+          <div class="bg-purple-500 h-2 rounded-full transition-all duration-300" 
+               style="width: <%= @quality_metrics[:consistency] %>%"></div>
+        </div>
+        <p class="text-xs text-gray-500">
+          Data format uniformity
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Quality Metrics -->
+  <div class="additional-metrics-section mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Validity -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Validity</h3>
+        <div class="text-3xl font-bold text-gray-900 mb-2">
+          <%= @quality_metrics[:validity] %>%
+        </div>
+        <div class="bg-gray-200 rounded-full h-2 mb-4">
+          <div class="bg-indigo-500 h-2 rounded-full transition-all duration-300" 
+               style="width: <%= @quality_metrics[:validity] %>%"></div>
+        </div>
+        <p class="text-sm text-gray-600">
+          Data conforms to defined business rules and constraints
+        </p>
+      </div>
+
+      <!-- Uniqueness -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Uniqueness</h3>
+        <div class="text-3xl font-bold text-gray-900 mb-2">
+          <%= @quality_metrics[:uniqueness] %>%
+        </div>
+        <div class="bg-gray-200 rounded-full h-2 mb-4">
+          <div class="bg-pink-500 h-2 rounded-full transition-all duration-300" 
+               style="width: <%= @quality_metrics[:uniqueness] %>%"></div>
+        </div>
+        <p class="text-sm text-gray-600">
+          Absence of duplicate records in the dataset
+        </p>
+      </div>
+
+      <!-- Schema Stability -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Schema Stability</h3>
+        <div class="text-3xl font-bold text-gray-900 mb-2">
+          <%= @quality_metrics[:schema_stability][:stability] %>%
+        </div>
+        <div class="bg-gray-200 rounded-full h-2 mb-4">
+          <div class="bg-teal-500 h-2 rounded-full transition-all duration-300" 
+               style="width: <%= @quality_metrics[:schema_stability][:stability] %>%"></div>
+        </div>
+        <p class="text-sm text-gray-600">
+          Consistency of data structure over time
+          <% if @quality_metrics[:schema_stability][:variations] > 1 %>
+            <br><span class="text-xs text-yellow-600">
+              <%= @quality_metrics[:schema_stability][:variations] %> schema variations detected
+            </span>
+          <% end %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Volume Trends -->
+  <div class="volume-trends-section mb-6">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Data Volume Trends (7 Days)</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <div class="volume-chart" id="volumeChart" style="height: 200px;">
+            <!-- Chart will be rendered here -->
+            <div class="flex items-center justify-center h-full text-gray-500">
+              <p>Loading volume trends...</p>
+            </div>
+          </div>
+        </div>
+        <div class="volume-stats">
+          <div class="space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-600">Total Records</span>
+              <span class="text-lg font-bold text-gray-900">
+                <%= number_with_delimiter(@quality_metrics[:total_records]) %>
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-600">Daily Average</span>
+              <span class="text-lg font-bold text-gray-900">
+                <%= number_with_delimiter(@quality_metrics[:data_volume_trend][:average].round) %>
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-600">Trend</span>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= trend_badge_class(@quality_metrics[:data_volume_trend][:trend]) %>">
+                <%= @quality_metrics[:data_volume_trend][:trend].capitalize %>
+                <% case @quality_metrics[:data_volume_trend][:trend] %>
+                <% when 'increasing' %>
+                  <svg class="ml-1 h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17l9.2-9.2M17 17V7m0 10H7" />
+                  </svg>
+                <% when 'decreasing' %>
+                  <svg class="ml-1 h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 7l-9.2 9.2M7 7v10m0-10h10" />
+                  </svg>
+                <% else %>
+                  <svg class="ml-1 h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                  </svg>
+                <% end %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quality Issues -->
+  <% if @quality_issues.any? %>
+    <div class="quality-issues-section mb-6">
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Quality Issues</h3>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+            <%= @quality_issues.count %> Issues Found
+          </span>
+        </div>
+        <div class="space-y-4">
+          <% @quality_issues.each do |issue| %>
+            <div class="issue-item border border-gray-200 rounded-lg p-4">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center space-x-2 mb-2">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= issue_severity_class(issue[:severity]) %>">
+                      <%= issue[:severity].capitalize %>
+                    </span>
+                    <span class="text-sm font-medium text-gray-900">
+                      <%= issue[:type].humanize %>
+                    </span>
+                    <% if issue[:field] %>
+                      <span class="text-sm text-gray-500">in field: <code class="bg-gray-100 px-1 rounded"><%= issue[:field] %></code></span>
+                    <% end %>
+                  </div>
+                  <p class="text-sm text-gray-700 mb-2">
+                    <%= issue[:message] %>
+                  </p>
+                  <% if issue[:count] > 1 %>
+                    <p class="text-xs text-gray-500">
+                      Affects <%= pluralize(issue[:count], 'record') %>
+                    </p>
+                  <% end %>
+                  <% if issue[:examples].any? %>
+                    <details class="mt-2">
+                      <summary class="text-xs text-blue-600 cursor-pointer hover:text-blue-800">
+                        View examples
+                      </summary>
+                      <div class="mt-2 bg-gray-50 rounded p-2">
+                        <% issue[:examples].first(3).each do |example| %>
+                          <code class="block text-xs text-gray-700 mb-1"><%= example %></code>
+                        <% end %>
+                      </div>
+                    </details>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Recommendations -->
+  <% if @recommendations.any? %>
+    <div class="recommendations-section mb-6">
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Quality Improvement Recommendations</h3>
+        <div class="space-y-4">
+          <% @recommendations.each do |recommendation| %>
+            <div class="recommendation-item border-l-4 <%= recommendation_border_class(recommendation[:priority]) %> bg-gray-50 p-4">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center space-x-2 mb-2">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= recommendation_priority_class(recommendation[:priority]) %>">
+                      <%= recommendation[:priority].capitalize %> Priority
+                    </span>
+                    <span class="text-sm text-gray-500">
+                      <%= recommendation[:category].humanize %>
+                    </span>
+                  </div>
+                  <h4 class="text-sm font-medium text-gray-900 mb-1">
+                    <%= recommendation[:title] %>
+                  </h4>
+                  <p class="text-sm text-gray-700 mb-2">
+                    <%= recommendation[:description] %>
+                  </p>
+                  <p class="text-xs text-blue-600">
+                    <strong>Recommended Action:</strong> <%= recommendation[:action] %>
+                  </p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Validation History -->
+  <div class="validation-history-section">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Validation History</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Date
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Overall Score
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Issues Found
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Records Analyzed
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @validation_history.each do |report| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= report.created_at.strftime('%b %d, %Y at %I:%M %p') %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="text-sm font-medium <%= quality_score_color(report.overall_score) %>">
+                    <%= report.overall_score %>%
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= report.issues_count || 0 %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= number_with_delimiter(report.records_analyzed || 0) %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <%= link_to "View Report", report_data_quality_path(@data_source, report_id: report.id), 
+                      class: "text-blue-600 hover:text-blue-900" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      
+      <% if @validation_history.empty? %>
+        <div class="text-center py-12">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No validation history</h3>
+          <p class="mt-1 text-sm text-gray-500">Run your first data quality validation to see results here.</p>
+          <div class="mt-6">
+            <%= link_to "Run Validation", validate_data_quality_path(@data_source), 
+                method: :post,
+                class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript for Charts -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeVolumeChart();
+  });
+  
+  function initializeVolumeChart() {
+    const volumeData = <%= @quality_metrics[:data_volume_trend][:daily_counts].to_json.html_safe %>;
+    const labels = [];
+    
+    // Generate labels for the last 7 days
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    }
+    
+    const ctx = document.getElementById('volumeChart');
+    if (ctx && typeof Chart !== 'undefined') {
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Records',
+            data: volumeData,
+            borderColor: 'rgb(59, 130, 246)',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.1,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+  }
+</script>
+
+<style>
+  .data-quality-detail {
+    @apply space-y-6;
+  }
+  
+  .metric-card {
+    @apply transition-all duration-200 hover:shadow-md;
+  }
+  
+  .issue-item {
+    @apply transition-all duration-200 hover:shadow-sm;
+  }
+  
+  .recommendation-item {
+    @apply transition-all duration-200;
+  }
+  
+  .volume-chart {
+    @apply relative;
+  }
+</style>

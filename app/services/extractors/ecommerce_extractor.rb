@@ -1,7 +1,6 @@
 # Abstract base class for e-commerce platform extractors
 # Provides unified interface and shared business logic for all e-commerce platforms
 class EcommerceExtractor < BaseExtractor
-  
   # E-commerce specific errors
   class InvalidPlatformError < ExtractionError; end
   class AdapterNotFoundError < ExtractionError; end
@@ -15,7 +14,7 @@ class EcommerceExtractor < BaseExtractor
   def initialize(data_source)
     super(data_source)
     @adapter = create_adapter
-    
+
     unless @adapter
       raise AdapterNotFoundError, "No adapter found for platform: #{data_source.source_type}"
     end
@@ -28,22 +27,22 @@ class EcommerceExtractor < BaseExtractor
 
   def perform_extraction
     logger.info "Starting e-commerce data extraction for #{data_source.name} (#{data_source.source_type})"
-    
+
     all_standardized_data = []
-    
+
     ECOMMERCE_RECORD_TYPES.each do |record_type|
       next unless should_extract_record_type?(record_type)
-      
+
       logger.info "Extracting #{record_type} from #{data_source.source_type}"
-      
+
       raw_records = extract_record_type_with_adapter(record_type)
       standardized_records = standardize_records(record_type, raw_records)
-      
+
       logger.info "Extracted and standardized #{standardized_records.count} #{record_type} records"
-      
+
       all_standardized_data.concat(standardized_records)
     end
-    
+
     logger.info "Completed e-commerce extraction: #{all_standardized_data.count} total records"
     all_standardized_data
   end
@@ -51,15 +50,15 @@ class EcommerceExtractor < BaseExtractor
   def normalize_data(raw_record)
     record_type = raw_record[:record_type]
     platform_data = raw_record[:data]
-    
+
     case record_type
-    when 'orders'
+    when "orders"
       StandardOrder.from_platform_data(data_source.source_type, platform_data).to_hash
-    when 'customers'
+    when "customers"
       StandardCustomer.from_platform_data(data_source.source_type, platform_data).to_hash
-    when 'products'
+    when "products"
       StandardProduct.from_platform_data(data_source.source_type, platform_data).to_hash
-    when 'inventory'
+    when "inventory"
       StandardInventory.from_platform_data(data_source.source_type, platform_data).to_hash
     else
       raise SchemaValidationError, "Unknown e-commerce record type: #{record_type}"
@@ -67,15 +66,15 @@ class EcommerceExtractor < BaseExtractor
   end
 
   def determine_record_type(record)
-    record[:record_type] || 'unknown'
+    record[:record_type] || "unknown"
   end
 
   def extract_external_id(record)
     case record[:record_type]
-    when 'orders', 'customers', 'products'
-      record.dig(:normalized_data, 'external_id') || record.dig(:data, 'id')&.to_s
-    when 'inventory'
-      record.dig(:normalized_data, 'external_id') || 
+    when "orders", "customers", "products"
+      record.dig(:normalized_data, "external_id") || record.dig(:data, "id")&.to_s
+    when "inventory"
+      record.dig(:normalized_data, "external_id") ||
         "#{record.dig(:data, 'inventory_item_id')}_#{record.dig(:data, 'location_id')}"
     else
       super
@@ -99,7 +98,7 @@ class EcommerceExtractor < BaseExtractor
   def calculate_customer_metrics(customer_data)
     customer_data.map do |customer_record|
       customer = StandardCustomer.new(customer_record[:normalized_data])
-      
+
       {
         external_id: customer.external_id,
         lifetime_value: customer.calculate_lifetime_value,
@@ -115,7 +114,7 @@ class EcommerceExtractor < BaseExtractor
   def calculate_product_metrics(product_data)
     product_data.map do |product_record|
       product = StandardProduct.new(product_record[:normalized_data])
-      
+
       {
         external_id: product.external_id,
         variant_count: product.variant_count,
@@ -132,7 +131,7 @@ class EcommerceExtractor < BaseExtractor
     inventory_items = inventory_data.map do |inventory_record|
       StandardInventory.new(inventory_record[:normalized_data])
     end
-    
+
     {
       total_value: StandardInventory.calculate_total_inventory_value(inventory_items),
       low_stock_count: StandardInventory.low_stock_items(inventory_items).count,
@@ -149,12 +148,12 @@ class EcommerceExtractor < BaseExtractor
       invalid_count: 0,
       errors: []
     }
-    
+
     standardized_records.each_with_index do |record, index|
       begin
         schema_class = get_schema_class(record[:record_type])
         instance = schema_class.new(record[:normalized_data])
-        
+
         if instance.valid?
           validation_results[:valid_count] += 1
         else
@@ -162,7 +161,7 @@ class EcommerceExtractor < BaseExtractor
           validation_results[:errors] << {
             index: index,
             record_type: record[:record_type],
-            external_id: record[:normalized_data]['external_id'],
+            external_id: record[:normalized_data]["external_id"],
             errors: instance.errors.full_messages
           }
         end
@@ -175,13 +174,13 @@ class EcommerceExtractor < BaseExtractor
         }
       end
     end
-    
+
     logger.info "Data validation: #{validation_results[:valid_count]} valid, #{validation_results[:invalid_count]} invalid"
-    
+
     if validation_results[:invalid_count] > 0
       logger.warn "Validation errors found: #{validation_results[:errors].first(5)}"
     end
-    
+
     validation_results
   end
 
@@ -189,12 +188,12 @@ class EcommerceExtractor < BaseExtractor
   def deduplicate_customers(customer_records)
     # Group customers by email (primary deduplication key)
     email_groups = customer_records.group_by do |record|
-      record[:normalized_data]['email']&.downcase
+      record[:normalized_data]["email"]&.downcase
     end
-    
+
     deduplicated = []
     duplicates_found = 0
-    
+
     email_groups.each do |email, records|
       if records.length == 1
         deduplicated << records.first
@@ -205,7 +204,7 @@ class EcommerceExtractor < BaseExtractor
         duplicates_found += records.length - 1
       end
     end
-    
+
     logger.info "Customer deduplication: #{duplicates_found} duplicates merged"
     deduplicated
   end
@@ -218,15 +217,15 @@ class EcommerceExtractor < BaseExtractor
       total_records: all_data.count,
       by_type: {}
     }
-    
+
     ECOMMERCE_RECORD_TYPES.each do |type|
       type_records = all_data.select { |r| r[:record_type] == type }
       summary[:by_type][type] = {
         count: type_records.count,
-        sample_ids: type_records.first(3).map { |r| r[:normalized_data]['external_id'] }
+        sample_ids: type_records.first(3).map { |r| r[:normalized_data]["external_id"] }
       }
     end
-    
+
     summary
   end
 
@@ -241,13 +240,13 @@ class EcommerceExtractor < BaseExtractor
 
   def extract_record_type_with_adapter(record_type)
     case record_type
-    when 'orders'
+    when "orders"
       adapter.fetch_orders(build_sync_options)
-    when 'customers'
+    when "customers"
       adapter.fetch_customers(build_sync_options)
-    when 'products'
+    when "products"
       adapter.fetch_products(build_sync_options)
-    when 'inventory'
+    when "inventory"
       adapter.fetch_inventory(build_sync_options)
     else
       raise ArgumentError, "Unknown record type: #{record_type}"
@@ -259,10 +258,10 @@ class EcommerceExtractor < BaseExtractor
       begin
         # Add record type metadata
         record_with_type = raw_record.merge(record_type: record_type)
-        
+
         # Standardize using schema
         normalized_data = normalize_data(record_with_type)
-        
+
         {
           record_type: record_type,
           raw_data: raw_record,
@@ -272,7 +271,7 @@ class EcommerceExtractor < BaseExtractor
       rescue => error
         logger.error "Failed to standardize #{record_type} record: #{error.message}"
         logger.debug "Raw record: #{raw_record.inspect}" if Rails.env.development?
-        
+
         # Return error record for debugging
         {
           record_type: record_type,
@@ -292,24 +291,24 @@ class EcommerceExtractor < BaseExtractor
 
   def build_sync_options
     options = {}
-    
+
     # Add incremental sync support
     if supports_incremental_sync? && data_source.last_sync_at
       options[:since] = data_source.last_sync_at
     end
-    
+
     # Add organization context
     options[:organization_id] = data_source.organization_id
-    
+
     options
   end
 
   def get_schema_class(record_type)
     case record_type
-    when 'orders' then StandardOrder
-    when 'customers' then StandardCustomer
-    when 'products' then StandardProduct
-    when 'inventory' then StandardInventory
+    when "orders" then StandardOrder
+    when "customers" then StandardCustomer
+    when "products" then StandardProduct
+    when "inventory" then StandardInventory
     else
       raise SchemaValidationError, "Unknown schema for record type: #{record_type}"
     end
@@ -317,35 +316,35 @@ class EcommerceExtractor < BaseExtractor
 
   def merge_customer_records(records)
     # Take the most recent record as base
-    base_record = records.max_by { |r| Date.parse(r[:normalized_data]['updated_at']) rescue Date.new(1900) }
-    
+    base_record = records.max_by { |r| Date.parse(r[:normalized_data]["updated_at"]) rescue Date.new(1900) }
+
     # Merge data from other records
     merged_data = base_record[:normalized_data].dup
-    
+
     records.each do |record|
       customer_data = record[:normalized_data]
-      
+
       # Aggregate numeric fields
-      merged_data['orders_count'] = records.sum { |r| r[:normalized_data]['orders_count'] || 0 }
-      merged_data['total_spent'] = records.sum { |r| r[:normalized_data]['total_spent'] || 0.0 }
-      
+      merged_data["orders_count"] = records.sum { |r| r[:normalized_data]["orders_count"] || 0 }
+      merged_data["total_spent"] = records.sum { |r| r[:normalized_data]["total_spent"] || 0.0 }
+
       # Take most complete data for missing fields
       %w[phone first_name last_name default_address].each do |field|
         merged_data[field] ||= customer_data[field] if customer_data[field].present?
       end
-      
+
       # Merge tags
-      if customer_data['tags'].present?
-        existing_tags = merged_data['tags']&.split(',')&.map(&:strip) || []
-        new_tags = customer_data['tags'].split(',').map(&:strip)
-        merged_data['tags'] = (existing_tags + new_tags).uniq.join(', ')
+      if customer_data["tags"].present?
+        existing_tags = merged_data["tags"]&.split(",")&.map(&:strip) || []
+        new_tags = customer_data["tags"].split(",").map(&:strip)
+        merged_data["tags"] = (existing_tags + new_tags).uniq.join(", ")
       end
     end
-    
+
     # Mark as deduplicated
-    merged_data['platform_data'] ||= {}
-    merged_data['platform_data']['deduplicated_from'] = records.map { |r| r[:normalized_data]['external_id'] }
-    
+    merged_data["platform_data"] ||= {}
+    merged_data["platform_data"]["deduplicated_from"] = records.map { |r| r[:normalized_data]["external_id"] }
+
     base_record.merge(normalized_data: merged_data)
   end
 

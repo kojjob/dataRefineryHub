@@ -46,7 +46,7 @@ class ExtractionJobPolicy < ApplicationPolicy
   def same_organization?
     return false unless user_signed_in?
     return false unless record.data_source&.organization_id
-    
+
     user.organization_id == record.data_source.organization_id
   end
 end

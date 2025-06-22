@@ -34,8 +34,8 @@ class EnhancedErrorHandlerService
 
   # Retry strategies
   RETRY_STRATEGIES = {
-    exponential: ->(attempt) { [2**attempt, 300].min }, # Max 5 minutes
-    linear: ->(attempt) { [attempt * 30, 300].min },     # 30s, 60s, 90s...
+    exponential: ->(attempt) { [ 2**attempt, 300 ].min }, # Max 5 minutes
+    linear: ->(attempt) { [ attempt * 30, 300 ].min },     # 30s, 60s, 90s...
     fixed: ->(attempt) { 60 },                          # Fixed 1 minute
     fibonacci: ->(attempt) { fibonacci_delay(attempt) }   # Fibonacci sequence
   }.freeze
@@ -44,19 +44,19 @@ class EnhancedErrorHandlerService
 
   def initialize(context:, circuit_breaker_config: {})
     @context = context
-    
+
     # Load configuration from centralized manager
     error_config = EtlConfigurationManager.error_handling_config
     cb_config = EtlConfigurationManager.circuit_breaker_config(context)
-    
+
     # Merge configurations
     merged_cb_config = cb_config.merge(circuit_breaker_config)
-    
+
     @circuit_breaker = CircuitBreakerService.for("#{context}_circuit_breaker", merged_cb_config)
     @dead_letter_queue = []
     @logger = Rails.logger
     @metrics = ErrorMetrics.new(context)
-    
+
     # Store merged configuration for reference
     @config = {
       retry_strategies: error_config[:retry_strategies],
@@ -69,30 +69,30 @@ class EnhancedErrorHandlerService
   # Main error handling method
   def handle_error(error, operation:, attempt: 1, max_attempts: 3, strategy: :exponential, **metadata)
     error_category = categorize_error(error)
-    
+
     # Log error with context
     log_error(error, operation, attempt, error_category, metadata)
-    
+
     # Update metrics
     @metrics.record_error(error_category, operation)
-    
+
     # Determine if we should retry
     should_retry = should_retry_error?(error_category, attempt, max_attempts)
-    
+
     if should_retry
       delay = calculate_retry_delay(strategy, attempt)
       schedule_retry(operation, attempt + 1, delay, metadata)
-      return { action: :retry, delay: delay, attempt: attempt + 1 }
+      { action: :retry, delay: delay, attempt: attempt + 1 }
     else
       handle_permanent_failure(error, operation, attempt, metadata)
-      return { action: :fail, reason: error_category }
+      { action: :fail, reason: error_category }
     end
   end
 
   # Execute operation with circuit breaker and error handling
   def execute_with_protection(operation_name, max_attempts: 3, strategy: :exponential, &block)
     attempt = 1
-    
+
     begin
       @circuit_breaker.call(&block)
     rescue CircuitBreakerService::CircuitBreakerOpenError => e
@@ -106,7 +106,7 @@ class EnhancedErrorHandlerService
         max_attempts: max_attempts,
         strategy: strategy
       )
-      
+
       if result[:action] == :retry && attempt < max_attempts
         sleep(result[:delay])
         attempt = result[:attempt]
@@ -131,7 +131,7 @@ class EnhancedErrorHandlerService
   def process_dead_letter_queue
     processed = 0
     failed = 0
-    
+
     @dead_letter_queue.dup.each do |dead_letter|
       begin
         if should_retry_dead_letter?(dead_letter)
@@ -144,7 +144,7 @@ class EnhancedErrorHandlerService
         failed += 1
       end
     end
-    
+
     { processed: processed, failed: failed, remaining: @dead_letter_queue.size }
   end
 
@@ -165,11 +165,11 @@ class EnhancedErrorHandlerService
     else
       # Check error message for common patterns
       message = error.message.downcase
-      if message.include?('timeout') || message.include?('connection')
+      if message.include?("timeout") || message.include?("connection")
         :transient
-      elsif message.include?('rate limit') || message.include?('too many requests')
+      elsif message.include?("rate limit") || message.include?("too many requests")
         :rate_limit
-      elsif message.include?('unauthorized') || message.include?('forbidden')
+      elsif message.include?("unauthorized") || message.include?("forbidden")
         :authentication
       else
         :unknown
@@ -179,7 +179,7 @@ class EnhancedErrorHandlerService
 
   def should_retry_error?(category, attempt, max_attempts)
     return false if attempt >= max_attempts
-    
+
     case category
     when :transient, :rate_limit, :circuit_breaker
       true
@@ -197,7 +197,7 @@ class EnhancedErrorHandlerService
   def calculate_retry_delay(strategy, attempt)
     delay_calculator = RETRY_STRATEGIES[strategy] || RETRY_STRATEGIES[:exponential]
     base_delay = delay_calculator.call(attempt)
-    
+
     # Add jitter to prevent thundering herd
     jitter = rand(0.1..0.3) * base_delay
     (base_delay + jitter).round(2)
@@ -205,7 +205,7 @@ class EnhancedErrorHandlerService
 
   def schedule_retry(operation, attempt, delay, metadata)
     @logger.info "Scheduling retry for #{operation} (attempt #{attempt}) in #{delay} seconds"
-    
+
     # In a real implementation, you might use a job scheduler here
     # For now, we'll just log the retry scheduling
   end
@@ -219,10 +219,10 @@ class EnhancedErrorHandlerService
       failed_at: Time.current,
       context: @context
     }
-    
+
     @dead_letter_queue << dead_letter
     @logger.error "Operation #{operation} failed permanently after #{attempt} attempts. Added to dead letter queue."
-    
+
     # Notify monitoring systems
     notify_permanent_failure(dead_letter)
   end
@@ -258,7 +258,7 @@ class EnhancedErrorHandlerService
       context: @context,
       metadata: metadata
     }
-    
+
     case category
     when :permanent
       @logger.error "Permanent error in #{operation}: #{log_data.to_json}"
@@ -270,9 +270,9 @@ class EnhancedErrorHandlerService
   end
 
   def self.fibonacci_delay(attempt)
-    fib_sequence = [1, 1]
+    fib_sequence = [ 1, 1 ]
     (2..attempt).each { |i| fib_sequence[i] = fib_sequence[i-1] + fib_sequence[i-2] }
-    [fib_sequence[attempt - 1] * 10, 300].min # Scale by 10 seconds, max 5 minutes
+    [ fib_sequence[attempt - 1] * 10, 300 ].min # Scale by 10 seconds, max 5 minutes
   end
 
   # Inner class for tracking error metrics

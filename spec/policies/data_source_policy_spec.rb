@@ -15,8 +15,8 @@ RSpec.describe DataSourcePolicy, type: :policy do
   subject { described_class }
 
   describe 'Scope' do
-    let!(:org_data_sources) { [data_source] }
-    let!(:other_data_sources) { [other_org_data_source] }
+    let!(:org_data_sources) { [ data_source ] }
+    let!(:other_data_sources) { [ other_org_data_source ] }
 
     it 'returns data sources from the same organization' do
       scope = Pundit.policy_scope(owner, DataSource)

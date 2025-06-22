@@ -11,7 +11,7 @@ class CreateOrganizations < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
+
     add_index :organizations, :slug, unique: true
     add_index :organizations, :stripe_customer_id, unique: true
     add_index :organizations, :plan

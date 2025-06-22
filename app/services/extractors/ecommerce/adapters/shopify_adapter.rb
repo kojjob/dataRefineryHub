@@ -1,15 +1,14 @@
 # Shopify platform adapter for e-commerce data extraction
 # Handles Shopify-specific API calls, authentication, and data formatting
 class ShopifyAdapter < EcommerceAdapter
-  
-  SHOPIFY_API_VERSION = '2024-01'
+  SHOPIFY_API_VERSION = "2024-01"
   SHOPIFY_RATE_LIMIT_PER_HOUR = 2000 # Shopify Plus: 2000/hour, Basic: 1000/hour
-  
+
   # Register this adapter
-  EcommerceAdapter.register_adapter('shopify', self)
+  EcommerceAdapter.register_adapter("shopify", self)
 
   def platform_name
-    'shopify'
+    "shopify"
   end
 
   def api_version
@@ -41,15 +40,15 @@ class ShopifyAdapter < EcommerceAdapter
     unless config_valid?
       raise AuthenticationError, "Missing required Shopify configuration: #{missing_config_fields.join(', ')}"
     end
-    
+
     with_rate_limiting do
-      response = http_client.get('/admin/api/shop.json')
-      
+      response = http_client.get("/admin/api/shop.json")
+
       unless response.success?
         handle_api_error(response)
       end
-      
-      shop_info = JSON.parse(response.body)['shop']
+
+      shop_info = JSON.parse(response.body)["shop"]
       logger.info "Successfully connected to Shopify store: #{shop_info['name']}"
     end
   end
@@ -57,7 +56,7 @@ class ShopifyAdapter < EcommerceAdapter
   # Data extraction methods
   def fetch_orders(options = {})
     logger.info "Fetching orders from Shopify"
-    
+
     all_orders = paginate_requests(build_orders_url(options)) do |url|
       with_rate_limiting do
         response = http_client.get(url)
@@ -65,14 +64,14 @@ class ShopifyAdapter < EcommerceAdapter
         response
       end
     end
-    
+
     logger.info "Fetched #{all_orders.count} orders from Shopify"
     all_orders
   end
 
   def fetch_customers(options = {})
     logger.info "Fetching customers from Shopify"
-    
+
     all_customers = paginate_requests(build_customers_url(options)) do |url|
       with_rate_limiting do
         response = http_client.get(url)
@@ -80,14 +79,14 @@ class ShopifyAdapter < EcommerceAdapter
         response
       end
     end
-    
+
     logger.info "Fetched #{all_customers.count} customers from Shopify"
     all_customers
   end
 
   def fetch_products(options = {})
     logger.info "Fetching products from Shopify"
-    
+
     all_products = paginate_requests(build_products_url(options)) do |url|
       with_rate_limiting do
         response = http_client.get(url)
@@ -95,35 +94,35 @@ class ShopifyAdapter < EcommerceAdapter
         response
       end
     end
-    
+
     logger.info "Fetched #{all_products.count} products from Shopify"
     all_products
   end
 
   def fetch_inventory(options = {})
     logger.info "Fetching inventory from Shopify"
-    
+
     # First get all locations
     locations = fetch_locations
     all_inventory = []
-    
+
     locations.each do |location|
-      location_inventory = paginate_requests(build_inventory_url(location['id'], options)) do |url|
+      location_inventory = paginate_requests(build_inventory_url(location["id"], options)) do |url|
         with_rate_limiting do
           response = http_client.get(url)
           handle_api_error(response) unless response.success?
           response
         end
       end
-      
+
       # Add location context to each inventory item
       location_inventory.each do |inventory_item|
-        inventory_item['location_data'] = location
+        inventory_item["location_data"] = location
       end
-      
+
       all_inventory.concat(location_inventory)
     end
-    
+
     logger.info "Fetched #{all_inventory.count} inventory levels from Shopify"
     all_inventory
   end
@@ -131,26 +130,26 @@ class ShopifyAdapter < EcommerceAdapter
   # Response parsing
   def parse_response_data(response)
     data = JSON.parse(response.body)
-    
+
     # Determine the data key based on the endpoint
-    records = case 
-    when data.key?('orders')
-      data['orders']
-    when data.key?('customers')
-      data['customers']
-    when data.key?('products')
-      data['products']
-    when data.key?('inventory_levels')
-      data['inventory_levels']
-    when data.key?('locations')
-      data['locations']
+    records = case
+    when data.key?("orders")
+      data["orders"]
+    when data.key?("customers")
+      data["customers"]
+    when data.key?("products")
+      data["products"]
+    when data.key?("inventory_levels")
+      data["inventory_levels"]
+    when data.key?("locations")
+      data["locations"]
     else
       []
     end
-    
+
     # Extract pagination info from Link header
     next_page_url = extract_next_page_url(response.headers)
-    
+
     {
       records: records,
       next_page_url: next_page_url
@@ -164,24 +163,24 @@ class ShopifyAdapter < EcommerceAdapter
 
   def build_headers
     super.merge({
-      'X-Shopify-Access-Token' => access_token
+      "X-Shopify-Access-Token" => access_token
     })
   end
 
   # Webhook management
-  def create_webhook(endpoint_url, events = ['orders/create', 'orders/updated', 'customers/create'])
+  def create_webhook(endpoint_url, events = [ "orders/create", "orders/updated", "customers/create" ])
     webhook_data = {
       webhook: {
         topic: events.first, # Shopify creates one webhook per topic
         address: endpoint_url,
-        format: 'json'
+        format: "json"
       }
     }
-    
-    response = http_client.post('/admin/api/webhooks.json', webhook_data.to_json)
+
+    response = http_client.post("/admin/api/webhooks.json", webhook_data.to_json)
     handle_api_error(response) unless response.success?
-    
-    JSON.parse(response.body)['webhook']
+
+    JSON.parse(response.body)["webhook"]
   end
 
   def delete_webhook(webhook_id)
@@ -191,20 +190,20 @@ class ShopifyAdapter < EcommerceAdapter
   end
 
   def list_webhooks
-    response = http_client.get('/admin/api/webhooks.json')
+    response = http_client.get("/admin/api/webhooks.json")
     handle_api_error(response) unless response.success?
-    
-    JSON.parse(response.body)['webhooks']
+
+    JSON.parse(response.body)["webhooks"]
   end
 
   private
 
   def shop_domain
-    configuration['shop_domain']
+    configuration["shop_domain"]
   end
 
   def access_token
-    configuration['access_token']
+    configuration["access_token"]
   end
 
   def fetch_locations
@@ -213,34 +212,34 @@ class ShopifyAdapter < EcommerceAdapter
         http_client.get("/admin/api/#{SHOPIFY_API_VERSION}/locations.json")
       end
     end
-    
+
     handle_api_error(response) unless response.success?
-    JSON.parse(response.body)['locations'] || []
+    JSON.parse(response.body)["locations"] || []
   end
 
   # URL builders
   def build_orders_url(options = {})
     params = build_sync_params(options).merge({
-      status: 'any',
-      fields: order_fields.join(',')
+      status: "any",
+      fields: order_fields.join(",")
     })
-    
+
     build_endpoint_url("admin/api/#{SHOPIFY_API_VERSION}/orders.json", params)
   end
 
   def build_customers_url(options = {})
     params = build_sync_params(options).merge({
-      fields: customer_fields.join(',')
+      fields: customer_fields.join(",")
     })
-    
+
     build_endpoint_url("admin/api/#{SHOPIFY_API_VERSION}/customers.json", params)
   end
 
   def build_products_url(options = {})
     params = build_sync_params(options).merge({
-      fields: product_fields.join(',')
+      fields: product_fields.join(",")
     })
-    
+
     build_endpoint_url("admin/api/#{SHOPIFY_API_VERSION}/products.json", params)
   end
 
@@ -249,7 +248,7 @@ class ShopifyAdapter < EcommerceAdapter
       location_ids: location_id,
       limit: max_records_per_request
     }
-    
+
     build_endpoint_url("admin/api/#{SHOPIFY_API_VERSION}/inventory_levels.json", params)
   end
 
@@ -283,20 +282,20 @@ class ShopifyAdapter < EcommerceAdapter
 
   # Pagination helpers
   def extract_next_page_url(headers)
-    link_header = headers['Link']
+    link_header = headers["Link"]
     return nil unless link_header
-    
+
     # Parse Link header for next page
     links = {}
-    link_header.split(',').each do |link|
+    link_header.split(",").each do |link|
       if link =~ /<([^>]+)>; rel="([^"]+)"/
         url = $1
         rel = $2
         links[rel] = url
       end
     end
-    
-    links['next']
+
+    links["next"]
   end
 
   # Rate limit tracking
@@ -308,10 +307,10 @@ class ShopifyAdapter < EcommerceAdapter
 
   def track_rate_limit(response)
     # Shopify uses X-Shopify-Shop-Api-Call-Limit header
-    call_limit_header = response.headers['X-Shopify-Shop-Api-Call-Limit']
-    
+    call_limit_header = response.headers["X-Shopify-Shop-Api-Call-Limit"]
+
     if call_limit_header
-      current, max = call_limit_header.split('/')
+      current, max = call_limit_header.split("/")
       @last_rate_limit_remaining = max.to_i - current.to_i
     end
   end
@@ -320,7 +319,7 @@ class ShopifyAdapter < EcommerceAdapter
   def handle_api_error(response)
     # Track rate limits before handling error
     track_rate_limit(response)
-    
+
     case response.status
     when 401
       raise AuthenticationError, "Invalid Shopify credentials"
@@ -335,7 +334,7 @@ class ShopifyAdapter < EcommerceAdapter
       raise AdapterError, "Shopify validation error: #{error_details}"
     when 429
       # Enhanced rate limit error with retry info
-      retry_after = response.headers['Retry-After']
+      retry_after = response.headers["Retry-After"]
       message = "Shopify API rate limit exceeded"
       message += " - retry after #{retry_after} seconds" if retry_after
       raise RateLimitError, message
@@ -351,19 +350,19 @@ class ShopifyAdapter < EcommerceAdapter
     @shop_info ||= begin
       response = http_client.get("/admin/api/#{SHOPIFY_API_VERSION}/shop.json")
       handle_api_error(response) unless response.success?
-      JSON.parse(response.body)['shop']
+      JSON.parse(response.body)["shop"]
     end
   end
 
   def shop_currency
-    extract_shop_info['currency']
+    extract_shop_info["currency"]
   end
 
   def shop_timezone
-    extract_shop_info['iana_timezone']
+    extract_shop_info["iana_timezone"]
   end
 
   def shop_country
-    extract_shop_info['country_code']
+    extract_shop_info["country_code"]
   end
 end

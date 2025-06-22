@@ -18,7 +18,7 @@ RSpec.describe ExtractorFactory, type: :service do
       it 'raises UnsupportedSourceTypeError' do
         # Create a test double for unsupported data source
         unknown_source = double('DataSource', source_type: 'unknown')
-        
+
         expect {
           ExtractorFactory.create_extractor(unknown_source)
         }.to raise_error(ExtractorFactory::UnsupportedSourceTypeError)
@@ -90,7 +90,7 @@ RSpec.describe ExtractorFactory, type: :service do
   describe '.extractors_by_status' do
     it 'separates implemented and planned extractors' do
       status = ExtractorFactory.extractors_by_status
-      
+
       expect(status[:implemented]).to include('shopify')
       expect(status[:planned]).to include('quickbooks', 'google_analytics', 'stripe')
     end
@@ -99,7 +99,7 @@ RSpec.describe ExtractorFactory, type: :service do
   describe '.extractor_metadata' do
     it 'returns metadata for all extractors' do
       metadata = ExtractorFactory.extractor_metadata
-      
+
       # Check implemented extractor (Shopify)
       shopify_meta = metadata['shopify']
       expect(shopify_meta[:implemented]).to be true
@@ -166,7 +166,7 @@ RSpec.describe ExtractorFactory, type: :service do
       it 'returns error result' do
         # Create a test double for unsupported data source
         unknown_source = double('DataSource', source_type: 'unknown')
-        
+
         result = ExtractorFactory.test_connection(unknown_source)
         expect(result[:status]).to eq(:error)
         expect(result[:error_type]).to eq('UnsupportedSourceType')
@@ -178,12 +178,12 @@ RSpec.describe ExtractorFactory, type: :service do
     context 'with valid data source' do
       before do
         # Mock the extraction process
-        allow_any_instance_of(ShopifyExtractor).to receive(:extract_data).and_return([{ id: 1, name: 'test' }])
+        allow_any_instance_of(ShopifyExtractor).to receive(:extract_data).and_return([ { id: 1, name: 'test' } ])
       end
 
       it 'calls extractor extract_data method' do
         result = ExtractorFactory.extract_data(shopify_data_source, job_id: 123)
-        expect(result).to eq([{ id: 1, name: 'test' }])
+        expect(result).to eq([ { id: 1, name: 'test' } ])
       end
     end
 
@@ -191,7 +191,7 @@ RSpec.describe ExtractorFactory, type: :service do
       it 'raises UnsupportedSourceTypeError' do
         # Create a test double for unsupported data source
         unknown_source = double('DataSource', source_type: 'unknown')
-        
+
         expect {
           ExtractorFactory.extract_data(unknown_source)
         }.to raise_error(ExtractorFactory::UnsupportedSourceTypeError)
@@ -205,7 +205,7 @@ RSpec.describe ExtractorFactory, type: :service do
 
     it 'returns extraction statistics' do
       stats = ExtractorFactory.extraction_stats(shopify_data_source)
-      
+
       expect(stats[:total_jobs]).to eq(2)
       expect(stats[:successful_jobs]).to eq(1)
       expect(stats[:failed_jobs]).to eq(1)
@@ -215,9 +215,9 @@ RSpec.describe ExtractorFactory, type: :service do
       it 'returns error stats' do
         # Create a test double for unsupported data source
         unknown_source = double('DataSource', source_type: 'unknown')
-        
+
         stats = ExtractorFactory.extraction_stats(unknown_source)
-        
+
         expect(stats[:total_jobs]).to eq(0)
         expect(stats[:successful_jobs]).to eq(0)
         expect(stats[:failed_jobs]).to eq(0)

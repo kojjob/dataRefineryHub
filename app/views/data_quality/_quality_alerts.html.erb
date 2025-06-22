@@ -1,0 +1,131 @@
+<div class="bg-white rounded-lg shadow-sm border border-gray-200">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-gray-900">Quality Alerts</h3>
+      <span class="<%= quality_status_badge_class(alerts.count > 0 ? 'warning' : 'success') %> px-2 py-1 rounded-full text-xs font-medium">
+        <%= alerts.count %> <%= alerts.count == 1 ? 'Alert' : 'Alerts' %>
+      </span>
+    </div>
+  </div>
+  
+  <div class="divide-y divide-gray-200">
+    <% if alerts.any? %>
+      <% alerts.each do |alert| %>
+        <div class="px-6 py-4 hover:bg-gray-50 transition-colors duration-150">
+          <div class="flex items-start space-x-3">
+            <!-- Alert Icon -->
+            <div class="flex-shrink-0 mt-1">
+              <% case alert[:severity] %>
+              <% when 'high', 'critical' %>
+                <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+              <% when 'medium' %>
+                <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+              <% else %>
+                <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                </svg>
+              <% end %>
+            </div>
+            
+            <!-- Alert Content -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <h4 class="text-sm font-medium text-gray-900 truncate">
+                  <%= alert[:title] %>
+                </h4>
+                <span class="<%= quality_status_badge_class(alert[:severity]) %> px-2 py-1 rounded-full text-xs font-medium ml-2">
+                  <%= alert[:severity].humanize %>
+                </span>
+              </div>
+              
+              <p class="mt-1 text-sm text-gray-600">
+                <%= alert[:description] %>
+              </p>
+              
+              <div class="mt-2 flex items-center justify-between">
+                <div class="flex items-center space-x-4 text-xs text-gray-500">
+                  <span>Type: <%= alert[:type].humanize %></span>
+                  <% if alert[:data_source_id] %>
+                    <span>Source ID: <%= alert[:data_source_id] %></span>
+                  <% end %>
+                  <span><%= time_ago_in_words(alert[:created_at]) %> ago</span>
+                </div>
+                
+                <div class="flex items-center space-x-2">
+                  <% if alert[:data_source_id] %>
+                    <%= link_to "View Details", data_quality_path(alert[:data_source_id]), 
+                        class: "text-blue-600 hover:text-blue-800 text-xs font-medium" %>
+                  <% end %>
+                  <button class="text-gray-400 hover:text-gray-600 text-xs" 
+                          onclick="dismissAlert(<%= alert[:id] if alert[:id] %>)">
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="px-6 py-8 text-center">
+        <svg class="mx-auto h-12 w-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No Quality Alerts</h3>
+        <p class="mt-1 text-sm text-gray-500">All data sources are meeting quality standards.</p>
+      </div>
+    <% end %>
+  </div>
+  
+  <% if alerts.any? %>
+    <div class="px-6 py-3 bg-gray-50 border-t border-gray-200">
+      <div class="flex items-center justify-between">
+        <button class="text-sm text-gray-600 hover:text-gray-800" onclick="markAllAlertsRead()">
+          Mark all as read
+        </button>
+        <%= link_to "View All Alerts", data_quality_alerts_path, 
+            class: "text-sm text-blue-600 hover:text-blue-800 font-medium" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  function dismissAlert(alertId) {
+    if (!alertId) return;
+    
+    fetch(`/data_quality/alerts/${alertId}/dismiss`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        location.reload();
+      }
+    })
+    .catch(error => console.error('Error dismissing alert:', error));
+  }
+  
+  function markAllAlertsRead() {
+    fetch('/data_quality/alerts/mark_all_read', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        location.reload();
+      }
+    })
+    .catch(error => console.error('Error marking alerts as read:', error));
+  }
+</script>

@@ -29,7 +29,7 @@ class DataQualityValidationService
   def initialize(validation_config = {})
     # Load configuration from centralized manager
     dq_config = EtlConfigurationManager.data_quality_config
-    
+
     @config = {
       # Validation rule configurations from centralized config
       presence_validation: dq_config[:validation_rules][:presence][:enabled],
@@ -40,7 +40,7 @@ class DataQualityValidationService
       data_type_validation: dq_config[:validation_rules][:data_type][:enabled],
       business_rules_validation: dq_config[:validation_rules][:business_rules][:enabled],
       statistical_validation: dq_config[:validation_rules][:statistical][:enabled],
-      
+
       # Quality thresholds from centralized config
       completeness_threshold: dq_config[:quality_thresholds][:completeness],
       accuracy_threshold: dq_config[:quality_thresholds][:accuracy],
@@ -49,14 +49,14 @@ class DataQualityValidationService
       uniqueness_threshold: dq_config[:quality_thresholds][:uniqueness],
       timeliness_threshold: dq_config[:quality_thresholds][:timeliness],
       integrity_threshold: dq_config[:quality_thresholds][:integrity],
-      
+
       # Processing options from centralized config
       batch_validation: true,
       parallel_validation: false,
       fail_fast: false,
       detailed_reporting: dq_config[:reporting][:detailed_errors]
     }.merge(validation_config)
-    
+
     @validation_rules = load_validation_rules(validation_config)
     @quality_metrics = QualityMetrics.new
     @validation_results = []
@@ -65,7 +65,7 @@ class DataQualityValidationService
   end
 
   # Validate data with comprehensive quality checks
-  def validate_data(data, context: 'unknown', rules: nil)
+  def validate_data(data, context: "unknown", rules: nil)
     return ValidationResult.new(true, [], @quality_metrics) if data.empty?
 
     @logger.info "Starting data quality validation for #{context}: #{data.size} records"
@@ -73,7 +73,7 @@ class DataQualityValidationService
 
     # Use specified rules or default rules for context
     active_rules = rules || @validation_rules[context.to_sym] || @validation_rules[:default]
-    
+
     # Reset validation state
     @validation_results.clear
     @quality_metrics.reset!
@@ -81,23 +81,23 @@ class DataQualityValidationService
     # Process data in batches for performance
     validation_errors = []
     valid_records = []
-    
+
     @batch_processor.process_in_batches(data) do |batch, batch_number|
       batch_results = validate_batch(batch, active_rules, context, batch_number)
-      
+
       validation_errors.concat(batch_results[:errors])
       valid_records.concat(batch_results[:valid_records])
-      
+
       # Update quality metrics
       @quality_metrics.update_from_batch(batch_results[:metrics])
     end
 
     # Calculate overall quality score
     quality_score = calculate_quality_score(data.size, validation_errors.size)
-    
+
     # Generate quality report
     quality_report = generate_quality_report(data.size, validation_errors, quality_score)
-    
+
     duration = Time.current - start_time
     @logger.info "Data validation completed in #{duration.round(2)}s. Quality score: #{quality_score}%"
 
@@ -112,17 +112,17 @@ class DataQualityValidationService
   end
 
   # Validate single record
-  def validate_record(record, rules, context = 'single_record')
+  def validate_record(record, rules, context = "single_record")
     errors = []
-    
+
     rules.each do |rule|
       begin
         validation_method = VALIDATION_TYPES[rule[:type]]
         next unless validation_method
-        
+
         result = send(validation_method, record, rule)
         errors << result unless result.nil?
-        
+
       rescue => error
         @logger.error "Validation rule failed: #{rule[:name]} - #{error.message}"
         errors << ValidationError.new(
@@ -134,7 +134,7 @@ class DataQualityValidationService
         )
       end
     end
-    
+
     errors.compact
   end
 
@@ -161,10 +161,10 @@ class DataQualityValidationService
     errors = []
     valid_records = []
     batch_metrics = BatchQualityMetrics.new
-    
+
     batch.each_with_index do |record, index|
       record_errors = validate_record(record, rules, context)
-      
+
       if record_errors.empty?
         valid_records << record
         batch_metrics.record_valid
@@ -172,11 +172,11 @@ class DataQualityValidationService
         errors.concat(record_errors)
         batch_metrics.record_invalid(record_errors.size)
       end
-      
+
       # Update quality dimension metrics
       update_quality_dimensions(record, record_errors, batch_metrics)
     end
-    
+
     {
       errors: errors,
       valid_records: valid_records,
@@ -188,22 +188,22 @@ class DataQualityValidationService
     # Completeness: Check for missing required fields
     missing_fields = count_missing_fields(record)
     metrics.update_completeness(missing_fields == 0)
-    
+
     # Accuracy: Based on validation errors
     accuracy_errors = errors.select { |e| e.dimension == :accuracy }
     metrics.update_accuracy(accuracy_errors.empty?)
-    
+
     # Validity: Format and type validation errors
-    validity_errors = errors.select { |e| [:format, :data_type].include?(e.rule_type) }
+    validity_errors = errors.select { |e| [ :format, :data_type ].include?(e.rule_type) }
     metrics.update_validity(validity_errors.empty?)
-    
+
     # Add other dimension updates as needed
   end
 
   # Validation methods for different rule types
   def validate_presence(record, rule)
     field_value = extract_field_value(record, rule[:field])
-    
+
     if field_value.nil? || (field_value.respond_to?(:empty?) && field_value.empty?)
       ValidationError.new(
         field: rule[:field],
@@ -220,7 +220,7 @@ class DataQualityValidationService
   def validate_format(record, rule)
     field_value = extract_field_value(record, rule[:field])
     return nil if field_value.nil? # Skip format validation for nil values
-    
+
     pattern = rule[:pattern]
     unless field_value.to_s.match?(pattern)
       ValidationError.new(
@@ -240,10 +240,10 @@ class DataQualityValidationService
   def validate_range(record, rule)
     field_value = extract_field_value(record, rule[:field])
     return nil if field_value.nil?
-    
+
     min_val = rule[:min]
     max_val = rule[:max]
-    
+
     if (min_val && field_value < min_val) || (max_val && field_value > max_val)
       ValidationError.new(
         field: rule[:field],
@@ -262,16 +262,16 @@ class DataQualityValidationService
   def validate_data_type(record, rule)
     field_value = extract_field_value(record, rule[:field])
     return nil if field_value.nil?
-    
+
     expected_type = rule[:expected_type]
-    
+
     case expected_type
     when :integer
       valid = field_value.is_a?(Integer) || (field_value.is_a?(String) && field_value.match?(/^\d+$/))
     when :float
       valid = field_value.is_a?(Numeric) || (field_value.is_a?(String) && field_value.match?(/^\d*\.?\d+$/))
     when :boolean
-      valid = [true, false, 'true', 'false', '1', '0'].include?(field_value)
+      valid = [ true, false, "true", "false", "1", "0" ].include?(field_value)
     when :date
       valid = field_value.is_a?(Date) || (field_value.is_a?(String) && Date.parse(field_value) rescue false)
     when :email
@@ -279,7 +279,7 @@ class DataQualityValidationService
     else
       valid = field_value.is_a?(expected_type)
     end
-    
+
     unless valid
       ValidationError.new(
         field: rule[:field],
@@ -299,7 +299,7 @@ class DataQualityValidationService
     # Custom business rule validation
     business_rule = rule[:rule_proc] || rule[:rule_lambda]
     return nil unless business_rule
-    
+
     begin
       result = business_rule.call(record)
       unless result
@@ -330,20 +330,20 @@ class DataQualityValidationService
     # Statistical anomaly detection (simplified)
     field_value = extract_field_value(record, rule[:field])
     return nil unless field_value.is_a?(Numeric)
-    
+
     # This would typically use historical data for comparison
     # For now, we'll use simple threshold-based detection
     threshold = rule[:anomaly_threshold] || 3 # Standard deviations
-    
+
     # Placeholder for statistical analysis
     # In practice, you'd compare against historical mean/std dev
-    
+
     nil # No anomaly detected in this simplified version
   end
 
   def extract_field_value(record, field_path)
     # Support nested field access (e.g., 'user.email')
-    field_path.to_s.split('.').reduce(record) do |obj, field|
+    field_path.to_s.split(".").reduce(record) do |obj, field|
       case obj
       when Hash
         obj[field] || obj[field.to_sym]
@@ -360,7 +360,7 @@ class DataQualityValidationService
   def extract_record_id(record)
     case record
     when Hash
-      record[:id] || record['id']
+      record[:id] || record["id"]
     when ActiveRecord::Base
       record.id
     else
@@ -382,7 +382,7 @@ class DataQualityValidationService
 
   def calculate_quality_score(total_records, error_count)
     return 100.0 if total_records == 0
-    
+
     valid_records = total_records - error_count
     (valid_records.to_f / total_records * 100).round(2)
   end
@@ -391,7 +391,7 @@ class DataQualityValidationService
     error_summary = errors.group_by(&:rule_type).transform_values(&:count)
     severity_summary = errors.group_by(&:severity).transform_values(&:count)
     dimension_summary = errors.group_by(&:dimension).transform_values(&:count)
-    
+
     {
       total_records: total_records,
       valid_records: total_records - errors.size,
@@ -406,9 +406,9 @@ class DataQualityValidationService
 
   def generate_recommendations(errors)
     recommendations = []
-    
+
     error_counts = errors.group_by(&:rule_type).transform_values(&:count)
-    
+
     error_counts.each do |rule_type, count|
       case rule_type
       when :presence
@@ -421,7 +421,7 @@ class DataQualityValidationService
         recommendations << "Review business rule implementations and data sources (#{count} occurrences)"
       end
     end
-    
+
     recommendations
   end
 
@@ -440,51 +440,285 @@ class DataQualityValidationService
     # Would typically track quality scores over time
     {
       current_session: @quality_metrics.summary,
-      trend: 'stable' # Would be calculated from historical data
+      trend: "stable" # Would be calculated from historical data
     }
   end
 
   def load_validation_rules(config)
-    # Load validation rules from configuration
+    # Load validation rules from configuration with support for all data source types
     default_rules = {
       default: [
         {
-          name: 'required_id',
+          name: "required_record_id",
           type: :presence,
-          field: :id,
+          field: :record_id,
           severity: :error,
-          message: 'Record ID is required'
-        }
-      ],
-      extraction: [
+          message: "Record ID is required"
+        },
         {
-          name: 'valid_timestamp',
-          type: :data_type,
+          name: "valid_created_at",
+          type: :presence,
           field: :created_at,
-          expected_type: :date,
-          severity: :warning
+          severity: :warning,
+          message: "Created date is required"
         }
       ],
-      transformation: [
+      
+      # E-commerce platforms
+      shopify: [
         {
-          name: 'email_format',
+          name: "customer_email_format",
           type: :format,
           field: :email,
           pattern: /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i,
-          severity: :error
+          severity: :error,
+          message: "Customer email must be valid"
+        },
+        {
+          name: "order_total_presence",
+          type: :presence,
+          field: :total_price,
+          severity: :error,
+          message: "Order total is required"
+        },
+        {
+          name: "customer_id_presence",
+          type: :presence,
+          field: :customer_id,
+          severity: :warning,
+          message: "Customer ID should be present"
+        }
+      ],
+      
+      woocommerce: [
+        {
+          name: "billing_email_format",
+          type: :format,
+          field: :billing_email,
+          pattern: /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i,
+          severity: :error,
+          message: "Billing email must be valid"
+        },
+        {
+          name: "order_status_presence",
+          type: :presence,
+          field: :status,
+          severity: :error,
+          message: "Order status is required"
+        }
+      ],
+      
+      # Financial platforms
+      quickbooks: [
+        {
+          name: "transaction_amount_presence",
+          type: :presence,
+          field: :amount,
+          severity: :error,
+          message: "Transaction amount is required"
+        },
+        {
+          name: "account_reference_presence",
+          type: :presence,
+          field: :account_ref,
+          severity: :error,
+          message: "Account reference is required"
+        }
+      ],
+      
+      stripe: [
+        {
+          name: "payment_amount_positive",
+          type: :range,
+          field: :amount,
+          min: 0.01,
+          severity: :error,
+          message: "Payment amount must be positive"
+        },
+        {
+          name: "currency_code_presence",
+          type: :presence,
+          field: :currency,
+          severity: :error,
+          message: "Currency code is required"
+        }
+      ],
+      
+      # Analytics platforms
+      google_analytics: [
+        {
+          name: "session_id_presence",
+          type: :presence,
+          field: :session_id,
+          severity: :warning,
+          message: "Session ID should be present"
+        },
+        {
+          name: "page_views_numeric",
+          type: :data_type,
+          field: :page_views,
+          expected_type: :integer,
+          severity: :warning,
+          message: "Page views must be numeric"
+        }
+      ],
+      
+      # Marketing platforms
+      mailchimp: [
+        {
+          name: "subscriber_email_format",
+          type: :format,
+          field: :email_address,
+          pattern: /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i,
+          severity: :error,
+          message: "Subscriber email must be valid"
+        },
+        {
+          name: "subscription_status_valid",
+          type: :format,
+          field: :status,
+          pattern: /\A(subscribed|unsubscribed|cleaned|pending)\z/i,
+          severity: :error,
+          message: "Subscription status must be valid"
+        }
+      ],
+      
+      # CRM platforms
+      hubspot: [
+        {
+          name: "contact_email_format",
+          type: :format,
+          field: :email,
+          pattern: /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i,
+          severity: :error,
+          message: "Contact email must be valid"
+        }
+      ],
+      
+      zendesk: [
+        {
+          name: "ticket_subject_presence",
+          type: :presence,
+          field: :subject,
+          severity: :error,
+          message: "Ticket subject is required"
+        },
+        {
+          name: "requester_email_format",
+          type: :format,
+          field: :requester_email,
+          pattern: /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i,
+          severity: :error,
+          message: "Requester email must be valid"
+        }
+      ],
+      
+      # Advertising platforms
+      google_ads: [
+        {
+          name: "campaign_id_presence",
+          type: :presence,
+          field: :campaign_id,
+          severity: :error,
+          message: "Campaign ID is required"
+        },
+        {
+          name: "cost_positive",
+          type: :range,
+          field: :cost,
+          min: 0,
+          severity: :warning,
+          message: "Cost should not be negative"
+        }
+      ],
+      
+      facebook_ads: [
+        {
+          name: "ad_set_id_presence",
+          type: :presence,
+          field: :adset_id,
+          severity: :error,
+          message: "Ad set ID is required"
+        },
+        {
+          name: "spend_positive",
+          type: :range,
+          field: :spend,
+          min: 0,
+          severity: :warning,
+          message: "Spend should not be negative"
+        }
+      ],
+      
+      # Sales platforms
+      salesforce: [
+        {
+          name: "lead_email_format",
+          type: :format,
+          field: :email,
+          pattern: /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i,
+          severity: :error,
+          message: "Lead email must be valid"
+        },
+        {
+          name: "lead_status_presence",
+          type: :presence,
+          field: :status,
+          severity: :error,
+          message: "Lead status is required"
+        }
+      ],
+      
+      # Marketplace platforms
+      amazon_seller_central: [
+        {
+          name: "asin_presence",
+          type: :presence,
+          field: :asin,
+          severity: :error,
+          message: "ASIN is required"
+        },
+        {
+          name: "price_positive",
+          type: :range,
+          field: :price,
+          min: 0.01,
+          severity: :error,
+          message: "Price must be positive"
+        }
+      ],
+      
+      # File upload and custom sources
+      file_upload: [
+        {
+          name: "data_completeness",
+          type: :presence,
+          field: :id,
+          severity: :warning,
+          message: "Record should have an identifier"
+        }
+      ],
+      
+      custom_api: [
+        {
+          name: "api_response_structure",
+          type: :presence,
+          field: :id,
+          severity: :warning,
+          message: "API response should include record ID"
         }
       ]
     }
-    
+
     default_rules.deep_merge(config)
   end
 
   # Supporting classes
   class ValidationError
-    attr_reader :field, :rule, :message, :severity, :dimension, :rule_type, 
+    attr_reader :field, :rule, :message, :severity, :dimension, :rule_type,
                 :record_id, :expected, :actual, :timestamp
 
-    def initialize(field:, rule:, message:, severity: :error, dimension: :validity, 
+    def initialize(field:, rule:, message:, severity: :error, dimension: :validity,
                    rule_type: :unknown, record_id: nil, expected: nil, actual: nil)
       @field = field
       @rule = rule
@@ -515,10 +749,10 @@ class DataQualityValidationService
   end
 
   class ValidationResult
-    attr_reader :valid, :errors, :quality_metrics, :quality_score, 
+    attr_reader :valid, :errors, :quality_metrics, :quality_score,
                 :quality_report, :valid_records
 
-    def initialize(valid, errors, quality_metrics, quality_score = nil, 
+    def initialize(valid, errors, quality_metrics, quality_score = nil,
                    quality_report = nil, valid_records = [])
       @valid = valid
       @errors = errors
@@ -547,7 +781,7 @@ class DataQualityValidationService
   end
 
   class QualityMetrics
-    attr_reader :completeness_score, :accuracy_score, :validity_score, 
+    attr_reader :completeness_score, :accuracy_score, :validity_score,
                 :total_records, :valid_records
 
     def initialize
@@ -566,16 +800,16 @@ class DataQualityValidationService
     def update_from_batch(batch_metrics)
       @total_records += batch_metrics.total_records
       @valid_records += batch_metrics.valid_records
-      
+
       # Update dimension scores (weighted average)
       QUALITY_DIMENSIONS.each do |dimension|
         current_weight = @total_records - batch_metrics.total_records
         new_weight = batch_metrics.total_records
         total_weight = @total_records
-        
+
         if total_weight > 0
           @dimension_scores[dimension] = (
-            (@dimension_scores[dimension] * current_weight) + 
+            (@dimension_scores[dimension] * current_weight) +
             (batch_metrics.dimension_score(dimension) * new_weight)
           ) / total_weight
         end

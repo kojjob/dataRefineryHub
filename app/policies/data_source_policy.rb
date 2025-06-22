@@ -36,7 +36,7 @@ class DataSourcePolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
       return scope.none unless user&.organization_id
-      
+
       scope.where(organization_id: user.organization_id)
     end
   end

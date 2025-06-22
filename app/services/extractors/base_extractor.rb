@@ -30,7 +30,7 @@ class BaseExtractor
   # Main extraction workflow - template method pattern
   def extract_data(job_id: nil)
     @extraction_job = find_or_create_job(job_id)
-    
+
     @error_handler.execute_with_protection(
       "extract_data_#{@data_source.source_type}",
       max_attempts: 3,
@@ -38,13 +38,13 @@ class BaseExtractor
     ) do
       update_job_status(:running)
       validate_connection
-      
+
       extracted_data = perform_extraction_with_batching
       validated_data = validate_data_quality(extracted_data)
-      
+
       save_raw_data(validated_data)
       update_job_status(:completed)
-      
+
       validated_data
     end
   rescue => error
@@ -92,16 +92,16 @@ class BaseExtractor
   # Enhanced data extraction with batching support
   def perform_extraction_with_batching
     raw_data = perform_extraction
-    
+
     # Process large datasets in batches for memory efficiency
     if raw_data.respond_to?(:size) && raw_data.size > 1000
       @logger.info "Processing #{raw_data.size} records in batches"
-      
+
       processed_data = @batch_processor.process_in_batches(raw_data) do |batch, batch_number|
         @logger.debug "Processing extraction batch #{batch_number} (#{batch.size} records)"
         normalize_batch_data(batch)
       end
-      
+
       processed_data.flatten
     else
       normalize_data(raw_data)
@@ -111,32 +111,32 @@ class BaseExtractor
   # Enhanced data validation with quality metrics
   def validate_data_quality(data)
     return data if data.empty?
-    
+
     # Get validation rules for this data source type
     validation_context = @data_source.source_type.to_s
-    
+
     # Perform comprehensive data quality validation
     validation_result = @data_validator.validate_data(
       data,
       context: validation_context
     )
-    
+
     # Log validation results
     if validation_result.valid?
       @logger.info "Data validation passed: #{data.size} records validated successfully"
     else
       @logger.warn "Data validation issues found: #{validation_result.error_count} errors in #{data.size} records"
       @logger.warn "Quality score: #{validation_result.quality_score}%"
-      
+
       # Log top validation errors
       validation_result.errors.first(5).each do |error|
         @logger.warn "Validation error: #{error.message} (Field: #{error.field}, Severity: #{error.severity})"
       end
     end
-    
+
     # Store validation metrics for monitoring
     store_validation_metrics(validation_result)
-    
+
     # Return valid records only, or all records based on configuration
     if should_filter_invalid_records?
       validation_result.valid_records
@@ -153,9 +153,9 @@ class BaseExtractor
   # Data validation with business rules (legacy method for compatibility)
   def validate_data(data)
     return [] if data.blank?
-    
+
     validated_records = []
-    
+
     data.each do |record|
       begin
         normalized_record = normalize_data(record)
@@ -166,26 +166,26 @@ class BaseExtractor
         # Continue processing other records
       end
     end
-    
+
     validated_records
   end
 
   def validate_record_schema(record)
     required_fields = self.class.required_fields
-    
+
     required_fields.each do |field|
       unless record.key?(field.to_s) || record.key?(field.to_sym)
         raise DataValidationError, "Missing required field: #{field}"
       end
     end
-    
+
     true
   end
 
   # Save extracted data as raw records
   def save_raw_data(validated_data)
     return if validated_data.empty?
-    
+
     raw_records = validated_data.map do |record|
       {
         data_source: data_source,
@@ -196,9 +196,9 @@ class BaseExtractor
         extracted_at: Time.current
       }
     end
-    
+
     RawDataRecord.insert_all(raw_records)
-    
+
     logger.info "Saved #{raw_records.count} raw records for #{data_source.name}"
   end
 
@@ -209,7 +209,7 @@ class BaseExtractor
     else
       ExtractionJob.create!(
         data_source: data_source,
-        status: 'queued',
+        status: "queued",
         started_at: Time.current
       )
     end
@@ -217,27 +217,27 @@ class BaseExtractor
 
   def update_job_status(status, metadata: {})
     return unless extraction_job
-    
+
     attributes = { status: status }
-    
+
     case status.to_s
-    when 'running'
+    when "running"
       attributes[:started_at] = Time.current
-    when 'completed'
+    when "completed"
       attributes[:completed_at] = Time.current
       data_source.update!(
         last_sync_at: Time.current,
         next_sync_at: calculate_next_sync,
-        status: 'connected'
+        status: "connected"
       )
-    when 'failed'
+    when "failed"
       attributes[:completed_at] = Time.current
       attributes[:error_details] = metadata
-      data_source.update!(status: 'error')
+      data_source.update!(status: "error")
     end
-    
+
     attributes[:metadata] = extraction_job.metadata.merge(metadata) if metadata.present?
-    
+
     extraction_job.update!(attributes)
   end
 
@@ -245,21 +245,21 @@ class BaseExtractor
   def handle_extraction_error(error)
     logger.error "Extraction failed for #{data_source.name}: #{error.message}"
     logger.error error.backtrace.join("\n") if Rails.env.development?
-    
+
     error_metadata = {
       error_message: error.message,
       error_type: error.class.name,
       error_details: error_details(error)
     }
-    
+
     update_job_status(:failed, metadata: error_metadata)
-    
+
     # Create audit log
     AuditLog.create!(
       organization: data_source.organization,
       user: nil, # System operation
-      action: 'extraction_failed',
-      resource_type: 'DataSource',
+      action: "extraction_failed",
+      resource_type: "DataSource",
       resource_id: data_source.id,
       details: error_metadata
     )
@@ -279,16 +279,16 @@ class BaseExtractor
 
   def retry_with_backoff(max_retries: 3, base_delay: 1)
     retries = 0
-    
+
     begin
       yield
     rescue RateLimitError, Net::TimeoutError => error
       retries += 1
-      
+
       if retries <= max_retries
         delay = base_delay * (2 ** (retries - 1)) # Exponential backoff
         jitter = rand(0.1..0.3) * delay # Add jitter
-        
+
         logger.info "Retrying in #{delay + jitter} seconds (attempt #{retries}/#{max_retries})"
         sleep(delay + jitter)
         retry
@@ -301,21 +301,21 @@ class BaseExtractor
   # Utility methods
   def determine_record_type(record)
     # Default implementation - should be overridden by subclasses
-    'unknown'
+    "unknown"
   end
 
   def extract_external_id(record)
     # Default implementation - looks for common ID fields
-    record['id'] || record[:id] || record['external_id'] || record[:external_id]
+    record["id"] || record[:id] || record["external_id"] || record[:external_id]
   end
 
   def calculate_next_sync
     case data_source.sync_frequency
-    when 'realtime' then 5.minutes.from_now
-    when 'hourly' then 1.hour.from_now
-    when 'daily' then 1.day.from_now
-    when 'weekly' then 1.week.from_now
-    when 'monthly' then 1.month.from_now
+    when "realtime" then 5.minutes.from_now
+    when "hourly" then 1.hour.from_now
+    when "daily" then 1.day.from_now
+    when "weekly" then 1.week.from_now
+    when "monthly" then 1.month.from_now
     else 1.hour.from_now
     end
   end
@@ -323,15 +323,15 @@ class BaseExtractor
   def error_details(error)
     case error
     when AuthenticationError
-      { category: 'authentication', recoverable: true }
+      { category: "authentication", recoverable: true }
     when ConnectionError
-      { category: 'connection', recoverable: true }
+      { category: "connection", recoverable: true }
     when RateLimitError
-      { category: 'rate_limit', recoverable: true }
+      { category: "rate_limit", recoverable: true }
     when DataValidationError
-      { category: 'data_validation', recoverable: false }
+      { category: "data_validation", recoverable: false }
     else
-      { category: 'unknown', recoverable: false }
+      { category: "unknown", recoverable: false }
     end
   end
 
@@ -342,7 +342,7 @@ class BaseExtractor
   # Class methods for extractor metadata
   class << self
     def supported_source_type
-      name.underscore.sub('_extractor', '')
+      name.underscore.sub("_extractor", "")
     end
 
     def required_fields
@@ -371,7 +371,7 @@ class BaseExtractor
   # Store validation metrics for monitoring and analysis
   def store_validation_metrics(validation_result)
     return unless @extraction_job
-    
+
     # Store metrics in extraction job for later analysis
     metrics_data = {
       quality_score: validation_result.quality_score,
@@ -379,7 +379,7 @@ class BaseExtractor
       validation_summary: validation_result.quality_report,
       timestamp: Time.current
     }
-    
+
     # Update extraction job with validation metrics
     @extraction_job.update(
       metadata: (@extraction_job.metadata || {}).merge(
@@ -393,13 +393,13 @@ class BaseExtractor
   # Configuration for filtering invalid records
   def should_filter_invalid_records?
     # Check data source configuration or use default
-    @data_source.configuration&.dig('filter_invalid_records') || false
+    @data_source.configuration&.dig("filter_invalid_records") || false
   end
 
   # Get comprehensive extraction metrics including new enhancements
   def enhanced_extraction_stats
     base_stats = extraction_stats
-    
+
     # Add enhanced metrics
     base_stats.merge(
       error_handler_metrics: @error_handler&.metrics,
@@ -451,7 +451,7 @@ class BaseExtractor
     def on_failure
       @failure_count += 1
       @last_failure_time = Time.current
-      
+
       if @failure_count >= FAILURE_THRESHOLD
         @state = :open
       end

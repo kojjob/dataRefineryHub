@@ -3,13 +3,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def build_resource(hash = {})
     super(hash)
-    
+
     # Create organization if organization_name is provided
     if params[:organization_name].present?
       begin
         organization = Organization.create!(
           name: params[:organization_name].strip,
-          plan: 'free_trial'
+          plan: "free_trial"
         )
         resource.organization = organization
         # Role will be automatically set to 'owner' by the User model callback for first user
@@ -23,6 +23,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :first_name, :last_name ])
   end
 end

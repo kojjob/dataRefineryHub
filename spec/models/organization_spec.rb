@@ -17,7 +17,7 @@ RSpec.describe Organization, type: :model do
 
   describe 'scopes' do
     before { Organization.delete_all }
-    
+
     let!(:active_org) { create(:organization, status: 'active', plan: 'growth') }
     let!(:trial_org) { create(:organization, status: 'trial', plan: 'free_trial') }
     let!(:starter_org) { create(:organization, plan: 'starter', status: 'suspended') }
@@ -29,7 +29,7 @@ RSpec.describe Organization, type: :model do
 
     it 'filters by plan' do
       expect(Organization.by_plan('starter')).to contain_exactly(starter_org)
-      expect(Organization.by_plan('growth')).to match_array([active_org, growth_org])
+      expect(Organization.by_plan('growth')).to match_array([ active_org, growth_org ])
     end
   end
 

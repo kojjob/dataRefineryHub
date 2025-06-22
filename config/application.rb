@@ -23,7 +23,7 @@ module DataRefineryPlatform
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-    
+
     # Add custom service paths to autoload
     config.autoload_paths += %W[
       #{config.root}/app/services
@@ -33,9 +33,9 @@ module DataRefineryPlatform
     # Full-stack application with API capabilities
     # Enable sessions, flash, cookies, and views for dashboard functionality
     config.api_only = false
-    
+
     # Asset pipeline configuration
     config.assets.enabled = true
-    config.assets.version = '1.0'
+    config.assets.version = "1.0"
   end
 end

@@ -15,13 +15,13 @@ class CreateRawDataRecords < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
-    add_index :raw_data_records, [:data_source_id, :external_id, :checksum], 
+
+    add_index :raw_data_records, [ :data_source_id, :external_id, :checksum ],
               unique: true, name: 'index_raw_data_records_on_source_id_checksum'
     add_index :raw_data_records, :record_type
     add_index :raw_data_records, :processing_status
     add_index :raw_data_records, :processed_at
-    add_index :raw_data_records, [:organization_id, :record_type]
-    add_index :raw_data_records, [:extraction_job_id, :processing_status]
+    add_index :raw_data_records, [ :organization_id, :record_type ]
+    add_index :raw_data_records, [ :extraction_job_id, :processing_status ]
   end
 end

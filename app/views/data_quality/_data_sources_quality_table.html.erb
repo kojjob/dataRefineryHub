@@ -1,0 +1,484 @@
+<div class="bg-white rounded-lg shadow-sm border border-gray-200">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-gray-900">Data Sources Quality</h3>
+      <div class="flex items-center space-x-3">
+        <div class="relative">
+          <input type="text" 
+                 id="dataSourceSearch" 
+                 placeholder="Search data sources..." 
+                 class="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+        </div>
+        
+        <select id="qualityFilter" class="text-sm border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="all">All Sources</option>
+          <option value="excellent">Excellent (90%+)</option>
+          <option value="good">Good (80-89%)</option>
+          <option value="fair">Fair (70-79%)</option>
+          <option value="poor">Poor (50-69%)</option>
+          <option value="critical">Critical (<50%)</option>
+        </select>
+        
+        <button id="refreshTable" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Table Container -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" 
+              onclick="sortTable('name')">
+            <div class="flex items-center space-x-1">
+              <span>Data Source</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+              </svg>
+            </div>
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" 
+              onclick="sortTable('score')">
+            <div class="flex items-center space-x-1">
+              <span>Quality Score</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+              </svg>
+            </div>
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Quality Dimensions
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" 
+              onclick="sortTable('trend')">
+            <div class="flex items-center space-x-1">
+              <span>Trend</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+              </svg>
+            </div>
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" 
+              onclick="sortTable('issues')">
+            <div class="flex items-center space-x-1">
+              <span>Issues</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+              </svg>
+            </div>
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" 
+              onclick="sortTable('lastValidation')">
+            <div class="flex items-center space-x-1">
+              <span>Last Validation</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+              </svg>
+            </div>
+          </th>
+          <th scope="col" class="relative px-6 py-3">
+            <span class="sr-only">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="dataSourcesTableBody" class="bg-white divide-y divide-gray-200">
+        <!-- Loading State -->
+        <tr id="tableLoading">
+          <td colspan="7" class="px-6 py-8 text-center">
+            <div class="flex items-center justify-center space-x-2">
+              <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+              <span class="text-sm text-gray-600">Loading data sources...</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Empty State -->
+  <div id="emptyState" class="hidden px-6 py-8 text-center">
+    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v4M6 13h2m8 0V9a2 2 0 00-2-2H8a2 2 0 00-2 2v4m8 0h2"></path>
+    </svg>
+    <h3 class="mt-2 text-sm font-medium text-gray-900">No data sources found</h3>
+    <p class="mt-1 text-sm text-gray-500">Get started by adding a data source to monitor quality.</p>
+    <div class="mt-6">
+      <%= link_to "Add Data Source", new_data_source_path, 
+          class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+    </div>
+  </div>
+  
+  <!-- Pagination -->
+  <div id="tablePagination" class="hidden px-6 py-3 bg-gray-50 border-t border-gray-200">
+    <div class="flex items-center justify-between">
+      <div class="text-sm text-gray-700">
+        Showing <span id="paginationStart">1</span> to <span id="paginationEnd">10</span> of <span id="paginationTotal">0</span> results
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="prevPage" class="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+          Previous
+        </button>
+        <span id="pageNumbers" class="flex items-center space-x-1"></span>
+        <button id="nextPage" class="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  class DataSourcesQualityTable {
+    constructor() {
+      this.currentPage = 1;
+      this.pageSize = 10;
+      this.sortField = 'score';
+      this.sortDirection = 'desc';
+      this.searchTerm = '';
+      this.qualityFilter = 'all';
+      this.data = [];
+      this.filteredData = [];
+      
+      this.bindEvents();
+      this.loadData();
+    }
+    
+    bindEvents() {
+      // Search functionality
+      document.getElementById('dataSourceSearch').addEventListener('input', (e) => {
+        this.searchTerm = e.target.value.toLowerCase();
+        this.filterAndRenderData();
+      });
+      
+      // Quality filter
+      document.getElementById('qualityFilter').addEventListener('change', (e) => {
+        this.qualityFilter = e.target.value;
+        this.filterAndRenderData();
+      });
+      
+      // Refresh button
+      document.getElementById('refreshTable').addEventListener('click', () => {
+        this.loadData();
+      });
+      
+      // Pagination
+      document.getElementById('prevPage').addEventListener('click', () => {
+        if (this.currentPage > 1) {
+          this.currentPage--;
+          this.renderTable();
+        }
+      });
+      
+      document.getElementById('nextPage').addEventListener('click', () => {
+        const totalPages = Math.ceil(this.filteredData.length / this.pageSize);
+        if (this.currentPage < totalPages) {
+          this.currentPage++;
+          this.renderTable();
+        }
+      });
+    }
+    
+    async loadData() {
+      try {
+        document.getElementById('tableLoading').style.display = 'table-row';
+        document.getElementById('emptyState').classList.add('hidden');
+        
+        const response = await fetch('/data_quality/data_sources', {
+          headers: {
+            'Accept': 'application/json',
+            'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch data sources');
+        }
+        
+        this.data = await response.json();
+        this.filterAndRenderData();
+        
+      } catch (error) {
+        console.error('Error loading data sources:', error);
+        this.showEmptyState();
+      } finally {
+        document.getElementById('tableLoading').style.display = 'none';
+      }
+    }
+    
+    filterAndRenderData() {
+      this.filteredData = this.data.filter(item => {
+        // Search filter
+        const matchesSearch = !this.searchTerm || 
+          item.name.toLowerCase().includes(this.searchTerm) ||
+          item.source_type.toLowerCase().includes(this.searchTerm);
+        
+        // Quality filter
+        const matchesQuality = this.qualityFilter === 'all' || 
+          this.getQualityCategory(item.current_score) === this.qualityFilter;
+        
+        return matchesSearch && matchesQuality;
+      });
+      
+      // Sort data
+      this.sortData();
+      
+      // Reset to first page
+      this.currentPage = 1;
+      
+      this.renderTable();
+    }
+    
+    sortData() {
+      this.filteredData.sort((a, b) => {
+        let aValue, bValue;
+        
+        switch (this.sortField) {
+          case 'name':
+            aValue = a.name.toLowerCase();
+            bValue = b.name.toLowerCase();
+            break;
+          case 'score':
+            aValue = a.current_score || 0;
+            bValue = b.current_score || 0;
+            break;
+          case 'trend':
+            aValue = a.trend || 'stable';
+            bValue = b.trend || 'stable';
+            break;
+          case 'issues':
+            aValue = a.issues_count || 0;
+            bValue = b.issues_count || 0;
+            break;
+          case 'lastValidation':
+            aValue = new Date(a.last_validation || 0);
+            bValue = new Date(b.last_validation || 0);
+            break;
+          default:
+            return 0;
+        }
+        
+        if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    
+    renderTable() {
+      const tbody = document.getElementById('dataSourcesTableBody');
+      
+      if (this.filteredData.length === 0) {
+        this.showEmptyState();
+        return;
+      }
+      
+      document.getElementById('emptyState').classList.add('hidden');
+      
+      // Calculate pagination
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = Math.min(startIndex + this.pageSize, this.filteredData.length);
+      const pageData = this.filteredData.slice(startIndex, endIndex);
+      
+      // Render rows
+      tbody.innerHTML = pageData.map(item => this.renderRow(item)).join('');
+      
+      // Update pagination
+      this.updatePagination();
+    }
+    
+    renderRow(item) {
+      const qualityCategory = this.getQualityCategory(item.current_score);
+      const qualityColor = this.getQualityColor(item.current_score);
+      const trendIcon = this.getTrendIcon(item.trend);
+      const trendColor = this.getTrendColor(item.trend);
+      
+      return `
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                  <span class="text-sm font-medium text-gray-600">${item.name.charAt(0).toUpperCase()}</span>
+                </div>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">${item.name}</div>
+                <div class="text-sm text-gray-500">${item.source_type.charAt(0).toUpperCase() + item.source_type.slice(1)}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-1">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-medium ${qualityColor}">${item.current_score || 0}%</span>
+                  <span class="text-xs text-gray-500">${qualityCategory}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="${this.getProgressColor(item.current_score)} h-2 rounded-full" style="width: ${item.current_score || 0}%"></div>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              ${this.renderDimensionScores(item.dimension_scores)}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center space-x-1">
+              ${trendIcon}
+              <span class="text-sm ${trendColor}">${(item.trend || 'stable').charAt(0).toUpperCase() + (item.trend || 'stable').slice(1)}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              (item.issues_count || 0) > 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+            }">
+              ${item.issues_count || 0} ${(item.issues_count || 0) === 1 ? 'issue' : 'issues'}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            ${item.last_validation ? this.formatDate(item.last_validation) : 'Never'}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <a href="/data_quality/${item.id}" class="text-blue-600 hover:text-blue-900">View Details</a>
+          </td>
+        </tr>
+      `;
+    }
+    
+    renderDimensionScores(scores) {
+      if (!scores) return '<span class="text-gray-400">No data</span>';
+      
+      const dimensions = ['completeness', 'accuracy', 'consistency', 'validity'];
+      return dimensions.map(dim => {
+        const score = scores[dim];
+        if (score === undefined) return '';
+        
+        return `
+          <div class="flex justify-between">
+            <span class="text-gray-600">${dim.charAt(0).toUpperCase() + dim.slice(1)}:</span>
+            <span class="font-medium ${this.getQualityColor(score)}">${score}%</span>
+          </div>
+        `;
+      }).filter(Boolean).join('');
+    }
+    
+    getQualityCategory(score) {
+      if (score >= 90) return 'excellent';
+      if (score >= 80) return 'good';
+      if (score >= 70) return 'fair';
+      if (score >= 50) return 'poor';
+      return 'critical';
+    }
+    
+    getQualityColor(score) {
+      if (score >= 90) return 'text-green-600';
+      if (score >= 80) return 'text-blue-600';
+      if (score >= 70) return 'text-yellow-600';
+      if (score >= 50) return 'text-orange-600';
+      return 'text-red-600';
+    }
+    
+    getProgressColor(score) {
+      if (score >= 90) return 'bg-green-500';
+      if (score >= 80) return 'bg-blue-500';
+      if (score >= 70) return 'bg-yellow-500';
+      if (score >= 50) return 'bg-orange-500';
+      return 'bg-red-500';
+    }
+    
+    getTrendIcon(trend) {
+      switch (trend) {
+        case 'improving':
+          return '<svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>';
+        case 'declining':
+          return '<svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>';
+        default:
+          return '<svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>';
+      }
+    }
+    
+    getTrendColor(trend) {
+      switch (trend) {
+        case 'improving': return 'text-green-600';
+        case 'declining': return 'text-red-600';
+        default: return 'text-gray-600';
+      }
+    }
+    
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+      
+      if (diffMins < 60) {
+        return `${diffMins}m ago`;
+      } else if (diffHours < 24) {
+        return `${diffHours}h ago`;
+      } else if (diffDays < 7) {
+        return `${diffDays}d ago`;
+      } else {
+        return date.toLocaleDateString();
+      }
+    }
+    
+    updatePagination() {
+      const totalPages = Math.ceil(this.filteredData.length / this.pageSize);
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = Math.min(startIndex + this.pageSize, this.filteredData.length);
+      
+      document.getElementById('paginationStart').textContent = startIndex + 1;
+      document.getElementById('paginationEnd').textContent = endIndex;
+      document.getElementById('paginationTotal').textContent = this.filteredData.length;
+      
+      document.getElementById('prevPage').disabled = this.currentPage === 1;
+      document.getElementById('nextPage').disabled = this.currentPage === totalPages;
+      
+      // Show/hide pagination
+      const paginationEl = document.getElementById('tablePagination');
+      if (totalPages > 1) {
+        paginationEl.classList.remove('hidden');
+      } else {
+        paginationEl.classList.add('hidden');
+      }
+    }
+    
+    showEmptyState() {
+      document.getElementById('dataSourcesTableBody').innerHTML = '';
+      document.getElementById('emptyState').classList.remove('hidden');
+      document.getElementById('tablePagination').classList.add('hidden');
+    }
+  }
+  
+  // Global sort function
+  function sortTable(field) {
+    if (window.dataSourcesTable) {
+      if (window.dataSourcesTable.sortField === field) {
+        window.dataSourcesTable.sortDirection = window.dataSourcesTable.sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        window.dataSourcesTable.sortField = field;
+        window.dataSourcesTable.sortDirection = 'asc';
+      }
+      window.dataSourcesTable.filterAndRenderData();
+    }
+  }
+  
+  // Initialize table when DOM is loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    window.dataSourcesTable = new DataSourcesQualityTable();
+  });
+</script>

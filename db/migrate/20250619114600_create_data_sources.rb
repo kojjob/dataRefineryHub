@@ -14,11 +14,11 @@ class CreateDataSources < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
-    add_index :data_sources, [:organization_id, :name], unique: true
+
+    add_index :data_sources, [ :organization_id, :name ], unique: true
     add_index :data_sources, :source_type
     add_index :data_sources, :status
     add_index :data_sources, :next_sync_at
-    add_index :data_sources, [:status, :next_sync_at]
+    add_index :data_sources, [ :status, :next_sync_at ]
   end
 end

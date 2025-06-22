@@ -1,0 +1,198 @@
+<div class="visualization-builder"
+     data-controller="visualization-builder"
+     data-visualization-builder-data-value="<%= @processed_data.to_json if @processed_data %>"
+     data-visualization-builder-columns-value="<%= @columns.to_json if @columns %>"
+     data-visualization-builder-data-source-id-value="<%= @data_source.id %>">
+  
+  <div class="visualization-builder__header p-6">
+  
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h3 class="text-xl font-bold text-gray-900">📊 Data Visualization Builder</h3>
+        <p class="text-sm text-gray-600 mt-1">Create stunning interactive charts and graphs from your uploaded data</p>
+      </div>
+      <div class="flex space-x-3">
+        <button data-action="click->visualization-builder#exportChart"
+                data-visualization-builder-target="exportBtn"
+                class="visualization-builder__button visualization-builder__button--secondary">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          Export Chart
+        </button>
+        <button data-action="click->visualization-builder#saveVisualization"
+                data-visualization-builder-target="saveBtn"
+                class="visualization-builder__button visualization-builder__button--primary">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
+          </svg>
+          Save Visualization
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart Configuration -->
+  <div class="p-6 pt-0">
+    <div class="visualization-builder__controls p-6 mb-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        <!-- Chart Type -->
+        <div class="visualization-builder__control-group">
+          <label>Chart Type</label>
+          <select data-visualization-builder-target="chartType"
+                  data-action="change->visualization-builder#updateChart"
+                  class="visualization-builder__select">
+            <option value="bar">📊 Bar Chart</option>
+            <option value="line">📈 Line Chart</option>
+            <option value="pie">🥧 Pie Chart</option>
+            <option value="doughnut">🍩 Doughnut</option>
+            <option value="horizontalBar">📊 Horizontal Bar</option>
+          </select>
+        </div>
+
+        <!-- X-Axis Column -->
+        <div class="visualization-builder__control-group">
+          <label>X-Axis Column</label>
+          <select data-visualization-builder-target="xColumn"
+                  data-action="change->visualization-builder#updateChart"
+                  class="visualization-builder__select">
+            <option value="">Select column...</option>
+          </select>
+        </div>
+
+        <!-- Y-Axis Column -->
+        <div class="visualization-builder__control-group">
+          <label>Y-Axis Column</label>
+          <select data-visualization-builder-target="yColumn"
+                  data-action="change->visualization-builder#updateChart"
+                  class="visualization-builder__select">
+            <option value="">Select column...</option>
+          </select>
+        </div>
+
+        <!-- Aggregation -->
+        <div class="visualization-builder__control-group">
+          <label>Aggregation Method</label>
+          <select data-visualization-builder-target="aggregation"
+                  data-action="change->visualization-builder#updateChart"
+                  class="visualization-builder__select">
+            <option value="sum">📊 Sum</option>
+            <option value="avg">📐 Average</option>
+            <option value="count">🔢 Count</option>
+            <option value="max">⬆️ Maximum</option>
+            <option value="min">⬇️ Minimum</option>
+          </select>
+        </div>
+
+        <!-- Filter Column -->
+        <div class="visualization-builder__control-group">
+          <label>Filter By Column</label>
+          <select data-visualization-builder-target="filterColumn"
+                  data-action="change->visualization-builder#updateChart"
+                  class="visualization-builder__select">
+            <option value="">🚫 No filter</option>
+          </select>
+        </div>
+
+        <!-- Filter Value -->
+        <div class="visualization-builder__control-group">
+          <label>Filter Value</label>
+          <input type="text"
+                 data-visualization-builder-target="filterValue"
+                 data-action="input->visualization-builder#updateChart"
+                 placeholder="Enter filter value..."
+                 class="visualization-builder__input">
+        </div>
+
+        <!-- Chart Title -->
+        <div class="visualization-builder__control-group">
+          <label>Chart Title</label>
+          <input type="text"
+                 data-visualization-builder-target="chartTitle"
+                 data-action="input->visualization-builder#updateChart"
+                 placeholder="Enter descriptive title..."
+                 class="visualization-builder__input">
+        </div>
+      </div>
+    </div>
+    <!-- Chart Display -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <!-- Chart -->
+      <div class="xl:col-span-2">
+        <div class="visualization-builder__chart-container">
+          <div class="visualization-builder__chart-wrapper">
+            <canvas data-visualization-builder-target="canvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="xl:col-span-1">
+        <div class="visualization-builder__data-table">
+          <div class="p-4 border-b border-gray-200">
+            <h4 class="font-semibold text-gray-900 flex items-center">
+              <span class="mr-2">📋</span>
+              Processed Data Preview
+            </h4>
+            <p class="text-xs text-gray-500 mt-1">Live preview of your chart data</p>
+          </div>
+          <div class="p-4">
+            <div data-visualization-builder-target="dataTable">
+              <div class="text-center py-8">
+                <div class="visualization-builder__loading-spinner"></div>
+                <p class="text-gray-500 text-sm">Configure chart settings to see data preview</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart Insights -->
+  <div class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="visualization-builder__insight-card bg-gradient-to-br from-blue-50 to-indigo-100 p-5 rounded-xl">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+              <span class="text-white text-lg">📊</span>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-semibold text-blue-900">Interactive Charts</h3>
+            <p class="text-xs text-blue-700 mt-1">Hover over chart elements for detailed tooltips and insights</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="visualization-builder__insight-card bg-gradient-to-br from-green-50 to-emerald-100 p-5 rounded-xl">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+              <span class="text-white text-lg">🔍</span>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-semibold text-green-900">Smart Filtering</h3>
+            <p class="text-xs text-green-700 mt-1">Filter data dynamically to focus on specific data segments</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="visualization-builder__insight-card bg-gradient-to-br from-purple-50 to-violet-100 p-5 rounded-xl">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+              <span class="text-white text-lg">💾</span>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-semibold text-purple-900">Export & Share</h3>
+            <p class="text-xs text-purple-700 mt-1">Download charts as high-quality images or save configurations</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

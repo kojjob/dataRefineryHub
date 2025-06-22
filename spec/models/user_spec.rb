@@ -10,11 +10,11 @@ RSpec.describe User, type: :model do
 
   describe 'validations' do
     subject { build(:user) }
-    
+
     it { should validate_presence_of(:email) }
     it { should validate_presence_of(:first_name) }
     it { should validate_presence_of(:last_name) }
-    
+
     it 'validates role inclusion' do
       valid_roles = %w[owner admin member viewer]
       valid_roles.each do |role|
@@ -23,14 +23,14 @@ RSpec.describe User, type: :model do
         user = build(:user, role: role, organization: organization)
         expect(user).to be_valid
       end
-      
+
       organization = create(:organization)
       create(:user, organization: organization) # Ensure first user exists
       user = build(:user, role: 'invalid_role', organization: organization)
       expect(user).not_to be_valid
       expect(user.errors[:role]).to include('is not included in the list')
     end
-    
+
     it 'validates email uniqueness within organization' do
       organization = create(:organization)
       existing_user = create(:user, organization: organization)
@@ -51,18 +51,18 @@ RSpec.describe User, type: :model do
   describe 'scopes' do
     let(:organization1) { create(:organization) }
     let(:organization2) { create(:organization) }
-    
+
     before do
       # Create users with different roles, avoiding conflicts with first-user-is-owner rule
       @owner = create(:user, role: 'owner', organization: organization1)
       @admin = create(:user, role: 'admin', organization: organization1)
       @member = create(:user, role: 'member', organization: organization1)
       @viewer = create(:user, role: 'viewer', organization: organization1)
-      
+
       # Create separate users for confirmation tests in different org
       @confirmed_user = create(:user, organization: organization2, role: 'member')
       @confirmed_user.update_column(:confirmed_at, 1.day.ago)
-      
+
       @pending_user = create(:user, organization: organization2, role: 'member')
       @pending_user.update_column(:confirmed_at, nil)
     end
@@ -95,7 +95,7 @@ RSpec.describe User, type: :model do
       it 'sets default role to member for non-first users' do
         organization = create(:organization)
         create(:user, organization: organization) # Create first user
-        
+
         user = build(:user, organization: organization, role: nil)
         user.valid?
         expect(user.role).to eq('member')
@@ -103,7 +103,7 @@ RSpec.describe User, type: :model do
 
       it 'sets first user in organization as owner' do
         organization = create(:organization)
-        
+
         user = build(:user, organization: organization, role: nil)
         user.valid?
         expect(user.role).to eq('owner')

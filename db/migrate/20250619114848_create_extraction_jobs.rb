@@ -17,12 +17,12 @@ class CreateExtractionJobs < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
+
     add_index :extraction_jobs, :job_id, unique: true
     add_index :extraction_jobs, :status
     add_index :extraction_jobs, :priority
     add_index :extraction_jobs, :next_retry_at
-    add_index :extraction_jobs, [:status, :priority]
-    add_index :extraction_jobs, [:data_source_id, :status]
+    add_index :extraction_jobs, [ :status, :priority ]
+    add_index :extraction_jobs, [ :data_source_id, :status ]
   end
 end

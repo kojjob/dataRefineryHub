@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :upload_log do
     association :scheduled_upload
-    
+
     status { 'completed' }
     started_at { 1.hour.ago }
     completed_at { 30.minutes.ago }
@@ -9,24 +9,24 @@ FactoryBot.define do
     files_failed { 0 }
     details { {} }
     error_message { nil }
-    
+
     trait :pending do
       status { 'pending' }
       completed_at { nil }
     end
-    
+
     trait :running do
       status { 'running' }
       completed_at { nil }
     end
-    
+
     trait :failed do
       status { 'failed' }
       files_processed { 0 }
       files_failed { 1 }
       error_message { 'File processing failed' }
     end
-    
+
     trait :completed_with_errors do
       status { 'completed_with_errors' }
       files_processed { 2 }
@@ -43,7 +43,7 @@ FactoryBot.define do
         }
       end
     end
-    
+
     trait :with_processed_files do
       details do
         {
@@ -54,7 +54,7 @@ FactoryBot.define do
         }
       end
     end
-    
+
     trait :with_errors do
       details do
         {

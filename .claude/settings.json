@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "don't ask complete the tasks"
+    ],
+    "deny": []
+  }
+}

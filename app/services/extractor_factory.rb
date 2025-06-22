@@ -6,21 +6,21 @@ class ExtractorFactory
   # Registry of available extractors
   EXTRACTORS = {
     # E-commerce platforms - use generic EcommerceExtractor with adapters
-    'shopify' => 'ConcreteEcommerceExtractor',
-    'woocommerce' => 'ConcreteEcommerceExtractor',
-    'amazon_seller_central' => 'ConcreteEcommerceExtractor',
-    
+    "shopify" => "ConcreteEcommerceExtractor",
+    "woocommerce" => "ConcreteEcommerceExtractor",
+    "amazon_seller_central" => "ConcreteEcommerceExtractor",
+
     # Other platform-specific extractors
-    'quickbooks' => 'QuickbooksExtractor',
-    'google_analytics' => 'GoogleAnalyticsExtractor',
-    'stripe' => 'StripeExtractor',
-    'mailchimp' => 'MailchimpExtractor',
-    'zendesk' => 'ZendeskExtractor',
-    'hubspot' => 'HubspotExtractor',
-    'google_ads' => 'GoogleAdsExtractor',
-    'facebook_ads' => 'FacebookAdsExtractor',
-    'salesforce' => 'SalesforceExtractor',
-    'custom_api' => 'CustomApiExtractor'
+    "quickbooks" => "QuickbooksExtractor",
+    "google_analytics" => "GoogleAnalyticsExtractor",
+    "stripe" => "StripeExtractor",
+    "mailchimp" => "MailchimpExtractor",
+    "zendesk" => "ZendeskExtractor",
+    "hubspot" => "HubspotExtractor",
+    "google_ads" => "GoogleAdsExtractor",
+    "facebook_ads" => "FacebookAdsExtractor",
+    "salesforce" => "SalesforceExtractor",
+    "custom_api" => "CustomApiExtractor"
   }.freeze
 
   class << self
@@ -68,7 +68,7 @@ class ExtractorFactory
     # Get metadata for all extractors
     def extractor_metadata
       result = {}
-      
+
       EXTRACTORS.each do |source_type, class_name|
         begin
           extractor_class = class_name.constantize
@@ -91,7 +91,7 @@ class ExtractorFactory
           }
         end
       end
-      
+
       result
     end
 
@@ -115,7 +115,7 @@ class ExtractorFactory
       extractor = create_extractor(data_source)
       extractor.test_connection
     rescue UnsupportedSourceTypeError => e
-      { status: :error, message: e.message, error_type: 'UnsupportedSourceType' }
+      { status: :error, message: e.message, error_type: "UnsupportedSourceType" }
     rescue => e
       { status: :error, message: e.message, error_type: e.class.name }
     end

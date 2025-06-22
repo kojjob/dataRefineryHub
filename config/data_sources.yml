@@ -1,0 +1,183 @@
+# Data Source Configurations
+# This file defines all available data sources and their properties
+
+default: &default
+  shopify:
+    name: 'Shopify'
+    description: 'Connect your Shopify store for real-time order and customer data'
+    status: 'available'
+    implemented: true
+    sync_type: 'real-time'
+    category: 'ecommerce'
+    icon: 'shopify'
+    priority: 1
+    settings:
+      webhook_support: true
+      rate_limit: 40 # requests per second
+      timeout: 30
+
+  woocommerce:
+    name: 'WooCommerce'
+    description: 'Sync your WooCommerce store data automatically'
+    status: 'available'
+    implemented: true
+    sync_type: 'real-time'
+    category: 'ecommerce'
+    icon: 'woocommerce'
+    priority: 2
+    settings:
+      webhook_support: true
+      rate_limit: 20
+      timeout: 30
+
+  amazon_seller_central:
+    name: 'Amazon Seller Central'
+    description: 'Import your Amazon marketplace data'
+    status: 'available'
+    implemented: true
+    sync_type: 'scheduled'
+    category: 'ecommerce'
+    icon: 'amazon'
+    priority: 3
+    settings:
+      webhook_support: false
+      rate_limit: 10
+      timeout: 60
+      sync_frequency: 'daily'
+
+  quickbooks:
+    name: 'QuickBooks'
+    description: 'Sync your accounting data from QuickBooks'
+    status: 'coming_soon'
+    implemented: false
+    sync_type: 'scheduled'
+    category: 'accounting'
+    icon: 'quickbooks'
+    priority: 4
+    settings:
+      webhook_support: true
+      rate_limit: 15
+      timeout: 45
+      oauth_required: true
+
+  stripe:
+    name: 'Stripe'
+    description: 'Connect your Stripe payment data'
+    status: 'available'
+    implemented: true
+    sync_type: 'real-time'
+    category: 'payments'
+    icon: 'stripe'
+    priority: 5
+    settings:
+      webhook_support: true
+      rate_limit: 100
+      timeout: 30
+
+  file_upload:
+    name: 'File Upload'
+    description: 'Direct file import for CSV, Excel, and JSON files'
+    status: 'available'
+    implemented: true
+    sync_type: 'manual'
+    category: 'manual'
+    icon: 'upload'
+    priority: 6
+    settings:
+      max_size_mb: 50
+      accepted_types:
+        - 'csv'
+        - 'xlsx'
+        - 'xls'
+        - 'json'
+        - 'txt'
+      processing_timeout: 300
+      virus_scan: true
+      content_validation: true
+
+  google_analytics:
+    name: 'Google Analytics'
+    description: 'Import your website analytics data'
+    status: 'coming_soon'
+    implemented: false
+    sync_type: 'scheduled'
+    category: 'analytics'
+    icon: 'google-analytics'
+    priority: 7
+    settings:
+      webhook_support: false
+      rate_limit: 5
+      timeout: 120
+      oauth_required: true
+      sync_frequency: 'daily'
+
+development:
+  <<: *default
+  # Development-specific overrides
+  file_upload:
+    name: 'File Upload'
+    description: 'Direct file import for CSV, Excel, and JSON files (Development)'
+    status: 'available'
+    implemented: true
+    sync_type: 'manual'
+    category: 'manual'
+    icon: 'upload'
+    priority: 6
+    settings:
+      max_size_mb: 10 # Smaller limit for development
+      accepted_types:
+        - 'csv'
+        - 'xlsx'
+        - 'xls'
+        - 'json'
+        - 'txt'
+      processing_timeout: 60
+      virus_scan: false # Disabled for development
+      content_validation: true
+
+test:
+  <<: *default
+  # Test-specific overrides
+  file_upload:
+    name: 'File Upload'
+    description: 'Direct file import for CSV, Excel, and JSON files (Test)'
+    status: 'available'
+    implemented: true
+    sync_type: 'manual'
+    category: 'manual'
+    icon: 'upload'
+    priority: 6
+    settings:
+      max_size_mb: 1 # Very small limit for tests
+      accepted_types:
+        - 'csv'
+        - 'json'
+      processing_timeout: 10
+      virus_scan: false
+      content_validation: true
+
+production:
+  <<: *default
+  # Production-specific overrides
+  file_upload:
+    name: 'File Upload'
+    description: 'Direct file import for CSV, Excel, and JSON files'
+    status: 'available'
+    implemented: true
+    sync_type: 'manual'
+    category: 'manual'
+    icon: 'upload'
+    priority: 6
+    settings:
+      max_size_mb: 100 # Larger limit for production
+      accepted_types:
+        - 'csv'
+        - 'xlsx'
+        - 'xls'
+        - 'json'
+        - 'txt'
+        - 'tsv'
+      processing_timeout: 600
+      virus_scan: true
+      content_validation: true
+      backup_enabled: true

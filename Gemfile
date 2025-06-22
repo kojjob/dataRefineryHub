@@ -113,7 +113,7 @@ group :development do
   gem "listen"
   gem "spring"
   gem "spring-watcher-listen"
-  
+
   # Performance and profiling
   gem "bullet"
   gem "rack-mini-profiler"

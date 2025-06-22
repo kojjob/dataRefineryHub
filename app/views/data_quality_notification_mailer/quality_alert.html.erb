@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Data Quality Alert</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 8px 8px 0 0;
+        text-align: center;
+      }
+      .content {
+        background: #fff;
+        padding: 30px;
+        border: 1px solid #e1e5e9;
+        border-top: none;
+      }
+      .alert-box {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 6px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .critical-alert {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+      }
+      .score-display {
+        text-align: center;
+        margin: 25px 0;
+      }
+      .score-circle {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #dc3545;
+        color: white;
+        line-height: 80px;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .score-good { background: #28a745; }
+      .score-warning { background: #ffc107; color: #333; }
+      .score-danger { background: #dc3545; }
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin: 25px 0;
+      }
+      .metric-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        text-align: center;
+      }
+      .metric-value {
+        font-size: 20px;
+        font-weight: bold;
+        color: #495057;
+      }
+      .metric-label {
+        font-size: 12px;
+        color: #6c757d;
+        text-transform: uppercase;
+        margin-top: 5px;
+      }
+      .issues-list {
+        background: #f8f9fa;
+        border-radius: 6px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .issue-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #e9ecef;
+      }
+      .issue-item:last-child {
+        border-bottom: none;
+      }
+      .issue-severity {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+      .severity-high {
+        background: #dc3545;
+        color: white;
+      }
+      .severity-medium {
+        background: #ffc107;
+        color: #333;
+      }
+      .severity-low {
+        background: #28a745;
+        color: white;
+      }
+      .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 500;
+        margin: 10px 5px;
+      }
+      .btn:hover {
+        background: #0056b3;
+      }
+      .footer {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 0 0 8px 8px;
+        text-align: center;
+        font-size: 14px;
+        color: #6c757d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>⚠️ Data Quality Alert</h1>
+      <p>Quality issues detected in your data source</p>
+    </div>
+    
+    <div class="content">
+      <div class="<%= @report.overall_score < 50 ? 'critical-alert' : 'alert-box' %>">
+        <h3>Data Source: <%= @data_source.name %></h3>
+        <p><strong>Organization:</strong> <%= @organization.name %></p>
+        <p><strong>Alert Time:</strong> <%= @report.created_at.strftime('%B %d, %Y at %I:%M %p') %></p>
+      </div>
+      
+      <div class="score-display">
+        <div class="score-circle <%= @report.overall_score >= 80 ? 'score-good' : @report.overall_score >= 60 ? 'score-warning' : 'score-danger' %>">
+          <%= @report.overall_score.round %>%
+        </div>
+        <p><strong>Overall Quality Score</strong></p>
+        <p>Status: <strong><%= @report.quality_status.titleize %></strong></p>
+      </div>
+      
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value"><%= @report.completeness_score.round %>%</div>
+          <div class="metric-label">Completeness</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value"><%= @report.accuracy_score.round %>%</div>
+          <div class="metric-label">Accuracy</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value"><%= @report.consistency_score.round %>%</div>
+          <div class="metric-label">Consistency</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value"><%= @report.validity_score.round %>%</div>
+          <div class="metric-label">Validity</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value"><%= @report.timeliness_score.round %>%</div>
+          <div class="metric-label">Timeliness</div>
+        </div>
+      </div>
+      
+      <% if @report.issues.any? %>
+        <div class="issues-list">
+          <h4>Issues Detected (<%= @report.issues_count %>)</h4>
+          <% @report.issues.first(5).each do |issue| %>
+            <div class="issue-item">
+              <span class="issue-severity severity-<%= issue['severity'] || 'medium' %>">
+                <%= (issue['severity'] || 'medium').upcase %>
+              </span>
+              <strong><%= issue['message'] %></strong>
+              <% if issue['count'] %>
+                <span style="color: #6c757d;">(<%= issue['count'] %> occurrences)</span>
+              <% end %>
+            </div>
+          <% end %>
+          <% if @report.issues.count > 5 %>
+            <p style="margin-top: 15px; color: #6c757d;">
+              ... and <%= @report.issues.count - 5 %> more issues
+            </p>
+          <% end %>
+        </div>
+      <% end %>
+      
+      <% if @report.recommendations.any? %>
+        <div class="issues-list">
+          <h4>Recommended Actions</h4>
+          <% @report.recommendations.first(3).each do |rec| %>
+            <div class="issue-item">
+              <strong><%= rec['title'] %></strong>
+              <p style="margin: 5px 0; color: #6c757d;"><%= rec['description'] %></p>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+      
+      <div style="text-align: center; margin-top: 30px;">
+        <a href="<%= data_quality_url(@data_source) %>" class="btn">
+          View Detailed Report
+        </a>
+        <a href="<%= data_source_url(@data_source) %>" class="btn" style="background: #6c757d;">
+          Manage Data Source
+        </a>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>This is an automated notification from Data Refinery Platform.</p>
+      <p>You're receiving this because you have data quality monitoring enabled for this data source.</p>
+      <p>To unsubscribe from these alerts, please update your notification preferences in your account settings.</p>
+    </div>
+  </body>
+</html>

@@ -2,24 +2,23 @@
 # This replaces platform-specific extractors like ShopifyExtractor
 
 # Load schemas and adapters
-require_relative 'ecommerce/schemas/standard_order'
-require_relative 'ecommerce/schemas/standard_customer'
-require_relative 'ecommerce/schemas/standard_product'
-require_relative 'ecommerce/schemas/standard_inventory'
-require_relative 'ecommerce/ecommerce_adapter'
-require_relative 'ecommerce/adapters/shopify_adapter'
-require_relative 'ecommerce/adapters/woocommerce_adapter'
+require_relative "ecommerce/schemas/standard_order"
+require_relative "ecommerce/schemas/standard_customer"
+require_relative "ecommerce/schemas/standard_product"
+require_relative "ecommerce/schemas/standard_inventory"
+require_relative "ecommerce/ecommerce_adapter"
+require_relative "ecommerce/adapters/shopify_adapter"
+require_relative "ecommerce/adapters/woocommerce_adapter"
 
 class ConcreteEcommerceExtractor < EcommerceExtractor
-  
   # Override abstract method to create appropriate adapter
   def create_adapter
     adapter_class = EcommerceAdapter.get_adapter_class(data_source.source_type)
-    
+
     unless adapter_class
       raise AdapterNotFoundError, "No adapter found for platform: #{data_source.source_type}"
     end
-    
+
     adapter_class.new(data_source)
   end
 

@@ -8,43 +8,43 @@ class StandardInventory
   # Core inventory identification
   attribute :external_id, :string # composite ID for uniqueness
   attribute :platform_name, :string # shopify, woocommerce, amazon, etc.
-  
+
   # Product/Variant relationship
   attribute :product_external_id, :string
   attribute :variant_external_id, :string
   attribute :inventory_item_id, :string # Platform-specific inventory item ID
-  
+
   # Location information
   attribute :location_id, :string
   attribute :location_name, :string
   attribute :location_type, :string # warehouse, store, dropshipper, etc.
-  
+
   # Inventory levels
   attribute :available_quantity, :integer
   attribute :committed_quantity, :integer # reserved for orders
   attribute :incoming_quantity, :integer # expected from suppliers
   attribute :on_hand_quantity, :integer # physical count
-  
+
   # Product information (denormalized for analytics)
   attribute :sku, :string
   attribute :product_title, :string
   attribute :variant_title, :string
-  
+
   # Inventory management
   attribute :tracked, :boolean # whether this item is tracked
   attribute :policy, :string # deny, continue (when out of stock)
   attribute :cost_per_item, :decimal
   attribute :currency, :string
-  
+
   # Reorder information
   attribute :reorder_point, :integer
   attribute :reorder_quantity, :integer
   attribute :supplier_name, :string
-  
+
   # Timestamps
   attribute :updated_at, :datetime
   attribute :last_count_at, :datetime
-  
+
   # Additional platform-specific data
   attribute :platform_data
 
@@ -81,7 +81,7 @@ class StandardInventory
   end
 
   def overstocked?
-    reorder_point && reorder_quantity && 
+    reorder_point && reorder_quantity &&
     available_quantity > (reorder_point + reorder_quantity * 2)
   end
 
@@ -112,11 +112,11 @@ class StandardInventory
   # Create from platform-specific data
   def self.from_platform_data(platform_name, raw_data, location_data = {})
     case platform_name.to_s
-    when 'shopify'
+    when "shopify"
       from_shopify_data(raw_data, location_data)
-    when 'woocommerce'
+    when "woocommerce"
       from_woocommerce_data(raw_data, location_data)
-    when 'amazon'
+    when "amazon"
       from_amazon_data(raw_data, location_data)
     else
       raise ArgumentError, "Unsupported platform: #{platform_name}"
@@ -128,24 +128,24 @@ class StandardInventory
     # Shopify inventory levels are per location per inventory item
     new(
       external_id: "#{shopify_inventory['inventory_item_id']}_#{shopify_inventory['location_id']}",
-      platform_name: 'shopify',
-      
-      inventory_item_id: shopify_inventory['inventory_item_id']&.to_s,
-      
-      location_id: shopify_inventory['location_id']&.to_s,
-      location_name: location_data['name'],
-      location_type: normalize_shopify_location_type(location_data['type']),
-      
-      available_quantity: shopify_inventory['available'],
-      
+      platform_name: "shopify",
+
+      inventory_item_id: shopify_inventory["inventory_item_id"]&.to_s,
+
+      location_id: shopify_inventory["location_id"]&.to_s,
+      location_name: location_data["name"],
+      location_type: normalize_shopify_location_type(location_data["type"]),
+
+      available_quantity: shopify_inventory["available"],
+
       tracked: true, # Shopify tracks if we have the data
-      
-      updated_at: shopify_inventory['updated_at'],
-      
+
+      updated_at: shopify_inventory["updated_at"],
+
       platform_data: {
-        shopify_inventory_item_id: shopify_inventory['inventory_item_id'],
-        shopify_location_id: shopify_inventory['location_id'],
-        admin_graphql_api_id: shopify_inventory['admin_graphql_api_id']
+        shopify_inventory_item_id: shopify_inventory["inventory_item_id"],
+        shopify_location_id: shopify_inventory["location_id"],
+        admin_graphql_api_id: shopify_inventory["admin_graphql_api_id"]
       }
     )
   end
@@ -154,32 +154,32 @@ class StandardInventory
     # WooCommerce products have inventory at product/variant level
     new(
       external_id: "#{wc_product['id']}_default",
-      platform_name: 'woocommerce',
-      
-      product_external_id: wc_product['id']&.to_s,
-      variant_external_id: wc_product['id']&.to_s, # Same for simple products
-      
-      location_id: 'default',
-      location_name: 'Default Location',
-      location_type: 'warehouse',
-      
-      available_quantity: wc_product['stock_quantity'],
-      on_hand_quantity: wc_product['stock_quantity'],
-      
-      sku: wc_product['sku'],
-      product_title: wc_product['name'],
-      variant_title: 'Default',
-      
-      tracked: wc_product['manage_stock'],
-      policy: wc_product['backorders'] == 'no' ? 'deny' : 'continue',
-      
-      updated_at: wc_product['date_modified'],
-      
+      platform_name: "woocommerce",
+
+      product_external_id: wc_product["id"]&.to_s,
+      variant_external_id: wc_product["id"]&.to_s, # Same for simple products
+
+      location_id: "default",
+      location_name: "Default Location",
+      location_type: "warehouse",
+
+      available_quantity: wc_product["stock_quantity"],
+      on_hand_quantity: wc_product["stock_quantity"],
+
+      sku: wc_product["sku"],
+      product_title: wc_product["name"],
+      variant_title: "Default",
+
+      tracked: wc_product["manage_stock"],
+      policy: wc_product["backorders"] == "no" ? "deny" : "continue",
+
+      updated_at: wc_product["date_modified"],
+
       platform_data: {
-        woocommerce_id: wc_product['id'],
-        stock_status: wc_product['stock_status'],
-        backorders: wc_product['backorders'],
-        low_stock_amount: wc_product['low_stock_amount']
+        woocommerce_id: wc_product["id"],
+        stock_status: wc_product["stock_status"],
+        backorders: wc_product["backorders"],
+        low_stock_amount: wc_product["low_stock_amount"]
       }
     )
   end
@@ -188,35 +188,35 @@ class StandardInventory
     # Amazon FBA inventory data
     new(
       external_id: "#{amazon_inventory['SellerSKU']}_#{amazon_inventory['FulfillmentChannelSKU']}",
-      platform_name: 'amazon',
-      
-      inventory_item_id: amazon_inventory['SellerSKU'],
-      
-      location_id: amazon_inventory['FulfillmentChannelSKU'],
-      location_name: 'Amazon Fulfillment Center',
-      location_type: 'warehouse',
-      
-      available_quantity: amazon_inventory['TotalSupplyQuantity'],
-      committed_quantity: amazon_inventory['ReservedQuantity'],
-      incoming_quantity: amazon_inventory['InboundWorkingQuantity'],
-      on_hand_quantity: amazon_inventory['TotalSupplyQuantity'],
-      
-      sku: amazon_inventory['SellerSKU'],
-      
+      platform_name: "amazon",
+
+      inventory_item_id: amazon_inventory["SellerSKU"],
+
+      location_id: amazon_inventory["FulfillmentChannelSKU"],
+      location_name: "Amazon Fulfillment Center",
+      location_type: "warehouse",
+
+      available_quantity: amazon_inventory["TotalSupplyQuantity"],
+      committed_quantity: amazon_inventory["ReservedQuantity"],
+      incoming_quantity: amazon_inventory["InboundWorkingQuantity"],
+      on_hand_quantity: amazon_inventory["TotalSupplyQuantity"],
+
+      sku: amazon_inventory["SellerSKU"],
+
       tracked: true,
-      
-      updated_at: amazon_inventory['LastUpdatedTime'],
-      
+
+      updated_at: amazon_inventory["LastUpdatedTime"],
+
       platform_data: {
-        seller_sku: amazon_inventory['SellerSKU'],
-        fulfillment_channel_sku: amazon_inventory['FulfillmentChannelSKU'],
-        asin: amazon_inventory['ASIN'],
-        condition: amazon_inventory['Condition'],
-        inbound_working_quantity: amazon_inventory['InboundWorkingQuantity'],
-        inbound_shipped_quantity: amazon_inventory['InboundShippedQuantity'],
-        inbound_receiving_quantity: amazon_inventory['InboundReceivingQuantity'],
-        reserved_quantity: amazon_inventory['ReservedQuantity'],
-        unfulfillable_quantity: amazon_inventory['UnfulfillableQuantity']
+        seller_sku: amazon_inventory["SellerSKU"],
+        fulfillment_channel_sku: amazon_inventory["FulfillmentChannelSKU"],
+        asin: amazon_inventory["ASIN"],
+        condition: amazon_inventory["Condition"],
+        inbound_working_quantity: amazon_inventory["InboundWorkingQuantity"],
+        inbound_shipped_quantity: amazon_inventory["InboundShippedQuantity"],
+        inbound_receiving_quantity: amazon_inventory["InboundReceivingQuantity"],
+        reserved_quantity: amazon_inventory["ReservedQuantity"],
+        unfulfillable_quantity: amazon_inventory["UnfulfillableQuantity"]
       }
     )
   end
@@ -224,10 +224,10 @@ class StandardInventory
   # Helper methods for location type normalization
   def self.normalize_shopify_location_type(location_type)
     case location_type&.downcase
-    when 'retail' then 'store'
-    when 'warehouse' then 'warehouse'
-    when 'dropshipper' then 'dropshipper'
-    else 'warehouse'
+    when "retail" then "store"
+    when "warehouse" then "warehouse"
+    when "dropshipper" then "dropshipper"
+    else "warehouse"
     end
   end
 

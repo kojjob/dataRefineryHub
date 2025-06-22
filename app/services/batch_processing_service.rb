@@ -38,12 +38,12 @@ class BatchProcessingService
     transformation_config = EtlConfigurationManager.batch_config(:transformation)
     validation_config = EtlConfigurationManager.batch_config(:validation)
     storage_config = EtlConfigurationManager.batch_config(:storage)
-    
+
     base_config = BATCH_CONFIGS[operation_type] || BATCH_CONFIGS[:extraction]
     enhanced_config = base_config.merge({
       adaptive_sizing_enabled: extraction_config[:adaptive_sizing_enabled]
     })
-    
+
     @config = enhanced_config.merge(custom_config)
     @metrics = BatchMetrics.new(operation_type)
     @logger = Rails.logger
@@ -78,7 +78,7 @@ class BatchProcessingService
 
     total_duration = Time.current - start_time
     @logger.info "Batch processing completed: #{processed_count} items in #{total_duration.round(2)}s"
-    
+
     @metrics.finalize(total_duration, processed_count)
     results
   end
@@ -88,29 +88,29 @@ class BatchProcessingService
     return [] if data.empty?
 
     @logger.info "Starting parallel batch processing with #{max_threads} threads"
-    
+
     batch_size = calculate_optimal_batch_size(data)
     batches = data.each_slice(batch_size).to_a
     results = []
     mutex = Mutex.new
-    
+
     # Use thread pool for parallel processing
     threads = []
     batch_queue = Queue.new
-    
+
     # Fill the queue with batches
-    batches.each_with_index { |batch, index| batch_queue << [batch, index + 1] }
-    
+    batches.each_with_index { |batch, index| batch_queue << [ batch, index + 1 ] }
+
     # Create worker threads
     max_threads.times do
       threads << Thread.new do
         while !batch_queue.empty?
           begin
             batch, batch_number = batch_queue.pop(true)
-            
+
             batch_start_time = Time.current
             batch_result = yield(batch, batch_number)
-            
+
             mutex.synchronize do
               results.concat(Array(batch_result))
               @metrics.record_batch(
@@ -120,7 +120,7 @@ class BatchProcessingService
                 success: true
               )
             end
-            
+
           rescue ThreadError
             # Queue is empty, exit thread
             break
@@ -139,10 +139,10 @@ class BatchProcessingService
         end
       end
     end
-    
+
     # Wait for all threads to complete
     threads.each(&:join)
-    
+
     @logger.info "Parallel batch processing completed: #{results.size} results"
     results
   end
@@ -162,20 +162,20 @@ class BatchProcessingService
   def calculate_optimal_batch_size(data)
     # Start with default size
     base_size = @config[:default_size]
-    
+
     # Adjust based on data characteristics
     if data.respond_to?(:first) && data.first
       estimated_item_size = estimate_item_size(data.first)
       memory_based_size = @config[:memory_threshold] / estimated_item_size
-      base_size = [base_size, memory_based_size].min
+      base_size = [ base_size, memory_based_size ].min
     end
-    
+
     # Apply historical performance adjustments
     performance_adjustment = @metrics.suggested_batch_size_adjustment
     adjusted_size = (base_size * performance_adjustment).to_i
-    
+
     # Ensure within bounds
-    [[adjusted_size, @config[:min_size]].max, @config[:max_size]].min
+    [ [ adjusted_size, @config[:min_size] ].max, @config[:max_size] ].min
   end
 
   def estimate_item_size(item)
@@ -194,19 +194,19 @@ class BatchProcessingService
   def adjust_batch_size_if_needed(duration, memory_used)
     # If processing is too slow, reduce batch size
     if duration > 30.seconds
-      @config[:default_size] = [@config[:default_size] * 0.8, @config[:min_size]].max.to_i
+      @config[:default_size] = [ @config[:default_size] * 0.8, @config[:min_size] ].max.to_i
       @logger.debug "Reduced batch size to #{@config[:default_size]} due to slow processing"
     end
-    
+
     # If memory usage is too high, reduce batch size
     if memory_used > @config[:memory_threshold]
-      @config[:default_size] = [@config[:default_size] * 0.7, @config[:min_size]].max.to_i
+      @config[:default_size] = [ @config[:default_size] * 0.7, @config[:min_size] ].max.to_i
       @logger.debug "Reduced batch size to #{@config[:default_size]} due to high memory usage"
     end
-    
+
     # If processing is fast and memory usage is low, increase batch size
     if duration < 5.seconds && memory_used < @config[:memory_threshold] * 0.5
-      @config[:default_size] = [@config[:default_size] * 1.2, @config[:max_size]].min.to_i
+      @config[:default_size] = [ @config[:default_size] * 1.2, @config[:max_size] ].min.to_i
       @logger.debug "Increased batch size to #{@config[:default_size]} due to efficient processing"
     end
   end
@@ -221,8 +221,8 @@ class BatchProcessingService
   def should_halt_on_error?(error)
     # Halt on critical errors, continue on transient ones
     case error
-    when ActiveRecord::RecordNotFound, 
-         NoMethodError, 
+    when ActiveRecord::RecordNotFound,
+         NoMethodError,
          ArgumentError,
          BaseExtractor::DataValidationError
       true
@@ -262,7 +262,7 @@ class BatchProcessingService
       @total_memory_used += memory_used
       @batch_durations << duration
       @batch_sizes << size
-      
+
       if success
         @successful_batches += 1
       else
@@ -295,9 +295,9 @@ class BatchProcessingService
 
     def suggested_batch_size_adjustment
       return 1.0 if @batch_durations.empty?
-      
+
       avg_duration = @batch_durations.sum / @batch_durations.size
-      
+
       # Suggest adjustment based on average processing time
       case avg_duration
       when 0..5
@@ -315,21 +315,21 @@ class BatchProcessingService
 
     def process_single_batch(batch, batch_number, results, total_items, processed_count, &block)
       batch_start_time = Time.current
-      
+
       begin
         @logger.debug "Processing batch #{batch_number} (#{batch.size} items)"
-        
+
         # Monitor memory usage before processing
         memory_before = get_memory_usage
-        
+
         # Process the batch
         batch_result = yield(batch, batch_number)
         results.concat(Array(batch_result))
-        
+
         # Monitor memory usage after processing
         memory_after = get_memory_usage
         memory_used = memory_after - memory_before
-        
+
         # Update metrics
         batch_duration = Time.current - batch_start_time
         @metrics.record_batch(
@@ -338,24 +338,24 @@ class BatchProcessingService
           memory_used: memory_used,
           success: true
         )
-        
+
         # Adaptive batch sizing based on performance
         adjust_batch_size_if_needed(batch_duration, memory_used)
-        
+
         # Memory pressure relief
         if memory_used > @config[:memory_threshold]
           @logger.debug "High memory usage detected (#{memory_used.to_f / 1.megabyte}MB), triggering GC"
           GC.start
         end
-        
+
         # Progress logging
         if batch_number % 10 == 0
           progress = ((processed_count + batch.size).to_f / total_items * 100).round(1)
           @logger.info "Batch processing progress: #{progress}% (#{processed_count + batch.size}/#{total_items})"
         end
-        
-        return batch.size
-        
+
+        batch.size
+
       rescue => error
         @metrics.record_batch(
           size: batch.size,
@@ -364,16 +364,16 @@ class BatchProcessingService
           success: false,
           error: error
         )
-        
+
         @logger.error "Batch #{batch_number} failed: #{error.message}"
-        
+
         # Decide whether to continue or halt based on error type
         if should_halt_on_error?(error)
           @logger.error "Halting batch processing due to critical error"
           raise error
         else
           @logger.warn "Continuing batch processing despite error in batch #{batch_number}"
-          return 0
+          0
         end
       end
     end

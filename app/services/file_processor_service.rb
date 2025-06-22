@@ -1,10 +1,10 @@
 class FileProcessorService
   include ActiveModel::Model
-  
+
   attr_accessor :data_source, :file, :user
 
   SUPPORTED_EXTENSIONS = %w[.csv .xlsx .xls .json .txt .xml .parquet .tsv .yaml .yml].freeze
-  
+
   def initialize(data_source:, file:, user:)
     @data_source = data_source
     @file = file
@@ -13,23 +13,23 @@ class FileProcessorService
 
   def process!
     validate_file!
-    
+
     case file_extension
-    when '.csv'
+    when ".csv"
       process_csv_file
-    when '.xlsx', '.xls'
+    when ".xlsx", ".xls"
       process_excel_file
-    when '.json'
+    when ".json"
       process_json_file
-    when '.txt'
+    when ".txt"
       process_text_file
-    when '.xml'
+    when ".xml"
       process_xml_file
-    when '.parquet'
+    when ".parquet"
       process_parquet_file
-    when '.tsv'
+    when ".tsv"
       process_tsv_file
-    when '.yaml', '.yml'
+    when ".yaml", ".yml"
       process_yaml_file
     else
       raise UnsupportedFileTypeError, "Unsupported file type: #{file_extension}"
@@ -38,19 +38,19 @@ class FileProcessorService
 
   def preview_data(limit: 10)
     case file_extension
-    when '.csv'
+    when ".csv"
       preview_csv_data(limit)
-    when '.xlsx', '.xls'
+    when ".xlsx", ".xls"
       preview_excel_data(limit)
-    when '.json'
+    when ".json"
       preview_json_data(limit)
-    when '.xml'
+    when ".xml"
       preview_xml_data(limit)
-    when '.parquet'
+    when ".parquet"
       preview_parquet_data(limit)
-    when '.tsv'
+    when ".tsv"
       preview_tsv_data(limit)
-    when '.yaml', '.yml'
+    when ".yaml", ".yml"
       preview_yaml_data(limit)
     else
       []
@@ -59,19 +59,19 @@ class FileProcessorService
 
   def analyze_structure
     case file_extension
-    when '.csv'
+    when ".csv"
       analyze_csv_structure
-    when '.xlsx', '.xls'
+    when ".xlsx", ".xls"
       analyze_excel_structure
-    when '.json'
+    when ".json"
       analyze_json_structure
-    when '.xml'
+    when ".xml"
       analyze_xml_structure
-    when '.parquet'
+    when ".parquet"
       analyze_parquet_structure
-    when '.tsv'
+    when ".tsv"
       analyze_tsv_structure
-    when '.yaml', '.yml'
+    when ".yaml", ".yml"
       analyze_yaml_structure
     else
       {}
@@ -83,11 +83,11 @@ class FileProcessorService
   def validate_file!
     raise ArgumentError, "File is required" unless file
     raise ArgumentError, "Data source is required" unless data_source
-    
+
     unless SUPPORTED_EXTENSIONS.include?(file_extension)
       raise UnsupportedFileTypeError, "Unsupported file extension: #{file_extension}"
     end
-    
+
     if file_size > 50.megabytes
       raise FileSizeError, "File size exceeds 50MB limit"
     end
@@ -108,18 +108,18 @@ class FileProcessorService
   def file_path
     @file_path ||= if file.respond_to?(:tempfile)
                      file.tempfile.path
-                   elsif file.respond_to?(:path)
+    elsif file.respond_to?(:path)
                      file.path
-                   else
+    else
                      # For Active Storage attachments
                      file.download
-                   end
+    end
   end
 
   # CSV Processing
   def process_csv_file
     records = []
-    
+
     begin
       SmarterCSV.process(file_path, {
         chunk_size: 100,
@@ -127,14 +127,14 @@ class FileProcessorService
         strip_whitespace: false
       }) do |chunk|
         chunk.each do |row_data|
-          records << create_raw_data_record(row_data, 'csv_row')
+          records << create_raw_data_record(row_data, "csv_row")
         end
       end
     rescue => e
       Rails.logger.error "CSV processing error: #{e.message}"
       raise FileProcessingError, "Failed to process CSV file: #{e.message}"
     end
-    
+
     {
       total_records: records.length,
       sample_data: records.first(5),
@@ -144,7 +144,7 @@ class FileProcessorService
 
   def preview_csv_data(limit)
     return [] unless File.exist?(file_path)
-    
+
     SmarterCSV.process(file_path, {
       chunk_size: limit,
       remove_empty_values: false
@@ -156,19 +156,19 @@ class FileProcessorService
 
   def analyze_csv_structure
     return {} unless File.exist?(file_path)
-    
+
     begin
       # Read first few rows to analyze structure
       sample_data = SmarterCSV.process(file_path, chunk_size: 100).first(100)
-      
+
       return {} if sample_data.empty?
-      
+
       headers = sample_data.first.keys
       column_analysis = {}
-      
+
       headers.each do |header|
         column_data = sample_data.map { |row| row[header] }.compact
-        
+
         column_analysis[header] = {
           data_type: detect_column_type(column_data),
           sample_values: column_data.first(5),
@@ -176,7 +176,7 @@ class FileProcessorService
           unique_count: column_data.uniq.length
         }
       end
-      
+
       {
         total_rows: sample_data.length,
         total_columns: headers.length,
@@ -193,26 +193,26 @@ class FileProcessorService
   # Excel Processing
   def process_excel_file
     records = []
-    
+
     begin
       workbook = Roo::Spreadsheet.open(file_path)
       default_sheet = workbook.default_sheet
-      
+
       headers = workbook.row(1).map(&:to_s)
-      
+
       (2..workbook.last_row).each do |row_num|
         row_data = {}
         headers.each_with_index do |header, index|
           row_data[header.underscore.to_sym] = workbook.cell(row_num, index + 1)
         end
-        
-        records << create_raw_data_record(row_data, 'excel_row')
+
+        records << create_raw_data_record(row_data, "excel_row")
       end
     rescue => e
       Rails.logger.error "Excel processing error: #{e.message}"
       raise FileProcessingError, "Failed to process Excel file: #{e.message}"
     end
-    
+
     {
       total_records: records.length,
       sample_data: records.first(5),
@@ -222,20 +222,20 @@ class FileProcessorService
 
   def preview_excel_data(limit)
     return [] unless File.exist?(file_path)
-    
+
     begin
       workbook = Roo::Spreadsheet.open(file_path)
       headers = workbook.row(1).map(&:to_s)
-      
+
       preview_data = []
-      (2..[workbook.last_row, limit + 1].min).each do |row_num|
+      (2..[ workbook.last_row, limit + 1 ].min).each do |row_num|
         row_data = {}
         headers.each_with_index do |header, index|
           row_data[header.underscore.to_sym] = workbook.cell(row_num, index + 1)
         end
         preview_data << row_data
       end
-      
+
       preview_data
     rescue => e
       Rails.logger.error "Excel preview error: #{e.message}"
@@ -245,26 +245,26 @@ class FileProcessorService
 
   def analyze_excel_structure
     return {} unless File.exist?(file_path)
-    
+
     begin
       workbook = Roo::Spreadsheet.open(file_path)
       headers = workbook.row(1).map(&:to_s)
-      
+
       # Sample first 100 rows for analysis
       sample_data = []
-      (2..[workbook.last_row, 101].min).each do |row_num|
+      (2..[ workbook.last_row, 101 ].min).each do |row_num|
         row_data = {}
         headers.each_with_index do |header, index|
           row_data[header.underscore.to_sym] = workbook.cell(row_num, index + 1)
         end
         sample_data << row_data
       end
-      
+
       column_analysis = {}
       headers.each do |header|
         header_sym = header.underscore.to_sym
         column_data = sample_data.map { |row| row[header_sym] }.compact
-        
+
         column_analysis[header] = {
           data_type: detect_column_type(column_data),
           sample_values: column_data.first(5),
@@ -272,7 +272,7 @@ class FileProcessorService
           unique_count: column_data.uniq.length
         }
       end
-      
+
       {
         total_rows: workbook.last_row - 1, # Exclude header row
         total_columns: headers.length,
@@ -290,19 +290,19 @@ class FileProcessorService
   # JSON Processing
   def process_json_file
     records = []
-    
+
     begin
       file_content = File.read(file_path)
       json_data = JSON.parse(file_content)
-      
+
       case json_data
       when Array
         json_data.each_with_index do |item, index|
-          records << create_raw_data_record(item, 'json_item', { index: index })
+          records << create_raw_data_record(item, "json_item", { index: index })
         end
       when Hash
         # Single object
-        records << create_raw_data_record(json_data, 'json_object')
+        records << create_raw_data_record(json_data, "json_object")
       else
         raise FileProcessingError, "Unsupported JSON structure"
       end
@@ -312,7 +312,7 @@ class FileProcessorService
       Rails.logger.error "JSON processing error: #{e.message}"
       raise FileProcessingError, "Failed to process JSON file: #{e.message}"
     end
-    
+
     {
       total_records: records.length,
       sample_data: records.first(5),
@@ -322,16 +322,16 @@ class FileProcessorService
 
   def preview_json_data(limit)
     return [] unless File.exist?(file_path)
-    
+
     begin
       file_content = File.read(file_path)
       json_data = JSON.parse(file_content)
-      
+
       case json_data
       when Array
         json_data.first(limit)
       when Hash
-        [json_data]
+        [ json_data ]
       else
         []
       end
@@ -343,22 +343,22 @@ class FileProcessorService
 
   def analyze_json_structure
     return {} unless File.exist?(file_path)
-    
+
     begin
       file_content = File.read(file_path)
       json_data = JSON.parse(file_content)
-      
+
       case json_data
       when Array
         return {} if json_data.empty?
-        
+
         sample_items = json_data.first(100)
         all_keys = sample_items.flat_map(&:keys).uniq
-        
+
         column_analysis = {}
         all_keys.each do |key|
           values = sample_items.map { |item| item[key] }.compact
-          
+
           column_analysis[key] = {
             data_type: detect_column_type(values),
             sample_values: values.first(5),
@@ -366,9 +366,9 @@ class FileProcessorService
             unique_count: values.uniq.length
           }
         end
-        
+
         {
-          structure_type: 'array',
+          structure_type: "array",
           total_items: json_data.length,
           total_fields: all_keys.length,
           fields: all_keys,
@@ -376,7 +376,7 @@ class FileProcessorService
         }
       when Hash
         {
-          structure_type: 'object',
+          structure_type: "object",
           total_fields: json_data.keys.length,
           fields: json_data.keys,
           sample_data: json_data
@@ -393,11 +393,11 @@ class FileProcessorService
     begin
       file_content = File.read(file_path)
       lines = file_content.lines.map(&:strip).reject(&:empty?)
-      
+
       records = lines.each_with_index.map do |line, index|
-        create_raw_data_record({ content: line, line_number: index + 1 }, 'text_line')
+        create_raw_data_record({ content: line, line_number: index + 1 }, "text_line")
       end
-      
+
       {
         total_records: records.length,
         sample_data: records.first(5),
@@ -412,43 +412,43 @@ class FileProcessorService
   # XML Processing
   def process_xml_file
     begin
-      require 'nokogiri'
-      
+      require "nokogiri"
+
       file_content = File.read(file_path)
       doc = Nokogiri::XML(file_content)
-      
+
       # Find the root element's children or use a common pattern
-      rows = doc.xpath('//row') # Try common 'row' pattern first
+      rows = doc.xpath("//row") # Try common 'row' pattern first
       if rows.empty?
         # If no 'row' elements, use the first level children of root
         rows = doc.root.children.select(&:element?)
       end
-      
+
       records = []
-      
+
       rows.each_with_index do |row, index|
         begin
           row_data = {}
-          
+
           # Extract attributes
           row.attributes.each do |name, attr|
             row_data[name] = attr.value
           end
-          
+
           # Extract child elements
           row.children.select(&:element?).each do |child|
             row_data[child.name] = child.text
           end
-          
+
           # Add row number if no other identifier
-          row_data['xml_row_number'] = index + 1 if row_data.empty?
-          
-          records << create_raw_data_record(row_data, 'xml_row')
+          row_data["xml_row_number"] = index + 1 if row_data.empty?
+
+          records << create_raw_data_record(row_data, "xml_row")
         rescue => e
           Rails.logger.warn "Error processing XML row #{index + 1}: #{e.message}"
         end
       end
-      
+
       {
         total_records: records.length,
         sample_data: records.first(5),
@@ -475,18 +475,18 @@ class FileProcessorService
   # TSV Processing
   def process_tsv_file
     begin
-      require 'csv'
-      
+      require "csv"
+
       records = []
-      
-      CSV.foreach(file_path, col_sep: "\t", headers: true, encoding: 'UTF-8') do |row|
+
+      CSV.foreach(file_path, col_sep: "\t", headers: true, encoding: "UTF-8") do |row|
         begin
-          records << create_raw_data_record(row.to_h, 'tsv_row')
+          records << create_raw_data_record(row.to_h, "tsv_row")
         rescue => e
           Rails.logger.warn "Error processing TSV row: #{e.message}"
         end
       end
-      
+
       {
         total_records: records.length,
         sample_data: records.first(5),
@@ -501,21 +501,21 @@ class FileProcessorService
   # YAML Processing
   def process_yaml_file
     begin
-      require 'yaml'
-      
+      require "yaml"
+
       file_content = File.read(file_path)
       data = YAML.safe_load(file_content)
-      
+
       records = []
-      
+
       case data
       when Array
         data.each_with_index do |item, index|
           begin
             if item.is_a?(Hash)
-              records << create_raw_data_record(item, 'yaml_item')
+              records << create_raw_data_record(item, "yaml_item")
             else
-              records << create_raw_data_record({ 'value' => item, 'index' => index }, 'yaml_item')
+              records << create_raw_data_record({ "value" => item, "index" => index }, "yaml_item")
             end
           rescue => e
             Rails.logger.warn "Error processing YAML item #{index}: #{e.message}"
@@ -523,14 +523,14 @@ class FileProcessorService
         end
       when Hash
         begin
-          records << create_raw_data_record(data, 'yaml_object')
+          records << create_raw_data_record(data, "yaml_object")
         rescue => e
           Rails.logger.warn "Error processing YAML hash: #{e.message}"
         end
       else
-        records << create_raw_data_record({ 'value' => data }, 'yaml_value')
+        records << create_raw_data_record({ "value" => data }, "yaml_value")
       end
-      
+
       {
         total_records: records.length,
         sample_data: records.first(5),
@@ -544,33 +544,33 @@ class FileProcessorService
 
   def preview_xml_data(limit)
     return [] unless File.exist?(file_path)
-    
+
     begin
-      require 'nokogiri'
-      
+      require "nokogiri"
+
       file_content = File.read(file_path)
       doc = Nokogiri::XML(file_content)
-      
-      rows = doc.xpath('//row')
+
+      rows = doc.xpath("//row")
       if rows.empty?
         rows = doc.root.children.select(&:element?)
       end
-      
+
       preview_data = []
       rows.first(limit).each do |row|
         row_data = {}
-        
+
         row.attributes.each do |name, attr|
           row_data[name] = attr.value
         end
-        
+
         row.children.select(&:element?).each do |child|
           row_data[child.name] = child.text
         end
-        
+
         preview_data << row_data
       end
-      
+
       preview_data
     rescue => e
       Rails.logger.error "XML preview error: #{e.message}"
@@ -584,16 +584,16 @@ class FileProcessorService
 
   def preview_tsv_data(limit)
     return [] unless File.exist?(file_path)
-    
+
     begin
-      require 'csv'
-      
+      require "csv"
+
       preview_data = []
-      CSV.foreach(file_path, col_sep: "\t", headers: true, encoding: 'UTF-8').with_index do |row, index|
+      CSV.foreach(file_path, col_sep: "\t", headers: true, encoding: "UTF-8").with_index do |row, index|
         break if index >= limit
         preview_data << row.to_h
       end
-      
+
       preview_data
     rescue => e
       Rails.logger.error "TSV preview error: #{e.message}"
@@ -603,20 +603,20 @@ class FileProcessorService
 
   def preview_yaml_data(limit)
     return [] unless File.exist?(file_path)
-    
+
     begin
-      require 'yaml'
-      
+      require "yaml"
+
       file_content = File.read(file_path)
       data = YAML.safe_load(file_content)
-      
+
       case data
       when Array
         data.first(limit)
       when Hash
-        [data]
+        [ data ]
       else
-        [{ 'value' => data }]
+        [ { "value" => data } ]
       end
     rescue => e
       Rails.logger.error "YAML preview error: #{e.message}"
@@ -626,26 +626,26 @@ class FileProcessorService
 
   def analyze_xml_structure
     return {} unless File.exist?(file_path)
-    
+
     begin
-      require 'nokogiri'
-      
+      require "nokogiri"
+
       file_content = File.read(file_path)
       doc = Nokogiri::XML(file_content)
-      
-      rows = doc.xpath('//row')
+
+      rows = doc.xpath("//row")
       if rows.empty?
         rows = doc.root.children.select(&:element?)
       end
-      
+
       sample_rows = rows.first(100)
       all_fields = Set.new
-      
+
       sample_rows.each do |row|
         row.attributes.each { |name, _| all_fields.add(name) }
         row.children.select(&:element?).each { |child| all_fields.add(child.name) }
       end
-      
+
       {
         total_rows: rows.length,
         total_fields: all_fields.length,
@@ -664,24 +664,24 @@ class FileProcessorService
 
   def analyze_tsv_structure
     return {} unless File.exist?(file_path)
-    
+
     begin
-      require 'csv'
-      
+      require "csv"
+
       sample_data = []
-      CSV.foreach(file_path, col_sep: "\t", headers: true, encoding: 'UTF-8').with_index do |row, index|
+      CSV.foreach(file_path, col_sep: "\t", headers: true, encoding: "UTF-8").with_index do |row, index|
         break if index >= 100
         sample_data << row.to_h
       end
-      
+
       return {} if sample_data.empty?
-      
+
       headers = sample_data.first.keys
       column_analysis = {}
-      
+
       headers.each do |header|
         column_data = sample_data.map { |row| row[header] }.compact
-        
+
         column_analysis[header] = {
           data_type: detect_column_type(column_data),
           sample_values: column_data.first(5),
@@ -689,7 +689,7 @@ class FileProcessorService
           unique_count: column_data.uniq.length
         }
       end
-      
+
       {
         total_rows: sample_data.length,
         total_columns: headers.length,
@@ -705,35 +705,35 @@ class FileProcessorService
 
   def analyze_yaml_structure
     return {} unless File.exist?(file_path)
-    
+
     begin
-      require 'yaml'
-      
+      require "yaml"
+
       file_content = File.read(file_path)
       data = YAML.safe_load(file_content)
-      
+
       case data
       when Array
         return {} if data.empty?
-        
+
         sample_items = data.first(100)
         all_keys = sample_items.select { |item| item.is_a?(Hash) }.flat_map(&:keys).uniq
-        
+
         {
-          structure_type: 'array',
+          structure_type: "array",
           total_items: data.length,
           total_fields: all_keys.length,
           fields: all_keys
         }
       when Hash
         {
-          structure_type: 'object',
+          structure_type: "object",
           total_fields: data.keys.length,
           fields: data.keys
         }
       else
         {
-          structure_type: 'primitive',
+          structure_type: "primitive",
           data_type: data.class.name.downcase
         }
       end
@@ -755,11 +755,11 @@ class FileProcessorService
           filename: original_filename,
           file_size: file_size,
           processed_at: Time.current,
-          processor_version: '1.0'
+          processor_version: "1.0"
         }.merge(metadata)
       }
     )
-    
+
     if raw_data_record.save
       raw_data_record
     else
@@ -775,65 +775,65 @@ class FileProcessorService
   end
 
   def detect_column_type(values)
-    return 'unknown' if values.empty?
-    
+    return "unknown" if values.empty?
+
     sample_values = values.compact.first(10)
-    
+
     # Check for numeric types
     if sample_values.all? { |v| v.to_s.match?(/^\d+$/) }
-      'integer'
+      "integer"
     elsif sample_values.all? { |v| v.to_s.match?(/^\d+\.?\d*$/) }
-      'decimal'
+      "decimal"
     elsif sample_values.all? { |v| v.to_s.match?(/^\d{4}-\d{2}-\d{2}/) }
-      'date'
+      "date"
     elsif sample_values.all? { |v| v.to_s.match?(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/) }
-      'datetime'
+      "datetime"
     elsif sample_values.all? { |v| %w[true false].include?(v.to_s.downcase) }
-      'boolean'
+      "boolean"
     elsif sample_values.all? { |v| v.to_s.match?(/^[^@]+@[^@]+\.[^@]+$/) }
-      'email'
+      "email"
     elsif sample_values.all? { |v| v.to_s.match?(/^https?:\/\//) }
-      'url'
+      "url"
     else
-      'text'
+      "text"
     end
   end
 
   def suggest_transformations(column_analysis)
     suggestions = []
-    
+
     column_analysis.each do |column, analysis|
       case analysis[:data_type]
-      when 'date', 'datetime'
+      when "date", "datetime"
         suggestions << {
           column: column,
-          transformation: 'parse_date',
+          transformation: "parse_date",
           description: "Parse #{column} as date/time for time-series analysis"
         }
-      when 'email'
+      when "email"
         suggestions << {
           column: column,
-          transformation: 'extract_domain',
+          transformation: "extract_domain",
           description: "Extract domain from #{column} for customer segmentation"
         }
-      when 'text'
+      when "text"
         if analysis[:unique_count] < analysis[:sample_values].length * 0.5
           suggestions << {
             column: column,
-            transformation: 'categorize',
+            transformation: "categorize",
             description: "Treat #{column} as categorical data for grouping"
           }
         end
       end
     end
-    
+
     suggestions
   end
 
   def generate_processing_summary(records)
     successful_records = records.compact.length
     failed_records = records.count(&:nil?)
-    
+
     {
       total_processed: records.length,
       successful: successful_records,

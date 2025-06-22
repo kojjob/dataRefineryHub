@@ -20,9 +20,9 @@ class CreateScheduledUploads < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    add_index :scheduled_uploads, [:data_source_id, :active]
+    add_index :scheduled_uploads, [ :data_source_id, :active ]
     add_index :scheduled_uploads, :next_run_at
     add_index :scheduled_uploads, :frequency
-    add_index :scheduled_uploads, [:user_id, :active]
+    add_index :scheduled_uploads, [ :user_id, :active ]
   end
 end

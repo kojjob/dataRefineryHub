@@ -221,35 +221,36 @@ export default class extends Controller {
   }
 
   selectSource(event) {
-    const sourceType = event.currentTarget.dataset.sourceType
-    const metadata = this.sourceMetadata[sourceType]
+    const sourceCard = event.currentTarget;
+    const sourceType = sourceCard.dataset.sourceType;
+    const sourceStatus = sourceCard.dataset.sourceStatus;
     
-    if (!metadata || metadata.status === 'coming_soon') {
-      this.showComingSoonMessage(metadata.name)
-      return
+    // Check if source is available and implemented
+    if (sourceStatus === 'coming_soon') {
+      const sourceData = this.sourceMetadata[sourceType];
+      this.showComingSoonMessage(sourceData ? sourceData.name : sourceType);
+      return;
     }
 
     // Update radio button
-    const radioButton = event.currentTarget.querySelector('input[type="radio"]')
-    if (radioButton) {
-      radioButton.checked = true
-      this.selectedTypeValue = sourceType
+    const radioButton = sourceCard.querySelector('input[type="radio"]');
+    if (radioButton && !radioButton.disabled) {
+      radioButton.checked = true;
+      this.selectedTypeValue = sourceType;
     }
 
     // Update visual selection
     this.sourceCardTargets.forEach(card => {
-      card.classList.remove('ring-2', 'ring-indigo-500', 'border-indigo-500')
-      card.classList.add('border-gray-200')
-    })
-
-    event.currentTarget.classList.add('ring-2', 'ring-indigo-500', 'border-indigo-500')
-    event.currentTarget.classList.remove('border-gray-200')
+      card.classList.remove('ring-2', 'ring-blue-500', 'border-blue-500');
+    });
+    
+    sourceCard.classList.add('ring-2', 'ring-blue-500', 'border-blue-500');
 
     // Update selected source display
-    this.updateSelectedSourceDisplay(sourceType, metadata)
+    this.updateSelectedSourceDisplay(sourceType);
 
-    // Trigger custom event for wizard controller
-    this.dispatch('sourceSelected', { detail: { sourceType, metadata } })
+    // Dispatch custom event
+    this.dispatch('sourceSelected', { detail: { sourceType, status: sourceStatus } });
   }
 
   updateSelectedSourceDisplay(sourceType, metadata) {
@@ -274,35 +275,36 @@ export default class extends Controller {
 
   getStatusBadge(status) {
     const badges = {
-      'available': '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Available</span>',
-      'beta': '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Beta</span>',
-      'coming_soon': '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Coming Soon</span>'
-    }
-    return badges[status] || ''
+      'available': '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Available</span>',
+      'beta': '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Beta</span>',
+      'coming_soon': '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Coming Soon</span>'
+    };
+    
+    return badges[status] || badges['available'];
+  }
+
+  // Add method to handle clicks on disabled sources
+  handleDisabledSourceClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const sourceCard = event.currentTarget;
+    const sourceType = sourceCard.dataset.sourceType;
+    const sourceData = this.sourceMetadata[sourceType];
+    
+    this.showComingSoonMessage(sourceData ? sourceData.name : sourceType);
   }
 
   showComingSoonMessage(sourceName) {
-    const message = document.createElement('div')
-    message.className = 'fixed top-4 right-4 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded z-50 max-w-sm'
-    message.innerHTML = `
-      <div class="flex items-center">
-        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-        </svg>
-        <div>
-          <p class="font-medium">${sourceName} Coming Soon!</p>
-          <p class="text-sm">This integration is in development. We'll notify you when it's available.</p>
-        </div>
-      </div>
-    `
-
-    document.body.appendChild(message)
-
-    setTimeout(() => {
-      if (message.parentNode) {
-        document.body.removeChild(message)
-      }
-    }, 5000)
+    // Create a more user-friendly notification
+    const message = `${sourceName} integration is currently in development. We're working hard to bring you this feature. Sign up for updates to be notified when it's available.`;
+    
+    // You can replace this with a toast notification or modal for better UX
+    if (window.showToast) {
+      window.showToast(message, 'info');
+    } else {
+      alert(message);
+    }
   }
 
   checkNoResults() {

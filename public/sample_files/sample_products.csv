@@ -1,0 +1,11 @@
+product_id,product_name,category,price,stock_quantity,supplier,description,created_date,last_updated
+PROD001,Wireless Bluetooth Headphones,Electronics,79.99,150,AudioTech Inc,High-quality wireless headphones with noise cancellation,2024-01-10,2024-01-24
+PROD002,Organic Coffee Beans,Food & Beverage,24.99,89,Mountain Roasters,Premium organic coffee beans from sustainable farms,2024-01-11,2024-01-23
+PROD003,Yoga Mat Premium,Sports & Fitness,45.50,75,FitLife Products,Non-slip premium yoga mat with carrying strap,2024-01-12,2024-01-22
+PROD004,Smartphone Case,Electronics,19.99,200,TechGuard,Protective case for latest smartphone models,2024-01-13,2024-01-21
+PROD005,Desk Lamp LED,Home & Office,65.00,45,BrightLight Co,Adjustable LED desk lamp with USB charging port,2024-01-14,2024-01-20
+PROD006,Running Shoes,Sports & Fitness,129.99,60,SportMax,Lightweight running shoes with advanced cushioning,2024-01-15,2024-01-19
+PROD007,Notebook Set,Stationery,12.99,120,PaperCraft,Set of 3 premium notebooks with lined pages,2024-01-16,2024-01-18
+PROD008,Water Bottle,Sports & Fitness,22.50,95,HydroFlow,Insulated stainless steel water bottle 750ml,2024-01-17,2024-01-17
+PROD009,Wireless Mouse,Electronics,35.99,110,TechPro,Ergonomic wireless mouse with precision tracking,2024-01-18,2024-01-16
+PROD010,Plant Pot Ceramic,Home & Garden,18.75,80,GreenThumb,Decorative ceramic plant pot with drainage holes,2024-01-19,2024-01-15

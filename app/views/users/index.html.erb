@@ -1,25 +1,37 @@
 <% content_for :title, "Team Members" %>
 
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-  <!-- Header -->
-  <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 shadow-2xl">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <div class="h-12 w-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-            </svg>
-          </div>
-          <div>
-            <h1 class="text-3xl font-bold text-white">Team Members</h1>
-            <p class="text-indigo-100 mt-1">Manage your organization's users and permissions</p>
-          </div>
+<!-- Enhanced Upcube-inspired Team Management -->
+<div class="min-h-screen bg-gray-50" data-controller="user-management">
+  
+  <!-- Page Header -->
+  <div class="mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex items-center gap-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100">
+          <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+          </svg>
         </div>
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Team Members</h1>
+          <p class="mt-2 text-gray-600">Manage your organization's users, roles, and permissions</p>
+        </div>
+      </div>
+      
+      <div class="mt-4 sm:mt-0 sm:ml-4 flex items-center gap-3">
+        <!-- Export Users -->
+        <button class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors duration-200"
+                data-action="click->user-management#exportUsers">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Export
+        </button>
+        
         <% if policy(User).create? %>
-          <%= link_to new_user_path, class: "inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-200 backdrop-blur-sm border border-white/20 hover:border-white/30" do %>
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          <%= link_to new_user_path, class: "inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200" do %>
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
             Invite User
           <% end %>
@@ -28,104 +40,575 @@
     </div>
   </div>
 
-  <!-- Content -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <% if @users.any? %>
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100/50 overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-              <tr>
-                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
-                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role</th>
-                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Joined</th>
-                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <% @users.each do |user| %>
-                <tr class="hover:bg-gray-50 transition-colors duration-150">
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                        <div class="h-10 w-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center">
-                          <span class="text-white font-semibold text-sm"><%= user.initials %></span>
-                        </div>
-                        <div class="ml-4">
-                          <div class="text-sm font-medium text-gray-900"><%= user.full_name %></div>
-                        <div class="text-sm text-gray-500"><%= user.email %></div>
-                      </div>
+  <!-- Team Stats Overview -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+          <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+          </svg>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          Total
+        </span>
+      </div>
+      <div class="mt-4">
+        <div class="text-2xl font-bold text-gray-900"><%= @users.count %></div>
+        <p class="text-sm font-medium text-gray-600">Total Members</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+          <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+          </svg>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          Active
+        </span>
+      </div>
+      <div class="mt-4">
+        <div class="text-2xl font-bold text-gray-900"><%= @users.where.not(confirmed_at: nil).count %></div>
+        <p class="text-sm font-medium text-gray-600">Active Users</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-100">
+          <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+          </svg>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+          Pending
+        </span>
+      </div>
+      <div class="mt-4">
+        <div class="text-2xl font-bold text-gray-900"><%= @users.where(confirmed_at: nil).count %></div>
+        <p class="text-sm font-medium text-gray-600">Pending Invites</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
+          <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+          </svg>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+          Admins
+        </span>
+      </div>
+      <div class="mt-4">
+        <div class="text-2xl font-bold text-gray-900"><%= @users.where(role: 'admin').count %></div>
+        <p class="text-sm font-medium text-gray-600">Admin Users</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced Filters & Search -->
+  <div class="mb-6">
+    <div class="bg-white rounded-lg border border-gray-200">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Search & Filter</h3>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <!-- Search Input -->
+          <div class="lg:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Search Members</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803a7.5 7.5 0 0010.607 0z" />
+                </svg>
+              </div>
+              <input type="text" placeholder="Search by name, email, or role..." 
+                     class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                     data-user-management-target="searchInput"
+                     data-action="input->user-management#filterUsers">
+            </div>
+          </div>
+          
+          <!-- Role Filter -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Role</label>
+            <select class="block w-full py-2 px-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    data-user-management-target="roleFilter"
+                    data-action="change->user-management#filterUsers">
+              <option value="">All Roles</option>
+              <option value="admin">Admin</option>
+              <option value="manager">Manager</option>
+              <option value="member">Member</option>
+              <option value="viewer">Viewer</option>
+            </select>
+          </div>
+          
+          <!-- Status Filter -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Status</label>
+            <select class="block w-full py-2 px-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    data-user-management-target="statusFilter"
+                    data-action="change->user-management#filterUsers">
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="pending">Pending</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Users Table -->
+  <% if @users.any? %>
+    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <!-- Table Header with Bulk Actions -->
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <h3 class="text-lg font-semibold text-gray-900">Team Members</h3>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800" data-user-management-target="userCount">
+              <%= @users.count %> members
+            </span>
+          </div>
+          
+          <!-- Bulk Actions -->
+          <div class="flex items-center gap-2" data-user-management-target="bulkActions" style="display: none;">
+            <span class="text-sm text-gray-600" data-user-management-target="selectedCount">0 selected</span>
+            <button class="inline-flex items-center gap-1 px-3 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors duration-200"
+                    data-action="click->user-management#bulkDelete">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Delete
+            </button>
+            <button class="inline-flex items-center gap-1 px-3 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+                    data-action="click->user-management#bulkResendInvites">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+              </svg>
+              Resend Invites
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left">
+                <input type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                       data-action="change->user-management#toggleAll"
+                       data-user-management-target="selectAll">
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Active</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200" data-user-management-target="userRows">
+            <% @users.each do |user| %>
+              <tr class="hover:bg-gray-50 transition-colors duration-150 user-row"
+                  data-user-id="<%= user.id %>"
+                  data-user-name="<%= user.full_name.downcase %>"
+                  data-user-email="<%= user.email.downcase %>"
+                  data-user-role="<%= user.role %>"
+                  data-user-status="<%= user.confirmed_at? ? 'active' : 'pending' %>">
+                
+                <!-- Checkbox -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <input type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded user-checkbox"
+                         data-action="change->user-management#updateSelection"
+                         data-user-id="<%= user.id %>">
+                </td>
+                
+                <!-- User Info -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400 to-purple-500">
+                      <span class="text-white font-semibold text-sm"><%= user.initials %></span>
                     </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <%= case user.role
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900"><%= user.full_name %></div>
+                      <div class="text-sm text-gray-500"><%= user.email %></div>
+                      <% if user == current_user %>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800 mt-1">
+                          You
+                        </span>
+                      <% end %>
+                    </div>
+                  </div>
+                </td>
+                
+                <!-- Role -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= case user.role
                       when 'admin' then 'bg-purple-100 text-purple-800'
                       when 'manager' then 'bg-blue-100 text-blue-800'
+                      when 'member' then 'bg-green-100 text-green-800'
                       else 'bg-gray-100 text-gray-800'
                       end %>">
                       <%= user.role.humanize %>
                     </span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <%= user.confirmed_at? ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                    <% if policy(user).edit? && user != current_user %>
+                      <button class="text-gray-400 hover:text-gray-600"
+                              data-action="click->user-management#changeRole"
+                              data-user-id="<%= user.id %>"
+                              title="Change role">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                    <% end %>
+                  </div>
+                </td>
+                
+                <!-- Status -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= user.confirmed_at? ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                      <div class="h-1.5 w-1.5 rounded-full mr-1 <%= user.confirmed_at? ? 'bg-green-500' : 'bg-yellow-500' %>"></div>
                       <%= user.confirmed_at? ? 'Active' : 'Pending' %>
                     </span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <%= user.created_at.strftime("%b %d, %Y") %>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div class="flex items-center gap-2">
-                      <% if policy(user).show? %>
-                        <%= link_to user_path(user), class: "text-indigo-600 hover:text-indigo-900 transition-colors" do %>
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
-                        <% end %>
+                    <% unless user.confirmed_at? %>
+                      <button class="text-indigo-600 hover:text-indigo-800 text-xs"
+                              data-action="click->user-management#resendInvite"
+                              data-user-id="<%= user.id %>"
+                              title="Resend invitation">
+                        Resend
+                      </button>
+                    <% end %>
+                  </div>
+                </td>
+                
+                <!-- Last Active -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= user.current_sign_in_at ? time_ago_in_words(user.current_sign_in_at) + " ago" : "Never" %>
+                </td>
+                
+                <!-- Joined -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= user.created_at.strftime("%b %d, %Y") %>
+                </td>
+                
+                <!-- Actions -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex items-center gap-1">
+                    <% if policy(user).show? %>
+                      <%= link_to user_path(user), 
+                          class: "inline-flex items-center justify-center w-8 h-8 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-lg transition-colors",
+                          title: "View profile" do %>
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
                       <% end %>
-                      <% if policy(user).edit? %>
-                        <%= link_to edit_user_path(user), class: "text-blue-600 hover:text-blue-900 transition-colors" do %>
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                        <% end %>
+                    <% end %>
+                    
+                    <% if policy(user).edit? %>
+                      <%= link_to edit_user_path(user), 
+                          class: "inline-flex items-center justify-center w-8 h-8 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors",
+                          title: "Edit user" do %>
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
                       <% end %>
-                      <% if policy(user).destroy? && user != current_user %>
-                        <%= link_to user_path(user), method: :delete, 
-                            confirm: "Are you sure you want to remove #{user.name}?",
-                            class: "text-red-600 hover:text-red-900 transition-colors" do %>
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        <% end %>
+                    <% end %>
+                    
+                    <% if policy(user).destroy? && user != current_user %>
+                      <%= link_to user_path(user), method: :delete, 
+                          confirm: "Are you sure you want to remove #{user.full_name}? This action cannot be undone.",
+                          class: "inline-flex items-center justify-center w-8 h-8 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors",
+                          title: "Delete user" do %>
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
                       <% end %>
-                    </div>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
       </div>
-    <% else %>
-      <div class="text-center py-12">
-        <div class="mx-auto h-24 w-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center mb-6">
-          <svg class="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+    </div>
+  <% else %>
+    <!-- Enhanced Empty State -->
+    <div class="bg-white rounded-lg border border-gray-200 p-12">
+      <div class="text-center">
+        <div class="flex h-20 w-20 items-center justify-center rounded-lg bg-gray-100 mx-auto mb-6">
+          <svg class="h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No team members yet</h3>
-        <p class="text-gray-500 mb-6">Get started by inviting your first team member.</p>
-        <% if policy(User).create? %>
-          <%= link_to new_user_path, class: "inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-200 transform hover:scale-105 shadow-lg" do %>
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Invite First User
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">No team members yet</h3>
+        <p class="text-gray-600 mb-8 max-w-sm mx-auto">
+          Build your team by inviting colleagues to collaborate on your data projects.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <% if policy(User).create? %>
+            <%= link_to new_user_path, class: "inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200" do %>
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Invite First User
+            <% end %>
           <% end %>
-        <% end %>
+          
+          <button class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors duration-200">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            Learn About Roles
+          </button>
+        </div>
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 </div>
+
+<!-- Enhanced User Management Stimulus Controller -->
+<script>
+  // Register the user-management controller
+  Stimulus.register("user-management", class extends Controller {
+    static targets = ["searchInput", "roleFilter", "statusFilter", "userRows", "userCount", "bulkActions", "selectedCount", "selectAll"]
+    
+    connect() {
+      this.selectedUsers = new Set()
+      this.allUsers = Array.from(this.userRowsTarget.querySelectorAll('.user-row'))
+    }
+    
+    filterUsers() {
+      const searchTerm = this.searchInputTarget.value.toLowerCase()
+      const roleFilter = this.roleFilterTarget.value
+      const statusFilter = this.statusFilterTarget.value
+      
+      let visibleCount = 0
+      
+      this.allUsers.forEach(row => {
+        const userName = row.dataset.userName
+        const userEmail = row.dataset.userEmail
+        const userRole = row.dataset.userRole
+        const userStatus = row.dataset.userStatus
+        
+        const matchesSearch = !searchTerm || 
+                            userName.includes(searchTerm) || 
+                            userEmail.includes(searchTerm) ||
+                            userRole.includes(searchTerm)
+        
+        const matchesRole = !roleFilter || userRole === roleFilter
+        const matchesStatus = !statusFilter || userStatus === statusFilter
+        
+        if (matchesSearch && matchesRole && matchesStatus) {
+          row.style.display = ''
+          visibleCount++
+        } else {
+          row.style.display = 'none'
+          // Uncheck hidden rows
+          const checkbox = row.querySelector('.user-checkbox')
+          if (checkbox.checked) {
+            checkbox.checked = false
+            this.selectedUsers.delete(checkbox.dataset.userId)
+          }
+        }
+      })
+      
+      this.userCountTarget.textContent = `${visibleCount} members`
+      this.updateBulkActions()
+    }
+    
+    updateSelection(event) {
+      const userId = event.target.dataset.userId
+      
+      if (event.target.checked) {
+        this.selectedUsers.add(userId)
+      } else {
+        this.selectedUsers.delete(userId)
+        this.selectAllTarget.checked = false
+      }
+      
+      this.updateBulkActions()
+    }
+    
+    toggleAll(event) {
+      const checked = event.target.checked
+      const visibleCheckboxes = this.userRowsTarget.querySelectorAll('.user-row:not([style*="display: none"]) .user-checkbox')
+      
+      visibleCheckboxes.forEach(checkbox => {
+        checkbox.checked = checked
+        if (checked) {
+          this.selectedUsers.add(checkbox.dataset.userId)
+        } else {
+          this.selectedUsers.delete(checkbox.dataset.userId)
+        }
+      })
+      
+      this.updateBulkActions()
+    }
+    
+    updateBulkActions() {
+      const count = this.selectedUsers.size
+      
+      if (count > 0) {
+        this.bulkActionsTarget.style.display = 'flex'
+        this.selectedCountTarget.textContent = `${count} selected`
+      } else {
+        this.bulkActionsTarget.style.display = 'none'
+      }
+    }
+    
+    async exportUsers() {
+      try {
+        const response = await fetch('/users/export.csv', {
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+        })
+        
+        if (response.ok) {
+          const blob = await response.blob()
+          const url = window.URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = `team-members-${new Date().toISOString().split('T')[0]}.csv`
+          document.body.appendChild(a)
+          a.click()
+          document.body.removeChild(a)
+          window.URL.revokeObjectURL(url)
+          
+          this.showNotification('Users exported successfully!', 'success')
+        } else {
+          throw new Error('Export failed')
+        }
+      } catch (error) {
+        this.showNotification('Failed to export users', 'error')
+      }
+    }
+    
+    async bulkDelete() {
+      if (this.selectedUsers.size === 0) return
+      
+      const confirmed = confirm(`Are you sure you want to delete ${this.selectedUsers.size} user(s)? This action cannot be undone.`)
+      if (!confirmed) return
+      
+      try {
+        const response = await fetch('/users/bulk_delete', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          },
+          body: JSON.stringify({ user_ids: Array.from(this.selectedUsers) })
+        })
+        
+        if (response.ok) {
+          // Remove deleted users from UI
+          this.selectedUsers.forEach(userId => {
+            const row = this.userRowsTarget.querySelector(`[data-user-id="${userId}"]`)
+            if (row) row.remove()
+          })
+          
+          this.selectedUsers.clear()
+          this.updateBulkActions()
+          this.selectAllTarget.checked = false
+          
+          this.showNotification('Users deleted successfully', 'success')
+        } else {
+          throw new Error('Bulk delete failed')
+        }
+      } catch (error) {
+        this.showNotification('Failed to delete users', 'error')
+      }
+    }
+    
+    async bulkResendInvites() {
+      if (this.selectedUsers.size === 0) return
+      
+      try {
+        const response = await fetch('/users/bulk_resend_invites', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          },
+          body: JSON.stringify({ user_ids: Array.from(this.selectedUsers) })
+        })
+        
+        if (response.ok) {
+          this.showNotification('Invitations sent successfully', 'success')
+        } else {
+          throw new Error('Bulk resend failed')
+        }
+      } catch (error) {
+        this.showNotification('Failed to resend invitations', 'error')
+      }
+    }
+    
+    async resendInvite(event) {
+      const userId = event.target.dataset.userId
+      
+      try {
+        const response = await fetch(`/users/${userId}/resend_invite`, {
+          method: 'POST',
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+        })
+        
+        if (response.ok) {
+          this.showNotification('Invitation sent successfully', 'success')
+        } else {
+          throw new Error('Resend failed')
+        }
+      } catch (error) {
+        this.showNotification('Failed to resend invitation', 'error')
+      }
+    }
+    
+    changeRole(event) {
+      const userId = event.target.dataset.userId
+      // This would open a modal or dropdown for role selection
+      this.showNotification('Role change feature coming soon!', 'info')
+    }
+    
+    showNotification(message, type = 'info') {
+      const notification = document.createElement('div')
+      const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+      
+      notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300`
+      notification.textContent = message
+      notification.style.transform = 'translateX(100%)'
+      
+      document.body.appendChild(notification)
+      
+      // Animate in
+      setTimeout(() => {
+        notification.style.transform = 'translateX(0)'
+      }, 100)
+      
+      // Remove after delay
+      setTimeout(() => {
+        notification.style.transform = 'translateX(100%)'
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification)
+          }
+        }, 300)
+      }, 3000)
+    }
+  })
+</script>

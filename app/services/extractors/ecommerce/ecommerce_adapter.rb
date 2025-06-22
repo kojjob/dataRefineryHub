@@ -1,7 +1,6 @@
 # Abstract base class for e-commerce platform adapters
 # Defines the interface that all platform adapters must implement
 class EcommerceAdapter
-  
   # Adapter-specific errors
   class AdapterError < StandardError; end
   class AuthenticationError < AdapterError; end
@@ -74,7 +73,7 @@ class EcommerceAdapter
   end
 
   def api_version
-    'v1' # Default version
+    "v1" # Default version
   end
 
   def required_config_fields
@@ -118,21 +117,21 @@ class EcommerceAdapter
     current_url = initial_url
     page_count = 0
     max_pages = 1000 # Safety limit
-    
+
     while current_url && page_count < max_pages
       logger.debug "Fetching page #{page_count + 1}: #{current_url}"
-      
+
       response = yield(current_url)
       page_data = parse_response_data(response)
-      
+
       all_records.concat(page_data[:records])
       current_url = page_data[:next_page_url]
       page_count += 1
-      
+
       # Rate limiting pause
       sleep(rate_limit_delay) if rate_limit_delay > 0
     end
-    
+
     logger.info "Fetched #{all_records.count} records across #{page_count} pages"
     all_records
   end
@@ -149,28 +148,28 @@ class EcommerceAdapter
     start_time = Time.current
     result = yield
     elapsed = Time.current - start_time
-    
+
     min_delay = rate_limit_delay
     remaining_delay = min_delay - elapsed
-    
+
     sleep(remaining_delay) if remaining_delay > 0
-    
+
     result
   end
 
   # Retry logic with exponential backoff
   def retry_with_backoff(max_retries: 3, base_delay: 1, &block)
     retries = 0
-    
+
     begin
       yield
     rescue RateLimitError, Net::TimeoutError => error
       retries += 1
-      
+
       if retries <= max_retries
         delay = base_delay * (2 ** (retries - 1)) # Exponential backoff
         jitter = rand(0.1..0.3) * delay # Add jitter
-        
+
         logger.info "#{platform_name} retry #{retries}/#{max_retries} in #{delay + jitter} seconds"
         sleep(delay + jitter)
         retry
@@ -194,12 +193,12 @@ class EcommerceAdapter
   def build_endpoint_url(endpoint, params = {})
     base_url = build_base_url
     url = "#{base_url}/#{endpoint}"
-    
+
     if params.any?
       query_string = params.to_query
       url += "?#{query_string}"
     end
-    
+
     url
   end
 
@@ -209,9 +208,9 @@ class EcommerceAdapter
   end
 
   def build_http_client
-    require 'faraday'
-    require 'faraday/retry'
-    
+    require "faraday"
+    require "faraday/retry"
+
     Faraday.new(
       url: build_base_url,
       headers: build_headers
@@ -224,30 +223,30 @@ class EcommerceAdapter
 
   def build_headers
     {
-      'Content-Type' => 'application/json',
-      'User-Agent' => "DataRefinery/#{Rails.application.config.version || '1.0'} (#{platform_name} Adapter)"
+      "Content-Type" => "application/json",
+      "User-Agent" => "DataRefinery/#{Rails.application.config.version || '1.0'} (#{platform_name} Adapter)"
     }
   end
 
   # Incremental sync helpers
   def build_sync_params(options = {})
     params = {}
-    
+
     # Add since parameter for incremental sync
     if options[:since] && supports_incremental_sync?
       params[:updated_at_min] = options[:since].iso8601
     end
-    
+
     # Add pagination
     params[:limit] = max_records_per_request
-    
+
     params
   end
 
   # Data normalization helpers
   def normalize_timestamp(timestamp_string)
     return nil unless timestamp_string
-    
+
     begin
       Time.parse(timestamp_string).utc
     rescue ArgumentError
@@ -257,13 +256,13 @@ class EcommerceAdapter
   end
 
   def normalize_currency(currency_string)
-    return 'USD' unless currency_string
+    return "USD" unless currency_string
     currency_string.upcase
   end
 
   def normalize_decimal(decimal_string)
     return 0.0 unless decimal_string
-    
+
     begin
       decimal_string.to_f
     rescue ArgumentError
@@ -273,7 +272,7 @@ class EcommerceAdapter
 
   def normalize_integer(integer_string)
     return 0 unless integer_string
-    
+
     begin
       integer_string.to_i
     rescue ArgumentError

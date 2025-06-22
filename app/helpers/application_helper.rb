@@ -1,7 +1,7 @@
 module ApplicationHelper
   def nav_link_classes(section)
     base_classes = "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-    
+
     if current_page_section == section
       "#{base_classes} bg-gray-50 text-indigo-600"
     else
@@ -11,7 +11,7 @@ module ApplicationHelper
 
   def enhanced_nav_link_classes(section)
     base_classes = "group flex items-center gap-x-4 rounded-2xl p-4 text-sm leading-6 font-bold transition-all duration-300 hover:bg-white/80 hover:backdrop-blur-sm hover:shadow-xl border border-transparent hover:border-gray-200/50 hover:-translate-y-0.5"
-    
+
     if current_page_section == section
       "#{base_classes} bg-white/90 backdrop-blur-sm shadow-xl border-gray-200/60 text-gray-900 scale-105"
     else
@@ -22,45 +22,45 @@ module ApplicationHelper
   def current_page_section
     # Determine current section based on controller and action
     case controller_name
-    when 'dashboard'
-      if params[:anchor] == 'data-quality'
-        'data_quality'
+    when "dashboard"
+      if params[:anchor] == "data-quality"
+        "data_quality"
       else
-        'dashboard'
+        "dashboard"
       end
-    when 'data_sources'
-      'data_sources'
-    when 'extraction_jobs', 'transformation_jobs'
-      'pipelines'
-    when 'analytics', 'dashboards'
-      'analytics'
-    when 'customers', 'processed_customers'
-      'customers'
-    when 'orders'
-      'orders'
-    when 'products'
-      'products'
-    when 'inventory'
-      'inventory'
-    when 'reports'
-      'reports'
-    when 'integrations'
-      'integrations'
-    when 'teams', 'users'
-      'team'
-    when 'organizations'
-      'organization'
-    when 'billing_subscriptions'
-      'billing'
+    when "data_sources"
+      "data_sources"
+    when "extraction_jobs", "transformation_jobs"
+      "pipelines"
+    when "analytics", "dashboards"
+      "analytics"
+    when "customers", "processed_customers"
+      "customers"
+    when "orders"
+      "orders"
+    when "products"
+      "products"
+    when "inventory"
+      "inventory"
+    when "reports"
+      "reports"
+    when "integrations"
+      "integrations"
+    when "teams", "users"
+      "team"
+    when "organizations"
+      "organization"
+    when "billing_subscriptions"
+      "billing"
     else
       # Handle platform-specific sections
       case params[:platform] || request.path
       when /shopify/
-        'shopify'
+        "shopify"
       when /woocommerce/
-        'woocommerce'
+        "woocommerce"
       when /amazon/
-        'amazon'
+        "amazon"
       else
         controller_name
       end
@@ -87,6 +87,60 @@ module ApplicationHelper
           concat content_tag(:span, title, class: "ml-2 text-sm font-medium text-gray-900")
         end
       end
+    end
+  end
+
+  def get_ui_styling(category)
+    case category
+    when 'ecommerce'
+      {
+        border_color: 'border-blue-200',
+        bg_color: 'bg-blue-50',
+        text_color: 'text-blue-700',
+        icon_color: 'text-blue-500'
+      }
+    when 'payment'
+      {
+        border_color: 'border-green-200',
+        bg_color: 'bg-green-50',
+        text_color: 'text-green-700',
+        icon_color: 'text-green-500'
+      }
+    when 'accounting'
+      {
+        border_color: 'border-purple-200',
+        bg_color: 'bg-purple-50',
+        text_color: 'text-purple-700',
+        icon_color: 'text-purple-500'
+      }
+    when 'analytics'
+      {
+        border_color: 'border-orange-200',
+        bg_color: 'bg-orange-50',
+        text_color: 'text-orange-700',
+        icon_color: 'text-orange-500'
+      }
+    when 'file'
+      {
+        border_color: 'border-gray-200',
+        bg_color: 'bg-gray-50',
+        text_color: 'text-gray-700',
+        icon_color: 'text-gray-500'
+      }
+    when 'marketplace'
+      {
+        border_color: 'border-yellow-200',
+        bg_color: 'bg-yellow-50',
+        text_color: 'text-yellow-700',
+        icon_color: 'text-yellow-500'
+      }
+    else
+      {
+        border_color: 'border-gray-200',
+        bg_color: 'bg-gray-50',
+        text_color: 'text-gray-700',
+        icon_color: 'text-gray-500'
+      }
     end
   end
 end

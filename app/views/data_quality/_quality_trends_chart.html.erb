@@ -1,0 +1,293 @@
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h3 class="text-lg font-semibold text-gray-900">Quality Trends</h3>
+    <div class="flex items-center space-x-2">
+      <select id="trendsTimeRange" class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="7">Last 7 days</option>
+        <option value="30" selected>Last 30 days</option>
+        <option value="90">Last 90 days</option>
+      </select>
+      <button id="refreshTrends" class="text-gray-400 hover:text-gray-600">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Chart Container -->
+  <div class="relative">
+    <canvas id="qualityTrendsChart" width="400" height="200"></canvas>
+    
+    <!-- Loading State -->
+    <div id="trendsLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 hidden">
+      <div class="flex items-center space-x-2">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+        <span class="text-sm text-gray-600">Loading trends...</span>
+      </div>
+    </div>
+    
+    <!-- No Data State -->
+    <div id="trendsNoData" class="absolute inset-0 flex items-center justify-center bg-white hidden">
+      <div class="text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No trend data available</h3>
+        <p class="mt-1 text-sm text-gray-500">Quality trends will appear after data validation runs.</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Trend Summary -->
+  <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="text-center p-4 bg-gray-50 rounded-lg">
+      <div class="text-2xl font-bold text-gray-900" id="averageScore">--</div>
+      <div class="text-sm text-gray-600">Average Score</div>
+    </div>
+    
+    <div class="text-center p-4 bg-gray-50 rounded-lg">
+      <div class="flex items-center justify-center space-x-1">
+        <span class="text-2xl font-bold" id="trendDirection">--</span>
+        <span id="trendIcon"></span>
+      </div>
+      <div class="text-sm text-gray-600">Trend Direction</div>
+    </div>
+    
+    <div class="text-center p-4 bg-gray-50 rounded-lg">
+      <div class="text-2xl font-bold" id="improvement">--</div>
+      <div class="text-sm text-gray-600">Improvement</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  class QualityTrendsChart {
+    constructor() {
+      this.chart = null;
+      this.initializeChart();
+      this.bindEvents();
+      this.loadTrendsData();
+    }
+    
+    initializeChart() {
+      const ctx = document.getElementById('qualityTrendsChart').getContext('2d');
+      
+      this.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Overall Quality Score',
+            data: [],
+            borderColor: 'rgb(59, 130, 246)',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+          }, {
+            label: 'Completeness',
+            data: [],
+            borderColor: 'rgb(16, 185, 129)',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderWidth: 1,
+            fill: false,
+            tension: 0.4
+          }, {
+            label: 'Accuracy',
+            data: [],
+            borderColor: 'rgb(245, 158, 11)',
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+            borderWidth: 1,
+            fill: false,
+            tension: 0.4
+          }, {
+            label: 'Consistency',
+            data: [],
+            borderColor: 'rgb(139, 92, 246)',
+            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+            borderWidth: 1,
+            fill: false,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                callback: function(value) {
+                  return value + '%';
+                }
+              }
+            },
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day',
+                displayFormats: {
+                  day: 'MMM DD'
+                }
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                usePointStyle: true,
+                padding: 20
+              }
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.parsed.y + '%';
+                }
+              }
+            }
+          },
+          interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+          }
+        }
+      });
+    }
+    
+    bindEvents() {
+      document.getElementById('trendsTimeRange').addEventListener('change', () => {
+        this.loadTrendsData();
+      });
+      
+      document.getElementById('refreshTrends').addEventListener('click', () => {
+        this.loadTrendsData();
+      });
+    }
+    
+    async loadTrendsData() {
+      const timeRange = document.getElementById('trendsTimeRange').value;
+      const loadingEl = document.getElementById('trendsLoading');
+      const noDataEl = document.getElementById('trendsNoData');
+      
+      try {
+        loadingEl.classList.remove('hidden');
+        noDataEl.classList.add('hidden');
+        
+        const response = await fetch(`/data_quality/trends?days=${timeRange}`, {
+          headers: {
+            'Accept': 'application/json',
+            'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch trends data');
+        }
+        
+        const data = await response.json();
+        this.updateChart(data);
+        this.updateSummary(data);
+        
+      } catch (error) {
+        console.error('Error loading trends data:', error);
+        this.showNoData();
+      } finally {
+        loadingEl.classList.add('hidden');
+      }
+    }
+    
+    updateChart(data) {
+      if (!data.daily_scores || Object.keys(data.daily_scores).length === 0) {
+        this.showNoData();
+        return;
+      }
+      
+      const labels = Object.keys(data.daily_scores);
+      const overallScores = Object.values(data.daily_scores);
+      
+      // Update chart data
+      this.chart.data.labels = labels;
+      this.chart.data.datasets[0].data = overallScores;
+      
+      // Update dimension scores if available
+      if (data.dimension_trends) {
+        this.chart.data.datasets[1].data = data.dimension_trends.completeness || [];
+        this.chart.data.datasets[2].data = data.dimension_trends.accuracy || [];
+        this.chart.data.datasets[3].data = data.dimension_trends.consistency || [];
+      }
+      
+      this.chart.update();
+      document.getElementById('trendsNoData').classList.add('hidden');
+    }
+    
+    updateSummary(data) {
+      // Update average score
+      const avgScore = data.average_score || 0;
+      document.getElementById('averageScore').textContent = avgScore.toFixed(1) + '%';
+      
+      // Update trend direction
+      const trendDirection = data.trend_direction || 'stable';
+      const trendEl = document.getElementById('trendDirection');
+      const trendIconEl = document.getElementById('trendIcon');
+      
+      trendEl.textContent = trendDirection.charAt(0).toUpperCase() + trendDirection.slice(1);
+      trendEl.className = `text-2xl font-bold ${
+        trendDirection === 'improving' ? 'text-green-600' :
+        trendDirection === 'declining' ? 'text-red-600' : 'text-gray-600'
+      }`;
+      
+      // Update trend icon
+      const iconSvg = trendDirection === 'improving' ?
+        '<svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>' :
+        trendDirection === 'declining' ?
+        '<svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>' :
+        '<svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>';
+      
+      trendIconEl.innerHTML = iconSvg;
+      
+      // Update improvement percentage
+      const improvement = data.improvement || 0;
+      const improvementEl = document.getElementById('improvement');
+      improvementEl.textContent = (improvement >= 0 ? '+' : '') + improvement.toFixed(1) + '%';
+      improvementEl.className = `text-2xl font-bold ${
+        improvement > 0 ? 'text-green-600' :
+        improvement < 0 ? 'text-red-600' : 'text-gray-600'
+      }`;
+    }
+    
+    showNoData() {
+      document.getElementById('trendsNoData').classList.remove('hidden');
+      
+      // Clear chart
+      this.chart.data.labels = [];
+      this.chart.data.datasets.forEach(dataset => {
+        dataset.data = [];
+      });
+      this.chart.update();
+      
+      // Reset summary
+      document.getElementById('averageScore').textContent = '--';
+      document.getElementById('trendDirection').textContent = '--';
+      document.getElementById('trendDirection').className = 'text-2xl font-bold text-gray-600';
+      document.getElementById('trendIcon').innerHTML = '';
+      document.getElementById('improvement').textContent = '--';
+      document.getElementById('improvement').className = 'text-2xl font-bold text-gray-600';
+    }
+  }
+  
+  // Initialize chart when DOM is loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Chart !== 'undefined') {
+      new QualityTrendsChart();
+    } else {
+      console.error('Chart.js library not found. Please include Chart.js to display quality trends.');
+    }
+  });
+</script>

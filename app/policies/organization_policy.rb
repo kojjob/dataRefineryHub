@@ -32,7 +32,7 @@ class OrganizationPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
       return scope.none unless user&.organization_id
-      
+
       scope.where(id: user.organization_id)
     end
   end

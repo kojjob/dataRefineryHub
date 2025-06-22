@@ -2,9 +2,9 @@
 # Load and validate ETL pipeline configuration on application startup
 
 # Require ETL services
-require_relative '../../app/services/etl_configuration_manager'
-require_relative '../../app/services/etl_monitoring_service'
-require_relative '../../app/services/etl_orchestration_service'
+require_relative "../../app/services/etl_configuration_manager"
+require_relative "../../app/services/etl_monitoring_service"
+require_relative "../../app/services/etl_orchestration_service"
 
 # Global ETL module for easy access to configuration
 module ETL
@@ -82,32 +82,32 @@ rescue => e
 end
 
 # Configure ETL-specific logging
-if ETL.logging_config['structured']
+if ETL.logging_config["structured"]
   Rails.logger.formatter = proc do |severity, datetime, progname, msg|
     {
       timestamp: datetime.iso8601,
       level: severity,
       message: msg,
-      component: 'etl_pipeline',
+      component: "etl_pipeline",
       environment: Rails.env
     }.to_json + "\n"
   end
 end
 
 # Set log level if specified
-if ETL.logging_config['level']
-  log_level = ETL.logging_config['level'].upcase
+if ETL.logging_config["level"]
+  log_level = ETL.logging_config["level"].upcase
   Rails.logger.level = Logger.const_get(log_level) if Logger.const_defined?(log_level)
 end
 
 # Initialize ETL services
 begin
   # Initialize monitoring service
-  if ETL.monitoring_config['enabled']
+  if ETL.monitoring_config["enabled"]
     EtlMonitoringService.instance
     Rails.logger.info "ETL Monitoring service initialized"
   end
-  
+
   # Initialize orchestration service
   EtlOrchestrationService.instance
   Rails.logger.info "ETL Orchestration service initialized"

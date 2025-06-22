@@ -1,25 +1,31 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: {
-    registrations: 'users/registrations'
+    registrations: 'users/registrations',
+    sessions: 'users/sessions'
   }
+
+  root 'dashboard#index'
+
+  # Dashboard routes
+  get 'dashboard', to: 'dashboard#index'
+  get 'dashboard/analytics', to: 'dashboard#analytics'
+  get 'dashboard/reports', to: 'dashboard#reports'
   
-  root "landing#index"
-  
-  # Dashboard
-  get "dashboard", to: "dashboard#index"
-  
+  # Include data quality monitoring routes
+  load Rails.root.join('config', 'routes', 'data_quality_routes.rb')
+
   # Analytics
   get "analytics", to: "analytics#index"
-  
+
   # Organization management
-  resource :organization, only: [:show, :edit, :update] do
+  resource :organization, only: [ :show, :edit, :update ] do
     member do
       get :billing
       get :usage_stats
       get :audit_logs
     end
   end
-  
+
   # User management - constrain ID to numeric to avoid conflicts with Devise routes
   resources :users, constraints: { id: /\d+/ } do
     member do
@@ -27,20 +33,25 @@ Rails.application.routes.draw do
       delete :remove_avatar
     end
   end
-  
+
   # Data sources
   resources :data_sources do
     collection do
       post :test_connection
+      get :quality  # Add quality dashboard as collection route
+      post :run_quality_check  # Add quality check endpoint
+      get :download_sample_csv
+      get :download_sample_excel
+      get :download_sample_json
     end
-    
+
     member do
       post :sync_now
       post :process_files
-      get 'preview_file/:file_id', action: :preview_file, as: :preview_file
-      get 'analyze_file/:file_id', action: :analyze_file, as: :analyze_file
+      get "preview_file/:file_id", action: :preview_file, as: :preview_file
+      get "analyze_file/:file_id", action: :analyze_file, as: :analyze_file
     end
-    
+
     # Scheduled uploads
     resources :scheduled_uploads do
       member do
@@ -48,29 +59,29 @@ Rails.application.routes.draw do
         post :execute_now
       end
     end
-    
+
     # Logs for all scheduled uploads in a data source
-    get 'scheduled_uploads_logs', to: 'scheduled_uploads#logs', as: :scheduled_uploads_logs
+    get "scheduled_uploads_logs", to: "scheduled_uploads#logs", as: :scheduled_uploads_logs
   end
-  
+
   # API Routes
   namespace :api do
     namespace :v1 do
       # Authentication endpoints
-      post 'auth/login', to: 'authentication#login'
-      delete 'auth/logout', to: 'authentication#logout'
-      post 'auth/refresh', to: 'authentication#refresh'
-      get 'auth/me', to: 'authentication#me'
-      
+      post "auth/login", to: "authentication#login"
+      delete "auth/logout", to: "authentication#logout"
+      post "auth/refresh", to: "authentication#refresh"
+      get "auth/me", to: "authentication#me"
+
       # Organization endpoints
-      resource :organization, only: [:show, :update] do
+      resource :organization, only: [ :show, :update ] do
         get :usage_stats
         get :audit_logs
         get :billing_info
       end
-      
+
       # Data Sources API
-      resources :data_sources, except: [:new, :edit] do
+      resources :data_sources, except: [ :new, :edit ] do
         member do
           post :test_connection
           post :sync_now
@@ -78,35 +89,35 @@ Rails.application.routes.draw do
           get :sync_history
           get :metrics
         end
-        
+
         # Nested resources for data source configuration
-        resources :extraction_jobs, only: [:index, :show, :create, :destroy] do
+        resources :extraction_jobs, only: [ :index, :show, :create, :destroy ] do
           member do
             post :retry
             post :cancel
           end
         end
-        
+
         # Scheduled uploads API
-        resources :scheduled_uploads, only: [:index, :show, :create, :update, :destroy] do
+        resources :scheduled_uploads, only: [ :index, :show, :create, :update, :destroy ] do
           member do
             patch :toggle_status
             post :execute_now
           end
-          
-          resources :upload_logs, only: [:index, :show]
+
+          resources :upload_logs, only: [ :index, :show ]
         end
       end
-      
+
       # Extraction Jobs API
-      resources :extraction_jobs, only: [:index, :show] do
+      resources :extraction_jobs, only: [ :index, :show ] do
         member do
           post :retry
           post :cancel
           get :logs
         end
       end
-      
+
       # Analytics and Reporting API
       namespace :analytics do
         get :dashboard_stats
@@ -115,49 +126,64 @@ Rails.application.routes.draw do
         get :product_metrics
         get :order_metrics
         get :trend_analysis
-        
+
         # Time-series data endpoints
         get :revenue_over_time
         get :orders_over_time
         get :customers_over_time
-        
+
         # Export endpoints
         post :export_report
-        get 'export_status/:job_id', action: :export_status
-        get 'download_export/:job_id', action: :download_export
+        get "export_status/:job_id", action: :export_status
+        get "download_export/:job_id", action: :download_export
       end
-      
+
+      # Visualizations API
+      resources :visualizations, only: [ :index, :show, :create, :destroy ]
+
+      # Notifications API
+      resources :notifications do
+        collection do
+          get 'unread_count'
+          patch 'mark_all_as_read'
+        end
+        member do
+          patch 'mark_as_read'
+          patch 'mark_as_unread'
+        end
+      end
+
       # Raw Data Access API
-      resources :customers, only: [:index, :show] do
+      resources :customers, only: [ :index, :show ] do
         collection do
           get :search
           get :segments
         end
       end
-      
-      resources :orders, only: [:index, :show] do
+
+      resources :orders, only: [ :index, :show ] do
         collection do
           get :search
           get :by_status
           get :by_date_range
         end
       end
-      
-      resources :products, only: [:index, :show] do
+
+      resources :products, only: [ :index, :show ] do
         collection do
           get :search
           get :by_category
           get :low_stock
         end
       end
-      
+
       # Real-time data endpoints
       namespace :realtime do
         get :metrics_stream
         get :job_status_stream
         get :notifications_stream
       end
-      
+
       # Webhook endpoints for external integrations
       namespace :webhooks do
         post :shopify
@@ -167,7 +193,7 @@ Rails.application.routes.draw do
       end
     end
   end
-  
+
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 end

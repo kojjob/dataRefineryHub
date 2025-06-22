@@ -14,10 +14,10 @@ class CreatePipelineExecutions < ActiveRecord::Migration[7.0]
       t.text :parameters
       t.text :result_summary
       t.text :error_details
-      
+
       t.timestamps
     end
-    
+
     # Indexes for performance
     add_index :pipeline_executions, :execution_id, unique: true, if_not_exists: true
     add_index :pipeline_executions, :pipeline_name, if_not_exists: true
@@ -25,8 +25,8 @@ class CreatePipelineExecutions < ActiveRecord::Migration[7.0]
     add_index :pipeline_executions, :data_source_id, if_not_exists: true
     add_index :pipeline_executions, :user_id, if_not_exists: true
     add_index :pipeline_executions, :started_at, if_not_exists: true
-    add_index :pipeline_executions, [:pipeline_name, :status], if_not_exists: true
-    add_index :pipeline_executions, [:data_source_id, :status], if_not_exists: true
-    add_index :pipeline_executions, [:started_at, :status], if_not_exists: true
+    add_index :pipeline_executions, [ :pipeline_name, :status ], if_not_exists: true
+    add_index :pipeline_executions, [ :data_source_id, :status ], if_not_exists: true
+    add_index :pipeline_executions, [ :started_at, :status ], if_not_exists: true
   end
 end

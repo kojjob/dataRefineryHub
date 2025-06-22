@@ -5,31 +5,33 @@ class User < ApplicationRecord
          :recoverable, :rememberable,
          :confirmable, :trackable
   belongs_to :organization
-  belongs_to :invited_by, class_name: 'User', optional: true
+  belongs_to :invited_by, class_name: "User", optional: true
 
   ROLES = %w[owner admin member viewer].freeze
 
   has_many :audit_logs, dependent: :destroy
-  has_many :sent_invitations, class_name: 'User', foreign_key: 'invited_by_id', dependent: :nullify
-  
+  has_many :sent_invitations, class_name: "User", foreign_key: "invited_by_id", dependent: :nullify
+  has_many :visualizations, dependent: :destroy
+  has_many :notifications, dependent: :destroy
+
   # Active Storage associations
   has_one_attached :avatar do |attachable|
-    attachable.variant :thumb, resize_to_limit: [100, 100]
-    attachable.variant :medium, resize_to_limit: [300, 300]
+    attachable.variant :thumb, resize_to_limit: [ 100, 100 ]
+    attachable.variant :medium, resize_to_limit: [ 300, 300 ]
   end
 
   # Devise validations with organization scope
   validates :email, presence: true, uniqueness: { scope: :organization_id, case_sensitive: false },
             format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true, length: { minimum: 6 }, confirmation: true, if: :password_required?
-  
+
   # Override Devise's find_for_authentication to support organization-scoped email
   def self.find_for_authentication(warden_conditions)
     conditions = warden_conditions.dup
     if (email = conditions.delete(:email))
       # For now, just use the standard Devise behavior
       # In production, you might want to add organization context here
-      where(conditions.to_h).where(["lower(email) = :value", { value: email.downcase }]).first
+      where(conditions.to_h).where([ "lower(email) = :value", { value: email.downcase } ]).first
     else
       where(conditions.to_h).first
     end
@@ -37,7 +39,7 @@ class User < ApplicationRecord
   validates :first_name, presence: true, length: { minimum: 1, maximum: 50 }
   validates :last_name, presence: true, length: { minimum: 1, maximum: 50 }
   validates :role, inclusion: { in: ROLES }
-  
+
   # Avatar validations
   validate :acceptable_avatar
 
@@ -58,19 +60,19 @@ class User < ApplicationRecord
   end
 
   def owner?
-    role == 'owner'
+    role == "owner"
   end
 
   def admin?
-    role == 'admin'
+    role == "admin"
   end
 
   def member?
-    role == 'member'
+    role == "member"
   end
 
   def viewer?
-    role == 'viewer'
+    role == "viewer"
   end
 
   def confirmed?
@@ -107,7 +109,7 @@ class User < ApplicationRecord
 
   def avatar_url(variant = :thumb)
     return nil unless avatar.attached?
-    
+
     if variant == :original
       Rails.application.routes.url_helpers.rails_blob_url(avatar, only_path: true)
     else
@@ -124,10 +126,10 @@ class User < ApplicationRecord
 
   def role_hierarchy_level
     case role
-    when 'owner' then 4
-    when 'admin' then 3
-    when 'member' then 2
-    when 'viewer' then 1
+    when "owner" then 4
+    when "admin" then 3
+    when "member" then 2
+    when "viewer" then 1
     else 0
     end
   end
@@ -136,7 +138,7 @@ class User < ApplicationRecord
     return false if target_user == self
     return false unless can_manage_users?
     return false if target_user.organization != organization
-    
+
     role_hierarchy_level > target_user.role_hierarchy_level
   end
 
@@ -150,14 +152,14 @@ class User < ApplicationRecord
     # Only set default role if role is blank/nil or explicitly 'member'
     # This allows for explicit role assignment while still handling first user logic
     if role.blank?
-      self.role = 'member'
+      self.role = "member"
     end
-    
+
     # Check if this is the first user in the organization and should be owner
-    if organization_id.present? && (role.blank? || role == 'member')
+    if organization_id.present? && (role.blank? || role == "member")
       existing_users_count = User.where(organization_id: organization_id).count
       if existing_users_count == 0
-        self.role = 'owner'
+        self.role = "owner"
       end
     end
   end
@@ -169,7 +171,7 @@ class User < ApplicationRecord
   def acceptable_avatar
     return unless avatar.attached?
 
-    acceptable_types = ["image/jpeg", "image/jpg", "image/png", "image/gif"]
+    acceptable_types = [ "image/jpeg", "image/jpg", "image/png", "image/gif" ]
     unless acceptable_types.include?(avatar.blob.content_type)
       errors.add(:avatar, "must be a JPEG, PNG, or GIF")
     end

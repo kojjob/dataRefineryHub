@@ -42,44 +42,44 @@ class AuditLog < ApplicationRecord
 
   def resource
     return nil unless resource_type && resource_id
-    
+
     resource_type.constantize.find_by(id: resource_id)
   rescue NameError, ActiveRecord::RecordNotFound
     nil
   end
 
   def user_description
-    user&.full_name || 'System'
+    user&.full_name || "System"
   end
 
   def action_description
     case action
-    when 'create' then "created #{resource_type&.humanize&.downcase}"
-    when 'update' then "updated #{resource_type&.humanize&.downcase}"
-    when 'delete' then "deleted #{resource_type&.humanize&.downcase}"
-    when 'login' then 'signed in'
-    when 'logout' then 'signed out'
-    when 'password_change' then 'changed password'
-    when 'invite_user' then 'invited user'
-    when 'accept_invitation' then 'accepted invitation'
-    when 'revoke_invitation' then 'revoked invitation'
-    when 'data_source_connect' then 'connected data source'
-    when 'data_source_disconnect' then 'disconnected data source'
-    when 'data_source_sync' then 'synchronized data source'
-    when 'dashboard_create' then 'created dashboard'
-    when 'dashboard_update' then 'updated dashboard'
-    when 'dashboard_delete' then 'deleted dashboard'
-    when 'dashboard_view' then 'viewed dashboard'
-    when 'api_key_create' then 'created API key'
-    when 'api_key_revoke' then 'revoked API key'
-    when 'export_data' then 'exported data'
-    when 'import_data' then 'imported data'
-    when 'plan_upgrade' then 'upgraded plan'
-    when 'plan_downgrade' then 'downgraded plan'
-    when 'payment_success' then 'successful payment'
-    when 'payment_failed' then 'failed payment'
-    when 'organization_suspend' then 'suspended organization'
-    when 'organization_activate' then 'activated organization'
+    when "create" then "created #{resource_type&.humanize&.downcase}"
+    when "update" then "updated #{resource_type&.humanize&.downcase}"
+    when "delete" then "deleted #{resource_type&.humanize&.downcase}"
+    when "login" then "signed in"
+    when "logout" then "signed out"
+    when "password_change" then "changed password"
+    when "invite_user" then "invited user"
+    when "accept_invitation" then "accepted invitation"
+    when "revoke_invitation" then "revoked invitation"
+    when "data_source_connect" then "connected data source"
+    when "data_source_disconnect" then "disconnected data source"
+    when "data_source_sync" then "synchronized data source"
+    when "dashboard_create" then "created dashboard"
+    when "dashboard_update" then "updated dashboard"
+    when "dashboard_delete" then "deleted dashboard"
+    when "dashboard_view" then "viewed dashboard"
+    when "api_key_create" then "created API key"
+    when "api_key_revoke" then "revoked API key"
+    when "export_data" then "exported data"
+    when "import_data" then "imported data"
+    when "plan_upgrade" then "upgraded plan"
+    when "plan_downgrade" then "downgraded plan"
+    when "payment_success" then "successful payment"
+    when "payment_failed" then "failed payment"
+    when "organization_suspend" then "suspended organization"
+    when "organization_activate" then "activated organization"
     else action.humanize.downcase
     end
   end

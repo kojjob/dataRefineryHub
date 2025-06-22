@@ -10,13 +10,13 @@ class DataValidationService
   def validate
     begin
       Rails.logger.info "Starting data validation for data source #{data_source.id}"
-      
+
       # Get data to validate (use processed data if available, otherwise raw data)
-      data_records = data_source.processed_data_records.any? ? 
-                    data_source.processed_data_records : 
+      data_records = data_source.processed_data_records.any? ?
+                    data_source.processed_data_records :
                     data_source.raw_data_records
-      
-      return { success: false, error: 'No data found to validate' } if data_records.empty?
+
+      return { success: false, error: "No data found to validate" } if data_records.empty?
 
       validation_results = []
       total_errors = 0
@@ -33,7 +33,7 @@ class DataValidationService
           validation_results << {
             rule_name: rule[:name] || "Rule #{index + 1}",
             rule_type: rule[:type],
-            status: 'failed',
+            status: "failed",
             error: e.message,
             error_count: 0,
             warning_count: 0
@@ -63,21 +63,21 @@ class DataValidationService
 
   def apply_validation_rule(data_records, rule)
     case rule[:type]
-    when 'required_fields'
+    when "required_fields"
       validate_required_fields(data_records, rule[:config])
-    when 'format_validation'
+    when "format_validation"
       validate_format(data_records, rule[:config])
-    when 'range_validation'
+    when "range_validation"
       validate_range(data_records, rule[:config])
-    when 'uniqueness_validation'
+    when "uniqueness_validation"
       validate_uniqueness(data_records, rule[:config])
-    when 'custom_regex'
+    when "custom_regex"
       validate_custom_regex(data_records, rule[:config])
-    when 'data_type_validation'
+    when "data_type_validation"
       validate_data_types(data_records, rule[:config])
-    when 'cross_field_validation'
+    when "cross_field_validation"
       validate_cross_fields(data_records, rule[:config])
-    when 'business_rule_validation'
+    when "business_rule_validation"
       validate_business_rules(data_records, rule[:config])
     else
       raise "Unknown validation rule type: #{rule[:type]}"
@@ -104,9 +104,9 @@ class DataValidationService
     end
 
     {
-      rule_name: config[:name] || 'Required Fields Validation',
-      rule_type: 'required_fields',
-      status: errors.empty? ? 'passed' : 'failed',
+      rule_name: config[:name] || "Required Fields Validation",
+      rule_type: "required_fields",
+      status: errors.empty? ? "passed" : "failed",
       error_count: errors.length,
       warning_count: warnings.length,
       errors: errors,
@@ -122,26 +122,26 @@ class DataValidationService
     warnings = []
 
     regex = case format_type
-            when 'email'
+    when "email"
               /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
-            when 'phone'
+    when "phone"
               /\A[\+]?[1-9]?[0-9]{7,15}\z/
-            when 'url'
+    when "url"
               /\Ahttps?:\/\/[^\s]+\z/
-            when 'date'
+    when "date"
               /\A\d{4}-\d{2}-\d{2}\z/
-            when 'custom'
+    when "custom"
               Regexp.new(pattern) if pattern.present?
-            else
+    else
               nil
-            end
+    end
 
-    return { error: 'Invalid format configuration' } unless regex
+    return { error: "Invalid format configuration" } unless regex
 
     data_records.each_with_index do |record, index|
       row_data = record.data
       value = row_data[field]
-      
+
       if value.present? && !value.to_s.match?(regex)
         errors << {
           row: index + 1,
@@ -154,8 +154,8 @@ class DataValidationService
 
     {
       rule_name: config[:name] || "#{format_type.humanize} Format Validation",
-      rule_type: 'format_validation',
-      status: errors.empty? ? 'passed' : 'failed',
+      rule_type: "format_validation",
+      status: errors.empty? ? "passed" : "failed",
       error_count: errors.length,
       warning_count: warnings.length,
       errors: errors,
@@ -173,11 +173,11 @@ class DataValidationService
     data_records.each_with_index do |record, index|
       row_data = record.data
       value = row_data[field]
-      
+
       next if value.nil? || value.to_s.strip.empty?
-      
+
       numeric_value = value.to_f
-      
+
       if min_value.present? && numeric_value < min_value
         errors << {
           row: index + 1,
@@ -186,7 +186,7 @@ class DataValidationService
           value: value
         }
       end
-      
+
       if max_value.present? && numeric_value > max_value
         errors << {
           row: index + 1,
@@ -198,9 +198,9 @@ class DataValidationService
     end
 
     {
-      rule_name: config[:name] || 'Range Validation',
-      rule_type: 'range_validation',
-      status: errors.empty? ? 'passed' : 'failed',
+      rule_name: config[:name] || "Range Validation",
+      rule_type: "range_validation",
+      status: errors.empty? ? "passed" : "failed",
       error_count: errors.length,
       warning_count: warnings.length,
       errors: errors,
@@ -216,11 +216,11 @@ class DataValidationService
 
     data_records.each_with_index do |record, index|
       row_data = record.data
-      
+
       # Create a composite key from the specified fields
       key_values = fields.map { |field| row_data[field] }
-      composite_key = key_values.join('|')
-      
+      composite_key = key_values.join("|")
+
       if seen_values.include?(composite_key)
         errors << {
           row: index + 1,
@@ -234,9 +234,9 @@ class DataValidationService
     end
 
     {
-      rule_name: config[:name] || 'Uniqueness Validation',
-      rule_type: 'uniqueness_validation',
-      status: errors.empty? ? 'passed' : 'failed',
+      rule_name: config[:name] || "Uniqueness Validation",
+      rule_type: "uniqueness_validation",
+      status: errors.empty? ? "passed" : "failed",
       error_count: errors.length,
       warning_count: warnings.length,
       errors: errors,
@@ -255,9 +255,9 @@ class DataValidationService
       regex = Regexp.new(pattern)
     rescue RegexpError => e
       return {
-        rule_name: config[:name] || 'Custom Regex Validation',
-        rule_type: 'custom_regex',
-        status: 'failed',
+        rule_name: config[:name] || "Custom Regex Validation",
+        rule_type: "custom_regex",
+        status: "failed",
         error: "Invalid regex pattern: #{e.message}",
         error_count: 0,
         warning_count: 0
@@ -267,7 +267,7 @@ class DataValidationService
     data_records.each_with_index do |record, index|
       row_data = record.data
       value = row_data[field]
-      
+
       if value.present? && !value.to_s.match?(regex)
         errors << {
           row: index + 1,
@@ -279,9 +279,9 @@ class DataValidationService
     end
 
     {
-      rule_name: config[:name] || 'Custom Regex Validation',
-      rule_type: 'custom_regex',
-      status: errors.empty? ? 'passed' : 'failed',
+      rule_name: config[:name] || "Custom Regex Validation",
+      rule_type: "custom_regex",
+      status: errors.empty? ? "passed" : "failed",
       error_count: errors.length,
       warning_count: warnings.length,
       errors: errors,
@@ -296,11 +296,11 @@ class DataValidationService
 
     data_records.each_with_index do |record, index|
       row_data = record.data
-      
+
       field_types.each do |field, expected_type|
         value = row_data[field]
         next if value.nil? || value.to_s.strip.empty?
-        
+
         unless value_matches_type?(value, expected_type)
           errors << {
             row: index + 1,
@@ -314,9 +314,9 @@ class DataValidationService
     end
 
     {
-      rule_name: config[:name] || 'Data Type Validation',
-      rule_type: 'data_type_validation',
-      status: errors.empty? ? 'passed' : 'failed',
+      rule_name: config[:name] || "Data Type Validation",
+      rule_type: "data_type_validation",
+      status: errors.empty? ? "passed" : "failed",
       error_count: errors.length,
       warning_count: warnings.length,
       errors: errors,
@@ -332,21 +332,21 @@ class DataValidationService
 
     data_records.each_with_index do |record, index|
       row_data = record.data
-      
+
       rules.each do |rule|
         field1 = rule[:field1]
         field2 = rule[:field2]
         operator = rule[:operator] # 'greater_than', 'less_than', 'equal', 'not_equal'
-        
+
         value1 = row_data[field1]
         value2 = row_data[field2]
-        
+
         next if value1.nil? || value2.nil?
-        
+
         unless values_satisfy_condition?(value1, value2, operator)
           errors << {
             row: index + 1,
-            fields: [field1, field2],
+            fields: [ field1, field2 ],
             message: "Cross-field validation failed: #{field1} #{operator.humanize} #{field2}",
             values: { field1 => value1, field2 => value2 }
           }
@@ -355,9 +355,9 @@ class DataValidationService
     end
 
     {
-      rule_name: config[:name] || 'Cross-Field Validation',
-      rule_type: 'cross_field_validation',
-      status: errors.empty? ? 'passed' : 'failed',
+      rule_name: config[:name] || "Cross-Field Validation",
+      rule_type: "cross_field_validation",
+      status: errors.empty? ? "passed" : "failed",
       error_count: errors.length,
       warning_count: warnings.length,
       errors: errors,
@@ -373,21 +373,21 @@ class DataValidationService
 
     data_records.each_with_index do |record, index|
       row_data = record.data
-      
+
       rules.each do |rule|
         begin
           unless evaluate_business_rule(row_data, rule)
             errors << {
               row: index + 1,
-              rule: rule[:name] || 'Business Rule',
-              message: rule[:error_message] || 'Business rule validation failed',
+              rule: rule[:name] || "Business Rule",
+              message: rule[:error_message] || "Business rule validation failed",
               data: row_data
             }
           end
         rescue => e
           warnings << {
             row: index + 1,
-            rule: rule[:name] || 'Business Rule',
+            rule: rule[:name] || "Business Rule",
             message: "Business rule evaluation error: #{e.message}",
             data: row_data
           }
@@ -396,9 +396,9 @@ class DataValidationService
     end
 
     {
-      rule_name: config[:name] || 'Business Rules Validation',
-      rule_type: 'business_rule_validation',
-      status: errors.empty? ? 'passed' : 'failed',
+      rule_name: config[:name] || "Business Rules Validation",
+      rule_type: "business_rule_validation",
+      status: errors.empty? ? "passed" : "failed",
       error_count: errors.length,
       warning_count: warnings.length,
       errors: errors,
@@ -408,27 +408,27 @@ class DataValidationService
 
   def value_matches_type?(value, expected_type)
     case expected_type
-    when 'integer'
+    when "integer"
       value.to_s.match?(/\A-?\d+\z/)
-    when 'float', 'decimal'
+    when "float", "decimal"
       value.to_s.match?(/\A-?\d*\.?\d+\z/)
-    when 'boolean'
-      ['true', 'false', '1', '0', 'yes', 'no'].include?(value.to_s.downcase)
-    when 'date'
+    when "boolean"
+      [ "true", "false", "1", "0", "yes", "no" ].include?(value.to_s.downcase)
+    when "date"
       begin
         Date.parse(value.to_s)
         true
       rescue
         false
       end
-    when 'datetime'
+    when "datetime"
       begin
         DateTime.parse(value.to_s)
         true
       rescue
         false
       end
-    when 'string'
+    when "string"
       true # Any value can be a string
     else
       false
@@ -443,17 +443,17 @@ class DataValidationService
     end
 
     case operator
-    when 'greater_than'
+    when "greater_than"
       value1 > value2
-    when 'less_than'
+    when "less_than"
       value1 < value2
-    when 'greater_than_or_equal'
+    when "greater_than_or_equal"
       value1 >= value2
-    when 'less_than_or_equal'
+    when "less_than_or_equal"
       value1 <= value2
-    when 'equal'
+    when "equal"
       value1 == value2
-    when 'not_equal'
+    when "not_equal"
       value1 != value2
     else
       false
@@ -464,13 +464,13 @@ class DataValidationService
     # Simple business rule evaluation
     # This can be enhanced with a proper expression parser
     condition = rule[:condition]
-    
+
     # Replace field references with actual values
     processed_condition = condition.dup
     row_data.each do |field, value|
       processed_condition.gsub!("{{#{field}}}", "'#{value}'")
     end
-    
+
     # For safety, only allow simple comparisons
     if processed_condition.match?(/^[\w\s'"\d\.<>=!]+$/)
       begin
@@ -496,9 +496,9 @@ class DataValidationService
   end
 
   def generate_validation_summary(validation_results, total_records)
-    passed_rules = validation_results.count { |result| result[:status] == 'passed' }
-    failed_rules = validation_results.count { |result| result[:status] == 'failed' }
-    
+    passed_rules = validation_results.count { |result| result[:status] == "passed" }
+    failed_rules = validation_results.count { |result| result[:status] == "failed" }
+
     {
       total_rules: validation_results.length,
       passed_rules: passed_rules,

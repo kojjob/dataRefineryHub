@@ -13,9 +13,9 @@ class CreateUploadLogs < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    add_index :upload_logs, [:scheduled_upload_id, :started_at]
+    add_index :upload_logs, [ :scheduled_upload_id, :started_at ]
     add_index :upload_logs, :status
     add_index :upload_logs, :started_at
-    add_index :upload_logs, [:status, :started_at]
+    add_index :upload_logs, [ :status, :started_at ]
   end
 end

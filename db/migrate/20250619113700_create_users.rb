@@ -17,8 +17,8 @@ class CreateUsers < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
-    add_index :users, [:organization_id, :email], unique: true
+
+    add_index :users, [ :organization_id, :email ], unique: true
     add_index :users, :invitation_token, unique: true
     add_index :users, :role
     add_index :users, :confirmed_at

@@ -1,518 +1,254 @@
 <% content_for :page_title, "Dashboard" %>
 
-<!-- Premium Real-time Dashboard Container with Glass Morphism -->
-<div data-controller="realtime-dashboard" class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 relative overflow-hidden">
-  <!-- Animated background elements -->
-  <div class="absolute inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-purple-600/10 rounded-full blur-3xl animate-pulse"></div>
-    <div class="absolute top-1/3 -left-32 w-80 h-80 bg-gradient-to-br from-emerald-400/10 to-teal-600/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
-    <div class="absolute bottom-0 right-1/3 w-64 h-64 bg-gradient-to-br from-purple-400/10 to-pink-600/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 4s;"></div>
-  </div>
-
-<!-- Premium Dashboard Header with Glass Morphism and Advanced Animations -->
-<div class="relative overflow-hidden bg-white/40 backdrop-blur-2xl rounded-4xl border border-white/20 p-12 mb-12 shadow-2xl hover:shadow-3xl transition-all duration-700 group">
-  <!-- Premium gradient overlay -->
-  <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-80"></div>
-  <!-- Shimmer effect -->
-  <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer group-hover:animate-shimmer-fast"></div>
-  <!-- Animated background elements -->
-  <div class="absolute inset-0">
-    <div class="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%236366f1\" fill-opacity=\"0.03\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"1.5\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
-    <div class="absolute top-20 right-20 w-40 h-40 bg-gradient-to-br from-blue-400/10 to-indigo-500/10 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-10 left-10 w-32 h-32 bg-gradient-to-br from-purple-400/10 to-pink-500/10 rounded-full blur-2xl"></div>
-  </div>
-  
-  <div class="relative">
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
-      <div class="flex-1">
-        <div class="flex items-center gap-6 mb-8">
-          <div class="relative group/icon">
-            <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl blur-xl opacity-30 group-hover/icon:opacity-50 transition-opacity duration-500"></div>
-            <div class="relative flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 shadow-2xl ring-4 ring-white/30 group-hover/icon:scale-110 group-hover/icon:rotate-3 transition-all duration-500">
-              <svg class="h-10 w-10 text-white group-hover/icon:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-            </div>
-          </div>
-          <div>
-            <h1 class="text-5xl font-black bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-3 tracking-tight">
-              Welcome back, <%= current_user.first_name %>!
-            </h1>
-            <p class="text-2xl text-gray-700 font-medium bg-gradient-to-r from-gray-600 to-gray-800 bg-clip-text text-transparent">Data Refinery Dashboard</p>
-          </div>
-        </div>
-        
-        <p class="text-lg text-gray-700 max-w-3xl leading-relaxed mb-6">
-          Monitor your data pipeline performance, track sync status, and manage your data sources from this central hub.
+<!-- Upcube-inspired Dashboard Layout -->
+<div data-controller="realtime-dashboard" class="min-h-screen bg-gray-50">
+  <!-- Page Header -->
+  <div class="mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p class="mt-2 text-gray-600">
+          Welcome back, <%= current_user.first_name %>! Here's what's happening with your data.
         </p>
-        
-        <div class="flex flex-wrap items-center gap-6">
-          <div class="flex items-center gap-3 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-2xl">
-            <div class="h-3 w-3 bg-emerald-500 rounded-full animate-pulse shadow-lg shadow-emerald-500/30"></div>
-            <span class="text-sm font-semibold text-emerald-700">System Operational</span>
-          </div>
-          <div class="flex items-center gap-3 px-4 py-2 bg-blue-50 border border-blue-200 rounded-2xl">
-            <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span class="text-sm font-semibold text-blue-700">Updated <%= Time.current.strftime("%I:%M %p") %></span>
-          </div>
-          <div class="flex items-center gap-3 px-4 py-2 bg-amber-50 border border-amber-200 rounded-2xl">
-            <svg class="h-4 w-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-            <span class="text-sm font-semibold text-amber-700">Live Data</span>
-          </div>
-          <div class="flex items-center gap-3 px-4 py-2 bg-gray-50 border border-gray-200 rounded-2xl">
-            <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" data-connection-status title="Connecting to real-time updates"></div>
-            <span class="text-sm font-semibold text-gray-700" data-last-updated>Connecting...</span>
-          </div>
-        </div>
       </div>
-      
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-        <button type="button" class="group inline-flex items-center justify-center rounded-2xl bg-white/90 backdrop-blur-sm px-6 py-4 text-sm font-bold text-gray-700 shadow-xl border border-gray-200/70 hover:bg-white hover:shadow-2xl hover:border-gray-300 transition-all duration-300 transform hover:-translate-y-1">
-          <svg class="-ml-0.5 mr-3 h-5 w-5 text-gray-500 group-hover:text-gray-700 transition-colors" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-          </svg>
-          Export Report
-        </button>
+      <div class="mt-4 sm:mt-0 sm:ml-4">
         <%= link_to new_data_source_path, 
-            class: "group inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-6 py-4 text-sm font-bold text-white shadow-2xl hover:shadow-blue-500/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105" do %>
-          <svg class="-ml-0.5 mr-3 h-5 w-5 group-hover:rotate-90 transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+            class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200" do %>
+          <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
           </svg>
           Add Data Source
         <% end %>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Premium Key Metrics Cards with Glass Morphism and Advanced Animations -->
-<div class="relative z-10 grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-4 mb-12">
-  <!-- Total Data Sources - Premium Card -->
-  <div class="group premium-card relative overflow-hidden rounded-4xl bg-white/30 backdrop-blur-2xl p-8 shadow-2xl border border-white/20 hover:shadow-blue-200/50 hover:shadow-4xl hover:-translate-y-3 transition-all duration-700 animate-float">
-    <!-- Premium floating decorations -->
-    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl transform translate-x-12 -translate-y-12 group-hover:scale-150 transition-all duration-700"></div>
-    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100 group-hover:animate-shimmer transition-opacity duration-500"></div>
-    
-    <div class="relative">
-      <div class="flex items-start justify-between mb-6">
-        <div class="relative group/icon-metric">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"></div>
-          <div class="relative flex h-18 w-18 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 shadow-2xl shadow-blue-500/30 group-hover:shadow-blue-500/50 group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 ring-4 ring-white/40 animate-pulse-glow">
-            <svg class="h-10 w-10 text-white group-hover/icon-metric:scale-110 group-hover/icon-metric:rotate-12 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-            </svg>
-          </div>
+  <!-- Status Bar -->
+  <div class="mb-8">
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex flex-wrap items-center gap-6">
+        <div class="flex items-center gap-2">
+          <div class="h-2 w-2 bg-green-500 rounded-full"></div>
+          <span class="text-sm font-medium text-gray-700">System Operational</span>
         </div>
-        <div class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-100/80 to-green-100/80 backdrop-blur-sm text-emerald-700 text-xs font-bold rounded-2xl border border-emerald-200/50 shadow-lg group-hover:scale-105 transition-all duration-300">
-          <svg class="h-3 w-3 animate-bounce" viewBox="0 0 20 20" fill="currentColor" style="animation-delay: 0.5s;">
-            <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04L10 3.26l5.79 5.47a.75.75 0 01-1.08 1.04L10.75 5.612V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+        <div class="flex items-center gap-2">
+          <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
+          <span class="text-sm text-gray-600">Updated <%= Time.current.strftime("%I:%M %p") %></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse" data-connection-status></div>
+          <span class="text-sm text-gray-600" data-last-updated>Live Data</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Metrics Cards -->
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+    <!-- Total Data Sources -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+          <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+          </svg>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
           +12%
-        </div>
+        </span>
       </div>
       <div>
-        <p class="text-sm font-bold text-blue-800/80 uppercase tracking-wider mb-3">Data Sources</p>
-        <p class="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent group-hover:scale-110 transition-all duration-500 animate-counter-bounce" data-realtime-dashboard-target="totalDataSources"><%= @stats[:total_data_sources] %></p>
-        <p class="text-sm text-gray-700/80 font-medium">Total connected sources</p>
+        <p class="text-sm font-medium text-gray-600 mb-1">Data Sources</p>
+        <p class="text-3xl font-bold text-gray-900" data-realtime-dashboard-target="totalDataSources"><%= @stats[:total_data_sources] %></p>
+        <p class="text-sm text-gray-500">Total connected sources</p>
       </div>
     </div>
-  </div>
 
-  <!-- Connected Sources - Premium Card -->
-  <div class="group premium-card relative overflow-hidden rounded-4xl bg-white/30 backdrop-blur-2xl p-8 shadow-2xl border border-white/20 hover:shadow-emerald-200/50 hover:shadow-4xl hover:-translate-y-3 transition-all duration-700 animate-float-delayed">
-    <!-- Premium floating decorations -->
-    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-600/20 rounded-full blur-3xl transform translate-x-12 -translate-y-12 group-hover:scale-150 transition-all duration-700"></div>
-    <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-green-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100 group-hover:animate-shimmer transition-opacity duration-500"></div>
-    
-    <div class="relative">
-      <div class="flex items-start justify-between mb-6">
-        <div class="relative group/icon-connected">
-          <div class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"></div>
-          <div class="relative flex h-18 w-18 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-500 via-green-600 to-teal-600 shadow-2xl shadow-emerald-500/30 group-hover:shadow-emerald-500/50 group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 ring-4 ring-white/40">
-            <svg class="h-10 w-10 text-white group-hover/icon-connected:scale-110 group-hover/icon-connected:rotate-12 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-            </svg>
-          </div>
-        </div>
-        <div class="w-24 h-4 bg-gray-200/50 backdrop-blur-sm rounded-full overflow-hidden shadow-inner border border-white/30">
-          <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full transition-all duration-1000 shadow-lg progress-bar group-hover:animate-gradient" style="width: <%= @stats[:total_data_sources] > 0 ? (@stats[:connected_sources].to_f / @stats[:total_data_sources] * 100).round : 0 %>%"></div>
-        </div>
-      </div>
-      <div>
-        <p class="text-sm font-bold text-emerald-800/80 uppercase tracking-wider mb-3">Connected</p>
-        <p class="text-5xl font-black mb-4 bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 bg-clip-text text-transparent group-hover:scale-110 transition-all duration-500 animate-counter-bounce" data-realtime-dashboard-target="connectedSources"><%= @stats[:connected_sources] %></p>
-        <p class="text-sm text-gray-700/80 font-medium">of <%= @stats[:total_data_sources] %> sources active</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Total Records - Premium Card -->
-  <div class="group premium-card relative overflow-hidden rounded-4xl bg-white/30 backdrop-blur-2xl p-8 shadow-2xl border border-white/20 hover:shadow-purple-200/50 hover:shadow-4xl hover:-translate-y-3 transition-all duration-700 animate-float-delayed-2">
-    <!-- Premium floating decorations -->
-    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-600/20 rounded-full blur-3xl transform translate-x-12 -translate-y-12 group-hover:scale-150 transition-all duration-700"></div>
-    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100 group-hover:animate-shimmer transition-opacity duration-500"></div>
-    <div class="relative">
+    <!-- Connected Sources -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
       <div class="flex items-center justify-between mb-4">
-        <div class="relative group/icon-records">
-          <div class="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-600 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"></div>
-          <div class="relative flex h-18 w-18 items-center justify-center rounded-3xl bg-gradient-to-br from-purple-500 via-purple-600 to-pink-600 shadow-2xl shadow-purple-500/30 group-hover:shadow-purple-500/50 group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 ring-4 ring-white/40">
-            <svg class="h-10 w-10 text-white group-hover/icon-records:scale-110 group-hover/icon-records:rotate-12 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-          </div>
-        </div>
-        <div class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-100/80 to-emerald-100/80 backdrop-blur-sm text-green-700 text-xs font-bold rounded-2xl border border-green-200/50 shadow-lg group-hover:scale-105 transition-all duration-300">
-          <svg class="h-3 w-3 animate-bounce" viewBox="0 0 20 20" fill="currentColor" style="animation-delay: 1s;">
-            <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04L10 3.26l5.79 5.47a.75.75 0 01-1.08 1.04L10.75 5.612V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+          <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
           </svg>
-          +8.2%
+        </div>
+        <div class="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div class="h-full bg-green-500 rounded-full transition-all duration-300" style="width: <%= @stats[:total_data_sources] > 0 ? (@stats[:connected_sources].to_f / @stats[:total_data_sources] * 100).round : 0 %>%"></div>
         </div>
       </div>
       <div>
-        <p class="text-sm font-bold text-purple-800/80 uppercase tracking-wider mb-3">Total Records</p>
-        <p class="text-5xl font-black mb-4 bg-gradient-to-r from-purple-600 via-pink-600 to-violet-600 bg-clip-text text-transparent group-hover:scale-110 transition-all duration-500 animate-counter-bounce"><%= number_with_delimiter(@stats[:total_records]) %></p>
-        <p class="text-sm text-gray-700/80 font-medium">Records processed</p>
+        <p class="text-sm font-medium text-gray-600 mb-1">Connected</p>
+        <p class="text-3xl font-bold text-gray-900" data-realtime-dashboard-target="connectedSources"><%= @stats[:connected_sources] %></p>
+        <p class="text-sm text-gray-500">of <%= @stats[:total_data_sources] %> sources active</p>
       </div>
     </div>
-   </div>
 
-  <!-- Last Sync - Premium Card -->
-  <div class="group premium-card relative overflow-hidden rounded-4xl bg-white/30 backdrop-blur-2xl p-8 shadow-2xl border border-white/20 hover:shadow-cyan-200/50 hover:shadow-4xl hover:-translate-y-3 transition-all duration-700 animate-float">
-    <!-- Premium floating decorations -->
-    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-cyan-400/20 to-blue-600/20 rounded-full blur-3xl transform translate-x-12 -translate-y-12 group-hover:scale-150 transition-all duration-700"></div>
-    <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100 group-hover:animate-shimmer transition-opacity duration-500"></div>
-    <div class="relative">
+    <!-- Total Records -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
       <div class="flex items-center justify-between mb-4">
-        <div class="relative group/icon-sync">
-          <div class="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"></div>
-          <div class="relative flex h-18 w-18 items-center justify-center rounded-3xl bg-gradient-to-br from-cyan-500 via-cyan-600 to-blue-600 shadow-2xl shadow-cyan-500/30 group-hover:shadow-cyan-500/50 group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 ring-4 ring-white/40">
-            <svg class="h-10 w-10 text-white group-hover/icon-sync:scale-110 group-hover/icon-sync:rotate-12 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
+          <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
         </div>
-        <div class="flex items-center gap-2 px-4 py-2 <%= @stats[:last_sync] ? 'bg-gradient-to-r from-green-100/80 to-emerald-100/80 text-green-700' : 'bg-gradient-to-r from-gray-100/80 to-gray-200/80 text-gray-600' %> backdrop-blur-sm text-xs font-bold rounded-2xl border <%= @stats[:last_sync] ? 'border-green-200/50' : 'border-gray-200/50' %> shadow-lg group-hover:scale-105 transition-all duration-300">
-          <div class="h-2 w-2 <%= @stats[:last_sync] ? 'bg-green-500 status-indicator connected' : 'bg-gray-400 status-indicator' %> rounded-full <%= @stats[:last_sync] ? 'animate-pulse' : '' %>"></div>
-          <%= @stats[:last_sync] ? 'Active' : 'Inactive' %>
-        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          +8.2%
+        </span>
       </div>
       <div>
-        <p class="text-sm font-bold text-cyan-800/80 uppercase tracking-wider mb-3">Last Sync</p>
-        <p class="text-5xl font-black mb-4 bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent group-hover:scale-110 transition-all duration-500 animate-counter-bounce">
+        <p class="text-sm font-medium text-gray-600 mb-1">Total Records</p>
+        <p class="text-3xl font-bold text-gray-900"><%= number_with_delimiter(@stats[:total_records]) %></p>
+        <p class="text-sm text-gray-500">Records processed</p>
+      </div>
+    </div>
+
+    <!-- Last Sync -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-cyan-100">
+          <svg class="h-6 w-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @stats[:last_sync] ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
+          <div class="h-1.5 w-1.5 <%= @stats[:last_sync] ? 'bg-green-500' : 'bg-gray-400' %> rounded-full mr-1"></div>
+          <%= @stats[:last_sync] ? 'Active' : 'Inactive' %>
+        </span>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-600 mb-1">Last Sync</p>
+        <p class="text-3xl font-bold text-gray-900">
           <%= @stats[:last_sync] ? time_ago_in_words(@stats[:last_sync]) : "Never" %>
         </p>
-        <p class="text-sm text-gray-700/80 font-medium"><%= @stats[:last_sync] ? 'ago' : 'No sync performed' %></p>
+        <p class="text-sm text-gray-500"><%= @stats[:last_sync] ? 'ago' : 'No sync performed' %></p>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Data Quality Monitoring Widget -->
-<%= render 'data_quality_widget' %>
+  <!-- Data Quality Monitoring Widget -->
+  <%= render 'data_quality_widget' %>
 
-<!-- E-commerce Analytics Section -->
-<%= render 'ecommerce_analytics' %>
+  <!-- E-commerce Analytics Section -->
+  <%= render 'ecommerce_analytics' %>
 
-<!-- Enhanced Main Content Grid -->
-<div class="grid grid-cols-1 gap-8 xl:grid-cols-12 mb-8">
-  <!-- Data Sources Status (Enhanced) -->
-  <div class="xl:col-span-8">
-    <div class="bg-white/80 backdrop-blur-sm overflow-hidden shadow-xl rounded-2xl border border-gray-200/50">
-      <div class="px-8 py-6 border-b border-gray-200/50 bg-gradient-to-r from-gray-50 to-white">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg">
-              <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-xl font-bold text-gray-900">Data Sources</h3>
-              <p class="text-sm text-gray-600">Manage your connected integrations</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-3">
-            <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full">
-              <div class="h-2 w-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <%= @data_sources.count %> Active
-            </div>
-            <%= link_to data_sources_path, class: "inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors" do %>
-              View all
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            <% end %>
-          </div>
-        </div>
-      </div>
-      <div class="p-8">
-        <% if @data_sources.any? %>
-          <div class="space-y-6">
-            <% @data_sources.limit(5).each_with_index do |data_source, index| %>
-              <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-white to-gray-50/50 p-6 shadow-lg border border-gray-200/50 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="relative flex items-center justify-between">
-                  <div class="flex items-center gap-4">
-                    <div class="relative">
-                      <!-- Enhanced dynamic icon based on source type -->
-                      <div class="h-14 w-14 rounded-2xl <%= case data_source.source_type
-                        when 'shopify' then 'bg-gradient-to-br from-green-400 to-green-600'
-                        when 'stripe' then 'bg-gradient-to-br from-purple-400 to-purple-600'
-                        when 'google_analytics' then 'bg-gradient-to-br from-orange-400 to-orange-600'
-                        when 'quickbooks' then 'bg-gradient-to-br from-blue-400 to-blue-600'
-                        when 'mailchimp' then 'bg-gradient-to-br from-yellow-400 to-yellow-600'
-                        else 'bg-gradient-to-br from-gray-400 to-gray-600'
-                        end %> flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                        <span class="text-lg font-bold text-white">
-                          <%= data_source.source_type.first(2).upcase %>
-                        </span>
-                      </div>
-                      <div class="absolute -bottom-1 -right-1 h-5 w-5 rounded-full <%= case data_source.status
-                        when 'connected' then 'bg-green-500'
-                        when 'syncing' then 'bg-blue-500 animate-pulse'
-                        when 'error' then 'bg-red-500'
-                        else 'bg-gray-400'
-                        end %> border-2 border-white shadow-sm"></div>
-                    </div>
-                    <div class="flex-1">
-                      <div class="flex items-center gap-3 mb-2">
-                        <h4 class="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors"><%= data_source.name %></h4>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <%= case data_source.status
-                          when 'connected' then 'bg-green-100 text-green-800'
-                          when 'syncing' then 'bg-blue-100 text-blue-800'
-                          when 'error' then 'bg-red-100 text-red-800'
-                          else 'bg-gray-100 text-gray-800'
-                          end %>">
-                          <%= data_source.status.humanize %>
-                        </span>
-                      </div>
-                      <p class="text-sm text-gray-600 capitalize font-medium"><%= data_source.source_type.humanize %></p>
-                      <p class="text-xs text-gray-500 mt-1">
-                        Last sync: <%= data_source.last_sync_at ? time_ago_in_words(data_source.last_sync_at) + " ago" : "Never" %>
-                      </p>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-4">
-                    <div class="text-right hidden sm:block">
-                      <div class="text-sm font-semibold text-gray-900"><%= number_with_delimiter(rand(1000..50000)) %></div>
-                      <div class="text-xs text-gray-500">Records</div>
-                    </div>
-                    <button class="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-all duration-200 group-hover:scale-110">
-                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        <% else %>
-          <!-- Enhanced Empty state -->
-          <div class="text-center py-16">
-            <div class="relative">
-              <div class="mx-auto h-24 w-24 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center mb-6">
-                <svg class="h-12 w-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 gap-8 xl:grid-cols-12 mb-8">
+    <!-- Data Sources Status -->
+    <div class="xl:col-span-8">
+      <div class="bg-white rounded-lg border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
+                <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
                 </svg>
               </div>
-              <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2">
-                <div class="h-4 w-4 bg-yellow-400 rounded-full animate-bounce"></div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900">Data Sources</h3>
+                <p class="text-sm text-gray-600">Manage your connected integrations</p>
               </div>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">No data sources connected</h3>
-            <p class="text-gray-600 mb-8 max-w-md mx-auto leading-relaxed">
-              Connect your first data source to start building powerful data pipelines and unlock insights from your business data.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-              <%= link_to new_data_source_path, 
-                  class: "inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105" do %>
-                <svg class="-ml-0.5 mr-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                </svg>
-                Connect Data Source
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <%= @data_sources.count %> Active
+              </span>
+              <%= link_to data_sources_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" do %>
+                View all →
               <% end %>
-              <button class="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow-lg border border-gray-200 hover:bg-gray-50 transition-all duration-200">
-                <svg class="-ml-0.5 mr-2 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                </svg>
-                View Documentation
-              </button>
             </div>
           </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
-
-  <!-- Enhanced Recent Activity -->
-  <div class="xl:col-span-4">
-    <div class="bg-white/80 backdrop-blur-sm overflow-hidden shadow-xl rounded-2xl border border-gray-200/50 h-full">
-      <div class="px-8 py-6 border-b border-gray-200/50 bg-gradient-to-r from-gray-50 to-white">
-        <div class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 shadow-lg">
-            <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-          </div>
-          <div>
-            <h3 class="text-xl font-bold text-gray-900">Recent Activity</h3>
-            <p class="text-sm text-gray-600">Latest sync operations</p>
-          </div>
         </div>
-      </div>
-      <div class="p-8">
-        <div class="flow-root">
-          <ul role="list" class="-mb-8">
-            <% @recent_jobs.each_with_index do |job, index| %>
-              <li>
-                <div class="relative pb-6 <%= 'pb-0' if index == @recent_jobs.count - 1 %>">
-                  <% unless index == @recent_jobs.count - 1 %>
-                    <span class="absolute left-6 top-12 -ml-px h-full w-0.5 bg-gradient-to-b from-gray-200 to-transparent" aria-hidden="true"></span>
-                  <% end %>
-                  <div class="group relative flex items-start space-x-4 p-4 rounded-2xl hover:bg-gradient-to-r hover:from-gray-50/50 hover:to-white transition-all duration-200">
-                    <div class="relative flex-shrink-0">
-                      <span class="h-12 w-12 rounded-2xl <%= case job.status
-                        when 'completed' then 'bg-gradient-to-br from-green-400 to-green-600'
-                        when 'running' then 'bg-gradient-to-br from-blue-400 to-blue-600'
-                        when 'failed' then 'bg-gradient-to-br from-red-400 to-red-600'
-                        else 'bg-gradient-to-br from-gray-400 to-gray-600'
-                        end %> flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-200">
-                        <% case job.status %>
-                        <% when 'completed' %>
-                          <svg class="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                          </svg>
-                        <% when 'running' %>
-                          <svg class="h-6 w-6 text-white animate-spin" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-                          </svg>
-                        <% else %>
-                          <svg class="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                          </svg>
-                        <% end %>
-                      </span>
-                      <div class="absolute -bottom-1 -right-1 h-4 w-4 rounded-full <%= case job.status
-                        when 'completed' then 'bg-green-500'
-                        when 'running' then 'bg-blue-500 animate-pulse'
-                        when 'failed' then 'bg-red-500'
-                        else 'bg-gray-400'
-                        end %> border-2 border-white shadow-sm"></div>
+        <div class="p-6">
+          <% if @data_sources.any? %>
+            <div class="space-y-4">
+              <% @data_sources.limit(5).each do |data_source| %>
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div class="flex items-center gap-4">
+                    <div class="h-10 w-10 rounded-lg <%= case data_source.source_type
+                      when 'shopify' then 'bg-green-100 text-green-600'
+                      when 'stripe' then 'bg-purple-100 text-purple-600'
+                      when 'google_analytics' then 'bg-orange-100 text-orange-600'
+                      when 'quickbooks' then 'bg-blue-100 text-blue-600'
+                      when 'mailchimp' then 'bg-yellow-100 text-yellow-600'
+                      else 'bg-gray-100 text-gray-600'
+                      end %> flex items-center justify-center text-sm font-semibold">
+                      <%= data_source.source_type.first(2).upcase %>
                     </div>
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2">
-                          <p class="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                            <%= job.data_source.name %>
-                          </p>
-                          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= case job.status
-                            when 'completed' then 'bg-green-100 text-green-800'
-                            when 'running' then 'bg-blue-100 text-blue-800'
-                            when 'failed' then 'bg-red-100 text-red-800'
-                            else 'bg-gray-100 text-gray-800'
-                            end %>">
-                            <%= job.status.humanize %>
-                          </span>
-                        </div>
-                        <time class="text-xs text-gray-500 font-medium"><%= time_ago_in_words(job.created_at) %> ago</time>
-                      </div>
-                      <p class="text-sm text-gray-600 mb-1">
-                        Data sync operation
-                      </p>
-                      <div class="flex items-center justify-between">
-                        <p class="text-xs text-gray-500">
-                          <span class="font-semibold text-gray-700"><%= number_with_delimiter(job.records_processed) %></span> records processed
-                        </p>
-                        <div class="flex items-center gap-1">
-                          <div class="h-1.5 w-16 bg-gray-200 rounded-full overflow-hidden">
-                            <div class="h-full <%= case job.status
-                              when 'completed' then 'bg-green-500 w-full'
-                              when 'running' then 'bg-blue-500 w-3/4 animate-pulse'
-                              when 'failed' then 'bg-red-500 w-1/4'
-                              else 'bg-gray-400 w-0'
-                              end %> rounded-full transition-all duration-500"></div>
-                          </div>
-                        </div>
-                      </div>
+                    <div>
+                      <h4 class="text-sm font-medium text-gray-900"><%= data_source.name %></h4>
+                      <p class="text-sm text-gray-500"><%= data_source.source_type.humanize %></p>
                     </div>
                   </div>
+                  <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= case data_source.status
+                      when 'connected' then 'bg-green-100 text-green-800'
+                      when 'syncing' then 'bg-blue-100 text-blue-800'
+                      when 'error' then 'bg-red-100 text-red-800'
+                      else 'bg-gray-100 text-gray-800'
+                      end %>">
+                      <%= data_source.status.humanize %>
+                    </span>
+                    <%= link_to data_source_path(data_source), class: "text-indigo-600 hover:text-indigo-500" do %>
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                      </svg>
+                    <% end %>
+                  </div>
                 </div>
-              </li>
-            <% end %>
-            
-            <% if @recent_jobs.empty? %>
-              <li class="text-center py-8">
-                <div class="text-sm text-gray-500">No recent activity</div>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="mt-8">
-  <div class="bg-gradient-to-br from-white to-gray-50/50 overflow-hidden shadow-xl rounded-3xl border border-gray-100/50 hover:shadow-2xl transition-all duration-300">
-    <div class="px-6 py-8">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="h-10 w-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        </div>
-        <h3 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Quick Actions</h3>
-      </div>
-      <div class="grid gap-4">
-        <%= link_to analytics_path, class: "group relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-2xl p-4 transition-all duration-300 transform hover:scale-105 hover:shadow-xl" do %>
-          <div class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <div class="relative flex items-center justify-center gap-3">
-            <div class="h-8 w-8 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
-              </svg>
+              <% end %>
             </div>
-            <span class="font-semibold text-sm">View Analytics</span>
-            <svg class="h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-        <% end %>
-        <% if current_user.can_manage_users? %>
-          <%= link_to users_path, class: "group relative overflow-hidden bg-white hover:bg-gray-50 border-2 border-gray-200 hover:border-indigo-300 text-gray-700 hover:text-indigo-700 rounded-2xl p-4 transition-all duration-300 transform hover:scale-105 hover:shadow-lg" do %>
-            <div class="flex items-center justify-center gap-3">
-              <div class="h-8 w-8 bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-indigo-100 group-hover:to-purple-100 rounded-xl flex items-center justify-center transition-all duration-300">
-                <svg class="h-5 w-5 group-hover:text-indigo-600 transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
-                </svg>
-              </div>
-              <span class="font-semibold text-sm">Invite Team</span>
-              <svg class="h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          <% else %>
+            <div class="text-center py-12">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
               </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">No data sources</h3>
+              <p class="mt-1 text-sm text-gray-500">Get started by connecting your first data source.</p>
+              <div class="mt-6">
+                <%= link_to new_data_source_path, class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700" do %>
+                  <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                  </svg>
+                  Add Data Source
+                <% end %>
+              </div>
             </div>
           <% end %>
-        <% end %>
-        <div class="mt-2 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
-          <div class="flex items-center gap-3">
-            <div class="h-8 w-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center">
-              <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="xl:col-span-4">
+      <div class="bg-white rounded-lg border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <div class="h-2 w-2 bg-green-500 rounded-full mt-2"></div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-900">Data sync completed</p>
+                <p class="text-xs text-gray-500">2 minutes ago</p>
+              </div>
             </div>
-            <div class="flex-1">
-              <p class="text-sm font-medium text-blue-900">Need help getting started?</p>
-              <p class="text-xs text-blue-700">Check out our documentation and tutorials</p>
+            <div class="flex items-start gap-3">
+              <div class="h-2 w-2 bg-blue-500 rounded-full mt-2"></div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-900">New data source connected</p>
+                <p class="text-xs text-gray-500">1 hour ago</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="h-2 w-2 bg-yellow-500 rounded-full mt-2"></div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-900">Data quality check completed</p>
+                <p class="text-xs text-gray-500">3 hours ago</p>
+              </div>
             </div>
           </div>
         </div>
@@ -521,4 +257,16 @@
   </div>
 </div>
 
-</div> <!-- End real-time dashboard container -->
+<script>
+  // Real-time dashboard updates
+  document.addEventListener('DOMContentLoaded', function() {
+    const controller = application.getControllerForElementAndIdentifier(
+      document.querySelector('[data-controller="realtime-dashboard"]'),
+      'realtime-dashboard'
+    );
+    
+    if (controller) {
+      controller.connect();
+    }
+  });
+</script>

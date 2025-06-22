@@ -18,36 +18,36 @@ class TransformationJob < ApplicationRecord
 
   scope :by_type, ->(type) { where(transformation_type: type) }
   scope :by_status, ->(status) { where(status: status) }
-  scope :running, -> { where(status: 'running') }
-  scope :completed, -> { where(status: 'completed') }
-  scope :failed, -> { where(status: 'failed') }
+  scope :running, -> { where(status: "running") }
+  scope :completed, -> { where(status: "completed") }
+  scope :failed, -> { where(status: "failed") }
   scope :recent, -> { order(created_at: :desc) }
 
   before_validation :generate_job_id, on: :create
   before_validation :set_defaults, on: :create
 
   def queued?
-    status == 'queued'
+    status == "queued"
   end
 
   def running?
-    status == 'running'
+    status == "running"
   end
 
   def completed?
-    status == 'completed'
+    status == "completed"
   end
 
   def failed?
-    status == 'failed'
+    status == "failed"
   end
 
   def cancelled?
-    status == 'cancelled'
+    status == "cancelled"
   end
 
   def paused?
-    status == 'paused'
+    status == "paused"
   end
 
   def can_start?
@@ -64,41 +64,41 @@ class TransformationJob < ApplicationRecord
 
   def duration
     return nil unless started_at
-    
+
     end_time = completed_at || Time.current
     end_time - started_at
   end
 
   def success_rate
     return 0 if input_records_count.to_i.zero?
-    
+
     ((output_records_count.to_f / input_records_count) * 100).round(2)
   end
 
   def processing_speed
     return 0 unless completed? && duration && duration > 0
-    
+
     (output_records_count.to_f / duration).round(2)
   end
 
   def data_quality_score
     return 0 unless data_quality_metrics.present?
-    
+
     metrics = data_quality_metrics
-    
+
     # Calculate weighted quality score
-    completeness = metrics['completeness_score'] || 0
-    accuracy = metrics['accuracy_score'] || 0
-    consistency = metrics['consistency_score'] || 0
-    validity = metrics['validity_score'] || 0
-    
+    completeness = metrics["completeness_score"] || 0
+    accuracy = metrics["accuracy_score"] || 0
+    consistency = metrics["consistency_score"] || 0
+    validity = metrics["validity_score"] || 0
+
     # Weighted average: completeness 30%, accuracy 40%, consistency 20%, validity 10%
     (completeness * 0.3 + accuracy * 0.4 + consistency * 0.2 + validity * 0.1).round(2)
   end
 
   def mark_as_running!
     update!(
-      status: 'running',
+      status: "running",
       started_at: Time.current,
       error_details: nil
     )
@@ -106,7 +106,7 @@ class TransformationJob < ApplicationRecord
 
   def mark_as_completed!(output_count: 0, quality_metrics: {})
     update!(
-      status: 'completed',
+      status: "completed",
       completed_at: Time.current,
       output_records_count: output_count,
       data_quality_metrics: quality_metrics.merge(completed_at: Time.current),
@@ -116,7 +116,7 @@ class TransformationJob < ApplicationRecord
 
   def mark_as_failed!(error)
     update!(
-      status: 'failed',
+      status: "failed",
       completed_at: Time.current,
       error_details: format_error_details(error)
     )
@@ -124,19 +124,19 @@ class TransformationJob < ApplicationRecord
 
   def mark_as_cancelled!
     update!(
-      status: 'cancelled',
+      status: "cancelled",
       completed_at: Time.current
     )
   end
 
   def mark_as_paused!
-    update!(status: 'paused')
+    update!(status: "paused")
   end
 
   def resume!
     return false unless paused?
-    
-    update!(status: 'running')
+
+    update!(status: "running")
     # Re-enqueue the job
     TransformDataJob.perform_later(self)
     true
@@ -144,7 +144,7 @@ class TransformationJob < ApplicationRecord
 
   def log_progress(processed_count:, quality_metrics: {})
     current_metrics = data_quality_metrics || {}
-    
+
     update!(
       output_records_count: processed_count,
       data_quality_metrics: current_metrics.merge(quality_metrics).merge(
@@ -157,51 +157,51 @@ class TransformationJob < ApplicationRecord
   def estimated_completion_time
     return nil unless running? && output_records_count > 0
     return nil if input_records_count <= 0
-    
+
     current_speed = processing_speed
     return nil if current_speed <= 0
-    
+
     remaining_records = input_records_count - output_records_count
     remaining_seconds = remaining_records / current_speed
-    
+
     Time.current + remaining_seconds.seconds
   end
 
   def transformation_efficiency
     return 0 unless completed? && duration && duration > 0
-    
+
     # Records per second
     (input_records_count.to_f / duration).round(2)
   end
 
   def improvement_metrics
     return {} unless data_quality_metrics.present?
-    
-    before_quality = transformation_rules&.dig('quality_baseline') || {}
+
+    before_quality = transformation_rules&.dig("quality_baseline") || {}
     after_quality = data_quality_metrics
-    
+
     {
-      completeness_improvement: calculate_improvement(before_quality['completeness_score'], after_quality['completeness_score']),
-      accuracy_improvement: calculate_improvement(before_quality['accuracy_score'], after_quality['accuracy_score']),
-      consistency_improvement: calculate_improvement(before_quality['consistency_score'], after_quality['consistency_score']),
-      overall_quality_improvement: calculate_improvement(before_quality['overall_score'], data_quality_score)
+      completeness_improvement: calculate_improvement(before_quality["completeness_score"], after_quality["completeness_score"]),
+      accuracy_improvement: calculate_improvement(before_quality["accuracy_score"], after_quality["accuracy_score"]),
+      consistency_improvement: calculate_improvement(before_quality["consistency_score"], after_quality["consistency_score"]),
+      overall_quality_improvement: calculate_improvement(before_quality["overall_score"], data_quality_score)
     }
   end
 
   def transformation_display_name
     case transformation_type
-    when 'customer_deduplication' then 'Customer Deduplication'
-    when 'order_normalization' then 'Order Data Normalization'
-    when 'product_enrichment' then 'Product Data Enrichment'
-    when 'currency_conversion' then 'Currency Conversion'
-    when 'address_standardization' then 'Address Standardization'
-    when 'phone_normalization' then 'Phone Number Normalization'
-    when 'email_validation' then 'Email Address Validation'
-    when 'data_classification' then 'Data Classification'
-    when 'rfm_calculation' then 'RFM Analysis Calculation'
-    when 'revenue_recognition' then 'Revenue Recognition'
-    when 'churn_prediction' then 'Customer Churn Prediction'
-    when 'inventory_optimization' then 'Inventory Optimization'
+    when "customer_deduplication" then "Customer Deduplication"
+    when "order_normalization" then "Order Data Normalization"
+    when "product_enrichment" then "Product Data Enrichment"
+    when "currency_conversion" then "Currency Conversion"
+    when "address_standardization" then "Address Standardization"
+    when "phone_normalization" then "Phone Number Normalization"
+    when "email_validation" then "Email Address Validation"
+    when "data_classification" then "Data Classification"
+    when "rfm_calculation" then "RFM Analysis Calculation"
+    when "revenue_recognition" then "Revenue Recognition"
+    when "churn_prediction" then "Customer Churn Prediction"
+    when "inventory_optimization" then "Inventory Optimization"
     else transformation_type.humanize
     end
   end
@@ -209,11 +209,11 @@ class TransformationJob < ApplicationRecord
   def self.performance_metrics(date_range = 1.week.ago..Time.current)
     jobs = where(created_at: date_range)
     total_count = jobs.count
-    
+
     return { total_jobs: 0 } if total_count.zero?
 
     completed_jobs = jobs.completed
-    
+
     {
       total_jobs: total_count,
       completed_jobs: completed_jobs.count,
@@ -236,7 +236,7 @@ class TransformationJob < ApplicationRecord
   end
 
   def set_defaults
-    self.status ||= 'queued'
+    self.status ||= "queued"
     self.input_records_count ||= 0
     self.output_records_count ||= 0
     self.transformation_rules ||= {}
@@ -245,7 +245,7 @@ class TransformationJob < ApplicationRecord
 
   def calculate_progress_percentage(processed_count)
     return 0 if input_records_count <= 0
-    
+
     ((processed_count.to_f / input_records_count) * 100).round(2)
   end
 
@@ -263,7 +263,7 @@ class TransformationJob < ApplicationRecord
 
   def calculate_improvement(before_score, after_score)
     return 0 unless before_score && after_score && before_score > 0
-    
+
     ((after_score - before_score) / before_score.to_f * 100).round(2)
   end
 
@@ -284,7 +284,7 @@ class TransformationJob < ApplicationRecord
   end
 
   def self.calculate_average_quality_score(jobs)
-    jobs_with_quality = jobs.where.not(data_quality_metrics: [nil, {}])
+    jobs_with_quality = jobs.where.not(data_quality_metrics: [ nil, {} ])
     return 0 if jobs_with_quality.empty?
 
     total_score = jobs_with_quality.sum(&:data_quality_score)

@@ -13,9 +13,9 @@ class OrganizationsController < ApplicationController
 
   def update
     authorize @organization
-    
+
     if @organization.update(organization_params)
-      redirect_to @organization, notice: 'Organization updated successfully.'
+      redirect_to @organization, notice: "Organization updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -28,7 +28,7 @@ class OrganizationsController < ApplicationController
 
   def usage_stats
     authorize @organization, :usage_stats?
-    
+
     @stats = {
       total_records: policy_scope(RawDataRecord).count,
       api_calls_this_month: calculate_api_calls,

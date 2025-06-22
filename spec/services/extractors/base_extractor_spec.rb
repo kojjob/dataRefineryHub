@@ -3,46 +3,46 @@ require 'rails_helper'
 RSpec.describe BaseExtractor, type: :service do
   let(:organization) { create(:organization) }
   let(:data_source) { create(:data_source, organization: organization, source_type: 'shopify') }
-  
+
   # Create a test extractor class for testing
   let(:test_extractor_class) do
     Class.new(BaseExtractor) do
       def self.name
         'TestExtractor'
       end
-      
+
       def validate_connection
         # Mock implementation
         true
       end
-      
+
       def perform_extraction
         [
           { id: 1, name: 'Test Record 1', created_at: Time.current },
           { id: 2, name: 'Test Record 2', created_at: Time.current }
         ]
       end
-      
+
       def determine_record_type(record)
         'test_record'
       end
-      
+
       def extract_external_id(record)
         record[:id] || record['id']
       end
-      
+
       class << self
         def required_fields
           %w[id name created_at]
         end
-        
+
         def supported_source_type
           'test'
         end
       end
     end
   end
-  
+
   let(:extractor) { test_extractor_class.new(data_source) }
 
   describe '#initialize' do
@@ -58,9 +58,9 @@ RSpec.describe BaseExtractor, type: :service do
       expect(extractor).to receive(:perform_extraction).and_call_original
       expect(extractor).to receive(:validate_data).and_call_original
       expect(extractor).to receive(:save_raw_data).and_call_original
-      
+
       result = extractor.extract_data
-      
+
       expect(result).to be_an(Array)
       expect(result.length).to eq(2)
     end
@@ -69,7 +69,7 @@ RSpec.describe BaseExtractor, type: :service do
       expect {
         extractor.extract_data
       }.to change(ExtractionJob, :count).by(1)
-      
+
       job = ExtractionJob.last
       expect(job.data_source).to eq(data_source)
       expect(job.status).to eq('completed')
@@ -79,7 +79,7 @@ RSpec.describe BaseExtractor, type: :service do
       expect {
         extractor.extract_data
       }.to change(RawDataRecord, :count).by(2)
-      
+
       records = RawDataRecord.where(data_source: data_source)
       expect(records.count).to eq(2)
       expect(records.first.record_type).to eq('test_record')
@@ -87,7 +87,7 @@ RSpec.describe BaseExtractor, type: :service do
 
     it 'updates data source sync timestamps' do
       extractor.extract_data
-      
+
       data_source.reload
       expect(data_source.last_sync_at).to be_present
       expect(data_source.next_sync_at).to be_present
@@ -103,7 +103,7 @@ RSpec.describe BaseExtractor, type: :service do
         expect {
           extractor.extract_data
         }.to raise_error(StandardError, 'Test error')
-        
+
         job = ExtractionJob.last
         expect(job.status).to eq('failed')
         expect(job.error_message).to eq('Test error')
@@ -115,7 +115,7 @@ RSpec.describe BaseExtractor, type: :service do
         rescue StandardError
           # Expected to raise
         end
-        
+
         data_source.reload
         expect(data_source.status).to eq('error')
       end
@@ -128,7 +128,7 @@ RSpec.describe BaseExtractor, type: :service do
             # Expected to raise
           end
         }.to change(AuditLog, :count).by(1)
-        
+
         audit_log = AuditLog.last
         expect(audit_log.action).to eq('extraction_failed')
         expect(audit_log.resource_type).to eq('DataSource')
@@ -140,16 +140,16 @@ RSpec.describe BaseExtractor, type: :service do
   describe '#test_connection' do
     it 'returns success when connection is valid' do
       result = extractor.test_connection
-      
+
       expect(result[:status]).to eq(:success)
       expect(result[:message]).to eq('Connection successful')
     end
 
     it 'returns error when connection fails' do
       allow(extractor).to receive(:validate_connection).and_raise(BaseExtractor::ConnectionError, 'Connection failed')
-      
+
       result = extractor.test_connection
-      
+
       expect(result[:status]).to eq(:error)
       expect(result[:message]).to eq('Connection failed')
       expect(result[:error_type]).to eq('BaseExtractor::ConnectionError')
@@ -162,7 +162,7 @@ RSpec.describe BaseExtractor, type: :service do
 
     it 'returns extraction statistics' do
       stats = extractor.extraction_stats
-      
+
       expect(stats[:total_jobs]).to eq(2)
       expect(stats[:successful_jobs]).to eq(1)
       expect(stats[:failed_jobs]).to eq(1)
@@ -222,10 +222,10 @@ RSpec.describe BaseExtractor, type: :service do
 
     it 'sets correct attributes on raw data records' do
       extractor.send(:save_raw_data, validated_data)
-      
+
       records = RawDataRecord.where(data_source: data_source)
       expect(records.count).to eq(2)
-      
+
       record = records.first
       expect(record.record_type).to eq('test_record')
       expect(record.external_id).to eq(1)

@@ -181,7 +181,7 @@ RSpec.describe DataSource, type: :model do
       it 'updates status to syncing and clears error message' do
         data_source.error_message = 'Previous error'
         data_source.mark_syncing!
-        
+
         expect(data_source.reload).to be_syncing
         expect(data_source.error_message).to be_nil
       end
@@ -191,7 +191,7 @@ RSpec.describe DataSource, type: :model do
       it 'updates status and sync timestamps' do
         freeze_time do
           data_source.mark_sync_completed!
-          
+
           data_source.reload
           expect(data_source).to be_connected
           expect(data_source.last_sync_at).to be_within(1.second).of(Time.current)
@@ -205,7 +205,7 @@ RSpec.describe DataSource, type: :model do
       it 'updates status to error and records error message' do
         error = StandardError.new('Sync failed')
         data_source.mark_sync_failed!(error)
-        
+
         data_source.reload
         expect(data_source).to be_error
         expect(data_source.error_message).to eq('Sync failed')
@@ -256,13 +256,13 @@ RSpec.describe DataSource, type: :model do
   describe 'encryption' do
     it 'encrypts credentials' do
       source = create(:data_source, credentials: { api_key: 'secret_key' })
-      
+
       # Check that credentials are encrypted in the database
       raw_credentials = source.class.connection.select_value(
         "SELECT credentials FROM data_sources WHERE id = #{source.id}"
       )
       expect(raw_credentials).not_to include('secret_key')
-      
+
       # Check that credentials can be decrypted
       expect(source.reload.credentials['api_key']).to eq('secret_key')
     end

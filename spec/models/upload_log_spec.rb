@@ -46,7 +46,7 @@ RSpec.describe UploadLog, type: :model do
 
   describe '#duration' do
     it 'calculates duration when completed_at is present' do
-      log = create(:upload_log, 
+      log = create(:upload_log,
         scheduled_upload: scheduled_upload,
         started_at: 1.hour.ago,
         completed_at: 30.minutes.ago

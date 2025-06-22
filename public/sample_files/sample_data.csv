@@ -1,0 +1,11 @@
+id,name,email,phone,company,revenue,created_at,status
+1,John Smith,john.smith@example.com,+1-555-0123,Acme Corp,125000.50,2024-01-15,active
+2,Sarah Johnson,sarah.j@techstart.io,+1-555-0124,TechStart Inc,89000.75,2024-01-16,active
+3,Michael Brown,m.brown@globaltech.com,+1-555-0125,GlobalTech Ltd,156000.00,2024-01-17,pending
+4,Emily Davis,emily.davis@innovate.co,+1-555-0126,Innovate Co,92000.25,2024-01-18,active
+5,David Wilson,d.wilson@futuresoft.net,+1-555-0127,FutureSoft,178000.80,2024-01-19,inactive
+6,Lisa Anderson,lisa.a@dataflow.org,+1-555-0128,DataFlow Systems,134000.60,2024-01-20,active
+7,Robert Taylor,robert.t@cloudnine.com,+1-555-0129,CloudNine Solutions,201000.90,2024-01-21,active
+8,Jennifer Martinez,j.martinez@webtech.io,+1-555-0130,WebTech Innovations,87000.40,2024-01-22,pending
+9,Christopher Lee,chris.lee@digitalpro.com,+1-555-0131,DigitalPro Agency,145000.70,2024-01-23,active
+10,Amanda White,amanda.w@smartsys.net,+1-555-0132,SmartSystems Inc,167000.30,2024-01-24,active

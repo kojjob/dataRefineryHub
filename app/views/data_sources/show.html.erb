@@ -138,6 +138,13 @@
     </div>
   </div>
 
+  <!-- Data Visualization Builder -->
+  <% if @data_source.source_type == 'file_upload' && @processed_data.present? %>
+    <div class="mt-8">
+      <%= render 'visualization_builder' %>
+    </div>
+  <% end %>
+
   <!-- Main Content Grid -->
   <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
     

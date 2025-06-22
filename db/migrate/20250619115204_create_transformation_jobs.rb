@@ -15,12 +15,12 @@ class CreateTransformationJobs < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
+
     add_index :transformation_jobs, :job_id, unique: true
     add_index :transformation_jobs, :transformation_type
     add_index :transformation_jobs, :status
-    add_index :transformation_jobs, [:organization_id, :transformation_type]
-    add_index :transformation_jobs, [:status, :started_at]
+    add_index :transformation_jobs, [ :organization_id, :transformation_type ]
+    add_index :transformation_jobs, [ :status, :started_at ]
     add_index :transformation_jobs, :completed_at
   end
 end

@@ -12,11 +12,11 @@ class CloudStorageService
 
   def self.oauth_url(provider, redirect_uri, state = nil)
     case provider
-    when 'google_drive'
+    when "google_drive"
       GoogleDriveAdapter.new.oauth_url(redirect_uri, state)
-    when 'dropbox'
+    when "dropbox"
       DropboxAdapter.new.oauth_url(redirect_uri, state)
-    when 'onedrive'
+    when "onedrive"
       OneDriveAdapter.new.oauth_url(redirect_uri, state)
     else
       raise "OAuth not supported for provider: #{provider}"
@@ -25,11 +25,11 @@ class CloudStorageService
 
   def self.exchange_code_for_token(provider, code, redirect_uri)
     case provider
-    when 'google_drive'
+    when "google_drive"
       GoogleDriveAdapter.new.exchange_code_for_token(code, redirect_uri)
-    when 'dropbox'
+    when "dropbox"
       DropboxAdapter.new.exchange_code_for_token(code, redirect_uri)
-    when 'onedrive'
+    when "onedrive"
       OneDriveAdapter.new.exchange_code_for_token(code, redirect_uri)
     else
       raise "Token exchange not supported for provider: #{provider}"
@@ -40,7 +40,7 @@ class CloudStorageService
     adapter.test_connection
   end
 
-  def list_files(folder_path = '/', limit = 100)
+  def list_files(folder_path = "/", limit = 100)
     adapter.list_files(folder_path, limit)
   end
 
@@ -67,19 +67,19 @@ class CloudStorageService
   def sync_files(local_directory, remote_directory, options = {})
     begin
       sync_options = {
-        direction: options[:direction] || 'download', # 'upload', 'download', 'bidirectional'
+        direction: options[:direction] || "download", # 'upload', 'download', 'bidirectional'
         delete_extra: options[:delete_extra] || false,
         dry_run: options[:dry_run] || false,
-        file_patterns: options[:file_patterns] || ['*'],
+        file_patterns: options[:file_patterns] || [ "*" ],
         exclude_patterns: options[:exclude_patterns] || []
       }
 
       case sync_options[:direction]
-      when 'download'
+      when "download"
         sync_download(local_directory, remote_directory, sync_options)
-      when 'upload'
+      when "upload"
         sync_upload(local_directory, remote_directory, sync_options)
-      when 'bidirectional'
+      when "bidirectional"
         download_result = sync_download(local_directory, remote_directory, sync_options)
         upload_result = sync_upload(local_directory, remote_directory, sync_options)
         merge_sync_results(download_result, upload_result)
@@ -104,17 +104,17 @@ class CloudStorageService
 
   def adapter
     @adapter ||= case provider
-                 when 'google_drive'
+    when "google_drive"
                    GoogleDriveAdapter.new(credentials)
-                 when 'dropbox'
+    when "dropbox"
                    DropboxAdapter.new(credentials)
-                 when 'aws_s3'
+    when "aws_s3"
                    AwsS3Adapter.new(credentials)
-                 when 'onedrive'
+    when "onedrive"
                    OneDriveAdapter.new(credentials)
-                 else
+    else
                    raise "Unsupported provider: #{provider}"
-                 end
+    end
   end
 
   def validate_provider!
@@ -125,7 +125,7 @@ class CloudStorageService
 
   def sync_download(local_directory, remote_directory, options)
     FileUtils.mkdir_p(local_directory) unless Dir.exist?(local_directory)
-    
+
     remote_files = list_files(remote_directory)
     downloaded_files = []
     errors = []
@@ -133,20 +133,20 @@ class CloudStorageService
     remote_files.each do |remote_file|
       begin
         next unless file_matches_patterns?(remote_file[:name], options[:file_patterns], options[:exclude_patterns])
-        
+
         local_file_path = File.join(local_directory, remote_file[:name])
-        
+
         # Check if file needs to be downloaded
         if should_download_file?(remote_file, local_file_path)
           unless options[:dry_run]
             download_file(remote_file[:id], local_file_path)
           end
-          
+
           downloaded_files << {
             name: remote_file[:name],
             size: remote_file[:size],
             local_path: local_file_path,
-            action: 'downloaded'
+            action: "downloaded"
           }
         end
       rescue => e
@@ -164,7 +164,7 @@ class CloudStorageService
 
     {
       success: true,
-      direction: 'download',
+      direction: "download",
       files_processed: downloaded_files.length,
       files: downloaded_files,
       errors: errors
@@ -172,9 +172,9 @@ class CloudStorageService
   end
 
   def sync_upload(local_directory, remote_directory, options)
-    return { success: false, error: 'Local directory does not exist' } unless Dir.exist?(local_directory)
-    
-    local_files = Dir.glob(File.join(local_directory, '*')).select { |f| File.file?(f) }
+    return { success: false, error: "Local directory does not exist" } unless Dir.exist?(local_directory)
+
+    local_files = Dir.glob(File.join(local_directory, "*")).select { |f| File.file?(f) }
     uploaded_files = []
     errors = []
 
@@ -182,21 +182,21 @@ class CloudStorageService
       begin
         file_name = File.basename(local_file_path)
         next unless file_matches_patterns?(file_name, options[:file_patterns], options[:exclude_patterns])
-        
-        remote_file_path = File.join(remote_directory, file_name).gsub('\\', '/')
-        
+
+        remote_file_path = File.join(remote_directory, file_name).gsub("\\", "/")
+
         # Check if file needs to be uploaded
         if should_upload_file?(local_file_path, remote_file_path)
           unless options[:dry_run]
             upload_file(local_file_path, remote_file_path)
           end
-          
+
           uploaded_files << {
             name: file_name,
             size: File.size(local_file_path),
             local_path: local_file_path,
             remote_path: remote_file_path,
-            action: 'uploaded'
+            action: "uploaded"
           }
         end
       rescue => e
@@ -209,7 +209,7 @@ class CloudStorageService
 
     {
       success: true,
-      direction: 'upload',
+      direction: "upload",
       files_processed: uploaded_files.length,
       files: uploaded_files,
       errors: errors
@@ -220,7 +220,7 @@ class CloudStorageService
     # Check include patterns
     included = include_patterns.any? { |pattern| File.fnmatch(pattern, filename) }
     return false unless included
-    
+
     # Check exclude patterns
     excluded = exclude_patterns.any? { |pattern| File.fnmatch(pattern, filename) }
     !excluded
@@ -228,11 +228,11 @@ class CloudStorageService
 
   def should_download_file?(remote_file, local_file_path)
     return true unless File.exist?(local_file_path)
-    
+
     # Compare modification times and sizes
     local_mtime = File.mtime(local_file_path)
     local_size = File.size(local_file_path)
-    
+
     remote_file[:modified_at] > local_mtime || remote_file[:size] != local_size
   end
 
@@ -240,10 +240,10 @@ class CloudStorageService
     begin
       remote_file_info = get_file_info(remote_file_path)
       return false unless remote_file_info
-      
+
       local_mtime = File.mtime(local_file_path)
       local_size = File.size(local_file_path)
-      
+
       local_mtime > remote_file_info[:modified_at] || local_size != remote_file_info[:size]
     rescue
       # File doesn't exist remotely, should upload
@@ -253,12 +253,12 @@ class CloudStorageService
 
   def delete_extra_local_files(local_directory, remote_files, options)
     remote_file_names = remote_files.map { |f| f[:name] }.to_set
-    local_files = Dir.glob(File.join(local_directory, '*')).select { |f| File.file?(f) }
-    
+    local_files = Dir.glob(File.join(local_directory, "*")).select { |f| File.file?(f) }
+
     local_files.each do |local_file_path|
       file_name = File.basename(local_file_path)
-      
-      if !remote_file_names.include?(file_name) && 
+
+      if !remote_file_names.include?(file_name) &&
          file_matches_patterns?(file_name, options[:file_patterns], options[:exclude_patterns])
         File.delete(local_file_path)
         Rails.logger.info "Deleted extra local file: #{local_file_path}"
@@ -269,7 +269,7 @@ class CloudStorageService
   def merge_sync_results(download_result, upload_result)
     {
       success: download_result[:success] && upload_result[:success],
-      direction: 'bidirectional',
+      direction: "bidirectional",
       download: download_result,
       upload: upload_result,
       total_files_processed: download_result[:files_processed] + upload_result[:files_processed]
@@ -283,39 +283,39 @@ class CloudStorageService
     end
 
     def test_connection
-      raise NotImplementedError, 'Subclasses must implement test_connection'
+      raise NotImplementedError, "Subclasses must implement test_connection"
     end
 
     def list_files(folder_path, limit)
-      raise NotImplementedError, 'Subclasses must implement list_files'
+      raise NotImplementedError, "Subclasses must implement list_files"
     end
 
     def download_file(file_id, local_path)
-      raise NotImplementedError, 'Subclasses must implement download_file'
+      raise NotImplementedError, "Subclasses must implement download_file"
     end
 
     def upload_file(local_path, remote_path)
-      raise NotImplementedError, 'Subclasses must implement upload_file'
+      raise NotImplementedError, "Subclasses must implement upload_file"
     end
 
     def delete_file(file_id)
-      raise NotImplementedError, 'Subclasses must implement delete_file'
+      raise NotImplementedError, "Subclasses must implement delete_file"
     end
 
     def get_file_info(file_id)
-      raise NotImplementedError, 'Subclasses must implement get_file_info'
+      raise NotImplementedError, "Subclasses must implement get_file_info"
     end
 
     def create_folder(folder_name, parent_folder_id)
-      raise NotImplementedError, 'Subclasses must implement create_folder'
+      raise NotImplementedError, "Subclasses must implement create_folder"
     end
 
     def monitor_changes(folder_id, webhook_url)
-      raise NotImplementedError, 'Subclasses must implement monitor_changes'
+      raise NotImplementedError, "Subclasses must implement monitor_changes"
     end
 
     def stop_monitoring(monitor_id)
-      raise NotImplementedError, 'Subclasses must implement stop_monitoring'
+      raise NotImplementedError, "Subclasses must implement stop_monitoring"
     end
 
     protected
@@ -326,7 +326,7 @@ class CloudStorageService
         name: raw_file_data[:name],
         size: raw_file_data[:size],
         modified_at: raw_file_data[:modified_at],
-        type: raw_file_data[:type] || 'file',
+        type: raw_file_data[:type] || "file",
         download_url: raw_file_data[:download_url]
       }
     end
@@ -341,11 +341,11 @@ class CloudStorageService
 
     def exchange_code_for_token(code, redirect_uri)
       # Implementation would exchange code for access token
-      { access_token: 'placeholder_token', refresh_token: 'placeholder_refresh' }
+      { access_token: "placeholder_token", refresh_token: "placeholder_refresh" }
     end
 
     def test_connection
-      { success: true, message: 'Google Drive connection successful' }
+      { success: true, message: "Google Drive connection successful" }
     end
 
     def list_files(folder_path, limit)
@@ -362,11 +362,11 @@ class CloudStorageService
     end
 
     def exchange_code_for_token(code, redirect_uri)
-      { access_token: 'placeholder_token' }
+      { access_token: "placeholder_token" }
     end
 
     def test_connection
-      { success: true, message: 'Dropbox connection successful' }
+      { success: true, message: "Dropbox connection successful" }
     end
 
     def list_files(folder_path, limit)
@@ -378,7 +378,7 @@ class CloudStorageService
 
   class AwsS3Adapter < BaseAdapter
     def test_connection
-      { success: true, message: 'AWS S3 connection successful' }
+      { success: true, message: "AWS S3 connection successful" }
     end
 
     def list_files(folder_path, limit)
@@ -394,11 +394,11 @@ class CloudStorageService
     end
 
     def exchange_code_for_token(code, redirect_uri)
-      { access_token: 'placeholder_token', refresh_token: 'placeholder_refresh' }
+      { access_token: "placeholder_token", refresh_token: "placeholder_refresh" }
     end
 
     def test_connection
-      { success: true, message: 'OneDrive connection successful' }
+      { success: true, message: "OneDrive connection successful" }
     end
 
     def list_files(folder_path, limit)

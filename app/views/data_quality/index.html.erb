@@ -1,0 +1,440 @@
+<% content_for :title, "Data Quality Monitoring" %>
+<% content_for :page_header, "Data Quality Monitoring" %>
+
+<div class="data-quality-dashboard">
+  <!-- Header Section with Overall Metrics -->
+  <div class="quality-overview-section mb-6">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <!-- Overall Quality Score -->
+      <div class="quality-metric-card bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Overall Quality Score</p>
+            <p class="text-3xl font-bold <%= quality_score_color(@overall_metrics[:overall][:overall_quality_score]) %>">
+              <%= @overall_metrics[:overall][:overall_quality_score].round(1) %>%
+            </p>
+          </div>
+          <div class="quality-status-badge <%= quality_status_badge_class(@overall_metrics[:overall][:quality_status]) %>">
+            <%= @overall_metrics[:overall][:quality_status].capitalize %>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="quality-progress-bar">
+            <div class="bg-gray-200 rounded-full h-2">
+              <div class="<%= quality_progress_color(@overall_metrics[:overall][:overall_quality_score]) %> h-2 rounded-full transition-all duration-300" 
+                   style="width: <%= @overall_metrics[:overall][:overall_quality_score] %>%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Sources Status -->
+      <div class="quality-metric-card bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Data Sources</p>
+            <p class="text-3xl font-bold text-gray-900">
+              <%= @overall_metrics[:summary][:total_sources_monitored] %>
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm text-green-600 font-medium">
+              <%= @overall_metrics[:summary][:total_sources_monitored] - @overall_metrics[:summary][:sources_with_issues] %> healthy
+            </p>
+            <% if @overall_metrics[:summary][:sources_with_issues] > 0 %>
+              <p class="text-sm text-red-600 font-medium">
+                <%= @overall_metrics[:summary][:sources_with_issues] %> with issues
+              </p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Records Analyzed -->
+      <div class="quality-metric-card bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Records Analyzed</p>
+            <p class="text-3xl font-bold text-gray-900">
+              <%= number_with_delimiter(@overall_metrics[:overall][:total_records_analyzed]) %>
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm text-gray-500">
+              Last 7 days
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quality Issues -->
+      <div class="quality-metric-card bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Quality Issues</p>
+            <p class="text-3xl font-bold <%= @overall_metrics[:overall][:quality_issues] > 0 ? 'text-red-600' : 'text-green-600' %>">
+              <%= @overall_metrics[:overall][:quality_issues] %>
+            </p>
+          </div>
+          <div class="text-right">
+            <% if @overall_metrics[:overall][:quality_issues] == 0 %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                All Clear
+              </span>
+            <% else %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                Needs Attention
+              </span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quality Dimensions Breakdown -->
+  <div class="quality-dimensions-section mb-6">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Quality Dimensions</h3>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="dimension-metric">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-gray-600">Completeness</span>
+            <span class="text-sm font-bold text-gray-900"><%= @overall_metrics[:overall][:completeness_score] %>%</span>
+          </div>
+          <div class="bg-gray-200 rounded-full h-2">
+            <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" 
+                 style="width: <%= @overall_metrics[:overall][:completeness_score] %>%"></div>
+          </div>
+        </div>
+        
+        <div class="dimension-metric">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-gray-600">Accuracy</span>
+            <span class="text-sm font-bold text-gray-900"><%= @overall_metrics[:overall][:accuracy_score] %>%</span>
+          </div>
+          <div class="bg-gray-200 rounded-full h-2">
+            <div class="bg-green-500 h-2 rounded-full transition-all duration-300" 
+                 style="width: <%= @overall_metrics[:overall][:accuracy_score] %>%"></div>
+          </div>
+        </div>
+        
+        <div class="dimension-metric">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-gray-600">Freshness</span>
+            <span class="text-sm font-bold text-gray-900"><%= @overall_metrics[:overall][:freshness_score] %>%</span>
+          </div>
+          <div class="bg-gray-200 rounded-full h-2">
+            <div class="bg-yellow-500 h-2 rounded-full transition-all duration-300" 
+                 style="width: <%= @overall_metrics[:overall][:freshness_score] %>%"></div>
+          </div>
+        </div>
+        
+        <div class="dimension-metric">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-gray-600">Consistency</span>
+            <span class="text-sm font-bold text-gray-900"><%= @overall_metrics[:overall][:consistency_score] %>%</span>
+          </div>
+          <div class="bg-gray-200 rounded-full h-2">
+            <div class="bg-purple-500 h-2 rounded-full transition-all duration-300" 
+                 style="width: <%= @overall_metrics[:overall][:consistency_score] %>%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alerts Section -->
+  <% if @alerts.any? %>
+    <div class="alerts-section mb-6">
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Quality Alerts</h3>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+            <%= @alerts.count %> Active
+          </span>
+        </div>
+        <div class="space-y-3">
+          <% @alerts.first(5).each do |alert| %>
+            <div class="alert-item flex items-start space-x-3 p-3 rounded-lg <%= alert_background_class(alert[:severity]) %>">
+              <div class="flex-shrink-0">
+                <% if alert[:type] == 'error' %>
+                  <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                  </svg>
+                <% else %>
+                  <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                  </svg>
+                <% end %>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900">
+                  <%= alert[:data_source].name %>
+                </p>
+                <p class="text-sm text-gray-600">
+                  <%= alert[:message] %>
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  <%= time_ago_in_words(alert[:created_at]) %> ago
+                </p>
+              </div>
+              <div class="flex-shrink-0">
+                <%= link_to "View Details", data_quality_path(alert[:data_source]), 
+                    class: "text-sm text-blue-600 hover:text-blue-800 font-medium" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <% if @alerts.count > 5 %>
+          <div class="mt-4 text-center">
+            <button class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+              View All <%= @alerts.count %> Alerts
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Quality Trends Chart -->
+  <div class="quality-trends-section mb-6">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Quality Trends (30 Days)</h3>
+        <div class="flex space-x-2">
+          <button class="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded-full">30D</button>
+          <button class="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200">7D</button>
+          <button class="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200">24H</button>
+        </div>
+      </div>
+      <div class="quality-trends-chart" id="qualityTrendsChart" style="height: 300px;">
+        <!-- Chart will be rendered here with JavaScript -->
+        <div class="flex items-center justify-center h-full text-gray-500">
+          <p>Loading quality trends chart...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Sources Quality Table -->
+  <div class="data-sources-section">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-900">Data Sources Quality Status</h3>
+          <div class="flex space-x-2">
+            <button class="px-3 py-1 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200">
+              Filter
+            </button>
+            <button class="px-3 py-1 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200">
+              Export
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Data Source
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Quality Score
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Records
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Issues
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Last Updated
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @overall_metrics[:by_source].each do |source_id, metrics| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-8 w-8">
+                      <div class="h-8 w-8 rounded-full <%= source_type_color(metrics[:data_source].source_type) %> flex items-center justify-center">
+                        <span class="text-xs font-medium text-white">
+                          <%= metrics[:data_source].source_type.first.upcase %>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="ml-3">
+                      <div class="text-sm font-medium text-gray-900">
+                        <%= metrics[:data_source].name %>
+                      </div>
+                      <div class="text-sm text-gray-500">
+                        <%= metrics[:data_source].source_type.humanize %>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <% overall_score = (metrics[:completeness] + metrics[:accuracy] + metrics[:freshness] + metrics[:consistency]) / 4.0 %>
+                    <span class="text-sm font-medium <%= quality_score_color(overall_score) %>">
+                      <%= overall_score.round(1) %>%
+                    </span>
+                    <div class="ml-2 w-16 bg-gray-200 rounded-full h-2">
+                      <div class="<%= quality_progress_color(overall_score) %> h-2 rounded-full" 
+                           style="width: <%= overall_score %>%"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= number_with_delimiter(metrics[:total_records]) %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% if metrics[:issues_count] > 0 %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      <%= metrics[:issues_count] %> issues
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      No issues
+                    </span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= time_ago_in_words(metrics[:last_updated]) %> ago
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                  <%= link_to "View Details", data_quality_path(metrics[:data_source]), 
+                      class: "text-blue-600 hover:text-blue-900" %>
+                  <%= link_to "Validate", validate_data_quality_path(metrics[:data_source]), 
+                      method: :post, 
+                      class: "text-green-600 hover:text-green-900",
+                      data: { confirm: "Start data quality validation for #{metrics[:data_source].name}?" } %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      
+      <% if @overall_metrics[:by_source].empty? %>
+        <div class="text-center py-12">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No data sources found</h3>
+          <p class="mt-1 text-sm text-gray-500">Get started by adding your first data source.</p>
+          <div class="mt-6">
+            <%= link_to "Add Data Source", new_data_source_path, 
+                class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript for Charts and Real-time Updates -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize quality trends chart
+    initializeQualityTrendsChart();
+    
+    // Set up real-time updates
+    setupRealTimeUpdates();
+  });
+  
+  function initializeQualityTrendsChart() {
+    const chartData = <%= @quality_trends.to_json.html_safe %>;
+    
+    // Using Chart.js or similar library
+    const ctx = document.getElementById('qualityTrendsChart');
+    if (ctx && typeof Chart !== 'undefined') {
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartData.map(d => new Date(d.date).toLocaleDateString()),
+          datasets: [
+            {
+              label: 'Completeness',
+              data: chartData.map(d => d.completeness),
+              borderColor: 'rgb(59, 130, 246)',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              tension: 0.1
+            },
+            {
+              label: 'Accuracy',
+              data: chartData.map(d => d.accuracy),
+              borderColor: 'rgb(34, 197, 94)',
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              tension: 0.1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100
+            }
+          }
+        }
+      });
+    }
+  }
+  
+  function setupRealTimeUpdates() {
+    // Poll for real-time metrics every 30 seconds
+    setInterval(function() {
+      fetch('<%= metrics_api_data_quality_index_path %>', {
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        updateRealTimeMetrics(data);
+      })
+      .catch(error => {
+        console.error('Error fetching real-time metrics:', error);
+      });
+    }, 30000);
+  }
+  
+  function updateRealTimeMetrics(data) {
+    // Update real-time metrics in the UI
+    // This would update specific elements with new data
+    console.log('Real-time metrics updated:', data);
+  }
+</script>
+
+<style>
+  .data-quality-dashboard {
+    @apply space-y-6;
+  }
+  
+  .quality-metric-card {
+    @apply transition-all duration-200 hover:shadow-md;
+  }
+  
+  .quality-progress-bar {
+    @apply transition-all duration-500;
+  }
+  
+  .alert-item {
+    @apply transition-all duration-200 hover:shadow-sm;
+  }
+  
+  .dimension-metric {
+    @apply space-y-2;
+  }
+</style>

@@ -1,0 +1,109 @@
+[
+  {
+    "order_id": "ORD-2024-001",
+    "customer": {
+      "id": "CUST001",
+      "name": "Alice Johnson",
+      "email": "alice.johnson@email.com",
+      "address": {
+        "street": "123 Main St",
+        "city": "New York",
+        "state": "NY",
+        "zip_code": "10001",
+        "country": "USA"
+      }
+    },
+    "items": [
+      {
+        "product_id": "PROD001",
+        "name": "Wireless Bluetooth Headphones",
+        "quantity": 1,
+        "unit_price": 79.99,
+        "total_price": 79.99
+      },
+      {
+        "product_id": "PROD004",
+        "name": "Smartphone Case",
+        "quantity": 2,
+        "unit_price": 19.99,
+        "total_price": 39.98
+      }
+    ],
+    "order_total": 119.97,
+    "tax_amount": 9.60,
+    "shipping_cost": 5.99,
+    "grand_total": 135.56,
+    "order_date": "2024-01-20T10:30:00Z",
+    "status": "shipped",
+    "payment_method": "credit_card"
+  },
+  {
+    "order_id": "ORD-2024-002",
+    "customer": {
+      "id": "CUST002",
+      "name": "Bob Smith",
+      "email": "bob.smith@email.com",
+      "address": {
+        "street": "456 Oak Ave",
+        "city": "Los Angeles",
+        "state": "CA",
+        "zip_code": "90210",
+        "country": "USA"
+      }
+    },
+    "items": [
+      {
+        "product_id": "PROD006",
+        "name": "Running Shoes",
+        "quantity": 1,
+        "unit_price": 129.99,
+        "total_price": 129.99
+      }
+    ],
+    "order_total": 129.99,
+    "tax_amount": 10.40,
+    "shipping_cost": 0.00,
+    "grand_total": 140.39,
+    "order_date": "2024-01-21T14:15:00Z",
+    "status": "processing",
+    "payment_method": "paypal"
+  },
+  {
+    "order_id": "ORD-2024-003",
+    "customer": {
+      "id": "CUST003",
+      "name": "Carol Davis",
+      "email": "carol.davis@email.com",
+      "address": {
+        "street": "789 Pine Rd",
+        "city": "Chicago",
+        "state": "IL",
+        "zip_code": "60601",
+        "country": "USA"
+      }
+    },
+    "items": [
+      {
+        "product_id": "PROD002",
+        "name": "Organic Coffee Beans",
+        "quantity": 3,
+        "unit_price": 24.99,
+        "total_price": 74.97
+      },
+      {
+        "product_id": "PROD007",
+        "name": "Notebook Set",
+        "quantity": 1,
+        "unit_price": 12.99,
+        "total_price": 12.99
+      }
+    ],
+    "order_total": 87.96,
+    "tax_amount": 7.04,
+    "shipping_cost": 3.99,
+    "grand_total": 98.99,
+    "order_date": "2024-01-22T09:45:00Z",
+    "status": "delivered",
+    "payment_method": "credit_card"
+  }
+]

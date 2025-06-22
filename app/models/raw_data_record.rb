@@ -17,13 +17,13 @@ class RawDataRecord < ApplicationRecord
   validates :record_type, inclusion: { in: RECORD_TYPES }
   validates :external_id, presence: true
   validates :processing_status, inclusion: { in: PROCESSING_STATUSES }
-  validates :checksum, presence: true, uniqueness: { scope: [:data_source_id, :external_id] }
+  validates :checksum, presence: true, uniqueness: { scope: [ :data_source_id, :external_id ] }
 
   scope :by_type, ->(type) { where(record_type: type) }
   scope :by_status, ->(status) { where(processing_status: status) }
-  scope :pending_processing, -> { where(processing_status: 'pending') }
-  scope :processed, -> { where(processing_status: 'processed') }
-  scope :failed, -> { where(processing_status: 'failed') }
+  scope :pending_processing, -> { where(processing_status: "pending") }
+  scope :processed, -> { where(processing_status: "processed") }
+  scope :failed, -> { where(processing_status: "failed") }
   scope :recent, -> { order(created_at: :desc) }
   scope :for_date_range, ->(start_date, end_date) { where(created_at: start_date..end_date) }
 
@@ -31,23 +31,23 @@ class RawDataRecord < ApplicationRecord
   before_validation :set_defaults, on: :create
 
   def pending?
-    processing_status == 'pending'
+    processing_status == "pending"
   end
 
   def processing?
-    processing_status == 'processing'
+    processing_status == "processing"
   end
 
   def processed?
-    processing_status == 'processed'
+    processing_status == "processed"
   end
 
   def failed?
-    processing_status == 'failed'
+    processing_status == "failed"
   end
 
   def skipped?
-    processing_status == 'skipped'
+    processing_status == "skipped"
   end
 
   def can_process?
@@ -60,7 +60,7 @@ class RawDataRecord < ApplicationRecord
 
   def payload_data
     return {} if encrypted_payload.blank?
-    
+
     JSON.parse(decrypt_payload)
   rescue JSON::ParserError => e
     Rails.logger.error "Failed to parse payload for RawDataRecord #{id}: #{e.message}"
@@ -73,12 +73,12 @@ class RawDataRecord < ApplicationRecord
   end
 
   def mark_as_processing!
-    update!(processing_status: 'processing', processed_at: nil, validation_errors: nil)
+    update!(processing_status: "processing", processed_at: nil, validation_errors: nil)
   end
 
   def mark_as_processed!
     update!(
-      processing_status: 'processed',
+      processing_status: "processed",
       processed_at: Time.current,
       validation_errors: nil
     )
@@ -86,14 +86,14 @@ class RawDataRecord < ApplicationRecord
 
   def mark_as_failed!(errors)
     validation_errors = case errors
-                       when String then [errors]
-                       when Array then errors
-                       when Hash then errors.values.flatten
-                       else [errors.to_s]
-                       end
+    when String then [ errors ]
+    when Array then errors
+    when Hash then errors.values.flatten
+    else [ errors.to_s ]
+    end
 
     update!(
-      processing_status: 'failed',
+      processing_status: "failed",
       processed_at: Time.current,
       validation_errors: {
         errors: validation_errors,
@@ -106,7 +106,7 @@ class RawDataRecord < ApplicationRecord
 
   def mark_as_skipped!(reason)
     update!(
-      processing_status: 'skipped',
+      processing_status: "skipped",
       processed_at: Time.current,
       validation_errors: {
         skip_reason: reason,
@@ -116,16 +116,16 @@ class RawDataRecord < ApplicationRecord
   end
 
   def has_validation_errors?
-    validation_errors.present? && validation_errors['errors'].present?
+    validation_errors.present? && validation_errors["errors"].present?
   end
 
   def validation_error_summary
     return nil unless has_validation_errors?
-    
-    errors = validation_errors['errors']
+
+    errors = validation_errors["errors"]
     case errors.length
     when 1 then errors.first
-    when 2..3 then errors.join(', ')
+    when 2..3 then errors.join(", ")
     else "#{errors.first} and #{errors.length - 1} other errors"
     end
   end
@@ -151,19 +151,19 @@ class RawDataRecord < ApplicationRecord
 
   def data_freshness
     return nil unless extraction_job&.completed_at
-    
+
     Time.current - extraction_job.completed_at
   end
 
   def self.cleanup_old_records(days_to_keep = 90)
     cutoff_date = days_to_keep.days.ago
-    where('created_at < ?', cutoff_date).destroy_all
+    where("created_at < ?", cutoff_date).destroy_all
   end
 
   def self.data_quality_metrics(date_range = 1.week.ago..Time.current)
     records = where(created_at: date_range)
     total_count = records.count
-    
+
     return { total_records: 0 } if total_count.zero?
 
     {
@@ -184,13 +184,13 @@ class RawDataRecord < ApplicationRecord
 
   def generate_checksum
     return unless raw_data.present? || encrypted_payload.present?
-    
+
     content = encrypted_payload.present? ? encrypted_payload : raw_data.to_s
     self.checksum = Digest::SHA256.hexdigest("#{external_id}:#{content}")
   end
 
   def set_defaults
-    self.processing_status ||= 'pending'
+    self.processing_status ||= "pending"
     self.validation_errors ||= {}
   end
 
@@ -210,7 +210,7 @@ class RawDataRecord < ApplicationRecord
 
     total_time = processed_records.sum do |record|
       next 0 unless record.processed_at && record.created_at
-      
+
       record.processed_at - record.created_at
     end
 

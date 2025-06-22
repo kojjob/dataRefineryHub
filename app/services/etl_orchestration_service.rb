@@ -14,7 +14,7 @@ class EtlOrchestrationService
     @dependency_manager = DependencyManager.new
     @monitoring = EtlMonitoringService.instance
     @logger = Rails.logger
-    
+
     setup_default_pipelines
     setup_pipeline_dependencies
   end
@@ -23,57 +23,57 @@ class EtlOrchestrationService
   def execute_pipeline(pipeline_name, options = {})
     pipeline = @pipeline_registry.get(pipeline_name)
     raise ArgumentError, "Pipeline '#{pipeline_name}' not found" unless pipeline
-    
+
     # Check concurrent pipeline limit
-    max_concurrent = @config['max_concurrent_pipelines'] || 5
+    max_concurrent = @config["max_concurrent_pipelines"] || 5
     if get_active_executions_count >= max_concurrent
       raise "Maximum concurrent pipelines (#{max_concurrent}) reached"
     end
-    
+
     execution_context = create_execution_context(pipeline, options)
-    
+
     @logger.info "Starting pipeline execution: #{pipeline_name}", execution_context.to_log_hash
-    
+
     begin
       # Check dependencies
       unless @dependency_manager.dependencies_satisfied?(pipeline_name, execution_context)
         raise PipelineDependencyError, "Dependencies not satisfied for pipeline: #{pipeline_name}"
       end
-      
+
       # Set pipeline timeout
-      timeout = @config['pipeline_timeout'] || 3600
-      
+      timeout = @config["pipeline_timeout"] || 3600
+
       # Execute pipeline stages with timeout
       result = Timeout.timeout(timeout) do
         execute_pipeline_stages(pipeline, execution_context)
       end
-      
+
       # Record success metrics
       @monitoring.record_pipeline_execution(pipeline_name, result)
-      
+
       @logger.info "Pipeline execution completed: #{pipeline_name}", result.to_log_hash
-      
+
       result
     rescue Timeout::Error => e
       # Record timeout failure
       @monitoring.record_pipeline_failure(pipeline_name, e, execution_context)
-      
+
       @logger.error "Pipeline execution timed out: #{pipeline_name}", {
         timeout: timeout,
         context: execution_context.to_log_hash
       }
-      
+
       raise
     rescue => e
       # Record failure metrics
       @monitoring.record_pipeline_failure(pipeline_name, e, execution_context)
-      
+
       @logger.error "Pipeline execution failed: #{pipeline_name}", {
         error: e.message,
         backtrace: e.backtrace.first(10),
         context: execution_context.to_log_hash
       }
-      
+
       raise
     end
   end
@@ -86,7 +86,7 @@ class EtlOrchestrationService
   def cancel_pipeline_execution(execution_id)
     execution = find_execution(execution_id)
     return false unless execution
-    
+
     execution.cancel!
     @logger.info "Pipeline execution cancelled: #{execution_id}"
     true
@@ -133,16 +133,16 @@ class EtlOrchestrationService
   def execute_pipeline_batch(pipeline_names, options = {})
     results = {}
     errors = {}
-    
+
     # Determine execution order based on dependencies
     execution_order = @dependency_manager.resolve_execution_order(pipeline_names)
-    
+
     execution_order.each do |pipeline_name|
       begin
         results[pipeline_name] = execute_pipeline(pipeline_name, options)
       rescue => e
         errors[pipeline_name] = e
-        
+
         # Stop execution if configured to do so
         if options[:stop_on_error]
           @logger.error "Batch execution stopped due to error in: #{pipeline_name}"
@@ -150,7 +150,7 @@ class EtlOrchestrationService
         end
       end
     end
-    
+
     {
       successful: results,
       failed: errors,
@@ -160,14 +160,14 @@ class EtlOrchestrationService
 
   def execute_data_source_pipeline(data_source_id, pipeline_type = :full)
     data_source = DataSource.find(data_source_id)
-    
+
     case pipeline_type
     when :extraction_only
-      execute_pipeline('extraction_pipeline', { data_source_id: data_source_id })
+      execute_pipeline("extraction_pipeline", { data_source_id: data_source_id })
     when :transformation_only
-      execute_pipeline('transformation_pipeline', { data_source_id: data_source_id })
+      execute_pipeline("transformation_pipeline", { data_source_id: data_source_id })
     when :full
-      execute_pipeline('full_etl_pipeline', { data_source_id: data_source_id })
+      execute_pipeline("full_etl_pipeline", { data_source_id: data_source_id })
     else
       raise ArgumentError, "Unknown pipeline type: #{pipeline_type}"
     end
@@ -176,7 +176,7 @@ class EtlOrchestrationService
   # Monitoring and health checks
   def get_system_health
     {
-      orchestration_status: 'healthy',
+      orchestration_status: "healthy",
       active_executions: get_active_executions_count,
       scheduled_pipelines: @scheduler.get_scheduled_count,
       recent_failures: get_recent_failures_count,
@@ -188,7 +188,7 @@ class EtlOrchestrationService
   def get_performance_metrics(time_range = 24.hours)
     end_time = Time.current
     start_time = end_time - time_range
-    
+
     {
       pipeline_executions: PipelineExecution.where(created_at: start_time..end_time).count,
       success_rate: calculate_success_rate(start_time, end_time),
@@ -202,87 +202,87 @@ class EtlOrchestrationService
 
   def setup_default_pipelines
     # Full ETL Pipeline
-    @pipeline_registry.register('full_etl_pipeline', {
-      name: 'Full ETL Pipeline',
-      description: 'Complete extraction, transformation, and loading pipeline',
+    @pipeline_registry.register("full_etl_pipeline", {
+      name: "Full ETL Pipeline",
+      description: "Complete extraction, transformation, and loading pipeline",
       stages: [
         {
-          name: 'extraction',
-          type: 'job',
-          job_class: 'ExtractionJobProcessor',
-          retry_policy: { max_attempts: 3, backoff: 'exponential' },
+          name: "extraction",
+          type: "job",
+          job_class: "ExtractionJobProcessor",
+          retry_policy: { max_attempts: 3, backoff: "exponential" },
           timeout: 30.minutes
         },
         {
-          name: 'transformation',
-          type: 'job',
-          job_class: 'TransformationJobProcessor',
-          retry_policy: { max_attempts: 3, backoff: 'exponential' },
+          name: "transformation",
+          type: "job",
+          job_class: "TransformationJobProcessor",
+          retry_policy: { max_attempts: 3, backoff: "exponential" },
           timeout: 45.minutes,
-          depends_on: ['extraction']
+          depends_on: [ "extraction" ]
         },
         {
-          name: 'validation',
-          type: 'service',
-          service_class: 'DataQualityValidationService',
-          method: 'validate_processed_data',
-          depends_on: ['transformation']
+          name: "validation",
+          type: "service",
+          service_class: "DataQualityValidationService",
+          method: "validate_processed_data",
+          depends_on: [ "transformation" ]
         }
       ],
       error_handling: {
-        strategy: 'circuit_breaker',
+        strategy: "circuit_breaker",
         max_failures: 5,
         recovery_time: 10.minutes
       }
     })
-    
+
     # Extraction Only Pipeline
-    @pipeline_registry.register('extraction_pipeline', {
-      name: 'Extraction Pipeline',
-      description: 'Data extraction only',
+    @pipeline_registry.register("extraction_pipeline", {
+      name: "Extraction Pipeline",
+      description: "Data extraction only",
       stages: [
         {
-          name: 'extraction',
-          type: 'job',
-          job_class: 'ExtractionJobProcessor',
-          retry_policy: { max_attempts: 5, backoff: 'exponential' },
+          name: "extraction",
+          type: "job",
+          job_class: "ExtractionJobProcessor",
+          retry_policy: { max_attempts: 5, backoff: "exponential" },
           timeout: 30.minutes
         }
       ]
     })
-    
+
     # Transformation Only Pipeline
-    @pipeline_registry.register('transformation_pipeline', {
-      name: 'Transformation Pipeline',
-      description: 'Data transformation only',
+    @pipeline_registry.register("transformation_pipeline", {
+      name: "Transformation Pipeline",
+      description: "Data transformation only",
       stages: [
         {
-          name: 'transformation',
-          type: 'job',
-          job_class: 'TransformationJobProcessor',
-          retry_policy: { max_attempts: 3, backoff: 'exponential' },
+          name: "transformation",
+          type: "job",
+          job_class: "TransformationJobProcessor",
+          retry_policy: { max_attempts: 3, backoff: "exponential" },
           timeout: 45.minutes
         }
       ]
     })
-    
+
     # Data Quality Pipeline
-    @pipeline_registry.register('data_quality_pipeline', {
-      name: 'Data Quality Pipeline',
-      description: 'Comprehensive data quality validation and reporting',
+    @pipeline_registry.register("data_quality_pipeline", {
+      name: "Data Quality Pipeline",
+      description: "Comprehensive data quality validation and reporting",
       stages: [
         {
-          name: 'quality_validation',
-          type: 'service',
-          service_class: 'DataQualityValidationService',
-          method: 'comprehensive_validation'
+          name: "quality_validation",
+          type: "service",
+          service_class: "DataQualityValidationService",
+          method: "comprehensive_validation"
         },
         {
-          name: 'quality_reporting',
-          type: 'service',
-          service_class: 'DataQualityReportingService',
-          method: 'generate_quality_report',
-          depends_on: ['quality_validation']
+          name: "quality_reporting",
+          type: "service",
+          service_class: "DataQualityReportingService",
+          method: "generate_quality_report",
+          depends_on: [ "quality_validation" ]
         }
       ]
     })
@@ -290,13 +290,13 @@ class EtlOrchestrationService
 
   def setup_pipeline_dependencies
     # Set up common dependencies
-    @dependency_manager.add_dependency('transformation_pipeline', 'extraction_pipeline', {
-      condition: 'successful_completion',
+    @dependency_manager.add_dependency("transformation_pipeline", "extraction_pipeline", {
+      condition: "successful_completion",
       max_age: 1.hour
     })
-    
-    @dependency_manager.add_dependency('data_quality_pipeline', 'transformation_pipeline', {
-      condition: 'successful_completion',
+
+    @dependency_manager.add_dependency("data_quality_pipeline", "transformation_pipeline", {
+      condition: "successful_completion",
       max_age: 30.minutes
     })
   end
@@ -308,51 +308,51 @@ class EtlOrchestrationService
       data_source_id: options[:data_source_id],
       user_id: options[:user_id],
       parameters: options[:parameters] || {},
-      priority: options[:priority] || 'normal',
+      priority: options[:priority] || "normal",
       created_at: Time.current
     )
   end
 
   def execute_pipeline_stages(pipeline, execution_context)
     result = PipelineExecutionResult.new(execution_context)
-    
+
     # Create pipeline execution record
     pipeline_execution = PipelineExecution.create!(
       execution_id: execution_context.execution_id,
       pipeline_name: execution_context.pipeline_name,
       data_source_id: execution_context.data_source_id,
-      status: 'running',
+      status: "running",
       started_at: Time.current,
       parameters: execution_context.parameters
     )
-    
+
     begin
       # Execute stages in dependency order
       execution_order = resolve_stage_dependencies(pipeline[:stages])
-      
+
       execution_order.each do |stage|
         stage_result = execute_stage(stage, execution_context)
         result.add_stage_result(stage[:name], stage_result)
-        
+
         # Update execution progress
         pipeline_execution.update!(
           progress: calculate_progress(result, pipeline[:stages].size),
           current_stage: stage[:name]
         )
       end
-      
+
       # Mark as completed
       pipeline_execution.update!(
-        status: 'completed',
+        status: "completed",
         completed_at: Time.current,
         result_summary: result.to_summary_hash
       )
-      
+
       result.mark_successful
     rescue => e
       # Mark as failed
       pipeline_execution.update!(
-        status: 'failed',
+        status: "failed",
         completed_at: Time.current,
         error_message: e.message,
         error_details: {
@@ -360,11 +360,11 @@ class EtlOrchestrationService
           stage: pipeline_execution.current_stage
         }
       )
-      
+
       result.mark_failed(e)
       raise
     end
-    
+
     result
   end
 
@@ -373,14 +373,14 @@ class EtlOrchestrationService
       pipeline: execution_context.pipeline_name,
       execution_id: execution_context.execution_id
     }
-    
+
     start_time = Time.current
-    
+
     begin
       case stage[:type]
-      when 'job'
+      when "job"
         execute_job_stage(stage, execution_context)
-      when 'service'
+      when "service"
         execute_service_stage(stage, execution_context)
       else
         raise ArgumentError, "Unknown stage type: #{stage[:type]}"
@@ -403,7 +403,7 @@ class EtlOrchestrationService
 
   def execute_job_stage(stage, execution_context)
     job_class = stage[:job_class].constantize
-    
+
     # Execute job with timeout if specified
     if stage[:timeout]
       Timeout.timeout(stage[:timeout]) do
@@ -418,7 +418,7 @@ class EtlOrchestrationService
     service_class = stage[:service_class].constantize
     service_instance = service_class.new
     method_name = stage[:method]
-    
+
     # Call service method with context
     service_instance.send(method_name, execution_context.data_source_id, execution_context.parameters)
   end
@@ -427,23 +427,23 @@ class EtlOrchestrationService
     # Simple topological sort for stage dependencies
     sorted_stages = []
     remaining_stages = stages.dup
-    
+
     while remaining_stages.any?
       # Find stages with no unresolved dependencies
       ready_stages = remaining_stages.select do |stage|
         dependencies = stage[:depends_on] || []
         dependencies.all? { |dep| sorted_stages.any? { |s| s[:name] == dep } }
       end
-      
+
       if ready_stages.empty?
         raise "Circular dependency detected in pipeline stages"
       end
-      
+
       # Add ready stages to sorted list
       sorted_stages.concat(ready_stages)
       remaining_stages -= ready_stages
     end
-    
+
     sorted_stages
   end
 
@@ -459,11 +459,11 @@ class EtlOrchestrationService
   def get_single_pipeline_status(pipeline_name)
     pipeline = @pipeline_registry.get(pipeline_name)
     return nil unless pipeline
-    
+
     recent_executions = PipelineExecution.where(pipeline_name: pipeline_name)
                                          .order(created_at: :desc)
                                          .limit(10)
-    
+
     {
       name: pipeline_name,
       definition: pipeline,
@@ -482,12 +482,12 @@ class EtlOrchestrationService
   end
 
   def get_active_executions_count
-    PipelineExecution.where(status: ['running', 'pending']).count
+    PipelineExecution.where(status: [ "running", "pending" ]).count
   end
 
   def get_recent_failures_count(time_range = 1.hour)
     PipelineExecution.where(
-      status: 'failed',
+      status: "failed",
       created_at: time_range.ago..Time.current
     ).count
   end
@@ -495,23 +495,23 @@ class EtlOrchestrationService
   def calculate_success_rate(start_time, end_time)
     total = PipelineExecution.where(created_at: start_time..end_time).count
     return 100.0 if total.zero?
-    
+
     successful = PipelineExecution.where(
       created_at: start_time..end_time,
-      status: 'completed'
+      status: "completed"
     ).count
-    
+
     (successful.to_f / total * 100).round(2)
   end
 
   def calculate_average_execution_time(start_time, end_time)
     executions = PipelineExecution.where(
       created_at: start_time..end_time,
-      status: 'completed'
+      status: "completed"
     ).where.not(completed_at: nil)
-    
+
     return 0 if executions.empty?
-    
+
     total_time = executions.sum { |e| e.completed_at - e.started_at }
     (total_time / executions.count).round(2)
   end
@@ -550,31 +550,31 @@ class EtlOrchestrationService
   end
 
   def determine_pipeline_health(recent_executions)
-    return 'unknown' if recent_executions.empty?
-    
+    return "unknown" if recent_executions.empty?
+
     last_execution = recent_executions.first
-    recent_failures = recent_executions.where(status: 'failed').count
-    
-    if last_execution.status == 'failed'
-      'unhealthy'
+    recent_failures = recent_executions.where(status: "failed").count
+
+    if last_execution.status == "failed"
+      "unhealthy"
     elsif recent_failures > recent_executions.count * 0.5
-      'degraded'
+      "degraded"
     else
-      'healthy'
+      "healthy"
     end
   end
 
   def calculate_pipeline_success_rate(executions)
     return 100.0 if executions.empty?
-    
-    successful = executions.where(status: 'completed').count
+
+    successful = executions.where(status: "completed").count
     (successful.to_f / executions.count * 100).round(2)
   end
 
   def calculate_pipeline_average_duration(executions)
-    completed = executions.where(status: 'completed').where.not(completed_at: nil)
+    completed = executions.where(status: "completed").where.not(completed_at: nil)
     return 0 if completed.empty?
-    
+
     total_time = completed.sum { |e| e.completed_at - e.started_at }
     (total_time / completed.count).round(2)
   end
@@ -644,7 +644,7 @@ class EtlOrchestrationService
 
     def dependencies_satisfied?(pipeline_name, execution_context)
       dependencies = @dependencies[pipeline_name] || []
-      
+
       dependencies.all? do |dep|
         check_dependency_condition(dep, execution_context)
       end
@@ -654,23 +654,23 @@ class EtlOrchestrationService
       # Simple topological sort
       sorted = []
       remaining = pipeline_names.dup
-      
+
       while remaining.any?
         ready = remaining.select do |name|
           deps = (@dependencies[name] || []).map { |d| d[:name] }
           deps.all? { |dep| sorted.include?(dep) }
         end
-        
+
         if ready.empty?
           # Add remaining pipelines (might have circular dependencies)
           sorted.concat(remaining)
           break
         end
-        
+
         sorted.concat(ready)
         remaining -= ready
       end
-      
+
       sorted
     end
 
@@ -678,7 +678,7 @@ class EtlOrchestrationService
 
     def check_dependency_condition(dependency, execution_context)
       case dependency[:conditions][:condition]
-      when 'successful_completion'
+      when "successful_completion"
         check_successful_completion(dependency[:name], dependency[:conditions], execution_context)
       else
         true # Unknown condition, assume satisfied
@@ -688,13 +688,13 @@ class EtlOrchestrationService
     def check_successful_completion(pipeline_name, conditions, execution_context)
       max_age = conditions[:max_age] || 24.hours
       cutoff_time = Time.current - max_age
-      
+
       recent_execution = PipelineExecution.where(
         pipeline_name: pipeline_name,
-        status: 'completed',
+        status: "completed",
         completed_at: cutoff_time..Time.current
       ).order(completed_at: :desc).first
-      
+
       recent_execution.present?
     end
   end
@@ -729,7 +729,7 @@ class EtlOrchestrationService
     def initialize(execution_context)
       @execution_context = execution_context
       @stage_results = {}
-      @status = 'running'
+      @status = "running"
       @error = nil
     end
 
@@ -738,16 +738,16 @@ class EtlOrchestrationService
     end
 
     def mark_successful
-      @status = 'completed'
+      @status = "completed"
     end
 
     def mark_failed(error)
-      @status = 'failed'
+      @status = "failed"
       @error = error
     end
 
     def successful?
-      @status == 'completed'
+      @status == "completed"
     end
 
     def to_summary_hash
@@ -774,7 +774,7 @@ class EtlOrchestrationService
 
     def calculate_total_duration
       return 0 if @stage_results.empty?
-      
+
       # This is a simplified calculation
       # In practice, you'd track actual stage execution times
       @stage_results.size * 30 # Assume 30 seconds per stage

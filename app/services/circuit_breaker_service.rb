@@ -70,14 +70,14 @@ class CircuitBreakerService
     @success_count = 0
     @consecutive_timeouts = 0
     @last_failure_time = nil
-    log_state_change('reset')
+    log_state_change("reset")
   end
 
   # Force circuit breaker to open state
   def trip!
     @state = OPEN
     @last_failure_time = Time.current
-    log_state_change('tripped')
+    log_state_change("tripped")
   end
 
   private
@@ -108,7 +108,7 @@ class CircuitBreakerService
     if should_attempt_reset?
       @state = HALF_OPEN
       @success_count = 0
-      log_state_change('half_open')
+      log_state_change("half_open")
       raise CircuitBreakerHalfOpenError, "Circuit breaker transitioning to half-open for #{@name}"
     else
       next_retry = calculate_next_retry_time
@@ -120,7 +120,7 @@ class CircuitBreakerService
     @success_count += 1
     @last_success_time = Time.current
     @consecutive_timeouts = 0
-    
+
     # Reset failure count on success in closed state
     @failure_count = 0 if @state == CLOSED
   end
@@ -128,14 +128,14 @@ class CircuitBreakerService
   def on_failure(error)
     @failure_count += 1
     @last_failure_time = Time.current
-    
+
     if timeout_error?(error)
       @consecutive_timeouts += 1
     end
 
     if @failure_count >= @config[:failure_threshold]
       @state = OPEN
-      log_state_change('opened', error)
+      log_state_change("opened", error)
     end
   end
 
@@ -147,7 +147,7 @@ class CircuitBreakerService
     if @success_count >= @config[:success_threshold]
       @state = CLOSED
       @failure_count = 0
-      log_state_change('closed')
+      log_state_change("closed")
     end
   end
 
@@ -155,27 +155,27 @@ class CircuitBreakerService
     @state = OPEN
     @failure_count += 1
     @last_failure_time = Time.current
-    
+
     if timeout_error?(error)
       @consecutive_timeouts += 1
     end
-    
-    log_state_change('opened_from_half_open', error)
+
+    log_state_change("opened_from_half_open", error)
   end
 
   def calculate_timeout_period
     base_timeout = @config[:timeout_period]
-    
+
     if @config[:exponential_backoff]
       # Exponential backoff with jitter
       timeout = base_timeout * (@config[:backoff_multiplier] ** @consecutive_timeouts)
-      timeout = [@config[:max_timeout_period], timeout].min
-      
+      timeout = [ @config[:max_timeout_period], timeout ].min
+
       if @config[:jitter]
         jitter_amount = timeout * @config[:max_jitter] * (rand - 0.5) * 2
         timeout += jitter_amount
       end
-      
+
       timeout
     else
       base_timeout
@@ -194,19 +194,19 @@ class CircuitBreakerService
   end
 
   def timeout_error?(error)
-    error.is_a?(Timeout::Error) || 
+    error.is_a?(Timeout::Error) ||
     error.is_a?(Net::TimeoutError) ||
-    error.message.downcase.include?('timeout')
+    error.message.downcase.include?("timeout")
   end
 
   def log_state_change(event, error = nil)
     message = "Circuit breaker '#{@name}' #{event}"
     message += ": #{error.class.name} - #{error.message}" if error
-    
+
     case event
-    when 'opened', 'opened_from_half_open'
+    when "opened", "opened_from_half_open"
       @logger.warn message
-    when 'closed', 'reset'
+    when "closed", "reset"
       @logger.info message
     else
       @logger.debug message
@@ -257,12 +257,12 @@ class CircuitBreakerService
 
     def record_circuit_open
       @circuit_opens += 1
-      @state_changes << { event: 'opened', timestamp: Time.current }
+      @state_changes << { event: "opened", timestamp: Time.current }
     end
 
     def record_circuit_close
       @circuit_closes += 1
-      @state_changes << { event: 'closed', timestamp: Time.current }
+      @state_changes << { event: "closed", timestamp: Time.current }
     end
 
     def success_rate

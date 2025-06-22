@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["step", "nextButton", "prevButton", "submitButton", "progressBar", "stepIndicator"]
+  static targets = ["step", "nextButton", "prevButton", "submitButton", "progressBar"]
   static values = { currentStep: Number, totalSteps: Number }
 
   connect() {
@@ -53,32 +53,18 @@ export default class extends Controller {
       }
     })
 
-    // Update step indicators
-    this.stepIndicatorTargets.forEach((indicator, index) => {
-      const stepNumber = index + 1
-      const circle = indicator.querySelector('.step-circle')
-      const text = indicator.querySelector('.step-text')
-      
-      if (stepNumber < this.currentStepValue) {
-        // Completed step
-        circle.className = 'step-circle w-8 h-8 rounded-full flex items-center justify-center bg-indigo-600 text-white text-sm font-medium'
-        circle.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>'
-        text.classList.add('text-indigo-600')
-        text.classList.remove('text-gray-500')
-      } else if (stepNumber === this.currentStepValue) {
-        // Current step
-        circle.className = 'step-circle w-8 h-8 rounded-full flex items-center justify-center bg-indigo-600 text-white text-sm font-medium'
-        circle.textContent = stepNumber
-        text.classList.add('text-indigo-600')
-        text.classList.remove('text-gray-500')
-      } else {
-        // Future step
-        circle.className = 'step-circle w-8 h-8 rounded-full flex items-center justify-center border-2 border-gray-300 text-gray-500 text-sm font-medium'
-        circle.textContent = stepNumber
-        text.classList.add('text-gray-500')
-        text.classList.remove('text-indigo-600')
-      }
-    })
+    // Update current step number display
+    const currentStepNumberElement = document.querySelector('[data-data-source-wizard-target="currentStepNumber"]')
+    if (currentStepNumberElement) {
+      currentStepNumberElement.textContent = this.currentStepValue
+    }
+    
+    // Update step title
+    const stepTitleElement = document.querySelector('[data-data-source-wizard-target="stepTitle"]')
+    if (stepTitleElement) {
+      const stepTitles = ['Choose Data Source', 'Configure Connection', 'Preview Data', 'Review & Finalize']
+      stepTitleElement.textContent = stepTitles[this.currentStepValue - 1] || 'Unknown Step'
+    }
 
     // Update progress bar
     if (this.hasProgressBarTarget) {

@@ -1,0 +1,55 @@
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-900"><%= title %></h3>
+    <div class="flex items-center space-x-2">
+      <%= quality_metric_with_icon(score, dimension) %>
+      <span class="text-2xl font-bold <%= quality_score_color(score) %>"><%= score %>%</span>
+    </div>
+  </div>
+  
+  <!-- Progress Bar -->
+  <div class="mb-4">
+    <div class="flex justify-between text-sm text-gray-600 mb-1">
+      <span>Quality Score</span>
+      <span><%= score %>%</span>
+    </div>
+    <div class="w-full bg-gray-200 rounded-full h-2">
+      <div class="<%= quality_progress_color(score) %> h-2 rounded-full transition-all duration-300" 
+           style="width: <%= score %>%"></div>
+    </div>
+  </div>
+  
+  <!-- Trend Indicator -->
+  <% if defined?(trend) && trend %>
+    <div class="flex items-center justify-between text-sm">
+      <span class="text-gray-600">Trend</span>
+      <div class="flex items-center space-x-1">
+        <%= quality_trend_indicator(trend) %>
+        <span class="<%= trend == 'improving' ? 'text-green-600' : trend == 'declining' ? 'text-red-600' : 'text-gray-600' %>">
+          <%= trend.humanize %>
+        </span>
+      </div>
+    </div>
+  <% end %>
+  
+  <!-- Additional Metrics -->
+  <% if defined?(additional_metrics) && additional_metrics.present? %>
+    <div class="mt-4 pt-4 border-t border-gray-100">
+      <div class="grid grid-cols-2 gap-4 text-sm">
+        <% additional_metrics.each do |key, value| %>
+          <div>
+            <span class="text-gray-600"><%= key.to_s.humanize %>:</span>
+            <span class="font-medium text-gray-900 ml-1"><%= value %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  
+  <!-- Description -->
+  <% if defined?(description) && description.present? %>
+    <div class="mt-4 pt-4 border-t border-gray-100">
+      <p class="text-sm text-gray-600"><%= description %></p>
+    </div>
+  <% end %>
+</div>

@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :change_role, :remove_avatar]
-  
+  before_action :set_user, only: [ :show, :edit, :update, :destroy, :change_role, :remove_avatar ]
+
   def index
     @users = policy_scope(User).includes(:organization)
     authorize @users
@@ -23,7 +23,7 @@ class UsersController < ApplicationController
     if @user.save
       # Send invitation email
       UserMailer.invitation_email(@user).deliver_later
-      redirect_to users_path, notice: 'User invitation sent successfully.'
+      redirect_to users_path, notice: "User invitation sent successfully."
     else
       render :new, status: :unprocessable_entity
     end
@@ -35,9 +35,9 @@ class UsersController < ApplicationController
 
   def update
     authorize @user
-    
+
     if @user.update(user_params)
-      redirect_to @user, notice: 'User updated successfully.'
+      redirect_to @user, notice: "User updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -45,29 +45,29 @@ class UsersController < ApplicationController
 
   def destroy
     authorize @user
-    
+
     @user.destroy
-    redirect_to users_path, notice: 'User removed successfully.'
+    redirect_to users_path, notice: "User removed successfully."
   end
 
   def change_role
     authorize @user, :change_role?
-    
+
     if @user.update(role: params[:role])
-      redirect_to @user, notice: 'User role updated successfully.'
+      redirect_to @user, notice: "User role updated successfully."
     else
-      redirect_to @user, alert: 'Failed to update user role.'
+      redirect_to @user, alert: "Failed to update user role."
     end
   end
 
   def remove_avatar
     authorize @user
-    
+
     if @user.avatar.attached?
       @user.avatar.purge
-      redirect_to edit_user_path(@user), notice: 'Profile photo removed successfully.'
+      redirect_to edit_user_path(@user), notice: "Profile photo removed successfully."
     else
-      redirect_to edit_user_path(@user), alert: 'No profile photo to remove.'
+      redirect_to edit_user_path(@user), alert: "No profile photo to remove."
     end
   end
 

@@ -13,8 +13,8 @@ RSpec.describe UserPolicy, type: :policy do
   subject { described_class }
 
   describe 'Scope' do
-    let!(:org_users) { [owner, admin, member, viewer] }
-    let!(:other_users) { [other_org_user] }
+    let!(:org_users) { [ owner, admin, member, viewer ] }
+    let!(:other_users) { [ other_org_user ] }
 
     it 'returns users from the same organization' do
       scope = Pundit.policy_scope(owner, User)

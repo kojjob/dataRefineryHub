@@ -17,7 +17,7 @@ class UserPolicy < ApplicationPolicy
     return true if user == record # Users can edit themselves
     return false unless same_organization?
     return false unless can_manage?
-    
+
     # Can't manage users with same or higher role
     user.role_hierarchy_level > record.role_hierarchy_level
   end
@@ -26,7 +26,7 @@ class UserPolicy < ApplicationPolicy
     return false if user == record # Can't delete yourself
     return false unless same_organization?
     return false unless can_manage?
-    
+
     # Can't delete users with same or higher role
     user.role_hierarchy_level > record.role_hierarchy_level
   end
@@ -43,7 +43,7 @@ class UserPolicy < ApplicationPolicy
     return false unless can_manage?
     return false unless same_organization?
     return false if user == record # Can't change own role
-    
+
     # Can't manage users with same or higher role
     user.role_hierarchy_level > record.role_hierarchy_level
   end
@@ -51,7 +51,7 @@ class UserPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
       return scope.none unless user&.organization_id
-      
+
       scope.where(organization_id: user.organization_id)
     end
   end

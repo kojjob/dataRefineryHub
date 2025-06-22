@@ -1,12 +1,12 @@
 class LandingController < ApplicationController
   skip_before_action :authenticate_user!
-  
+
   def index
     # Redirect authenticated users to dashboard
     if user_signed_in?
       redirect_to dashboard_path and return
     end
-    
+
     # Landing page metrics for display
     @stats = {
       businesses_served: "10,000+",
@@ -14,7 +14,7 @@ class LandingController < ApplicationController
       integrations: "25+",
       uptime: "99.99%"
     }
-    
+
     # Customer testimonials
     @testimonials = [
       {
@@ -27,7 +27,7 @@ class LandingController < ApplicationController
       {
         name: "Michael Rodriguez",
         company: "GrowthCorp",
-        role: "VP of Operations", 
+        role: "VP of Operations",
         quote: "The real-time insights helped us identify bottlenecks we never knew existed.",
         rating: 5
       },
@@ -39,7 +39,7 @@ class LandingController < ApplicationController
         rating: 5
       }
     ]
-    
+
     # Integration logos/names
     @integrations = [
       "Shopify", "QuickBooks", "Stripe", "Mailchimp", "Google Analytics",

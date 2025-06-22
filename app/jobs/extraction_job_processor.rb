@@ -2,12 +2,12 @@
 # Uses Solid Queue for reliable job processing with retries
 class ExtractionJobProcessor < ApplicationJob
   queue_as :extraction
-  
+
   # Enhanced retry configuration with circuit breaker integration
   retry_on StandardError, wait: :exponentially_longer, attempts: 3 do |job, error|
     # Log retry attempt with enhanced context
     Rails.logger.warn "Retrying extraction job #{job.job_id}: #{error.class.name} - #{error.message}"
-    
+
     # Update circuit breaker metrics
     data_source_id = job.arguments.first
     if data_source_id
@@ -15,19 +15,19 @@ class ExtractionJobProcessor < ApplicationJob
       # Circuit breaker will be updated by the error handler in the extractor
     end
   end
-  
+
   retry_on ExtractorFactory::UnsupportedSourceTypeError, attempts: 1
   retry_on CircuitBreakerService::CircuitBreakerOpenError, attempts: 5, wait: :exponentially_longer
-  
+
   # Discard job if data source is deleted
   discard_on ActiveRecord::RecordNotFound
 
   def perform(data_source_id, extraction_job_id = nil)
     data_source = DataSource.find(data_source_id)
-    
+
     # Update status to processing
-    data_source.update!(status: 'processing')
-    
+    data_source.update!(status: "processing")
+
     # Create audit log with enhanced context
     audit_context = {
       job_id: job_id,
@@ -35,37 +35,37 @@ class ExtractionJobProcessor < ApplicationJob
       data_source_type: data_source.source_type,
       started_at: Time.current
     }
-    
+
     AuditLog.create!(
-      action: 'extraction_started',
-      resource_type: 'DataSource',
+      action: "extraction_started",
+      resource_type: "DataSource",
       resource_id: data_source.id,
       details: audit_context
     )
-    
+
     begin
       # Create extractor with enhanced capabilities
       extractor = ExtractorFactory.create_extractor(data_source, extraction_job_id)
-      
+
       # Perform data extraction with enhanced error handling and batch processing
       # The extractor now uses EnhancedErrorHandlerService internally
       extracted_data = extractor.extract_data
-      
+
       # Get comprehensive extraction statistics
-      extraction_stats = extractor.respond_to?(:enhanced_extraction_stats) ? 
-                        extractor.enhanced_extraction_stats : 
+      extraction_stats = extractor.respond_to?(:enhanced_extraction_stats) ?
+                        extractor.enhanced_extraction_stats :
                         extractor.extraction_stats
-      
+
       # Update status to completed
       data_source.update!(
-        status: 'connected', 
+        status: "connected",
         last_sync_at: Time.current,
         metadata: (data_source.metadata || {}).merge(
           last_extraction_stats: extraction_stats,
           last_successful_extraction: Time.current
         )
       )
-      
+
       # Create comprehensive audit log for success
       success_details = audit_context.merge(
         completed_at: Time.current,
@@ -73,53 +73,53 @@ class ExtractionJobProcessor < ApplicationJob
         extraction_stats: extraction_stats,
         processing_duration: Time.current - audit_context[:started_at]
       )
-      
+
       AuditLog.create!(
-        action: 'extraction_completed',
-        resource_type: 'DataSource',
+        action: "extraction_completed",
+        resource_type: "DataSource",
         resource_id: data_source.id,
         details: success_details
       )
-      
+
       # Schedule transformation if data was extracted
       if extracted_data&.any?
         # Pass extraction statistics to transformation job
         TransformationJobProcessor.perform_later(
-          data_source_id, 
+          data_source_id,
           extraction_job_id,
           { extraction_stats: extraction_stats }
         )
       else
         Rails.logger.info "No data extracted for data source #{data_source_id}, skipping transformation"
       end
-      
+
     rescue CircuitBreakerService::CircuitBreakerOpenError => error
       # Handle circuit breaker open state
-      data_source.update!(status: 'circuit_breaker_open')
-      
+      data_source.update!(status: "circuit_breaker_open")
+
       error_details = audit_context.merge(
         failed_at: Time.current,
         error_message: error.message,
         error_class: error.class.name,
-        error_type: 'circuit_breaker_open',
+        error_type: "circuit_breaker_open",
         processing_duration: Time.current - audit_context[:started_at]
       )
-      
+
       AuditLog.create!(
-        action: 'extraction_circuit_breaker_open',
-        resource_type: 'DataSource',
+        action: "extraction_circuit_breaker_open",
+        resource_type: "DataSource",
         resource_id: data_source.id,
         details: error_details
       )
-      
+
       # Don't re-raise circuit breaker errors immediately - let retry mechanism handle it
       Rails.logger.warn "Circuit breaker open for data source #{data_source_id}: #{error.message}"
       raise error
-      
+
     rescue => error
       # Update status to error
-      data_source.update!(status: 'error')
-      
+      data_source.update!(status: "error")
+
       # Create comprehensive audit log for error
       error_details = audit_context.merge(
         failed_at: Time.current,
@@ -128,17 +128,17 @@ class ExtractionJobProcessor < ApplicationJob
         error_backtrace: error.backtrace&.first(10),
         processing_duration: Time.current - audit_context[:started_at]
       )
-      
+
       AuditLog.create!(
-        action: 'extraction_failed',
-        resource_type: 'DataSource',
+        action: "extraction_failed",
+        resource_type: "DataSource",
         resource_id: data_source.id,
         details: error_details
       )
-      
+
       # Log error with context for monitoring
       Rails.logger.error "Extraction failed for data source #{data_source_id}: #{error.class.name} - #{error.message}"
-      
+
       # Re-raise the error to trigger retry mechanism
       raise error
     end
@@ -148,9 +148,9 @@ class ExtractionJobProcessor < ApplicationJob
 
   def can_extract?(data_source)
     return false unless data_source
-    return false if data_source.status == 'disconnected'
+    return false if data_source.status == "disconnected"
     return false unless ExtractorFactory.supported_source_type?(data_source.source_type)
-    
+
     true
   end
 
@@ -161,7 +161,7 @@ class ExtractionJobProcessor < ApplicationJob
       organization: data_source.organization,
       user: nil, # System operation
       action: action,
-      resource_type: 'DataSource',
+      resource_type: "DataSource",
       resource_id: data_source.id,
       details: details.merge({
         source_type: data_source.source_type,
