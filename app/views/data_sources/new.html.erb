@@ -37,26 +37,6 @@
   # Get configurations from the centralized registry
   data_source_configs = DataSourceRegistry.configurations
   
-  # Helper method to get UI styling based on category
-  def get_ui_styling(category)
-    case category.to_s
-    when 'ecommerce'
-      { icon_color: 'text-green-600', bg_color: 'bg-green-50', border_color: 'border-green-200' }
-    when 'payment'
-      { icon_color: 'text-indigo-600', bg_color: 'bg-indigo-50', border_color: 'border-indigo-200' }
-    when 'accounting'
-      { icon_color: 'text-blue-600', bg_color: 'bg-blue-50', border_color: 'border-blue-200' }
-    when 'analytics'
-      { icon_color: 'text-orange-500', bg_color: 'bg-orange-50', border_color: 'border-orange-200' }
-    when 'file'
-      { icon_color: 'text-gray-600', bg_color: 'bg-gray-50', border_color: 'border-gray-200' }
-    when 'marketplace'
-      { icon_color: 'text-orange-600', bg_color: 'bg-orange-50', border_color: 'border-orange-200' }
-    else
-      { icon_color: 'text-gray-600', bg_color: 'bg-gray-50', border_color: 'border-gray-200' }
-    end
-  end
-  
   # Merge UI styling with configurations
   data_source_configs.each do |key, config|
     styling = get_ui_styling(config[:category])
@@ -72,17 +52,36 @@
     { value: 'monthly', label: 'Monthly', description: 'Sync once per month' }
   ]
   
-  # File upload settings
+  # Enhanced file upload settings with comprehensive format support
   file_upload_settings = {
-    max_size: 52428800, # 50MB
-    accepted_types: ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/json', 'text/plain'],
+    max_size: 104857600, # 100MB (increased from 50MB)
+    accepted_types: [
+      'text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+      'application/json', 'text/plain', 'application/xml', 'text/xml',
+      'application/octet-stream', # For Parquet files
+      'text/tab-separated-values', 'application/x-yaml', 'text/yaml',
+      'application/vnd.sqlite3', # SQLite database files
+      'application/x-sqlite3', 'text/x-sql', # SQL files
+      'application/vnd.apache.parquet' # Parquet files
+    ],
     type_descriptions: {
-      'text/csv' => 'CSV files',
+      'text/csv' => 'CSV files (Comma-separated values)',
       'application/vnd.ms-excel' => 'Excel files (.xls)',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel files (.xlsx)',
-      'application/json' => 'JSON files',
-      'text/plain' => 'Text files'
-    }
+      'application/json' => 'JSON files (JavaScript Object Notation)',
+      'text/plain' => 'Text files (.txt)',
+      'application/xml' => 'XML files (Extensible Markup Language)',
+      'text/xml' => 'XML files',
+      'application/octet-stream' => 'Parquet files (Columnar storage)',
+      'text/tab-separated-values' => 'TSV files (Tab-separated values)',
+      'application/x-yaml' => 'YAML files (YAML Ain\'t Markup Language)',
+      'text/yaml' => 'YAML files',
+      'application/vnd.sqlite3' => 'SQLite database files',
+      'application/x-sqlite3' => 'SQLite database files',
+      'text/x-sql' => 'SQL script files',
+      'application/vnd.apache.parquet' => 'Apache Parquet files'
+    },
+    file_extensions: ['csv', 'xls', 'xlsx', 'json', 'txt', 'xml', 'parquet', 'tsv', 'yaml', 'yml', 'sqlite', 'sqlite3', 'sql']
   }
 %>
 
@@ -348,7 +347,8 @@
                 </svg>
                 <div class="mt-4">
                   <p class="text-lg font-medium text-gray-900 drop-text">Drag and drop files here, or click to select</p>
-                  <p class="text-sm text-gray-500 mt-2">Supports <%= file_upload_settings[:type_descriptions].values.join(', ') %> up to <%= number_to_human_size(file_upload_settings[:max_size]) %></p>
+                  <p class="text-sm text-gray-500 mt-2">Supports <strong><%= file_upload_settings[:file_extensions].count %> file formats</strong> including CSV, Excel, JSON, XML, Parquet, YAML, SQLite & more</p>
+                  <p class="text-xs text-gray-400 mt-1">Maximum file size: <%= number_to_human_size(file_upload_settings[:max_size]) %> | Multiple files supported</p>
                   
                   <!-- Sample file download section -->
                   <div class="mt-4 pt-4 border-t border-gray-200">
@@ -386,7 +386,7 @@
               <!-- Hidden File Input -->
               <input type="file" 
                      multiple 
-                     accept="<%= file_upload_settings[:accepted_types].map { |type| type.gsub('application/vnd.ms-excel', '.xls').gsub('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '.xlsx').gsub('text/csv', '.csv').gsub('application/json', '.json').gsub('text/plain', '.txt') }.join(',') %>"
+                     accept="<%= file_upload_settings[:file_extensions].map { |ext| ".#{ext}" }.join(',') %>"
                      data-file-upload-target="input"
                      data-action="change->file-upload#handleFiles"
                      class="hidden">
@@ -414,6 +414,68 @@
 
               <!-- Data Preview -->
               <div data-file-upload-target="dataPreview" class="space-y-4"></div>
+
+              <!-- Enhanced Data Insights Panel -->
+              <div data-file-upload-target="dataInsights" class="hidden mt-6 bg-white border border-gray-200 rounded-lg p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Data Insights & Recommendations</h3>
+                
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-4 gap-4 mb-6">
+                  <div class="bg-blue-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-600" data-file-upload-target="totalRows">-</div>
+                    <div class="text-sm text-gray-600">Total Rows</div>
+                  </div>
+                  <div class="bg-green-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-green-600" data-file-upload-target="totalColumns">-</div>
+                    <div class="text-sm text-gray-600">Columns</div>
+                  </div>
+                  <div class="bg-yellow-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-yellow-600" data-file-upload-target="qualityScore">-</div>
+                    <div class="text-sm text-gray-600">Quality Score</div>
+                  </div>
+                  <div class="bg-purple-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-purple-600" data-file-upload-target="completeness">-</div>
+                    <div class="text-sm text-gray-600">Completeness</div>
+                  </div>
+                </div>
+
+                <!-- Data Quality Issues -->
+                <div class="mb-6">
+                  <h4 class="text-sm font-medium text-gray-900 mb-3">Data Quality Assessment</h4>
+                  <div data-file-upload-target="qualityIssues" class="space-y-2">
+                    <!-- Quality issues will be populated dynamically -->
+                  </div>
+                </div>
+
+                <!-- Suggested Transformations -->
+                <div class="mb-6">
+                  <h4 class="text-sm font-medium text-gray-900 mb-3">Suggested Data Transformations</h4>
+                  <div data-file-upload-target="suggestedTransformations" class="space-y-2">
+                    <!-- Transformations will be populated dynamically -->
+                  </div>
+                </div>
+
+                <!-- Column Analysis -->
+                <div class="mb-6">
+                  <h4 class="text-sm font-medium text-gray-900 mb-3">Column Analysis</h4>
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200" data-file-upload-target="columnAnalysisTable">
+                      <thead class="bg-gray-50">
+                        <tr>
+                          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Column</th>
+                          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Completeness</th>
+                          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Unique Values</th>
+                          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody class="bg-white divide-y divide-gray-200">
+                        <!-- Column analysis rows will be populated dynamically -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
 
               <!-- Process Files Button -->
               <div class="flex justify-center">
@@ -549,7 +611,7 @@
       <% end %>
     </div>
 
-    <!-- Error Display -->
+    <!-- Enhanced Error Display & User Feedback -->
     <% if @data_source.errors.any? %>
       <div class="mt-6 bg-red-50 border border-red-200 rounded-md p-4">
         <div class="flex">
@@ -571,6 +633,121 @@
         </div>
       </div>
     <% end %>
+
+    <!-- Enhanced Help & Tips Section -->
+    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189 11.95 11.95 0 013.17-1.043 3.48 3.48 0 011.33-.134c.844 0 1.66.269 2.34.707a6.018 6.018 0 00-6.33-3.841zm0 5.25a6.01 6.01 0 01-1.5-.189 11.95 11.95 0 01-3.17-1.043 3.48 3.48 0 01-1.33-.134c-.844 0-1.66.269-2.34.707a6.018 6.018 0 006.33-3.841z" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-blue-900">Pro Tips for Better Data Integration</h3>
+          <div class="mt-2 text-sm text-blue-800">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+              <div>
+                <h4 class="font-medium mb-2">📁 File Upload Best Practices:</h4>
+                <ul class="text-sm space-y-1 text-blue-700">
+                  <li>• Use clear, descriptive column headers</li>
+                  <li>• Remove empty rows and columns</li>
+                  <li>• Ensure consistent date formats</li>
+                  <li>• Include unique identifiers (IDs)</li>
+                  <li>• Keep files under 100MB for optimal performance</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-medium mb-2">🔌 API Connections:</h4>
+                <ul class="text-sm space-y-1 text-blue-700">
+                  <li>• Verify API credentials before connecting</li>
+                  <li>• Test with small data sets first</li>
+                  <li>• Set appropriate sync frequencies</li>
+                  <li>• Monitor data quality after initial sync</li>
+                  <li>• Review connection permissions</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supported Data Formats Information -->
+    <div class="mt-6 bg-white border border-gray-200 rounded-lg p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Supported Data Formats & File Types</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <h4 class="font-medium text-gray-900 mb-3 flex items-center">
+            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+            Structured Data
+          </h4>
+          <div class="space-y-2 text-sm text-gray-600">
+            <div class="flex justify-between">
+              <span>CSV (Comma-separated)</span>
+              <span class="text-green-600 font-medium">✓</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Excel (.xls, .xlsx)</span>
+              <span class="text-green-600 font-medium">✓</span>
+            </div>
+            <div class="flex justify-between">
+              <span>TSV (Tab-separated)</span>
+              <span class="text-green-600 font-medium">✓</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Parquet (Columnar)</span>
+              <span class="text-green-600 font-medium">✓</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-medium text-gray-900 mb-3 flex items-center">
+            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+            Semi-Structured Data
+          </h4>
+          <div class="space-y-2 text-sm text-gray-600">
+            <div class="flex justify-between">
+              <span>JSON (JavaScript Object)</span>
+              <span class="text-green-600 font-medium">✓</span>
+            </div>
+            <div class="flex justify-between">
+              <span>XML (Extensible Markup)</span>
+              <span class="text-green-600 font-medium">✓</span>
+            </div>
+            <div class="flex justify-between">
+              <span>YAML (.yml, .yaml)</span>
+              <span class="text-green-600 font-medium">✓</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-medium text-gray-900 mb-3 flex items-center">
+            <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+            Database & Other
+          </h4>
+          <div class="space-y-2 text-sm text-gray-600">
+            <div class="flex justify-between">
+              <span>SQLite Database</span>
+              <span class="text-green-600 font-medium">✓</span>
+            </div>
+            <div class="flex justify-between">
+              <span>SQL Scripts</span>
+              <span class="text-green-600 font-medium">✓</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Plain Text (.txt)</span>
+              <span class="text-green-600 font-medium">✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+        <p class="text-sm text-gray-600">
+          <strong>Note:</strong> All uploaded files are securely processed and stored with encryption. 
+          Large files are processed in chunks to ensure optimal performance and reliability.
+        </p>
+      </div>
+    </div>
   </div>
 </div>
 

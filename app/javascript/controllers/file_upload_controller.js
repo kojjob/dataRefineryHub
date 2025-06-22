@@ -4,7 +4,9 @@ export default class extends Controller {
   static targets = [
     "input", "dropZone", "fileList", "preview", "previewContent", 
     "progressContainer", "batchProgress", "uploadStatus", "dataPreview",
-    "columnMapping", "dataQuality"
+    "columnMapping", "dataQuality", "dataInsights", "totalRows", "totalColumns",
+    "qualityScore", "completeness", "qualityIssues", "suggestedTransformations",
+    "columnAnalysisTable"
   ]
   static values = { 
     maxSize: Number, 
@@ -914,6 +916,268 @@ export default class extends Controller {
     `
 
     this.dataPreviewTarget.insertAdjacentHTML('beforeend', previewHTML)
+    
+    // Show enhanced data insights
+    this.showEnhancedDataInsights(analysis, processedData)
+  }
+
+  showEnhancedDataInsights(analysis, processedData) {
+    if (!this.hasDataInsightsTarget) return
+
+    // Calculate enhanced metrics
+    const qualityScore = this.calculateQualityScore(analysis)
+    const completeness = this.calculateCompleteness(analysis)
+    const issues = this.identifyQualityIssues(analysis)
+    const transformations = this.suggestTransformations(analysis)
+
+    // Update quick stats
+    this.updateQuickStats(analysis, qualityScore, completeness)
+    
+    // Show quality issues
+    this.displayQualityIssues(issues)
+    
+    // Show suggested transformations
+    this.displaySuggestedTransformations(transformations)
+    
+    // Show column analysis
+    this.displayColumnAnalysis(analysis)
+    
+    // Show the insights panel
+    this.dataInsightsTarget.classList.remove('hidden')
+  }
+
+  updateQuickStats(analysis, qualityScore, completeness) {
+    if (this.hasTotalRowsTarget) this.totalRowsTarget.textContent = analysis.lineCount.toLocaleString()
+    if (this.hasTotalColumnsTarget) this.totalColumnsTarget.textContent = analysis.columnCount
+    if (this.hasQualityScoreTarget) this.qualityScoreTarget.textContent = `${qualityScore}%`
+    if (this.hasCompletenessTarget) this.completenessTarget.textContent = `${completeness}%`
+  }
+
+  calculateQualityScore(analysis) {
+    let score = 100
+    
+    // Deduct points for missing headers
+    if (!analysis.quality.hasHeaders) score -= 20
+    
+    // Deduct points for empty rows (max 20 points)
+    const emptyRowsPenalty = Math.min(20, (analysis.quality.emptyRows / analysis.lineCount) * 100)
+    score -= emptyRowsPenalty
+    
+    // Deduct points for missing values (max 30 points)
+    const missingValuesPenalty = Math.min(30, (analysis.quality.missingValues / (analysis.lineCount * analysis.columnCount)) * 100)
+    score -= missingValuesPenalty
+    
+    return Math.max(0, Math.round(score))
+  }
+
+  calculateCompleteness(analysis) {
+    const totalCells = analysis.lineCount * analysis.columnCount
+    const filledCells = totalCells - analysis.quality.missingValues
+    return Math.round((filledCells / totalCells) * 100)
+  }
+
+  identifyQualityIssues(analysis) {
+    const issues = []
+    
+    if (!analysis.quality.hasHeaders) {
+      issues.push({
+        type: 'warning',
+        title: 'Missing Headers',
+        description: 'First row may not contain column headers',
+        severity: 'medium'
+      })
+    }
+    
+    if (analysis.quality.emptyRows > 0) {
+      issues.push({
+        type: 'warning',
+        title: 'Empty Rows',
+        description: `Found ${analysis.quality.emptyRows} empty rows that should be removed`,
+        severity: 'low'
+      })
+    }
+    
+    if (analysis.quality.missingValues > 0) {
+      const percentage = ((analysis.quality.missingValues / (analysis.lineCount * analysis.columnCount)) * 100).toFixed(1)
+      issues.push({
+        type: 'info',
+        title: 'Missing Values',
+        description: `${analysis.quality.missingValues} missing values (${percentage}% of data)`,
+        severity: percentage > 10 ? 'high' : 'low'
+      })
+    }
+    
+    if (analysis.quality.duplicateRows > 0) {
+      issues.push({
+        type: 'warning',
+        title: 'Duplicate Rows',
+        description: `Found ${analysis.quality.duplicateRows} duplicate rows`,
+        severity: 'medium'
+      })
+    }
+    
+    return issues
+  }
+
+  suggestTransformations(analysis) {
+    const transformations = []
+    
+    // Suggest header normalization
+    if (analysis.headers.some(h => h.includes(' ') || h.includes('-'))) {
+      transformations.push({
+        type: 'normalize_headers',
+        title: 'Normalize Column Names',
+        description: 'Convert column names to snake_case format for better data processing',
+        impact: 'low'
+      })
+    }
+    
+    // Suggest data type conversions
+    Object.entries(analysis.dataTypes).forEach(([column, type]) => {
+      if (type === 'text' && column.toLowerCase().includes('date')) {
+        transformations.push({
+          type: 'convert_date',
+          title: `Convert '${column}' to Date`,
+          description: 'This column appears to contain date values',
+          impact: 'medium'
+        })
+      }
+      
+      if (type === 'text' && column.toLowerCase().includes('price', 'amount', 'cost', 'revenue')) {
+        transformations.push({
+          type: 'convert_number',
+          title: `Convert '${column}' to Number`,
+          description: 'This column appears to contain numeric values',
+          impact: 'medium'
+        })
+      }
+    })
+    
+    // Suggest removing empty rows
+    if (analysis.quality.emptyRows > 0) {
+      transformations.push({
+        type: 'remove_empty_rows',
+        title: 'Remove Empty Rows',
+        description: `Clean up ${analysis.quality.emptyRows} empty rows`,
+        impact: 'low'
+      })
+    }
+    
+    return transformations
+  }
+
+  displayQualityIssues(issues) {
+    if (!this.hasQualityIssuesTarget) return
+    
+    if (issues.length === 0) {
+      this.qualityIssuesTarget.innerHTML = `
+        <div class="flex items-center p-3 bg-green-50 border border-green-200 rounded-lg">
+          <svg class="w-5 h-5 text-green-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-sm font-medium text-green-800">No data quality issues detected!</span>
+        </div>
+      `
+      return
+    }
+    
+    const issuesHTML = issues.map(issue => {
+      const colors = {
+        warning: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-800', icon: 'text-yellow-600' },
+        info: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: 'text-blue-600' },
+        error: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-800', icon: 'text-red-600' }
+      }
+      
+      const color = colors[issue.type] || colors.info
+      
+      return `
+        <div class="flex items-start p-3 ${color.bg} border ${color.border} rounded-lg">
+          <svg class="w-5 h-5 ${color.icon} mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+          </svg>
+          <div>
+            <div class="text-sm font-medium ${color.text}">${issue.title}</div>
+            <div class="text-sm ${color.text} opacity-80">${issue.description}</div>
+          </div>
+          <span class="ml-auto text-xs px-2 py-1 bg-white rounded-full ${color.text} font-medium">${issue.severity}</span>
+        </div>
+      `
+    }).join('')
+    
+    this.qualityIssuesTarget.innerHTML = issuesHTML
+  }
+
+  displaySuggestedTransformations(transformations) {
+    if (!this.hasSuggestedTransformationsTarget) return
+    
+    if (transformations.length === 0) {
+      this.suggestedTransformationsTarget.innerHTML = `
+        <div class="text-sm text-gray-500 italic">No transformations suggested. Your data looks good!</div>
+      `
+      return
+    }
+    
+    const transformationsHTML = transformations.map(transformation => `
+      <div class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg">
+        <div>
+          <div class="text-sm font-medium text-gray-900">${transformation.title}</div>
+          <div class="text-sm text-gray-600">${transformation.description}</div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-xs px-2 py-1 bg-white rounded-full text-gray-600 font-medium">${transformation.impact} impact</span>
+          <button type="button" class="text-xs px-3 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+            Apply
+          </button>
+        </div>
+      </div>
+    `).join('')
+    
+    this.suggestedTransformationsTarget.innerHTML = transformationsHTML
+  }
+
+  displayColumnAnalysis(analysis) {
+    if (!this.hasColumnAnalysisTableTarget) return
+    
+    const tbody = this.columnAnalysisTableTarget.querySelector('tbody')
+    if (!tbody) return
+    
+    const rowsHTML = analysis.headers.map((header, index) => {
+      const dataType = analysis.dataTypes[header] || 'unknown'
+      const sampleValues = analysis.sampleData.map(row => row[index]).filter(val => val !== '' && val != null)
+      const uniqueValues = [...new Set(sampleValues)].length
+      const completeness = Math.round((sampleValues.length / analysis.lineCount) * 100)
+      
+      return `
+        <tr>
+          <td class="px-4 py-2 text-sm font-medium text-gray-900">${this.escapeHtml(header)}</td>
+          <td class="px-4 py-2 text-sm text-gray-600">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${this.getDataTypeColor(dataType)}">
+              ${dataType}
+            </span>
+          </td>
+          <td class="px-4 py-2 text-sm text-gray-600">${completeness}%</td>
+          <td class="px-4 py-2 text-sm text-gray-600">${uniqueValues.toLocaleString()}</td>
+          <td class="px-4 py-2 text-sm">
+            <button type="button" class="text-indigo-600 hover:text-indigo-500 text-xs font-medium">
+              Transform
+            </button>
+          </td>
+        </tr>
+      `
+    }).join('')
+    
+    tbody.innerHTML = rowsHTML
+  }
+
+  getDataTypeColor(dataType) {
+    const colors = {
+      'text': 'bg-gray-100 text-gray-800',
+      'number': 'bg-blue-100 text-blue-800',
+      'date': 'bg-green-100 text-green-800',
+      'boolean': 'bg-purple-100 text-purple-800',
+      'unknown': 'bg-red-100 text-red-800'
+    }
+    return colors[dataType] || colors.unknown
   }
 
   renderDataTable(data, headers) {
