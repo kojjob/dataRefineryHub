@@ -1,296 +1,190 @@
-<!-- Premium Ultra-Modern Desktop Sidebar with Glass Morphism -->
-<div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-20 xl:w-80 lg:flex-col transition-all duration-500" id="desktop-sidebar">
-  <div class="flex grow flex-col gap-y-6 overflow-y-auto bg-white border-r border-gray-200 lg:px-3 xl:px-7 pb-6 shadow-xl">
+<!-- Enhanced Upcube-inspired Desktop Sidebar -->
+<div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col" id="desktop-sidebar" data-controller="sidebar">
+  <div class="flex grow flex-col gap-y-4 overflow-y-auto bg-white border-r border-gray-200 px-6 pb-4">
     
-    <!-- Enhanced Logo Section -->
-    <div class="flex h-16 shrink-0 items-center justify-center xl:justify-start border-b border-gray-200 mb-4">
-      <%= link_to dashboard_path, class: "group flex items-center space-x-4 transition-all duration-300 hover:scale-105" do %>
-        <div class="relative">
-          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 shadow-lg group-hover:shadow-xl transition-all duration-300 ring-2 ring-white/50">
-            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-          </div>
-          <div class="absolute -bottom-1 -right-1 h-4 w-4 bg-emerald-500 rounded-full border-2 border-white animate-pulse"></div>
+    <!-- Logo Section -->
+    <div class="flex h-16 shrink-0 items-center">
+      <%= link_to dashboard_path, class: "flex items-center space-x-3 group" do %>
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 shadow-lg group-hover:shadow-xl transition-shadow">
+          <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
         </div>
-        <div class="lg:hidden xl:block">
+        <div>
           <span class="text-xl font-bold text-gray-900">DataReflow</span>
-          <p class="text-sm text-gray-600">E-commerce Intelligence</p>
+          <div class="text-xs text-gray-500 font-medium">Data Refinery Platform</div>
         </div>
       <% end %>
     </div>
 
-    <!-- Status Overview Card -->
-    <div class="lg:hidden xl:block mx-2 mb-6">
-      <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200 shadow-lg">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">System Status</h3>
-          <div class="flex items-center gap-2 px-3 py-1 bg-emerald-100 rounded-full border border-emerald-200">
-            <div class="h-2 w-2 bg-emerald-500 rounded-full animate-pulse"></div>
-            <span class="text-xs text-emerald-800 font-semibold">Live</span>
+    <!-- Quick Stats Summary -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+      <div class="flex items-center justify-between mb-3">
+        <h4 class="text-sm font-semibold text-gray-900">System Overview</h4>
+        <button class="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                data-action="click->sidebar#refreshStats">
+          <svg class="h-3 w-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Refresh
+        </button>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="text-center p-2 bg-white rounded-lg border border-blue-200/50">
+          <div class="text-lg font-bold text-blue-600" data-sidebar-target="sourceCount">
+            <%= @data_sources&.count || 0 %>
           </div>
+          <div class="text-xs text-gray-600 font-medium">Sources</div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div class="text-center bg-white rounded-lg p-3 border border-gray-200">
-            <div class="text-2xl font-bold text-blue-600 mb-1"><%= current_organization&.data_sources&.connected&.count || 0 %></div>
-            <div class="text-xs text-gray-600 font-medium uppercase tracking-wide">Sources</div>
-          </div>
-          <div class="text-center bg-white rounded-lg p-3 border border-gray-200">
-            <div class="text-2xl font-bold text-emerald-600 mb-1">
-              <%= current_organization&.extraction_jobs&.where('extraction_jobs.created_at >= ?', 24.hours.ago)&.completed&.count || 0 %>
-            </div>
-            <div class="text-xs text-gray-600 font-medium uppercase tracking-wide">Syncs/24h</div>
-          </div>
+        <div class="text-center p-2 bg-white rounded-lg border border-green-200/50">
+          <div class="text-lg font-bold text-green-600" data-sidebar-target="qualityScore">92%</div>
+          <div class="text-xs text-gray-600 font-medium">Quality</div>
         </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-gray-50 rounded-xl p-4">
+      <h4 class="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h4>
+      <div class="space-y-2">
+        <%= link_to new_data_source_path, 
+            class: "flex items-center gap-3 px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-white hover:shadow-sm transition-all group" do %>
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 group-hover:bg-indigo-200 transition-colors">
+            <svg class="h-4 w-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </div>
+          <span class="font-medium">Add Source</span>
+        <% end %>
+        
+        <%= link_to new_user_path, 
+            class: "flex items-center gap-3 px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-white hover:shadow-sm transition-all group" do %>
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors">
+            <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-1.5-6.75H12v2.25m0 0h3.75m-3.75 0h-.375a1.125 1.125 0 00-1.125 1.125v9.75c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V10.125a1.125 1.125 0 00-1.125-1.125H18.75" />
+            </svg>
+          </div>
+          <span class="font-medium">Invite User</span>
+        <% end %>
       </div>
     </div>
 
     <!-- Navigation -->
     <nav class="flex flex-1 flex-col">
-      <ul role="list" class="flex flex-1 flex-col gap-y-7">
+      <ul role="list" class="flex flex-1 flex-col gap-y-6">
         
         <!-- Main Navigation -->
         <li>
-          <div class="text-xs font-black leading-6 text-gray-600/80 lg:hidden xl:block mb-5 px-3 uppercase tracking-widest bg-gradient-to-r from-gray-600 to-gray-800 bg-clip-text text-transparent">
-            OVERVIEW
-          </div>
-          <ul role="list" class="-mx-2 space-y-3">
+          <div class="text-xs font-semibold leading-6 text-gray-400 uppercase tracking-wider mb-2">Main</div>
+          <ul role="list" class="-mx-2 space-y-1">
             
             <!-- Dashboard -->
             <li>
-              <%= link_to dashboard_path, class: enhanced_nav_link_classes('dashboard') do %>
-                <div class="relative group/nav-icon">
-                  <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"></div>
-                  <div class="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 text-white shadow-2xl shadow-blue-500/30 group-hover:shadow-blue-500/50 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 ring-2 ring-white/30">
-                    <svg class="h-7 w-7 group-hover/nav-icon:scale-110 group-hover/nav-icon:rotate-12 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                    </svg>
-                  </div>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start flex-1">
-                  <span class="font-black text-gray-900 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Dashboard</span>
-                  <span class="text-xs text-gray-600/80 font-bold">Overview & metrics</span>
-                </div>
-                <% if current_page?(dashboard_path) %>
-                  <div class="ml-auto lg:hidden xl:block">
-                    <div class="h-4 w-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full shadow-lg shadow-blue-500/50 animate-pulse status-indicator connected"></div>
-                  </div>
-                <% end %>
+              <%= link_to dashboard_path, class: nav_link_classes('dashboard') do %>
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                </svg>
+                <span>Dashboard</span>
+                <span class="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-600">
+                  <%= @new_alerts_count || 0 %>
+                </span>
               <% end %>
             </li>
 
-            <!-- E-commerce Analytics -->
+            <!-- Analytics -->
             <li>
-              <%= link_to analytics_path, class: enhanced_nav_link_classes('analytics') do %>
-                <div class="relative group/nav-icon">
-                  <div class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-green-600 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"></div>
-                  <div class="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-500 via-green-600 to-teal-600 text-white shadow-2xl shadow-emerald-500/30 group-hover:shadow-emerald-500/50 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 ring-2 ring-white/30">
-                    <svg class="h-7 w-7 group-hover/nav-icon:scale-110 group-hover/nav-icon:rotate-12 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-                    </svg>
-                  </div>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start flex-1">
-                  <span class="font-black text-gray-900 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Analytics</span>
-                  <span class="text-xs text-gray-600/80 font-bold">Deep insights & trends</span>
-                </div>
-                <% if current_page?(analytics_path) %>
-                  <div class="ml-auto lg:hidden xl:block">
-                    <div class="h-4 w-4 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full shadow-lg shadow-emerald-500/50 animate-pulse status-indicator connected"></div>
-                  </div>
-                <% end %>
+              <%= link_to analytics_path, class: nav_link_classes('analytics') do %>
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                </svg>
+                <span>Analytics</span>
               <% end %>
             </li>
 
-            <!-- Data Quality Monitoring -->
+            <!-- Data Sources with submenu -->
             <li>
-              <%= link_to dashboard_path(anchor: 'data-quality'), class: enhanced_nav_link_classes('data_quality') do %>
-                <div class="relative group/nav-icon">
-                  <div class="absolute inset-0 bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"></div>
-                  <div class="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-amber-500 via-orange-600 to-red-600 text-white shadow-2xl shadow-amber-500/30 group-hover:shadow-amber-500/50 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 ring-2 ring-white/30">
-                    <svg class="h-7 w-7 group-hover/nav-icon:scale-110 group-hover/nav-icon:rotate-12 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.623 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-                    </svg>
-                  </div>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start flex-1">
-                  <span class="font-black text-gray-900 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Data Quality</span>
-                  <span class="text-xs text-gray-600/80 font-bold">Monitoring & validation</span>
-                </div>
-                <% if request.path == dashboard_path && params[:anchor] == 'data-quality' %>
-                  <div class="ml-auto lg:hidden xl:block">
-                    <div class="h-4 w-4 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full shadow-lg shadow-amber-500/50 animate-pulse status-indicator connected"></div>
-                  </div>
-                <% end %>
-              <% end %>
-            </li>
-
-            <!-- Data Sources -->
-            <li>
-              <%= link_to data_sources_path, class: enhanced_nav_link_classes('data_sources') do %>
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg group-hover:shadow-xl transition-all duration-200">
-                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <div data-controller="submenu">
+                <button class="flex w-full items-center gap-x-3 rounded-lg px-3 py-2 text-left text-sm leading-6 font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors" 
+                        data-action="click->submenu#toggle"
+                        data-submenu-target="button">
+                  <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
                   </svg>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start">
-                  <span class="font-semibold text-gray-900">Data Sources</span>
-                  <span class="text-xs text-gray-500">Platform integrations</span>
-                </div>
-                <% if current_page?(data_sources_path) %>
-                  <div class="ml-auto">
-                    <div class="h-2 w-2 bg-purple-600 rounded-full"></div>
-                  </div>
-                <% end %>
-              <% end %>
+                  <span class="flex-1 text-left">Data Sources</span>
+                  <svg class="h-4 w-4 shrink-0 transition-transform" data-submenu-target="chevron" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
+                </button>
+                
+                <ul class="hidden ml-6 mt-1 space-y-1" data-submenu-target="menu">
+                  <li>
+                    <%= link_to data_sources_path, class: "flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors" do %>
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      All Sources
+                    <% end %>
+                  </li>
+                  <li>
+                    <%= link_to quality_data_sources_path, class: "flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors" do %>
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                      </svg>
+                      Data Quality
+                    <% end %>
+                  </li>
+                  <li>
+                    <%= link_to new_data_source_path, class: "flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors" do %>
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                      </svg>
+                      Add New Source
+                    <% end %>
+                  </li>
+                </ul>
+              </div>
             </li>
           </ul>
         </li>
 
-        <!-- E-commerce Section -->
+        <!-- Applications Section -->
         <li>
-          <div class="text-xs font-semibold leading-6 text-gray-400 lg:hidden xl:block mb-3 px-2">
-            E-COMMERCE
-          </div>
-          <ul role="list" class="-mx-2 space-y-2">
+          <div class="text-xs font-semibold leading-6 text-gray-400 uppercase tracking-wider mb-2">Applications</div>
+          <ul role="list" class="-mx-2 space-y-1">
             
-            <!-- Orders -->
+            <!-- E-commerce -->
             <li>
-              <%= link_to '#orders', class: enhanced_nav_link_classes('orders') do %>
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-lg group-hover:shadow-xl transition-all duration-200">
-                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start">
-                  <span class="font-semibold text-gray-900">Orders</span>
-                  <span class="text-xs text-gray-500">Order management</span>
-                </div>
-                <div class="lg:hidden xl:block ml-auto">
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                    <%= policy_scope(RawDataRecord).joins(:data_source).where(data_sources: { source_type: %w[shopify woocommerce amazon_seller_central] }).where(record_type: 'order').where('raw_data_records.created_at >= ?', 30.days.ago).count %>
-                  </span>
-                </div>
+              <%= link_to '#ecommerce', class: nav_link_classes('ecommerce') do %>
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                <span>E-commerce</span>
+                <span class="ml-auto text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-medium">
+                  Active
+                </span>
               <% end %>
             </li>
 
-            <!-- Customers -->
+            <!-- Marketing -->
             <li>
-              <%= link_to '#customers', class: enhanced_nav_link_classes('customers') do %>
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 text-white shadow-lg group-hover:shadow-xl transition-all duration-200">
-                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-                  </svg>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start">
-                  <span class="font-semibold text-gray-900">Customers</span>
-                  <span class="text-xs text-gray-500">Customer insights</span>
-                </div>
-                <div class="lg:hidden xl:block ml-auto">
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
-                    <%= policy_scope(RawDataRecord).joins(:data_source).where(data_sources: { source_type: %w[shopify woocommerce amazon_seller_central] }).where(record_type: 'customer').where('raw_data_records.created_at >= ?', 30.days.ago).count %>
-                  </span>
-                </div>
+              <%= link_to '#marketing', class: nav_link_classes('marketing') do %>
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125l1.25 1.25M1.5 4.875l1.25 1.25m0 0l-1.262 12.621a23.906 23.906 0 0015.777 0L18.75 6.125m0 0l1.25-1.25" />
+                </svg>
+                <span>Marketing</span>
+                <span class="ml-auto text-xs bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full font-medium">
+                  Beta
+                </span>
               <% end %>
             </li>
 
-            <!-- Products -->
+            <!-- Finance -->
             <li>
-              <%= link_to '#products', class: enhanced_nav_link_classes('products') do %>
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 text-white shadow-lg group-hover:shadow-xl transition-all duration-200">
-                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
-                  </svg>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start">
-                  <span class="font-semibold text-gray-900">Products</span>
-                  <span class="text-xs text-gray-500">Catalog & performance</span>
-                </div>
-                <div class="lg:hidden xl:block ml-auto">
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
-                    <%= policy_scope(RawDataRecord).joins(:data_source).where(data_sources: { source_type: %w[shopify woocommerce amazon_seller_central] }).where(record_type: 'product').where('raw_data_records.created_at >= ?', 30.days.ago).count %>
-                  </span>
-                </div>
-              <% end %>
-            </li>
-
-            <!-- Inventory -->
-            <li>
-              <%= link_to '#inventory', class: enhanced_nav_link_classes('inventory') do %>
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg group-hover:shadow-xl transition-all duration-200">
-                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-2.25-1.313L15 4.41 12 2.25 9 4.41 5.25 6.187 3 7.5M21 7.5v9l-2.25 1.313L15 19.59 12 21.75 9 19.59 5.25 17.813 3 16.5v-9M21 7.5l-9 5.25L3 7.5" />
-                  </svg>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start">
-                  <span class="font-semibold text-gray-900">Inventory</span>
-                  <span class="text-xs text-gray-500">Stock management</span>
-                </div>
-                <div class="lg:hidden xl:block ml-auto">
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                    <%= policy_scope(RawDataRecord).joins(:data_source).where(data_sources: { source_type: %w[shopify woocommerce amazon_seller_central] }).where(record_type: 'product').where('raw_data_records.created_at >= ?', 7.days.ago).count %>
-                  </span>
-                </div>
-              <% end %>
-            </li>
-          </ul>
-        </li>
-
-        <!-- Platform Integrations -->
-        <li>
-          <div class="text-xs font-semibold leading-6 text-gray-400 lg:hidden xl:block mb-3 px-2">
-            PLATFORMS
-          </div>
-          <ul role="list" class="-mx-2 space-y-2">
-            
-            <!-- Shopify -->
-            <li>
-              <%= link_to '#shopify', class: enhanced_nav_link_classes('shopify') do %>
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-green-600 to-emerald-600 text-white shadow-lg group-hover:shadow-xl transition-all duration-200">
-                  <span class="text-sm font-bold">S</span>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start">
-                  <span class="font-semibold text-gray-900">Shopify</span>
-                  <span class="text-xs text-gray-500">E-commerce platform</span>
-                </div>
-                <div class="lg:hidden xl:block ml-auto">
-                  <% shopify_sources = current_organization.data_sources.where(source_type: 'shopify') %>
-                  <div class="h-2 w-2 <%= shopify_sources.connected.any? ? 'bg-green-500' : 'bg-gray-300' %> rounded-full"></div>
-                </div>
-              <% end %>
-            </li>
-
-            <!-- WooCommerce -->
-            <li>
-              <%= link_to '#woocommerce', class: enhanced_nav_link_classes('woocommerce') do %>
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-lg group-hover:shadow-xl transition-all duration-200">
-                  <span class="text-sm font-bold">W</span>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start">
-                  <span class="font-semibold text-gray-900">WooCommerce</span>
-                  <span class="text-xs text-gray-500">WordPress e-commerce</span>
-                </div>
-                <div class="lg:hidden xl:block ml-auto">
-                  <% woo_sources = current_organization.data_sources.where(source_type: 'woocommerce') %>
-                  <div class="h-2 w-2 <%= woo_sources.connected.any? ? 'bg-green-500' : 'bg-gray-300' %> rounded-full"></div>
-                </div>
-              <% end %>
-            </li>
-
-            <!-- Amazon -->
-            <li>
-              <%= link_to '#amazon', class: enhanced_nav_link_classes('amazon') do %>
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-yellow-500 text-white shadow-lg group-hover:shadow-xl transition-all duration-200">
-                  <span class="text-sm font-bold">A</span>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start">
-                  <span class="font-semibold text-gray-900">Amazon</span>
-                  <span class="text-xs text-gray-500">Seller Central</span>
-                </div>
-                <div class="lg:hidden xl:block ml-auto">
-                  <% amazon_sources = current_organization.data_sources.where(source_type: 'amazon_seller_central') %>
-                  <div class="h-2 w-2 <%= amazon_sources.connected.any? ? 'bg-green-500' : 'bg-gray-300' %> rounded-full"></div>
-                </div>
+              <%= link_to '#finance', class: nav_link_classes('finance') do %>
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.375-.203-1.769-.55-.879-.78-.879-2.426 0-3.205.879-.78 2.074-.78 2.953 0l.15.15M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5" />
+                </svg>
+                <span>Finance</span>
               <% end %>
             </li>
           </ul>
@@ -298,103 +192,73 @@
 
         <!-- Management Section -->
         <li>
-          <div class="text-xs font-semibold leading-6 text-gray-400 lg:hidden xl:block mb-3 px-2">
-            MANAGEMENT
-          </div>
-          <ul role="list" class="-mx-2 space-y-2">
+          <div class="text-xs font-semibold leading-6 text-gray-400 uppercase tracking-wider mb-2">Management</div>
+          <ul role="list" class="-mx-2 space-y-1">
             
             <!-- Team -->
             <li>
-              <%= link_to users_path, class: enhanced_nav_link_classes('team') do %>
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-gray-500 to-gray-600 text-white shadow-lg group-hover:shadow-xl transition-all duration-200">
-                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                  </svg>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start">
-                  <span class="font-semibold text-gray-900">Team</span>
-                  <span class="text-xs text-gray-500">User management</span>
-                </div>
-                <div class="lg:hidden xl:block ml-auto">
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                    <%= current_organization&.users&.count || 0 %>
-                  </span>
-                </div>
+              <%= link_to users_path, class: nav_link_classes('team') do %>
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                </svg>
+                <span>Team</span>
               <% end %>
             </li>
 
-            <!-- Organization Settings -->
+            <!-- Settings -->
             <li>
-              <%= link_to organization_path, class: enhanced_nav_link_classes('organization') do %>
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-500 to-slate-600 text-white shadow-lg group-hover:shadow-xl transition-all duration-200">
-                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </div>
-                <div class="lg:hidden xl:flex xl:flex-col xl:items-start">
-                  <span class="font-semibold text-gray-900">Settings</span>
-                  <span class="text-xs text-gray-500">Organization config</span>
-                </div>
+              <%= link_to organization_path, class: nav_link_classes('settings') do %>
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>Settings</span>
               <% end %>
             </li>
           </ul>
         </li>
-
-        <!-- Quick Add Section (collapsed on lg) -->
-        <li class="lg:hidden xl:block">
-          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 mx-2 border border-blue-100/50">
-            <h3 class="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h3>
-            <div class="space-y-2">
-              <%= link_to new_data_source_path, class: "flex items-center gap-3 p-2 text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200" do %>
-                <div class="h-6 w-6 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <svg class="h-3 w-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                </div>
-                Add Data Source
-              <% end %>
-              <%= link_to analytics_path, class: "flex items-center gap-3 p-2 text-sm text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all duration-200" do %>
-                <div class="h-6 w-6 rounded-lg bg-emerald-100 flex items-center justify-center">
-                  <svg class="h-3 w-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </div>
-                View Analytics
-              <% end %>
-            </div>
-          </div>
-        </li>
-
-        <!-- Bottom Section - Organization Switcher -->
-        <li class="mt-auto">
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 mx-2 hover:shadow-md transition-all duration-200">
-            <div class="flex items-center gap-3">
-              <div class="relative">
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 text-sm font-bold text-gray-700 border-2 border-white shadow-sm">
-                  <% if current_user&.organization&.name.present? %>
-                    <%= current_user.organization.name.first.upcase %>
-                  <% else %>
-                    D
-                  <% end %>
-                </div>
-                <div class="absolute -bottom-1 -right-1 h-3 w-3 bg-blue-500 rounded-full border-2 border-white"></div>
-              </div>
-              <div class="flex-1 lg:hidden xl:block">
-                <div class="text-sm font-semibold text-gray-900 truncate">
-                  <%= current_user&.organization&.name || "DataReflow" %>
-                </div>
-                <div class="text-xs text-gray-500">
-                  <%= current_user&.role&.humanize || 'Member' %> • <%= current_organization&.users&.count || 0 %> members
-                </div>
-              </div>
-              <svg class="h-4 w-4 shrink-0 text-gray-400 lg:hidden xl:inline" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-              </svg>
-            </div>
-          </div>
-        </li>
       </ul>
     </nav>
+
+    <!-- Enhanced Bottom Section -->
+    <div class="mt-auto space-y-4">
+      <!-- System Status -->
+      <div class="bg-green-50 rounded-xl p-3 border border-green-200">
+        <div class="flex items-center gap-2">
+          <div class="flex h-6 w-6 items-center justify-center rounded-full bg-green-100">
+            <div class="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+          </div>
+          <div class="flex-1">
+            <div class="text-xs font-semibold text-green-900">System Healthy</div>
+            <div class="text-xs text-green-600">All services operational</div>
+          </div>
+          <button class="text-green-600 hover:text-green-800 transition-colors"
+                  data-action="click->sidebar#showSystemStatus">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Help & Support -->
+      <div class="flex items-center gap-2 text-sm">
+        <button class="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex-1"
+                data-action="click->sidebar#showHelp">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Help
+        </button>
+        <button class="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex-1"
+                data-action="click->sidebar#showFeedback">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10m0 0V6a2 2 0 00-2-2H9a2 2 0 00-2 2v2m10 0v10a2 2 0 01-2 2H9a2 2 0 01-2-2V8m10 0L17 8" />
+          </svg>
+          Feedback
+        </button>
+      </div>
+    </div>
   </div>
 </div>
+
