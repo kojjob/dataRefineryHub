@@ -19,6 +19,116 @@ Rails.application.routes.draw do
 
   # Analytics
   get "analytics", to: "analytics#index"
+  
+  # AI-powered features
+  namespace :ai do
+    resources :presentations do
+      member do
+        get :download
+        get :status
+      end
+      collection do
+        post :generate
+        get :preview
+      end
+    end
+    
+    resources :queries, only: [:index] do
+      collection do
+        post :process_query
+        get :suggestions
+        post :validate
+        get :examples
+        post :export
+      end
+    end
+    
+    resources :real_time_analytics, only: [] do
+      collection do
+        get :dashboard
+        get :live_data
+        get :anomalies
+        get :alerts
+        get :insights
+        get :predictions
+        get :performance_metrics
+        post :start_monitoring
+        post :stop_monitoring
+        post :configure_alerts
+        post :dismiss_alert
+        post :snooze_alert
+        get :export_analytics
+        get :health_check
+      end
+    end
+    
+    resources :bi_agent, only: [] do
+      collection do
+        get :dashboard
+        post :start_agent
+        post :stop_agent
+        post :generate_insights
+        post :weekly_report
+        post :customer_analysis
+        post :competitive_analysis
+        post :scenario_planning
+        get :agent_status
+        post :configure_agent
+        get :learning_status
+        post :feedback
+        get :export_insights
+      end
+    end
+    
+    resources :data_integration, only: [] do
+      collection do
+        get :dashboard
+        get :dashboard_stats
+        post :analyze_source
+        post :generate_field_mapping
+        post :optimize_data_source
+        post :suggest_new_sources
+        post :validate_integration_quality
+        post :preview_integration
+        get :integration_recommendations
+        get :export_integration_plan
+        post :optimize_all
+        post :validate_quality
+      end
+    end
+    
+    resources :interactive_presentations, only: [] do
+      collection do
+        get :dashboard
+        get :dashboard_stats
+        post :create_presentation
+        post :create_interactive
+        post :create_live_dashboard
+        post :create_data_story
+        post :generate_content
+        post :analyze_data
+        post :suggest_visualizations
+        get :presentation_templates
+        get :export_presentation
+        post :save_presentation
+        post :share_presentation
+        get :presentation_analytics
+        post :duplicate_presentation
+        delete :delete_presentation
+      end
+      
+      member do
+        get :show
+        get :edit
+        patch :update
+        get :preview
+        post :publish
+        post :unpublish
+        get :analytics
+        post :clone
+      end
+    end
+  end
 
   # Organization management
   resource :organization, only: [ :show, :edit, :update ] do
@@ -41,6 +151,7 @@ Rails.application.routes.draw do
   resources :data_sources do
     collection do
       post :test_connection
+      post :auto_save
       get :quality  # Add quality dashboard as collection route
       post :run_quality_check  # Add quality check endpoint
       get :download_sample_csv
@@ -53,6 +164,11 @@ Rails.application.routes.draw do
       post :process_files
       get "preview_file/:file_id", action: :preview_file, as: :preview_file
       get "analyze_file/:file_id", action: :analyze_file, as: :analyze_file
+      get "enhanced_preview/:file_id", action: :enhanced_preview, as: :enhanced_preview
+      # Data quality routes
+      get :quality, to: 'data_quality#show'
+      post :validate_quality, to: 'data_quality#validate'
+      get 'quality/reports/:report_id', to: 'data_quality#report', as: :quality_report
     end
 
     # Scheduled uploads
