@@ -36,10 +36,29 @@ class ApplicationController < ActionController::Base
     Rails.logger.debug "=== SESSION DEBUG ==="
     Rails.logger.debug "Controller: #{controller_name}##{action_name}"
     Rails.logger.debug "User signed in: #{user_signed_in?}"
-    Rails.logger.debug "Current user: #{current_user&.email}"
+    Rails.logger.debug "Current user: #{safe_current_user_email}"
     Rails.logger.debug "Session ID present: #{session.id.present? rescue 'N/A'}"
     Rails.logger.debug "Remember token cookie present: #{cookies[:remember_user_token].present?}"
     Rails.logger.debug "====================="
+  end
+  
+  def safe_current_user_email
+    user = current_user
+    case user
+    when User
+      user.email
+    when Array
+      Rails.logger.error "CRITICAL: current_user returned an Array: #{user.inspect}"
+      "[ERROR: current_user is Array]"
+    when nil
+      "[No user]"
+    else
+      Rails.logger.error "CRITICAL: current_user returned unexpected type #{user.class}: #{user.inspect}"
+      "[ERROR: current_user is #{user.class}]"
+    end
+  rescue => e
+    Rails.logger.error "Error getting current user email: #{e.message}"
+    "[ERROR: #{e.message}]"
   end
   
   def set_system_status

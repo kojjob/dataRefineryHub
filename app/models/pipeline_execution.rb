@@ -2,14 +2,18 @@
 
 # Pipeline Execution Model
 # Tracks the execution of ETL pipelines for monitoring and auditing
+# Supports multiple execution modes: automatic, manual, scheduled, triggered
 class PipelineExecution < ApplicationRecord
   belongs_to :data_source, optional: true
   belongs_to :user, optional: true
+  belongs_to :approved_by, class_name: 'User', optional: true
+  has_many :tasks, dependent: :destroy
 
   validates :execution_id, presence: true, uniqueness: true
   validates :pipeline_name, presence: true
   validates :status, presence: true, inclusion: { in: %w[pending running completed failed cancelled] }
   validates :started_at, presence: true
+  validates :execution_mode, presence: true, inclusion: { in: %w[automatic manual scheduled triggered] }
 
   scope :recent, -> { order(created_at: :desc) }
   scope :successful, -> { where(status: "completed") }
@@ -18,14 +22,18 @@ class PipelineExecution < ApplicationRecord
   scope :for_pipeline, ->(name) { where(pipeline_name: name) }
   scope :for_data_source, ->(id) { where(data_source_id: id) }
   scope :within_timeframe, ->(start_time, end_time) { where(created_at: start_time..end_time) }
+  scope :automatic, -> { where(execution_mode: "automatic") }
+  scope :manual, -> { where(execution_mode: "manual") }
+  scope :requiring_intervention, -> { where(manual_intervention_required: true) }
+  scope :pending_approval, -> { where(approval_status: "pending") }
 
   before_create :set_defaults
   after_update :update_metrics, if: :saved_change_to_status?
 
   # Serialized attributes for storing complex data
-  serialize :parameters, JSON
-  serialize :result_summary, JSON
-  serialize :error_details, JSON
+  serialize :parameters, coder: JSON
+  serialize :result_summary, coder: JSON
+  serialize :error_details, coder: JSON
 
   def duration
     return nil unless started_at && completed_at
@@ -108,7 +116,11 @@ class PipelineExecution < ApplicationRecord
       user_id: user_id,
       user_name: user&.name,
       error_message: error_message,
-      parameters: parameters
+      parameters: parameters,
+      execution_mode: execution_mode,
+      manual_intervention_required: manual_intervention_required,
+      approval_status: approval_status,
+      approved_by_name: approved_by&.name
     }
   end
 
@@ -271,14 +283,127 @@ class PipelineExecution < ApplicationRecord
     end
   end
 
+  # Execution mode management
+  def request_manual_intervention!(reason = nil)
+    self.manual_intervention_required = true
+    self.last_manual_task_at = Time.current
+    self.result_summary = (result_summary || {}).merge(
+      manual_intervention_reason: reason,
+      manual_intervention_requested_at: Time.current
+    )
+    save!
+    
+    # Broadcast notification
+    broadcast_manual_intervention_required
+  end
+  
+  def clear_manual_intervention!
+    self.manual_intervention_required = false
+    save!
+  end
+  
+  def request_approval!(approver = nil)
+    self.approval_status = "pending"
+    self.approved_by = approver if approver
+    save!
+  end
+  
+  def approve!(user)
+    self.approval_status = "approved"
+    self.approved_by = user
+    self.result_summary = (result_summary || {}).merge(
+      approved_at: Time.current,
+      approved_by_id: user.id
+    )
+    save!
+  end
+  
+  def reject!(user, reason = nil)
+    self.approval_status = "rejected"
+    self.approved_by = user
+    self.status = "cancelled"
+    self.completed_at = Time.current
+    self.result_summary = (result_summary || {}).merge(
+      rejected_at: Time.current,
+      rejected_by_id: user.id,
+      rejection_reason: reason
+    )
+    save!
+  end
+  
+  # Task management
+  def create_tasks_from_definition(pipeline_definition)
+    tasks_config = pipeline_definition[:tasks] || []
+    
+    tasks_config.each_with_index do |task_config, index|
+      tasks.create!(
+        name: task_config[:name],
+        description: task_config[:description],
+        task_type: task_config[:type],
+        execution_mode: task_config[:execution_mode] || 'automated',
+        priority: task_config[:priority] || 0,
+        position: index + 1,
+        configuration: task_config[:configuration] || {},
+        timeout_seconds: task_config[:timeout] || 300,
+        max_retries: task_config[:max_retries] || 3,
+        depends_on: task_config[:depends_on] || []
+      )
+    end
+  end
+  
+  def pending_manual_tasks
+    tasks.manual.ready
+  end
+  
+  def tasks_requiring_approval
+    tasks.requiring_approval
+  end
+  
+  def update_task_progress!
+    total_tasks = tasks.count
+    return if total_tasks.zero?
+    
+    completed_tasks = tasks.where(status: ['completed', 'skipped', 'cancelled']).count
+    failed_tasks = tasks.where(status: 'failed').count
+    
+    new_progress = (completed_tasks.to_f / total_tasks * 100).round(2)
+    
+    # Update progress and potentially status
+    updates = { progress: new_progress }
+    
+    if failed_tasks > 0 && completed_tasks + failed_tasks == total_tasks
+      updates[:status] = 'failed'
+      updates[:completed_at] = Time.current
+    elsif completed_tasks == total_tasks
+      updates[:status] = 'completed'
+      updates[:completed_at] = Time.current
+    end
+    
+    update!(updates)
+  end
+  
   private
-
+  
   def set_defaults
     self.execution_id ||= SecureRandom.uuid
     self.status ||= "pending"
     self.started_at ||= Time.current
     self.progress ||= 0
     self.parameters ||= {}
+    self.execution_mode ||= "automatic"
+    self.manual_intervention_required ||= false
+  end
+  
+  def broadcast_manual_intervention_required
+    ActionCable.server.broadcast(
+      "pipeline_#{id}",
+      {
+        type: 'manual_intervention_required',
+        pipeline_execution_id: id,
+        pipeline_name: pipeline_name,
+        timestamp: Time.current
+      }
+    )
   end
 
   def update_metrics

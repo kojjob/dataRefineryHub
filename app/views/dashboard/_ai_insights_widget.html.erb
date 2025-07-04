@@ -1,0 +1,318 @@
+<!-- AI Insights & Presentation Generator Widget -->
+<div class="bg-white rounded-lg border border-gray-200 mb-8" data-controller="ai-insights">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-600">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">AI Business Insights</h3>
+          <p class="text-sm text-gray-600">Generate intelligent reports and presentations</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+          <div class="h-1.5 w-1.5 bg-purple-500 rounded-full mr-1 animate-pulse"></div>
+          AI Powered
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="p-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- AI Insights Summary -->
+      <div class="lg:col-span-2">
+        <div class="mb-4">
+          <h4 class="text-sm font-semibold text-gray-900 mb-3">Latest AI Insights</h4>
+          <div id="ai-insights-loading" class="hidden">
+            <div class="flex items-center justify-center py-8">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+              <span class="ml-3 text-sm text-gray-600">Analyzing your data...</span>
+            </div>
+          </div>
+          <div id="ai-insights-content" class="space-y-3">
+            <!-- Placeholder insights - will be populated by AI -->
+            <div class="p-3 bg-blue-50 rounded-lg border border-blue-100">
+              <div class="flex items-start gap-3">
+                <div class="h-2 w-2 bg-blue-500 rounded-full mt-2"></div>
+                <div>
+                  <h5 class="text-sm font-medium text-blue-900">Revenue Growth Opportunity</h5>
+                  <p class="text-xs text-blue-700">Your top-performing product category shows 23% growth potential</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-3 bg-green-50 rounded-lg border border-green-100">
+              <div class="flex items-start gap-3">
+                <div class="h-2 w-2 bg-green-500 rounded-full mt-2"></div>
+                <div>
+                  <h5 class="text-sm font-medium text-green-900">Customer Retention Strength</h5>
+                  <p class="text-xs text-green-700">Repeat purchase rate increased by 15% this quarter</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-3 bg-amber-50 rounded-lg border border-amber-100">
+              <div class="flex items-start gap-3">
+                <div class="h-2 w-2 bg-amber-500 rounded-full mt-2"></div>
+                <div>
+                  <h5 class="text-sm font-medium text-amber-900">Operational Efficiency</h5>
+                  <p class="text-xs text-amber-700">Data processing speed improved by 31% over last month</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-3">
+            <button class="text-sm font-medium text-purple-600 hover:text-purple-500 transition-colors"
+                    data-action="click->ai-insights#refreshInsights">
+              <svg class="h-4 w-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+              Refresh Insights
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Presentation Generator -->
+      <div class="lg:col-span-1">
+        <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg p-4 border border-purple-100">
+          <h4 class="text-sm font-semibold text-gray-900 mb-3">Generate Presentation</h4>
+          <p class="text-xs text-gray-600 mb-4">Create AI-powered business presentations from your data</p>
+          
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Template</label>
+              <select id="presentation-template" 
+                      class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                <option value="executive_summary">Executive Summary</option>
+                <option value="monthly_report">Monthly Report</option>
+                <option value="quarterly_review">Quarterly Review</option>
+                <option value="custom">Custom Report</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Format</label>
+              <select id="presentation-format" 
+                      class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                <option value="pdf">PDF Document</option>
+                <option value="powerpoint">PowerPoint</option>
+                <option value="html">HTML Presentation</option>
+              </select>
+            </div>
+            
+            <div class="flex gap-2">
+              <button class="flex-1 px-3 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                      data-action="click->ai-insights#generatePresentation"
+                      data-ai-insights-target="generateButton">
+                <svg class="h-4 w-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Generate
+              </button>
+              <button class="px-3 py-2 bg-white text-purple-600 text-sm font-medium rounded-lg border border-purple-200 hover:bg-purple-50 transition-colors"
+                      data-action="click->ai-insights#previewPresentation">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Presentations -->
+        <div class="mt-4">
+          <h4 class="text-sm font-semibold text-gray-900 mb-3">Recent Presentations</h4>
+          <div class="space-y-2" data-ai-insights-target="recentPresentations">
+            <% if current_organization.presentations.completed.recent.limit(3).any? %>
+              <% current_organization.presentations.completed.recent.limit(3).each do |presentation| %>
+                <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                  <div class="flex items-center gap-2">
+                    <div class="h-6 w-6 rounded bg-purple-100 flex items-center justify-center">
+                      <svg class="h-3 w-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-xs font-medium text-gray-900"><%= presentation.title.truncate(20) %></p>
+                      <p class="text-xs text-gray-500"><%= time_ago_in_words(presentation.created_at) %> ago</p>
+                    </div>
+                  </div>
+                  <%= link_to ai_presentation_path(presentation), 
+                      class: "text-xs text-purple-600 hover:text-purple-500 font-medium" do %>
+                    View
+                  <% end %>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="text-center py-4">
+                <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <p class="mt-2 text-xs text-gray-500">No presentations yet</p>
+              </div>
+            <% end %>
+          </div>
+          <div class="mt-3">
+            <%= link_to ai_presentations_path, 
+                class: "block text-center text-xs font-medium text-purple-600 hover:text-purple-500 transition-colors" do %>
+              View All Presentations →
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI Insights Stimulus Controller -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const aiInsightsController = {
+    connect() {
+      console.log('AI Insights widget connected');
+      this.loadInitialInsights();
+    },
+    
+    refreshInsights() {
+      this.showLoading();
+      
+      fetch('/ai/presentations/preview?template_type=executive_summary')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            this.updateInsights(data.preview);
+          }
+        })
+        .catch(error => {
+          console.error('Error refreshing insights:', error);
+        })
+        .finally(() => {
+          this.hideLoading();
+        });
+    },
+    
+    generatePresentation() {
+      const template = document.getElementById('presentation-template').value;
+      const format = document.getElementById('presentation-format').value;
+      const button = document.querySelector('[data-ai-insights-target="generateButton"]');
+      
+      button.disabled = true;
+      button.innerHTML = '<svg class="animate-spin h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Generating...';
+      
+      fetch('/ai/presentations/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+          template_type: template,
+          output_format: format
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          this.showSuccess('Presentation generated successfully!');
+          this.updateRecentPresentations();
+          
+          // Redirect to download or view
+          if (data.presentation.download_url) {
+            window.location.href = data.presentation.download_url;
+          }
+        } else {
+          this.showError(data.error || 'Failed to generate presentation');
+        }
+      })
+      .catch(error => {
+        console.error('Error generating presentation:', error);
+        this.showError('Failed to generate presentation');
+      })
+      .finally(() => {
+        button.disabled = false;
+        button.innerHTML = '<svg class="h-4 w-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>Generate';
+      });
+    },
+    
+    previewPresentation() {
+      const template = document.getElementById('presentation-template').value;
+      
+      fetch(`/ai/presentations/preview?template_type=${template}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            this.showPreviewModal(data.preview);
+          }
+        })
+        .catch(error => {
+          console.error('Error previewing presentation:', error);
+        });
+    },
+    
+    loadInitialInsights() {
+      // Load initial AI insights
+      console.log('Loading initial AI insights...');
+    },
+    
+    showLoading() {
+      document.getElementById('ai-insights-loading').classList.remove('hidden');
+      document.getElementById('ai-insights-content').classList.add('hidden');
+    },
+    
+    hideLoading() {
+      document.getElementById('ai-insights-loading').classList.add('hidden');
+      document.getElementById('ai-insights-content').classList.remove('hidden');
+    },
+    
+    updateInsights(insights) {
+      // Update insights display with fresh data
+      console.log('Updating insights:', insights);
+    },
+    
+    updateRecentPresentations() {
+      // Refresh recent presentations list
+      location.reload(); // Simple refresh for now
+    },
+    
+    showSuccess(message) {
+      // Show success notification
+      console.log('Success:', message);
+      alert(message); // Replace with proper toast notification
+    },
+    
+    showError(message) {
+      // Show error notification
+      console.log('Error:', message);
+      alert(message); // Replace with proper toast notification
+    },
+    
+    showPreviewModal(preview) {
+      // Show preview modal
+      console.log('Preview:', preview);
+      alert(`Preview: ${preview.title}\nSlides: ${preview.slides_count}`);
+    }
+  };
+  
+  // Initialize the controller
+  aiInsightsController.connect();
+  
+  // Attach event listeners
+  document.querySelector('[data-action="click->ai-insights#refreshInsights"]')?.addEventListener('click', () => {
+    aiInsightsController.refreshInsights();
+  });
+  
+  document.querySelector('[data-action="click->ai-insights#generatePresentation"]')?.addEventListener('click', () => {
+    aiInsightsController.generatePresentation();
+  });
+  
+  document.querySelector('[data-action="click->ai-insights#previewPresentation"]')?.addEventListener('click', () => {
+    aiInsightsController.previewPresentation();
+  });
+});
+</script>

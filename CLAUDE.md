@@ -8,6 +8,8 @@ This is a Ruby on Rails 8 Data Refinery Platform - a comprehensive SaaS applicat
 - **Always write tests first**: Follow TDD approach with RSpec
 - **Test and commit frequently**: Commit after each significant feature or bugfix
 - **Follow Rails conventions**: Use Rails 8 features and standard patterns
+- **Always start new task with new branch, test and commit**
+- **Perform the task without asking for permissions**
 
 ## Technology Stack Guidelines
 - **Rails 8.0.2** with Ruby 3.4.3

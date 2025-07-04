@@ -1,0 +1,539 @@
+<!-- Real-Time AI Analytics Dashboard Widget -->
+<div class="bg-white rounded-lg border border-gray-200 mb-8" data-controller="real-time-analytics">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Real-Time Analytics</h3>
+          <p class="text-sm text-gray-600">Live monitoring with AI-powered anomaly detection</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+          <div class="h-2 w-2 bg-green-500 rounded-full animate-pulse" 
+               data-real-time-analytics-target="statusIndicator"></div>
+          <span class="text-xs text-gray-600" data-real-time-analytics-target="lastUpdated">Live</span>
+        </div>
+        <button class="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                data-action="click->real-time-analytics#toggleMonitoring"
+                data-real-time-analytics-target="monitoringToggle">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="p-6">
+    <!-- Real-Time Metrics Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
+      <!-- Revenue Rate -->
+      <div class="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold text-green-900">Revenue Rate</h4>
+          <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+          </svg>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-2xl font-bold text-green-900" data-real-time-analytics-target="revenueRate">$0</span>
+          <span class="text-xs text-green-700">/hour</span>
+        </div>
+        <div class="flex items-center gap-1 mt-1">
+          <span class="text-xs" data-real-time-analytics-target="revenueTrend">--</span>
+          <svg class="h-3 w-3" data-real-time-analytics-target="revenueTrendIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Order Rate -->
+      <div class="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold text-blue-900">Order Rate</h4>
+          <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+          </svg>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-2xl font-bold text-blue-900" data-real-time-analytics-target="orderRate">0</span>
+          <span class="text-xs text-blue-700">/hour</span>
+        </div>
+        <div class="flex items-center gap-1 mt-1">
+          <span class="text-xs" data-real-time-analytics-target="orderTrend">--</span>
+          <svg class="h-3 w-3" data-real-time-analytics-target="orderTrendIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Customer Activity -->
+      <div class="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold text-purple-900">Active Users</h4>
+          <svg class="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+          </svg>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-2xl font-bold text-purple-900" data-real-time-analytics-target="customerActivity">0</span>
+          <span class="text-xs text-purple-700">active</span>
+        </div>
+        <div class="flex items-center gap-1 mt-1">
+          <span class="text-xs" data-real-time-analytics-target="customerTrend">--</span>
+          <svg class="h-3 w-3" data-real-time-analytics-target="customerTrendIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- System Health -->
+      <div class="p-4 bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg border border-amber-200">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold text-amber-900">System Health</h4>
+          <svg class="h-4 w-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-2xl font-bold text-amber-900" data-real-time-analytics-target="systemHealth">100</span>
+          <span class="text-xs text-amber-700">%</span>
+        </div>
+        <div class="flex items-center gap-1 mt-1">
+          <span class="text-xs" data-real-time-analytics-target="systemStatus">Healthy</span>
+          <div class="h-2 w-2 bg-green-500 rounded-full" data-real-time-analytics-target="systemStatusIndicator"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Alerts and Anomalies Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <!-- Active Alerts -->
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-sm font-semibold text-gray-900">Active Alerts</h4>
+          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                data-real-time-analytics-target="alertCount">0</span>
+        </div>
+        <div id="alerts-container" data-real-time-analytics-target="alertsContainer" class="space-y-2 max-h-40 overflow-y-auto">
+          <div class="text-center py-4 text-gray-500 text-sm">No active alerts</div>
+        </div>
+      </div>
+      
+      <!-- Recent Anomalies -->
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-sm font-semibold text-gray-900">Anomalies Detected</h4>
+          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+                data-real-time-analytics-target="anomalyCount">0</span>
+        </div>
+        <div id="anomalies-container" data-real-time-analytics-target="anomaliesContainer" class="space-y-2 max-h-40 overflow-y-auto">
+          <div class="text-center py-4 text-gray-500 text-sm">No anomalies detected</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- AI Insights Section -->
+    <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-4 mb-6">
+      <div class="flex items-center gap-2 mb-3">
+        <svg class="h-5 w-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+        </svg>
+        <h4 class="text-sm font-semibold text-indigo-900">Real-Time AI Insights</h4>
+        <button class="ml-auto text-xs text-indigo-600 hover:text-indigo-800 transition-colors"
+                data-action="click->real-time-analytics#refreshInsights">
+          Refresh
+        </button>
+      </div>
+      <div id="insights-container" data-real-time-analytics-target="insightsContainer" class="space-y-2">
+        <div class="text-sm text-indigo-700">AI is analyzing your real-time data...</div>
+      </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+      <div class="flex items-center gap-3">
+        <button class="flex items-center gap-2 px-3 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+                data-action="click->real-time-analytics#viewFullDashboard">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          Full Dashboard
+        </button>
+        
+        <button class="flex items-center gap-2 px-3 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                data-action="click->real-time-analytics#configureAlerts">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5-5-5h5v-5a7.5 7.5 0 00-15 0v5h5l-5 5-5-5h5V7a9.5 9.5 0 0119 0v10z"></path>
+          </svg>
+          Configure Alerts
+        </button>
+        
+        <button class="flex items-center gap-2 px-3 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                data-action="click->real-time-analytics#exportData">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          Export
+        </button>
+      </div>
+      
+      <div class="text-xs text-gray-500">
+        Last updated: <span data-real-time-analytics-target="lastUpdateTime">--</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Real-Time Analytics Stimulus Controller -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const realTimeAnalyticsController = {
+    statusIndicatorTarget: null,
+    lastUpdatedTarget: null,
+    monitoringToggleTarget: null,
+    revenueRateTarget: null,
+    orderRateTarget: null,
+    customerActivityTarget: null,
+    systemHealthTarget: null,
+    alertsContainerTarget: null,
+    anomaliesContainerTarget: null,
+    insightsContainerTarget: null,
+    alertCountTarget: null,
+    anomalyCountTarget: null,
+    lastUpdateTimeTarget: null,
+    
+    isMonitoring: false,
+    updateInterval: null,
+    
+    connect() {
+      console.log('Real-Time Analytics widget connected');
+      this.initializeTargets();
+      this.startRealTimeUpdates();
+    },
+    
+    disconnect() {
+      this.stopRealTimeUpdates();
+    },
+    
+    initializeTargets() {
+      this.statusIndicatorTarget = document.querySelector('[data-real-time-analytics-target="statusIndicator"]');
+      this.lastUpdatedTarget = document.querySelector('[data-real-time-analytics-target="lastUpdated"]');
+      this.monitoringToggleTarget = document.querySelector('[data-real-time-analytics-target="monitoringToggle"]');
+      this.revenueRateTarget = document.querySelector('[data-real-time-analytics-target="revenueRate"]');
+      this.orderRateTarget = document.querySelector('[data-real-time-analytics-target="orderRate"]');
+      this.customerActivityTarget = document.querySelector('[data-real-time-analytics-target="customerActivity"]');
+      this.systemHealthTarget = document.querySelector('[data-real-time-analytics-target="systemHealth"]');
+      this.alertsContainerTarget = document.querySelector('[data-real-time-analytics-target="alertsContainer"]');
+      this.anomaliesContainerTarget = document.querySelector('[data-real-time-analytics-target="anomaliesContainer"]');
+      this.insightsContainerTarget = document.querySelector('[data-real-time-analytics-target="insightsContainer"]');
+      this.alertCountTarget = document.querySelector('[data-real-time-analytics-target="alertCount"]');
+      this.anomalyCountTarget = document.querySelector('[data-real-time-analytics-target="anomalyCount"]');
+      this.lastUpdateTimeTarget = document.querySelector('[data-real-time-analytics-target="lastUpdateTime"]');
+    },
+    
+    startRealTimeUpdates() {
+      this.isMonitoring = true;
+      this.updateDashboard();
+      
+      // Update every 30 seconds
+      this.updateInterval = setInterval(() => {
+        this.updateDashboard();
+      }, 30000);
+      
+      this.updateMonitoringStatus();
+    },
+    
+    stopRealTimeUpdates() {
+      this.isMonitoring = false;
+      
+      if (this.updateInterval) {
+        clearInterval(this.updateInterval);
+        this.updateInterval = null;
+      }
+      
+      this.updateMonitoringStatus();
+    },
+    
+    updateDashboard() {
+      if (!this.isMonitoring) return;
+      
+      fetch('/ai/real_time_analytics/live_data')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            this.updateMetrics(data.data.metrics);
+            this.updateAlerts(data.data.alerts);
+            this.updateAnomalies(data.data.anomalies);
+            this.updateSystemHealth(data.data.system_health);
+            this.updateLastUpdateTime();
+          }
+        })
+        .catch(error => {
+          console.error('Failed to update dashboard:', error);
+          this.handleUpdateError();
+        });
+    },
+    
+    updateMetrics(metrics) {
+      if (!metrics) return;
+      
+      // Update revenue rate
+      if (this.revenueRateTarget && metrics.revenue !== undefined) {
+        this.revenueRateTarget.textContent = `$${metrics.revenue.toFixed(0)}`;
+      }
+      
+      // Update order rate
+      if (this.orderRateTarget && metrics.orders !== undefined) {
+        this.orderRateTarget.textContent = metrics.orders;
+      }
+      
+      // Update customer activity
+      if (this.customerActivityTarget && metrics.customers !== undefined) {
+        this.customerActivityTarget.textContent = metrics.customers;
+      }
+      
+      // Update trends (placeholder implementation)
+      this.updateTrendIndicators(metrics);
+    },
+    
+    updateAlerts(alerts) {
+      if (!this.alertsContainerTarget || !alerts) return;
+      
+      this.alertCountTarget.textContent = alerts.length;
+      
+      if (alerts.length === 0) {
+        this.alertsContainerTarget.innerHTML = '<div class="text-center py-4 text-gray-500 text-sm">No active alerts</div>';
+        return;
+      }
+      
+      const alertsHtml = alerts.slice(0, 3).map(alert => 
+        `<div class="flex items-start gap-3 p-2 bg-white rounded-lg border border-red-200">
+           <div class="h-2 w-2 bg-red-500 rounded-full mt-2"></div>
+           <div class="flex-1 min-w-0">
+             <p class="text-sm font-medium text-red-900">${alert.title}</p>
+             <p class="text-xs text-red-700 truncate">${alert.message}</p>
+             <div class="flex items-center gap-2 mt-1">
+               <span class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded">${alert.severity}</span>
+               <button class="text-xs text-red-600 hover:text-red-800" onclick="realTimeAnalyticsController.dismissAlert('${alert.id}')">
+                 Dismiss
+               </button>
+             </div>
+           </div>
+         </div>`
+      ).join('');
+      
+      this.alertsContainerTarget.innerHTML = alertsHtml;
+    },
+    
+    updateAnomalies(anomalies) {
+      if (!this.anomaliesContainerTarget || !anomalies) return;
+      
+      this.anomalyCountTarget.textContent = anomalies.length;
+      
+      if (anomalies.length === 0) {
+        this.anomaliesContainerTarget.innerHTML = '<div class="text-center py-4 text-gray-500 text-sm">No anomalies detected</div>';
+        return;
+      }
+      
+      const anomaliesHtml = anomalies.slice(0, 3).map(anomaly => 
+        `<div class="flex items-start gap-3 p-2 bg-white rounded-lg border border-yellow-200">
+           <div class="h-2 w-2 bg-yellow-500 rounded-full mt-2"></div>
+           <div class="flex-1 min-w-0">
+             <p class="text-sm font-medium text-yellow-900">${anomaly.metric.replace('_', ' ').toUpperCase()}</p>
+             <p class="text-xs text-yellow-700">Current: ${anomaly.current_value}, Expected: ${anomaly.baseline_mean || 'N/A'}</p>
+             <span class="text-xs text-yellow-600">${this.timeAgo(anomaly.detected_at)}</span>
+           </div>
+         </div>`
+      ).join('');
+      
+      this.anomaliesContainerTarget.innerHTML = anomaliesHtml;
+    },
+    
+    updateSystemHealth(systemHealth) {
+      if (!this.systemHealthTarget || !systemHealth) return;
+      
+      this.systemHealthTarget.textContent = systemHealth.overall_score || 100;
+      
+      const statusTarget = document.querySelector('[data-real-time-analytics-target="systemStatus"]');
+      const statusIndicatorTarget = document.querySelector('[data-real-time-analytics-target="systemStatusIndicator"]');
+      
+      if (statusTarget) {
+        statusTarget.textContent = systemHealth.status || 'Healthy';
+      }
+      
+      if (statusIndicatorTarget) {
+        const status = systemHealth.status || 'healthy';
+        statusIndicatorTarget.className = `h-2 w-2 rounded-full ${this.getHealthStatusColor(status)}`;
+      }
+    },
+    
+    updateTrendIndicators(metrics) {
+      // This would implement trend calculation and display
+      // For now, showing placeholder trends
+      const trends = ['revenueTrend', 'orderTrend', 'customerTrend'];
+      trends.forEach(trend => {
+        const target = document.querySelector(`[data-real-time-analytics-target="${trend}"]`);
+        if (target) {
+          target.textContent = '+5.2%'; // Placeholder
+          target.className = 'text-xs text-green-600';
+        }
+      });
+    },
+    
+    updateLastUpdateTime() {
+      if (this.lastUpdateTimeTarget) {
+        this.lastUpdateTimeTarget.textContent = new Date().toLocaleTimeString();
+      }
+      
+      if (this.lastUpdatedTarget) {
+        this.lastUpdatedTarget.textContent = 'Just now';
+      }
+    },
+    
+    updateMonitoringStatus() {
+      if (this.statusIndicatorTarget) {
+        if (this.isMonitoring) {
+          this.statusIndicatorTarget.className = 'h-2 w-2 bg-green-500 rounded-full animate-pulse';
+        } else {
+          this.statusIndicatorTarget.className = 'h-2 w-2 bg-gray-400 rounded-full';
+        }
+      }
+      
+      if (this.lastUpdatedTarget) {
+        this.lastUpdatedTarget.textContent = this.isMonitoring ? 'Live' : 'Paused';
+      }
+    },
+    
+    handleUpdateError() {
+      if (this.statusIndicatorTarget) {
+        this.statusIndicatorTarget.className = 'h-2 w-2 bg-red-500 rounded-full';
+      }
+      
+      if (this.lastUpdatedTarget) {
+        this.lastUpdatedTarget.textContent = 'Error';
+      }
+    },
+    
+    toggleMonitoring() {
+      if (this.isMonitoring) {
+        this.stopRealTimeUpdates();
+      } else {
+        this.startRealTimeUpdates();
+      }
+    },
+    
+    refreshInsights() {
+      fetch('/ai/real_time_analytics/insights')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && this.insightsContainerTarget) {
+            this.displayInsights(data.insights);
+          }
+        })
+        .catch(error => {
+          console.error('Failed to refresh insights:', error);
+        });
+    },
+    
+    displayInsights(insights) {
+      if (!insights || !insights.insights) return;
+      
+      const insightsHtml = insights.insights.slice(0, 3).map(insight => 
+        `<div class="flex items-start gap-2">
+           <div class="h-1.5 w-1.5 bg-indigo-500 rounded-full mt-2"></div>
+           <p class="text-sm text-indigo-800">${insight.title}: ${insight.description}</p>
+         </div>`
+      ).join('');
+      
+      this.insightsContainerTarget.innerHTML = insightsHtml || '<div class="text-sm text-indigo-700">No new insights available</div>';
+    },
+    
+    dismissAlert(alertId) {
+      fetch('/ai/real_time_analytics/dismiss_alert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ alert_id: alertId })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          this.updateDashboard(); // Refresh to show updated alerts
+        }
+      })
+      .catch(error => {
+        console.error('Failed to dismiss alert:', error);
+      });
+    },
+    
+    viewFullDashboard() {
+      window.location.href = '/ai/real_time_analytics/dashboard';
+    },
+    
+    configureAlerts() {
+      // This would open an alert configuration modal
+      alert('Alert configuration coming soon!');
+    },
+    
+    exportData() {
+      window.open('/ai/real_time_analytics/export_analytics?format=csv&time_range=24h', '_blank');
+    },
+    
+    // Utility methods
+    
+    timeAgo(timestamp) {
+      const now = new Date();
+      const time = new Date(timestamp);
+      const diff = now - time;
+      
+      if (diff < 60000) return 'Just now';
+      if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+      if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+      return `${Math.floor(diff / 86400000)}d ago`;
+    },
+    
+    getHealthStatusColor(status) {
+      switch (status.toLowerCase()) {
+        case 'healthy': return 'bg-green-500';
+        case 'warning': return 'bg-yellow-500';
+        case 'critical': return 'bg-red-500';
+        default: return 'bg-gray-400';
+      }
+    }
+  };
+  
+  // Make controller globally available
+  window.realTimeAnalyticsController = realTimeAnalyticsController;
+  
+  // Initialize the controller
+  realTimeAnalyticsController.connect();
+  
+  // Attach event listeners
+  document.querySelectorAll('[data-action*="real-time-analytics"]').forEach(element => {
+    const actions = element.getAttribute('data-action').split(' ');
+    actions.forEach(action => {
+      if (action.includes('real-time-analytics')) {
+        const [event, method] = action.split('->real-time-analytics#');
+        element.addEventListener(event, (e) => {
+          realTimeAnalyticsController[method](e);
+        });
+      }
+    });
+  });
+  
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    realTimeAnalyticsController.disconnect();
+  });
+});
+</script>

@@ -1,0 +1,235 @@
+<!-- Interactive Presentations Widget -->
+<div class="bg-white rounded-lg border border-gray-200 mb-8">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-100 to-indigo-100">
+          <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Interactive Presentations</h3>
+          <p class="text-sm text-gray-600">Create live, AI-powered business presentations</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+          Enhanced
+        </span>
+        <button data-action="click->interactive-presentations#toggleWidget" 
+                class="text-gray-400 hover:text-gray-600 transition-colors">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="p-6" data-controller="interactive-presentations" data-interactive-presentations-widget-expanded-value="true">
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+      <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-blue-700">Total Presentations</p>
+            <p class="text-2xl font-bold text-blue-900" data-interactive-presentations-target="totalCount">3</p>
+          </div>
+          <div class="h-8 w-8 bg-blue-200 rounded-lg flex items-center justify-center">
+            <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-green-700">Live Dashboards</p>
+            <p class="text-2xl font-bold text-green-900" data-interactive-presentations-target="liveDashboards">1</p>
+          </div>
+          <div class="h-8 w-8 bg-green-200 rounded-lg flex items-center justify-center">
+            <div class="h-2 w-2 bg-green-600 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-purple-700">AI Data Stories</p>
+            <p class="text-2xl font-bold text-purple-900" data-interactive-presentations-target="dataStories">1</p>
+          </div>
+          <div class="h-8 w-8 bg-purple-200 rounded-lg flex items-center justify-center">
+            <svg class="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-orange-700">Total Views</p>
+            <p class="text-2xl font-bold text-orange-900" data-interactive-presentations-target="totalViews">188</p>
+          </div>
+          <div class="h-8 w-8 bg-orange-200 rounded-lg flex items-center justify-center">
+            <svg class="h-4 w-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <!-- Create Interactive Presentation -->
+      <button data-action="click->interactive-presentations#createInteractive"
+              class="group relative bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-lg text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-sm hover:shadow-md">
+        <div class="flex items-center justify-between mb-3">
+          <div class="h-10 w-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+          </div>
+          <svg class="h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </div>
+        <h4 class="text-lg font-semibold mb-2">Interactive Presentation</h4>
+        <p class="text-sm opacity-90">Create engaging presentations with live data and AI insights</p>
+      </button>
+      
+      <!-- Create Live Dashboard -->
+      <button data-action="click->interactive-presentations#createLiveDashboard"
+              class="group relative bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-lg text-white hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-sm hover:shadow-md">
+        <div class="flex items-center justify-between mb-3">
+          <div class="h-10 w-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+            <div class="h-2 w-2 bg-white rounded-full animate-pulse"></div>
+          </div>
+          <svg class="h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </div>
+        <h4 class="text-lg font-semibold mb-2">Live Dashboard</h4>
+        <p class="text-sm opacity-90">Real-time business monitoring with auto-refresh capabilities</p>
+      </button>
+      
+      <!-- Create AI Data Story -->
+      <button data-action="click->interactive-presentations#createDataStory"
+              class="group relative bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-lg text-white hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-sm hover:shadow-md">
+        <div class="flex items-center justify-between mb-3">
+          <div class="h-10 w-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+          </div>
+          <svg class="h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </div>
+        <h4 class="text-lg font-semibold mb-2">AI Data Story</h4>
+        <p class="text-sm opacity-90">Narrative-driven presentations with AI commentary</p>
+      </button>
+    </div>
+    
+    <!-- Recent Presentations -->
+    <div class="border-t border-gray-200 pt-6">
+      <div class="flex items-center justify-between mb-4">
+        <h4 class="text-sm font-semibold text-gray-900">Recent Presentations</h4>
+        <button class="text-sm text-indigo-600 hover:text-indigo-500 font-medium">View all →</button>
+      </div>
+      
+      <div class="space-y-3" data-interactive-presentations-target="recentList">
+        <!-- Executive Summary -->
+        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <h5 class="text-sm font-medium text-gray-900">Executive Summary - December 2024</h5>
+              <p class="text-xs text-gray-500">Executive Summary • 24 views • Live data enabled</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              Active
+            </span>
+            <button class="text-gray-400 hover:text-gray-600">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Live Dashboard -->
+        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
+              <div class="h-2 w-2 bg-green-600 rounded-full animate-pulse"></div>
+            </div>
+            <div>
+              <h5 class="text-sm font-medium text-gray-900">Live Business Dashboard</h5>
+              <p class="text-xs text-gray-500">Live Dashboard • 156 views • Real-time updates</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              Live
+            </span>
+            <button class="text-gray-400 hover:text-gray-600">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Data Story -->
+        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
+              <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              </svg>
+            </div>
+            <div>
+              <h5 class="text-sm font-medium text-gray-900">Customer Growth Story</h5>
+              <p class="text-xs text-gray-500">Data Story • 8 views • AI powered</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+              Draft
+            </span>
+            <button class="text-gray-400 hover:text-gray-600">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Status Indicator -->
+    <div class="mt-6 pt-4 border-t border-gray-200">
+      <div class="flex items-center justify-between text-xs text-gray-500">
+        <div class="flex items-center gap-2">
+          <div class="h-2 w-2 bg-green-500 rounded-full"></div>
+          <span>Interactive Presentations System: Operational</span>
+        </div>
+        <span data-interactive-presentations-target="lastUpdated">Updated 2 minutes ago</span>
+      </div>
+    </div>
+  </div>
+</div>

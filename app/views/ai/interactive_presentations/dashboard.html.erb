@@ -1,0 +1,291 @@
+<% content_for :title, "Interactive Presentations Dashboard" %>
+
+<!-- Interactive Presentations Dashboard -->
+<div data-controller="interactive-presentations-dashboard" class="min-h-screen bg-gray-50">
+  <!-- Page Header -->
+  <div class="mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Interactive Presentations</h1>
+        <p class="mt-2 text-gray-600">
+          Create and manage AI-powered, live business presentations with real-time data integration.
+        </p>
+      </div>
+      <div class="mt-4 sm:mt-0 sm:ml-4 flex gap-3">
+        <button data-action="click->interactive-presentations-dashboard#createPresentation" 
+                class="inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors duration-200">
+          <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Create Presentation
+        </button>
+        <button data-action="click->interactive-presentations-dashboard#createDashboard" 
+                class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+          <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+          Live Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="mb-8">
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex flex-wrap items-center gap-6">
+        <div class="flex items-center gap-2">
+          <div class="h-2 w-2 bg-green-500 rounded-full"></div>
+          <span class="text-sm font-medium text-gray-700">AI Services Active</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-sm text-gray-600">Updated <%= Time.current.strftime("%I:%M %p") %></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+          <span class="text-sm text-gray-600">Real-time Data</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Metrics Cards -->
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+    <!-- Total Presentations -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Presentations</p>
+          <p class="text-3xl font-bold text-gray-900"><%= @dashboard_metrics[:total_presentations] || 0 %></p>
+        </div>
+        <div class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+          <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-sm text-green-600 font-medium">+<%= @dashboard_metrics[:monthly_growth] %>%</span>
+        <span class="text-sm text-gray-600 ml-1">from last month</span>
+      </div>
+    </div>
+
+    <!-- Active Presentations -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Active Presentations</p>
+          <p class="text-3xl font-bold text-gray-900"><%= @dashboard_metrics[:active_presentations] || 0 %></p>
+        </div>
+        <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+          <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-sm text-gray-600">Live data enabled</span>
+      </div>
+    </div>
+
+    <!-- Total Views -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Views</p>
+          <p class="text-3xl font-bold text-gray-900"><%= number_with_delimiter(@dashboard_metrics[:total_views] || 0) %></p>
+        </div>
+        <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+          <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-sm text-gray-600">Across all presentations</span>
+      </div>
+    </div>
+
+    <!-- Average Engagement -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Avg. Engagement</p>
+          <p class="text-3xl font-bold text-gray-900"><%= @dashboard_metrics[:avg_engagement] || 0 %>%</p>
+        </div>
+        <div class="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
+          <svg class="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-sm text-gray-600">User interaction rate</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Recent Presentations -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-900">Recent Presentations</h3>
+            <%= link_to "View All", "#", class: "text-sm text-purple-600 hover:text-purple-700 font-medium" %>
+          </div>
+        </div>
+        <div class="p-6">
+          <% if @presentations.any? %>
+            <div class="space-y-4">
+              <% @presentations.each do |presentation| %>
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div class="flex items-center gap-4">
+                    <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 class="font-medium text-gray-900"><%= presentation[:title] %></h4>
+                      <p class="text-sm text-gray-600">Type: <%= presentation[:type].humanize %> • <%= presentation[:view_count] %> views</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                      <%= presentation[:status] == 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                      <%= presentation[:status].capitalize %>
+                    </span>
+                    <button class="text-gray-400 hover:text-gray-600">
+                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="text-center py-8">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">No presentations yet</h3>
+              <p class="mt-1 text-sm text-gray-500">Get started by creating your first interactive presentation.</p>
+              <div class="mt-6">
+                <button data-action="click->interactive-presentations-dashboard#createPresentation" 
+                        class="inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700">
+                  <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                  </svg>
+                  Create Presentation
+                </button>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Quick Actions -->
+      <div class="bg-white rounded-lg border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Quick Actions</h3>
+        </div>
+        <div class="p-6 space-y-3">
+          <button data-action="click->interactive-presentations-dashboard#createInteractive" 
+                  class="w-full flex items-center gap-3 p-3 text-left bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
+            <div class="h-8 w-8 bg-purple-100 rounded-lg flex items-center justify-center">
+              <svg class="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="font-medium text-gray-900">Interactive Presentation</p>
+              <p class="text-sm text-gray-600">AI-powered with live data</p>
+            </div>
+          </button>
+          
+          <button data-action="click->interactive-presentations-dashboard#createDataStory" 
+                  class="w-full flex items-center gap-3 p-3 text-left bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+            <div class="h-8 w-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="font-medium text-gray-900">Data Story</p>
+              <p class="text-sm text-gray-600">Narrative-driven insights</p>
+            </div>
+          </button>
+          
+          <button data-action="click->interactive-presentations-dashboard#createMonitoring" 
+                  class="w-full flex items-center gap-3 p-3 text-left bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+            <div class="h-8 w-8 bg-green-100 rounded-lg flex items-center justify-center">
+              <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="font-medium text-gray-900">Monitoring Dashboard</p>
+              <p class="text-sm text-gray-600">Real-time alerts</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="bg-white rounded-lg border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
+        </div>
+        <div class="p-6">
+          <% if @recent_activity.any? %>
+            <div class="space-y-4">
+              <% @recent_activity.each do |activity| %>
+                <div class="flex items-start gap-3">
+                  <div class="h-2 w-2 bg-purple-500 rounded-full mt-2"></div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm text-gray-900"><%= activity[:description] %></p>
+                    <p class="text-xs text-gray-500 mt-1"><%= time_ago_in_words(Time.parse(activity[:timestamp])) %> ago</p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-sm text-gray-500">No recent activity</p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Templates -->
+      <div class="bg-white rounded-lg border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Templates</h3>
+        </div>
+        <div class="p-6">
+          <div class="space-y-3">
+            <% @templates.each do |template| %>
+              <button class="w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <p class="font-medium text-gray-900"><%= template[:name] %></p>
+                <p class="text-sm text-gray-600"><%= template[:description] %></p>
+              </button>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals and overlays would go here -->
+<div data-interactive-presentations-dashboard-target="modal" class="hidden">
+  <!-- Modal content for creating presentations -->
+</div>

@@ -1,0 +1,587 @@
+<!-- Autonomous Business Intelligence Agent Widget -->
+<div class="bg-white rounded-lg border border-gray-200 mb-8" data-controller="bi-agent">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-600">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">AI Business Agent</h3>
+          <p class="text-sm text-gray-600">Autonomous business intelligence and insights generation</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+          <div class="h-2 w-2 bg-green-500 rounded-full animate-pulse" 
+               data-bi-agent-target="agentStatus"></div>
+          <span class="text-xs text-gray-600" data-bi-agent-target="agentStatusText">Active</span>
+        </div>
+        <button class="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                data-action="click->bi-agent#toggleAgent"
+                data-bi-agent-target="toggleButton"
+                title="Start/Stop Agent">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-5-3v3m5-3v3M12 3l9 9-9 9-9-9 9-9z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="p-6">
+    <!-- Agent Status Overview -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
+      <!-- Insights Generated -->
+      <div class="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold text-blue-900">Insights Today</h4>
+          <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-2xl font-bold text-blue-900" data-bi-agent-target="insightsCount">--</span>
+          <span class="text-xs text-blue-700">insights</span>
+        </div>
+        <div class="flex items-center gap-1 mt-1">
+          <span class="text-xs text-green-600" data-bi-agent-target="insightsTrend">Loading...</span>
+        </div>
+      </div>
+      
+      <!-- Agent Confidence -->
+      <div class="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold text-green-900">Confidence Level</h4>
+          <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-2xl font-bold text-green-900" data-bi-agent-target="confidenceLevel">--</span>
+        </div>
+        <div class="flex items-center gap-1 mt-1">
+          <span class="text-xs text-green-600" data-bi-agent-target="accuracyRate">Loading...</span>
+        </div>
+      </div>
+      
+      <!-- Active Alerts -->
+      <div class="p-4 bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg border border-amber-200">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold text-amber-900">Active Alerts</h4>
+          <svg class="h-4 w-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-2xl font-bold text-amber-900" data-bi-agent-target="alertsCount">--</span>
+          <span class="text-xs text-amber-700">alerts</span>
+        </div>
+        <div class="flex items-center gap-1 mt-1">
+          <span class="text-xs text-amber-600" data-bi-agent-target="alertsBreakdown">Loading...</span>
+        </div>
+      </div>
+      
+      <!-- Agent Uptime -->
+      <div class="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold text-purple-900">Uptime</h4>
+          <svg class="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-2xl font-bold text-purple-900" data-bi-agent-target="uptime">--</span>
+        </div>
+        <div class="flex items-center gap-1 mt-1">
+          <span class="text-xs text-purple-600">Last 30 days</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Recent AI Insights -->
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h4 class="text-sm font-semibold text-gray-900">Recent AI Insights</h4>
+        <button class="text-xs text-purple-600 hover:text-purple-800 transition-colors"
+                data-action="click->bi-agent#generateInsights">
+          Generate New Insights
+        </button>
+      </div>
+      <div id="insights-container" data-bi-agent-target="insightsContainer" class="space-y-3 max-h-64 overflow-y-auto">
+        <!-- Insights will be populated dynamically -->
+        <div class="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
+          <div class="h-2 w-2 bg-red-500 rounded-full mt-2"></div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h5 class="text-sm font-medium text-red-900">Customer Churn Risk Alert</h5>
+              <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Critical</span>
+            </div>
+            <p class="text-xs text-red-700">15 high-value customers showing churn indicators</p>
+            <div class="flex items-center gap-3 mt-2">
+              <span class="text-xs text-red-600">Confidence: 92%</span>
+              <span class="text-xs text-red-600">4 hours ago</span>
+              <button class="text-xs text-red-600 hover:text-red-800 font-medium"
+                      data-action="click->bi-agent#viewInsightDetails"
+                      data-insight-id="churn-001">
+                View Details →
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div class="h-2 w-2 bg-blue-500 rounded-full mt-2"></div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h5 class="text-sm font-medium text-blue-900">Revenue Growth Opportunity</h5>
+              <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">High</span>
+            </div>
+            <p class="text-xs text-blue-700">Product category X shows 34% week-over-week growth potential</p>
+            <div class="flex items-center gap-3 mt-2">
+              <span class="text-xs text-blue-600">Confidence: 89%</span>
+              <span class="text-xs text-blue-600">2 hours ago</span>
+              <button class="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                      data-action="click->bi-agent#viewInsightDetails"
+                      data-insight-id="revenue-001">
+                View Details →
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+          <div class="h-2 w-2 bg-yellow-500 rounded-full mt-2"></div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h5 class="text-sm font-medium text-yellow-900">Operational Efficiency</h5>
+              <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">Medium</span>
+            </div>
+            <p class="text-xs text-yellow-700">Data processing optimization could save 23% time</p>
+            <div class="flex items-center gap-3 mt-2">
+              <span class="text-xs text-yellow-600">Confidence: 76%</span>
+              <span class="text-xs text-yellow-600">6 hours ago</span>
+              <button class="text-xs text-yellow-600 hover:text-yellow-800 font-medium"
+                      data-action="click->bi-agent#viewInsightDetails"
+                      data-insight-id="ops-001">
+                View Details →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Agent Capabilities -->
+    <div class="mb-6">
+      <h4 class="text-sm font-semibold text-gray-900 mb-3">Agent Capabilities</h4>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <button class="p-3 bg-gray-50 hover:bg-purple-50 rounded-lg border border-gray-200 hover:border-purple-200 transition-colors text-left group"
+                data-action="click->bi-agent#performCustomerAnalysis">
+          <div class="flex items-center gap-2 mb-1">
+            <svg class="h-4 w-4 text-gray-600 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+            </svg>
+            <span class="text-xs font-medium text-gray-900">Customer Analysis</span>
+          </div>
+          <p class="text-xs text-gray-600">Lifecycle & churn prediction</p>
+        </button>
+        
+        <button class="p-3 bg-gray-50 hover:bg-purple-50 rounded-lg border border-gray-200 hover:border-purple-200 transition-colors text-left group"
+                data-action="click->bi-agent#performCompetitiveAnalysis">
+          <div class="flex items-center gap-2 mb-1">
+            <svg class="h-4 w-4 text-gray-600 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            <span class="text-xs font-medium text-gray-900">Competitive Intel</span>
+          </div>
+          <p class="text-xs text-gray-600">Market positioning analysis</p>
+        </button>
+        
+        <button class="p-3 bg-gray-50 hover:bg-purple-50 rounded-lg border border-gray-200 hover:border-purple-200 transition-colors text-left group"
+                data-action="click->bi-agent#performScenarioPlanning">
+          <div class="flex items-center gap-2 mb-1">
+            <svg class="h-4 w-4 text-gray-600 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+            </svg>
+            <span class="text-xs font-medium text-gray-900">Scenario Planning</span>
+          </div>
+          <p class="text-xs text-gray-600">Future business scenarios</p>
+        </button>
+        
+        <button class="p-3 bg-gray-50 hover:bg-purple-50 rounded-lg border border-gray-200 hover:border-purple-200 transition-colors text-left group"
+                data-action="click->bi-agent#generateWeeklyReport">
+          <div class="flex items-center gap-2 mb-1">
+            <svg class="h-4 w-4 text-gray-600 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <span class="text-xs font-medium text-gray-900">Weekly Reports</span>
+          </div>
+          <p class="text-xs text-gray-600">Automated intelligence reports</p>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+      <div class="flex items-center gap-3">
+        <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                data-action="click->bi-agent#viewAgentDashboard">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          Agent Dashboard
+        </button>
+        
+        <button class="flex items-center gap-2 px-3 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                data-action="click->bi-agent#configureAgent">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          Configure
+        </button>
+        
+        <button class="flex items-center gap-2 px-3 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                data-action="click->bi-agent#exportInsights">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          Export
+        </button>
+      </div>
+      
+      <div class="text-xs text-gray-500">
+        Next run: <span data-bi-agent-target="nextRunTime">Loading...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BI Agent Stimulus Controller -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const biAgentController = {
+    agentStatusTarget: null,
+    agentStatusTextTarget: null,
+    toggleButtonTarget: null,
+    insightsContainerTarget: null,
+    insightsCountTarget: null,
+    insightsTrendTarget: null,
+    confidenceLevelTarget: null,
+    accuracyRateTarget: null,
+    alertsCountTarget: null,
+    alertsBreakdownTarget: null,
+    uptimeTarget: null,
+    nextRunTimeTarget: null,
+    
+    isAgentActive: true,
+    
+    connect() {
+      console.log('BI Agent widget connected');
+      this.initializeTargets();
+      this.updateAgentStatus();
+      this.startStatusUpdates();
+    },
+    
+    disconnect() {
+      if (this.statusUpdateInterval) {
+        clearInterval(this.statusUpdateInterval);
+      }
+    },
+    
+    initializeTargets() {
+      this.agentStatusTarget = document.querySelector('[data-bi-agent-target="agentStatus"]');
+      this.agentStatusTextTarget = document.querySelector('[data-bi-agent-target="agentStatusText"]');
+      this.toggleButtonTarget = document.querySelector('[data-bi-agent-target="toggleButton"]');
+      this.insightsContainerTarget = document.querySelector('[data-bi-agent-target="insightsContainer"]');
+      this.insightsCountTarget = document.querySelector('[data-bi-agent-target="insightsCount"]');
+      this.insightsTrendTarget = document.querySelector('[data-bi-agent-target="insightsTrend"]');
+      this.confidenceLevelTarget = document.querySelector('[data-bi-agent-target="confidenceLevel"]');
+      this.accuracyRateTarget = document.querySelector('[data-bi-agent-target="accuracyRate"]');
+      this.alertsCountTarget = document.querySelector('[data-bi-agent-target="alertsCount"]');
+      this.alertsBreakdownTarget = document.querySelector('[data-bi-agent-target="alertsBreakdown"]');
+      this.uptimeTarget = document.querySelector('[data-bi-agent-target="uptime"]');
+      this.nextRunTimeTarget = document.querySelector('[data-bi-agent-target="nextRunTime"]');
+    },
+    
+    startStatusUpdates() {
+      // Update status every 30 seconds
+      this.statusUpdateInterval = setInterval(() => {
+        this.updateAgentStatus();
+      }, 30000);
+    },
+    
+    updateAgentStatus() {
+      fetch('/ai/bi_agent/agent_status')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            this.displayAgentStatus(data.status);
+          }
+        })
+        .catch(error => {
+          console.error('Failed to update agent status:', error);
+        });
+    },
+    
+    displayAgentStatus(status) {
+      // Update status indicators
+      if (this.agentStatusTarget) {
+        const statusClass = status.status === 'active' ? 'bg-green-500 animate-pulse' : 'bg-gray-400';
+        this.agentStatusTarget.className = `h-2 w-2 ${statusClass} rounded-full`;
+      }
+      
+      if (this.agentStatusTextTarget) {
+        this.agentStatusTextTarget.textContent = status.status.charAt(0).toUpperCase() + status.status.slice(1);
+      }
+      
+      // Update metrics
+      if (this.insightsCountTarget) {
+        this.insightsCountTarget.textContent = status.insights_generated_today || 0;
+      }
+      
+      if (this.insightsTrendTarget) {
+        const trend = status.insights_trend || { change: 0, direction: 'neutral' };
+        this.insightsTrendTarget.textContent = trend.direction === 'up' 
+          ? `+${trend.change} since yesterday` 
+          : trend.direction === 'down' 
+          ? `-${trend.change} since yesterday` 
+          : 'No change';
+      }
+      
+      if (this.confidenceLevelTarget) {
+        this.confidenceLevelTarget.textContent = status.confidence_level || 'Medium';
+      }
+      
+      if (this.accuracyRateTarget) {
+        const accuracy = status.accuracy_rate || 0.75;
+        this.accuracyRateTarget.textContent = `${Math.round(accuracy * 100)}% accuracy rate`;
+      }
+      
+      if (this.alertsCountTarget) {
+        this.alertsCountTarget.textContent = status.alerts_sent_today || 0;
+      }
+      
+      if (this.alertsBreakdownTarget) {
+        const breakdown = status.alerts_breakdown || { critical: 0, medium: 0, low: 0 };
+        this.alertsBreakdownTarget.textContent = `${breakdown.critical} critical, ${breakdown.medium} medium`;
+      }
+      
+      if (this.uptimeTarget) {
+        this.uptimeTarget.textContent = status.uptime || '99.0%';
+      }
+      
+      // Update next run time
+      if (this.nextRunTimeTarget && status.next_run) {
+        const nextRun = new Date(status.next_run);
+        const now = new Date();
+        const diffMinutes = Math.floor((nextRun - now) / (1000 * 60));
+        this.nextRunTimeTarget.textContent = `in ${diffMinutes} minutes`;
+      }
+    },
+    
+    toggleAgent() {
+      const action = this.isAgentActive ? 'stop' : 'start';
+      
+      fetch(`/ai/bi_agent/${action}_agent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          this.isAgentActive = !this.isAgentActive;
+          this.updateAgentStatus();
+          this.showNotification(data.message, 'success');
+        } else {
+          this.showNotification(data.error, 'error');
+        }
+      })
+      .catch(error => {
+        console.error('Failed to toggle agent:', error);
+        this.showNotification('Failed to toggle agent', 'error');
+      });
+    },
+    
+    generateInsights() {
+      this.showLoading('Generating new insights...');
+      
+      fetch('/ai/bi_agent/generate_insights', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        this.hideLoading();
+        
+        if (data.success) {
+          this.displayNewInsights(data.insights);
+          this.showNotification('New insights generated successfully!', 'success');
+        } else {
+          this.showNotification(data.error, 'error');
+        }
+      })
+      .catch(error => {
+        this.hideLoading();
+        console.error('Failed to generate insights:', error);
+        this.showNotification('Failed to generate insights', 'error');
+      });
+    },
+    
+    performCustomerAnalysis() {
+      this.performAnalysis('customer_analysis', 'Customer Analysis');
+    },
+    
+    performCompetitiveAnalysis() {
+      this.performAnalysis('competitive_analysis', 'Competitive Analysis');
+    },
+    
+    performScenarioPlanning() {
+      this.performAnalysis('scenario_planning', 'Scenario Planning');
+    },
+    
+    generateWeeklyReport() {
+      this.showLoading('Generating weekly report...');
+      
+      fetch('/ai/bi_agent/weekly_report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        this.hideLoading();
+        
+        if (data.success) {
+          this.showWeeklyReportModal(data.report);
+        } else {
+          this.showNotification(data.error, 'error');
+        }
+      })
+      .catch(error => {
+        this.hideLoading();
+        console.error('Failed to generate weekly report:', error);
+        this.showNotification('Failed to generate weekly report', 'error');
+      });
+    },
+    
+    performAnalysis(type, displayName) {
+      this.showLoading(`Performing ${displayName}...`);
+      
+      fetch(`/ai/bi_agent/${type}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        this.hideLoading();
+        
+        if (data.success) {
+          this.showAnalysisResults(data.analysis, displayName);
+        } else {
+          this.showNotification(data.error, 'error');
+        }
+      })
+      .catch(error => {
+        this.hideLoading();
+        console.error(`Failed to perform ${type}:`, error);
+        this.showNotification(`Failed to perform ${displayName}`, 'error');
+      });
+    },
+    
+    viewInsightDetails(event) {
+      const insightId = event.currentTarget.dataset.insightId;
+      // This would open a detailed view of the insight
+      console.log('Viewing insight details:', insightId);
+      alert(`Insight details for ${insightId}\n\nDetailed insight view coming soon!`);
+    },
+    
+    viewAgentDashboard() {
+      window.location.href = '/ai/bi_agent/dashboard';
+    },
+    
+    configureAgent() {
+      // This would open agent configuration modal
+      alert('Agent configuration coming soon!');
+    },
+    
+    exportInsights() {
+      window.open('/ai/bi_agent/export_insights?format=csv&time_range=7d', '_blank');
+    },
+    
+    displayNewInsights(insights) {
+      // This would update the insights container with new insights
+      console.log('Displaying new insights:', insights);
+      this.updateAgentStatus(); // Refresh the display
+    },
+    
+    showAnalysisResults(analysis, analysisType) {
+      console.log(`${analysisType} results:`, analysis);
+      alert(`${analysisType} completed!\n\nDetailed results view coming soon.`);
+    },
+    
+    showWeeklyReportModal(report) {
+      console.log('Weekly report:', report);
+      alert(`Weekly Intelligence Report Generated!\n\nReport Title: ${report.report_type}\nConfidence: ${report.confidence_score}\n\nDetailed report view coming soon.`);
+    },
+    
+    showLoading(message) {
+      // Simple loading indicator
+      console.log('Loading:', message);
+    },
+    
+    hideLoading() {
+      console.log('Loading complete');
+    },
+    
+    showNotification(message, type) {
+      // Simple notification system
+      const color = type === 'success' ? 'green' : 'red';
+      console.log(`%c${message}`, `color: ${color}; font-weight: bold;`);
+      
+      // In production, this would show a proper toast notification
+      if (type === 'error') {
+        alert(message);
+      }
+    }
+  };
+  
+  // Make controller globally available
+  window.biAgentController = biAgentController;
+  
+  // Initialize the controller
+  biAgentController.connect();
+  
+  // Attach event listeners
+  document.querySelectorAll('[data-action*="bi-agent"]').forEach(element => {
+    const actions = element.getAttribute('data-action').split(' ');
+    actions.forEach(action => {
+      if (action.includes('bi-agent')) {
+        const [event, method] = action.split('->bi-agent#');
+        element.addEventListener(event, (e) => {
+          biAgentController[method](e);
+        });
+      }
+    });
+  });
+  
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    biAgentController.disconnect();
+  });
+});
+</script>

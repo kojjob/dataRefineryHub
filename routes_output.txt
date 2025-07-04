@@ -1,0 +1,290 @@
+                                                Prefix Verb   URI Pattern                                                                                           Controller#Action
+                                      new_user_session GET    /users/sign_in(.:format)                                                                              users/sessions#new
+                                          user_session POST   /users/sign_in(.:format)                                                                              users/sessions#create
+                                  destroy_user_session DELETE /users/sign_out(.:format)                                                                             users/sessions#destroy
+                                     new_user_password GET    /users/password/new(.:format)                                                                         devise/passwords#new
+                                    edit_user_password GET    /users/password/edit(.:format)                                                                        devise/passwords#edit
+                                         user_password PATCH  /users/password(.:format)                                                                             devise/passwords#update
+                                                       PUT    /users/password(.:format)                                                                             devise/passwords#update
+                                                       POST   /users/password(.:format)                                                                             devise/passwords#create
+                              cancel_user_registration GET    /users/cancel(.:format)                                                                               users/registrations#cancel
+                                 new_user_registration GET    /users/sign_up(.:format)                                                                              users/registrations#new
+                                edit_user_registration GET    /users/edit(.:format)                                                                                 users/registrations#edit
+                                     user_registration PATCH  /users(.:format)                                                                                      users/registrations#update
+                                                       PUT    /users(.:format)                                                                                      users/registrations#update
+                                                       DELETE /users(.:format)                                                                                      users/registrations#destroy
+                                                       POST   /users(.:format)                                                                                      users/registrations#create
+                                 new_user_confirmation GET    /users/confirmation/new(.:format)                                                                     devise/confirmations#new
+                                     user_confirmation GET    /users/confirmation(.:format)                                                                         devise/confirmations#show
+                                                       POST   /users/confirmation(.:format)                                                                         devise/confirmations#create
+                                                  root GET    /                                                                                                     landing#index
+                                    debug_session_info GET    /debug/session_info(.:format)                                                                         debug#session_info
+                                             dashboard GET    /dashboard(.:format)                                                                                  dashboard#index
+                                   dashboard_analytics GET    /dashboard/analytics(.:format)                                                                        dashboard#analytics
+                                     dashboard_reports GET    /dashboard/reports(.:format)                                                                          dashboard#reports
+                                    data_quality_index GET    /data-quality(.:format)                                                                               data_quality#index
+                        metrics_api_data_quality_index GET    /data-quality/metrics(.:format)                                                                       data_quality#metrics_api
+                                          data_quality GET    /data-quality/sources/:data_source_id(.:format)                                                       data_quality#show
+                                 validate_data_quality POST   /data-quality/sources/:data_source_id/validate(.:format)                                              data_quality#validate
+                                   report_data_quality GET    /data-quality/sources/:data_source_id/reports/:report_id(.:format)                                    data_quality#report
+                            export_data_quality_report GET    /data-quality/sources/:data_source_id/reports/:report_id/export(.:format)                             data_quality#report {format: "pdf"}
+                                   quality_data_source GET    /data_sources/:id/quality(.:format)                                                                   data_quality#show
+                          validate_quality_data_source POST   /data_sources/:id/validate_quality(.:format)                                                          data_quality#validate
+                            quality_report_data_source GET    /data_sources/:id/quality/reports/:report_id(.:format)                                                data_quality#report
+                     metrics_api_v1_data_quality_index GET    /api/v1/data_quality/metrics(.:format)                                                                api/v1/data_quality#metrics
+                      trends_api_v1_data_quality_index GET    /api/v1/data_quality/trends(.:format)                                                                 api/v1/data_quality#trends
+                      alerts_api_v1_data_quality_index GET    /api/v1/data_quality/alerts(.:format)                                                                 api/v1/data_quality#alerts
+                          validate_api_v1_data_quality POST   /api/v1/data_quality/:id/validate(.:format)                                                           api/v1/data_quality#validate
+                           history_api_v1_data_quality GET    /api/v1/data_quality/:id/history(.:format)                                                            api/v1/data_quality#history
+                   recommendations_api_v1_data_quality GET    /api/v1/data_quality/:id/recommendations(.:format)                                                    api/v1/data_quality#recommendations
+                             api_v1_data_quality_index GET    /api/v1/data_quality(.:format)                                                                        api/v1/data_quality#index
+                                   api_v1_data_quality GET    /api/v1/data_quality/:id(.:format)                                                                    api/v1/data_quality#show
+                                                api_v1 GET    /api/v1/data-quality/real-time/:data_source_id(.:format)                                              api/v1/data_quality#real_time_metrics
+                                                       POST   /api/v1/data-quality/webhook/:data_source_id(.:format)                                                api/v1/data_quality#webhook_validation
+                                             analytics GET    /analytics(.:format)                                                                                  analytics#index
+                              download_ai_presentation GET    /ai/presentations/:id/download(.:format)                                                              ai/presentations#download
+                                status_ai_presentation GET    /ai/presentations/:id/status(.:format)                                                                ai/presentations#status
+                             generate_ai_presentations POST   /ai/presentations/generate(.:format)                                                                  ai/presentations#generate
+                              preview_ai_presentations GET    /ai/presentations/preview(.:format)                                                                   ai/presentations#preview
+                                      ai_presentations GET    /ai/presentations(.:format)                                                                           ai/presentations#index
+                                                       POST   /ai/presentations(.:format)                                                                           ai/presentations#create
+                                   new_ai_presentation GET    /ai/presentations/new(.:format)                                                                       ai/presentations#new
+                                  edit_ai_presentation GET    /ai/presentations/:id/edit(.:format)                                                                  ai/presentations#edit
+                                       ai_presentation GET    /ai/presentations/:id(.:format)                                                                       ai/presentations#show
+                                                       PATCH  /ai/presentations/:id(.:format)                                                                       ai/presentations#update
+                                                       PUT    /ai/presentations/:id(.:format)                                                                       ai/presentations#update
+                                                       DELETE /ai/presentations/:id(.:format)                                                                       ai/presentations#destroy
+                              process_query_ai_queries POST   /ai/queries/process_query(.:format)                                                                   ai/queries#process_query
+                                suggestions_ai_queries GET    /ai/queries/suggestions(.:format)                                                                     ai/queries#suggestions
+                                   validate_ai_queries POST   /ai/queries/validate(.:format)                                                                        ai/queries#validate
+                                   examples_ai_queries GET    /ai/queries/examples(.:format)                                                                        ai/queries#examples
+                                     export_ai_queries POST   /ai/queries/export(.:format)                                                                          ai/queries#export
+                                            ai_queries GET    /ai/queries(.:format)                                                                                 ai/queries#index
+                      dashboard_ai_real_time_analytics GET    /ai/real_time_analytics/dashboard(.:format)                                                           ai/real_time_analytics#dashboard
+                      live_data_ai_real_time_analytics GET    /ai/real_time_analytics/live_data(.:format)                                                           ai/real_time_analytics#live_data
+                      anomalies_ai_real_time_analytics GET    /ai/real_time_analytics/anomalies(.:format)                                                           ai/real_time_analytics#anomalies
+                         alerts_ai_real_time_analytics GET    /ai/real_time_analytics/alerts(.:format)                                                              ai/real_time_analytics#alerts
+                       insights_ai_real_time_analytics GET    /ai/real_time_analytics/insights(.:format)                                                            ai/real_time_analytics#insights
+                    predictions_ai_real_time_analytics GET    /ai/real_time_analytics/predictions(.:format)                                                         ai/real_time_analytics#predictions
+            performance_metrics_ai_real_time_analytics GET    /ai/real_time_analytics/performance_metrics(.:format)                                                 ai/real_time_analytics#performance_metrics
+               start_monitoring_ai_real_time_analytics POST   /ai/real_time_analytics/start_monitoring(.:format)                                                    ai/real_time_analytics#start_monitoring
+                stop_monitoring_ai_real_time_analytics POST   /ai/real_time_analytics/stop_monitoring(.:format)                                                     ai/real_time_analytics#stop_monitoring
+               configure_alerts_ai_real_time_analytics POST   /ai/real_time_analytics/configure_alerts(.:format)                                                    ai/real_time_analytics#configure_alerts
+                  dismiss_alert_ai_real_time_analytics POST   /ai/real_time_analytics/dismiss_alert(.:format)                                                       ai/real_time_analytics#dismiss_alert
+                   snooze_alert_ai_real_time_analytics POST   /ai/real_time_analytics/snooze_alert(.:format)                                                        ai/real_time_analytics#snooze_alert
+               export_analytics_ai_real_time_analytics GET    /ai/real_time_analytics/export_analytics(.:format)                                                    ai/real_time_analytics#export_analytics
+                   health_check_ai_real_time_analytics GET    /ai/real_time_analytics/health_check(.:format)                                                        ai/real_time_analytics#health_check
+                           dashboard_ai_bi_agent_index GET    /ai/bi_agent/dashboard(.:format)                                                                      ai/bi_agent#dashboard
+                         start_agent_ai_bi_agent_index POST   /ai/bi_agent/start_agent(.:format)                                                                    ai/bi_agent#start_agent
+                          stop_agent_ai_bi_agent_index POST   /ai/bi_agent/stop_agent(.:format)                                                                     ai/bi_agent#stop_agent
+                   generate_insights_ai_bi_agent_index POST   /ai/bi_agent/generate_insights(.:format)                                                              ai/bi_agent#generate_insights
+                       weekly_report_ai_bi_agent_index POST   /ai/bi_agent/weekly_report(.:format)                                                                  ai/bi_agent#weekly_report
+                   customer_analysis_ai_bi_agent_index POST   /ai/bi_agent/customer_analysis(.:format)                                                              ai/bi_agent#customer_analysis
+                competitive_analysis_ai_bi_agent_index POST   /ai/bi_agent/competitive_analysis(.:format)                                                           ai/bi_agent#competitive_analysis
+                   scenario_planning_ai_bi_agent_index POST   /ai/bi_agent/scenario_planning(.:format)                                                              ai/bi_agent#scenario_planning
+                        agent_status_ai_bi_agent_index GET    /ai/bi_agent/agent_status(.:format)                                                                   ai/bi_agent#agent_status
+                     configure_agent_ai_bi_agent_index POST   /ai/bi_agent/configure_agent(.:format)                                                                ai/bi_agent#configure_agent
+                     learning_status_ai_bi_agent_index GET    /ai/bi_agent/learning_status(.:format)                                                                ai/bi_agent#learning_status
+                            feedback_ai_bi_agent_index POST   /ai/bi_agent/feedback(.:format)                                                                       ai/bi_agent#feedback
+                     export_insights_ai_bi_agent_index GET    /ai/bi_agent/export_insights(.:format)                                                                ai/bi_agent#export_insights
+                   dashboard_ai_data_integration_index GET    /ai/data_integration/dashboard(.:format)                                                              ai/data_integration#dashboard
+             dashboard_stats_ai_data_integration_index GET    /ai/data_integration/dashboard_stats(.:format)                                                        ai/data_integration#dashboard_stats
+              analyze_source_ai_data_integration_index POST   /ai/data_integration/analyze_source(.:format)                                                         ai/data_integration#analyze_source
+      generate_field_mapping_ai_data_integration_index POST   /ai/data_integration/generate_field_mapping(.:format)                                                 ai/data_integration#generate_field_mapping
+        optimize_data_source_ai_data_integration_index POST   /ai/data_integration/optimize_data_source(.:format)                                                   ai/data_integration#optimize_data_source
+         suggest_new_sources_ai_data_integration_index POST   /ai/data_integration/suggest_new_sources(.:format)                                                    ai/data_integration#suggest_new_sources
+validate_integration_quality_ai_data_integration_index POST   /ai/data_integration/validate_integration_quality(.:format)                                           ai/data_integration#validate_integration_quality
+         preview_integration_ai_data_integration_index POST   /ai/data_integration/preview_integration(.:format)                                                    ai/data_integration#preview_integration
+ integration_recommendations_ai_data_integration_index GET    /ai/data_integration/integration_recommendations(.:format)                                            ai/data_integration#integration_recommendations
+     export_integration_plan_ai_data_integration_index GET    /ai/data_integration/export_integration_plan(.:format)                                                ai/data_integration#export_integration_plan
+                optimize_all_ai_data_integration_index POST   /ai/data_integration/optimize_all(.:format)                                                           ai/data_integration#optimize_all
+            validate_quality_ai_data_integration_index POST   /ai/data_integration/validate_quality(.:format)                                                       ai/data_integration#validate_quality
+                dashboard_ai_interactive_presentations GET    /ai/interactive_presentations/dashboard(.:format)                                                     ai/interactive_presentations#dashboard
+          dashboard_stats_ai_interactive_presentations GET    /ai/interactive_presentations/dashboard_stats(.:format)                                               ai/interactive_presentations#dashboard_stats
+      create_presentation_ai_interactive_presentations POST   /ai/interactive_presentations/create_presentation(.:format)                                           ai/interactive_presentations#create_presentation
+       create_interactive_ai_interactive_presentations POST   /ai/interactive_presentations/create_interactive(.:format)                                            ai/interactive_presentations#create_interactive
+    create_live_dashboard_ai_interactive_presentations POST   /ai/interactive_presentations/create_live_dashboard(.:format)                                         ai/interactive_presentations#create_live_dashboard
+        create_data_story_ai_interactive_presentations POST   /ai/interactive_presentations/create_data_story(.:format)                                             ai/interactive_presentations#create_data_story
+         generate_content_ai_interactive_presentations POST   /ai/interactive_presentations/generate_content(.:format)                                              ai/interactive_presentations#generate_content
+             analyze_data_ai_interactive_presentations POST   /ai/interactive_presentations/analyze_data(.:format)                                                  ai/interactive_presentations#analyze_data
+   suggest_visualizations_ai_interactive_presentations POST   /ai/interactive_presentations/suggest_visualizations(.:format)                                        ai/interactive_presentations#suggest_visualizations
+   presentation_templates_ai_interactive_presentations GET    /ai/interactive_presentations/presentation_templates(.:format)                                        ai/interactive_presentations#presentation_templates
+      export_presentation_ai_interactive_presentations GET    /ai/interactive_presentations/export_presentation(.:format)                                           ai/interactive_presentations#export_presentation
+        save_presentation_ai_interactive_presentations POST   /ai/interactive_presentations/save_presentation(.:format)                                             ai/interactive_presentations#save_presentation
+       share_presentation_ai_interactive_presentations POST   /ai/interactive_presentations/share_presentation(.:format)                                            ai/interactive_presentations#share_presentation
+   presentation_analytics_ai_interactive_presentations GET    /ai/interactive_presentations/presentation_analytics(.:format)                                        ai/interactive_presentations#presentation_analytics
+   duplicate_presentation_ai_interactive_presentations POST   /ai/interactive_presentations/duplicate_presentation(.:format)                                        ai/interactive_presentations#duplicate_presentation
+      delete_presentation_ai_interactive_presentations DELETE /ai/interactive_presentations/delete_presentation(.:format)                                           ai/interactive_presentations#delete_presentation
+                           ai_interactive_presentation GET    /ai/interactive_presentations/:id(.:format)                                                           ai/interactive_presentations#show
+                      edit_ai_interactive_presentation GET    /ai/interactive_presentations/:id/edit(.:format)                                                      ai/interactive_presentations#edit
+                                                       PATCH  /ai/interactive_presentations/:id(.:format)                                                           ai/interactive_presentations#update
+                   preview_ai_interactive_presentation GET    /ai/interactive_presentations/:id/preview(.:format)                                                   ai/interactive_presentations#preview
+                   publish_ai_interactive_presentation POST   /ai/interactive_presentations/:id/publish(.:format)                                                   ai/interactive_presentations#publish
+                 unpublish_ai_interactive_presentation POST   /ai/interactive_presentations/:id/unpublish(.:format)                                                 ai/interactive_presentations#unpublish
+                 analytics_ai_interactive_presentation GET    /ai/interactive_presentations/:id/analytics(.:format)                                                 ai/interactive_presentations#analytics
+                     clone_ai_interactive_presentation POST   /ai/interactive_presentations/:id/clone(.:format)                                                     ai/interactive_presentations#clone
+                                  billing_organization GET    /organization/billing(.:format)                                                                       organizations#billing
+                              usage_stats_organization GET    /organization/usage_stats(.:format)                                                                   organizations#usage_stats
+                               audit_logs_organization GET    /organization/audit_logs(.:format)                                                                    organizations#audit_logs
+                                     edit_organization GET    /organization/edit(.:format)                                                                          organizations#edit
+                                          organization GET    /organization(.:format)                                                                               organizations#show
+                                                       PATCH  /organization(.:format)                                                                               organizations#update
+                                                       PUT    /organization(.:format)                                                                               organizations#update
+                                      change_role_user PATCH  /users/:id/change_role(.:format)                                                                      users#change_role {id: /\d+/}
+                                    remove_avatar_user DELETE /users/:id/remove_avatar(.:format)                                                                    users#remove_avatar {id: /\d+/}
+                                                 users GET    /users(.:format)                                                                                      users#index
+                                                       POST   /users(.:format)                                                                                      users#create
+                                              new_user GET    /users/new(.:format)                                                                                  users#new
+                                             edit_user GET    /users/:id/edit(.:format)                                                                             users#edit {id: /\d+/}
+                                                  user GET    /users/:id(.:format)                                                                                  users#show {id: /\d+/}
+                                                       PATCH  /users/:id(.:format)                                                                                  users#update {id: /\d+/}
+                                                       PUT    /users/:id(.:format)                                                                                  users#update {id: /\d+/}
+                                                       DELETE /users/:id(.:format)                                                                                  users#destroy {id: /\d+/}
+                          test_connection_data_sources POST   /data_sources/test_connection(.:format)                                                               data_sources#test_connection
+                                auto_save_data_sources POST   /data_sources/auto_save(.:format)                                                                     data_sources#auto_save
+                                  quality_data_sources GET    /data_sources/quality(.:format)                                                                       data_sources#quality
+                        run_quality_check_data_sources POST   /data_sources/run_quality_check(.:format)                                                             data_sources#run_quality_check
+                      download_sample_csv_data_sources GET    /data_sources/download_sample_csv(.:format)                                                           data_sources#download_sample_csv
+                    download_sample_excel_data_sources GET    /data_sources/download_sample_excel(.:format)                                                         data_sources#download_sample_excel
+                     download_sample_json_data_sources GET    /data_sources/download_sample_json(.:format)                                                          data_sources#download_sample_json
+                                  sync_now_data_source POST   /data_sources/:id/sync_now(.:format)                                                                  data_sources#sync_now
+                             process_files_data_source POST   /data_sources/:id/process_files(.:format)                                                             data_sources#process_files
+                              preview_file_data_source GET    /data_sources/:id/preview_file/:file_id(.:format)                                                     data_sources#preview_file
+                              analyze_file_data_source GET    /data_sources/:id/analyze_file/:file_id(.:format)                                                     data_sources#analyze_file
+            toggle_status_data_source_scheduled_upload PATCH  /data_sources/:data_source_id/scheduled_uploads/:id/toggle_status(.:format)                           scheduled_uploads#toggle_status
+              execute_now_data_source_scheduled_upload POST   /data_sources/:data_source_id/scheduled_uploads/:id/execute_now(.:format)                             scheduled_uploads#execute_now
+                         data_source_scheduled_uploads GET    /data_sources/:data_source_id/scheduled_uploads(.:format)                                             scheduled_uploads#index
+                                                       POST   /data_sources/:data_source_id/scheduled_uploads(.:format)                                             scheduled_uploads#create
+                      new_data_source_scheduled_upload GET    /data_sources/:data_source_id/scheduled_uploads/new(.:format)                                         scheduled_uploads#new
+                     edit_data_source_scheduled_upload GET    /data_sources/:data_source_id/scheduled_uploads/:id/edit(.:format)                                    scheduled_uploads#edit
+                          data_source_scheduled_upload GET    /data_sources/:data_source_id/scheduled_uploads/:id(.:format)                                         scheduled_uploads#show
+                                                       PATCH  /data_sources/:data_source_id/scheduled_uploads/:id(.:format)                                         scheduled_uploads#update
+                                                       PUT    /data_sources/:data_source_id/scheduled_uploads/:id(.:format)                                         scheduled_uploads#update
+                                                       DELETE /data_sources/:data_source_id/scheduled_uploads/:id(.:format)                                         scheduled_uploads#destroy
+                    data_source_scheduled_uploads_logs GET    /data_sources/:data_source_id/scheduled_uploads_logs(.:format)                                        scheduled_uploads#logs
+                                          data_sources GET    /data_sources(.:format)                                                                               data_sources#index
+                                                       POST   /data_sources(.:format)                                                                               data_sources#create
+                                       new_data_source GET    /data_sources/new(.:format)                                                                           data_sources#new
+                                      edit_data_source GET    /data_sources/:id/edit(.:format)                                                                      data_sources#edit
+                                           data_source GET    /data_sources/:id(.:format)                                                                           data_sources#show
+                                                       PATCH  /data_sources/:id(.:format)                                                                           data_sources#update
+                                                       PUT    /data_sources/:id(.:format)                                                                           data_sources#update
+                                                       DELETE /data_sources/:id(.:format)                                                                           data_sources#destroy
+                                     api_v1_auth_login POST   /api/v1/auth/login(.:format)                                                                          api/v1/authentication#login
+                                    api_v1_auth_logout DELETE /api/v1/auth/logout(.:format)                                                                         api/v1/authentication#logout
+                                   api_v1_auth_refresh POST   /api/v1/auth/refresh(.:format)                                                                        api/v1/authentication#refresh
+                                        api_v1_auth_me GET    /api/v1/auth/me(.:format)                                                                             api/v1/authentication#me
+                       usage_stats_api_v1_organization GET    /api/v1/organization/usage_stats(.:format)                                                            api/v1/organizations#usage_stats
+                        audit_logs_api_v1_organization GET    /api/v1/organization/audit_logs(.:format)                                                             api/v1/organizations#audit_logs
+                      billing_info_api_v1_organization GET    /api/v1/organization/billing_info(.:format)                                                           api/v1/organizations#billing_info
+                                   api_v1_organization GET    /api/v1/organization(.:format)                                                                        api/v1/organizations#show
+                                                       PATCH  /api/v1/organization(.:format)                                                                        api/v1/organizations#update
+                                                       PUT    /api/v1/organization(.:format)                                                                        api/v1/organizations#update
+                    test_connection_api_v1_data_source POST   /api/v1/data_sources/:id/test_connection(.:format)                                                    api/v1/data_sources#test_connection
+                           sync_now_api_v1_data_source POST   /api/v1/data_sources/:id/sync_now(.:format)                                                           api/v1/data_sources#sync_now
+                        sync_status_api_v1_data_source GET    /api/v1/data_sources/:id/sync_status(.:format)                                                        api/v1/data_sources#sync_status
+                       sync_history_api_v1_data_source GET    /api/v1/data_sources/:id/sync_history(.:format)                                                       api/v1/data_sources#sync_history
+                            metrics_api_v1_data_source GET    /api/v1/data_sources/:id/metrics(.:format)                                                            api/v1/data_sources#metrics
+               retry_api_v1_data_source_extraction_job POST   /api/v1/data_sources/:data_source_id/extraction_jobs/:id/retry(.:format)                              api/v1/extraction_jobs#retry
+              cancel_api_v1_data_source_extraction_job POST   /api/v1/data_sources/:data_source_id/extraction_jobs/:id/cancel(.:format)                             api/v1/extraction_jobs#cancel
+                    api_v1_data_source_extraction_jobs GET    /api/v1/data_sources/:data_source_id/extraction_jobs(.:format)                                        api/v1/extraction_jobs#index
+                                                       POST   /api/v1/data_sources/:data_source_id/extraction_jobs(.:format)                                        api/v1/extraction_jobs#create
+                     api_v1_data_source_extraction_job GET    /api/v1/data_sources/:data_source_id/extraction_jobs/:id(.:format)                                    api/v1/extraction_jobs#show
+                                                       DELETE /api/v1/data_sources/:data_source_id/extraction_jobs/:id(.:format)                                    api/v1/extraction_jobs#destroy
+     toggle_status_api_v1_data_source_scheduled_upload PATCH  /api/v1/data_sources/:data_source_id/scheduled_uploads/:id/toggle_status(.:format)                    api/v1/scheduled_uploads#toggle_status
+       execute_now_api_v1_data_source_scheduled_upload POST   /api/v1/data_sources/:data_source_id/scheduled_uploads/:id/execute_now(.:format)                      api/v1/scheduled_uploads#execute_now
+       api_v1_data_source_scheduled_upload_upload_logs GET    /api/v1/data_sources/:data_source_id/scheduled_uploads/:scheduled_upload_id/upload_logs(.:format)     api/v1/upload_logs#index
+        api_v1_data_source_scheduled_upload_upload_log GET    /api/v1/data_sources/:data_source_id/scheduled_uploads/:scheduled_upload_id/upload_logs/:id(.:format) api/v1/upload_logs#show
+                  api_v1_data_source_scheduled_uploads GET    /api/v1/data_sources/:data_source_id/scheduled_uploads(.:format)                                      api/v1/scheduled_uploads#index
+                                                       POST   /api/v1/data_sources/:data_source_id/scheduled_uploads(.:format)                                      api/v1/scheduled_uploads#create
+                   api_v1_data_source_scheduled_upload GET    /api/v1/data_sources/:data_source_id/scheduled_uploads/:id(.:format)                                  api/v1/scheduled_uploads#show
+                                                       PATCH  /api/v1/data_sources/:data_source_id/scheduled_uploads/:id(.:format)                                  api/v1/scheduled_uploads#update
+                                                       PUT    /api/v1/data_sources/:data_source_id/scheduled_uploads/:id(.:format)                                  api/v1/scheduled_uploads#update
+                                                       DELETE /api/v1/data_sources/:data_source_id/scheduled_uploads/:id(.:format)                                  api/v1/scheduled_uploads#destroy
+                                   api_v1_data_sources GET    /api/v1/data_sources(.:format)                                                                        api/v1/data_sources#index
+                                                       POST   /api/v1/data_sources(.:format)                                                                        api/v1/data_sources#create
+                                    api_v1_data_source GET    /api/v1/data_sources/:id(.:format)                                                                    api/v1/data_sources#show
+                                                       PATCH  /api/v1/data_sources/:id(.:format)                                                                    api/v1/data_sources#update
+                                                       PUT    /api/v1/data_sources/:id(.:format)                                                                    api/v1/data_sources#update
+                                                       DELETE /api/v1/data_sources/:id(.:format)                                                                    api/v1/data_sources#destroy
+                           retry_api_v1_extraction_job POST   /api/v1/extraction_jobs/:id/retry(.:format)                                                           api/v1/extraction_jobs#retry
+                          cancel_api_v1_extraction_job POST   /api/v1/extraction_jobs/:id/cancel(.:format)                                                          api/v1/extraction_jobs#cancel
+                            logs_api_v1_extraction_job GET    /api/v1/extraction_jobs/:id/logs(.:format)                                                            api/v1/extraction_jobs#logs
+                                api_v1_extraction_jobs GET    /api/v1/extraction_jobs(.:format)                                                                     api/v1/extraction_jobs#index
+                                 api_v1_extraction_job GET    /api/v1/extraction_jobs/:id(.:format)                                                                 api/v1/extraction_jobs#show
+                      api_v1_analytics_dashboard_stats GET    /api/v1/analytics/dashboard_stats(.:format)                                                           api/v1/analytics#dashboard_stats
+                      api_v1_analytics_revenue_metrics GET    /api/v1/analytics/revenue_metrics(.:format)                                                           api/v1/analytics#revenue_metrics
+                     api_v1_analytics_customer_metrics GET    /api/v1/analytics/customer_metrics(.:format)                                                          api/v1/analytics#customer_metrics
+                      api_v1_analytics_product_metrics GET    /api/v1/analytics/product_metrics(.:format)                                                           api/v1/analytics#product_metrics
+                        api_v1_analytics_order_metrics GET    /api/v1/analytics/order_metrics(.:format)                                                             api/v1/analytics#order_metrics
+                       api_v1_analytics_trend_analysis GET    /api/v1/analytics/trend_analysis(.:format)                                                            api/v1/analytics#trend_analysis
+                    api_v1_analytics_revenue_over_time GET    /api/v1/analytics/revenue_over_time(.:format)                                                         api/v1/analytics#revenue_over_time
+                     api_v1_analytics_orders_over_time GET    /api/v1/analytics/orders_over_time(.:format)                                                          api/v1/analytics#orders_over_time
+                  api_v1_analytics_customers_over_time GET    /api/v1/analytics/customers_over_time(.:format)                                                       api/v1/analytics#customers_over_time
+                        api_v1_analytics_export_report POST   /api/v1/analytics/export_report(.:format)                                                             api/v1/analytics#export_report
+                                      api_v1_analytics GET    /api/v1/analytics/export_status/:job_id(.:format)                                                     api/v1/analytics#export_status
+                                                       GET    /api/v1/analytics/download_export/:job_id(.:format)                                                   api/v1/analytics#download_export
+                                 api_v1_visualizations GET    /api/v1/visualizations(.:format)                                                                      api/v1/visualizations#index
+                                                       POST   /api/v1/visualizations(.:format)                                                                      api/v1/visualizations#create
+                                  api_v1_visualization GET    /api/v1/visualizations/:id(.:format)                                                                  api/v1/visualizations#show
+                                                       DELETE /api/v1/visualizations/:id(.:format)                                                                  api/v1/visualizations#destroy
+                     unread_count_api_v1_notifications GET    /api/v1/notifications/unread_count(.:format)                                                          api/v1/notifications#unread_count
+                 mark_all_as_read_api_v1_notifications PATCH  /api/v1/notifications/mark_all_as_read(.:format)                                                      api/v1/notifications#mark_all_as_read
+                      mark_as_read_api_v1_notification PATCH  /api/v1/notifications/:id/mark_as_read(.:format)                                                      api/v1/notifications#mark_as_read
+                    mark_as_unread_api_v1_notification PATCH  /api/v1/notifications/:id/mark_as_unread(.:format)                                                    api/v1/notifications#mark_as_unread
+                                  api_v1_notifications GET    /api/v1/notifications(.:format)                                                                       api/v1/notifications#index
+                                                       POST   /api/v1/notifications(.:format)                                                                       api/v1/notifications#create
+                               new_api_v1_notification GET    /api/v1/notifications/new(.:format)                                                                   api/v1/notifications#new
+                              edit_api_v1_notification GET    /api/v1/notifications/:id/edit(.:format)                                                              api/v1/notifications#edit
+                                   api_v1_notification GET    /api/v1/notifications/:id(.:format)                                                                   api/v1/notifications#show
+                                                       PATCH  /api/v1/notifications/:id(.:format)                                                                   api/v1/notifications#update
+                                                       PUT    /api/v1/notifications/:id(.:format)                                                                   api/v1/notifications#update
+                                                       DELETE /api/v1/notifications/:id(.:format)                                                                   api/v1/notifications#destroy
+                               search_api_v1_customers GET    /api/v1/customers/search(.:format)                                                                    api/v1/customers#search
+                             segments_api_v1_customers GET    /api/v1/customers/segments(.:format)                                                                  api/v1/customers#segments
+                                      api_v1_customers GET    /api/v1/customers(.:format)                                                                           api/v1/customers#index
+                                       api_v1_customer GET    /api/v1/customers/:id(.:format)                                                                       api/v1/customers#show
+                                  search_api_v1_orders GET    /api/v1/orders/search(.:format)                                                                       api/v1/orders#search
+                               by_status_api_v1_orders GET    /api/v1/orders/by_status(.:format)                                                                    api/v1/orders#by_status
+                           by_date_range_api_v1_orders GET    /api/v1/orders/by_date_range(.:format)                                                                api/v1/orders#by_date_range
+                                         api_v1_orders GET    /api/v1/orders(.:format)                                                                              api/v1/orders#index
+                                          api_v1_order GET    /api/v1/orders/:id(.:format)                                                                          api/v1/orders#show
+                                search_api_v1_products GET    /api/v1/products/search(.:format)                                                                     api/v1/products#search
+                           by_category_api_v1_products GET    /api/v1/products/by_category(.:format)                                                                api/v1/products#by_category
+                             low_stock_api_v1_products GET    /api/v1/products/low_stock(.:format)                                                                  api/v1/products#low_stock
+                                       api_v1_products GET    /api/v1/products(.:format)                                                                            api/v1/products#index
+                                        api_v1_product GET    /api/v1/products/:id(.:format)                                                                        api/v1/products#show
+                        api_v1_realtime_metrics_stream GET    /api/v1/realtime/metrics_stream(.:format)                                                             api/v1/realtime#metrics_stream
+                     api_v1_realtime_job_status_stream GET    /api/v1/realtime/job_status_stream(.:format)                                                          api/v1/realtime#job_status_stream
+                  api_v1_realtime_notifications_stream GET    /api/v1/realtime/notifications_stream(.:format)                                                       api/v1/realtime#notifications_stream
+                               api_v1_webhooks_shopify POST   /api/v1/webhooks/shopify(.:format)                                                                    api/v1/webhooks#shopify
+                           api_v1_webhooks_woocommerce POST   /api/v1/webhooks/woocommerce(.:format)                                                                api/v1/webhooks#woocommerce
+                                api_v1_webhooks_stripe POST   /api/v1/webhooks/stripe(.:format)                                                                     api/v1/webhooks#stripe
+                             api_v1_webhooks_mailchimp POST   /api/v1/webhooks/mailchimp(.:format)                                                                  api/v1/webhooks#mailchimp
+                                    rails_health_check GET    /up(.:format)                                                                                         rails/health#show
+                      turbo_recede_historical_location GET    /recede_historical_location(.:format)                                                                 turbo/native/navigation#recede
+                      turbo_resume_historical_location GET    /resume_historical_location(.:format)                                                                 turbo/native/navigation#resume
+                     turbo_refresh_historical_location GET    /refresh_historical_location(.:format)                                                                turbo/native/navigation#refresh
+                         rails_postmark_inbound_emails POST   /rails/action_mailbox/postmark/inbound_emails(.:format)                                               action_mailbox/ingresses/postmark/inbound_emails#create
+                            rails_relay_inbound_emails POST   /rails/action_mailbox/relay/inbound_emails(.:format)                                                  action_mailbox/ingresses/relay/inbound_emails#create
+                         rails_sendgrid_inbound_emails POST   /rails/action_mailbox/sendgrid/inbound_emails(.:format)                                               action_mailbox/ingresses/sendgrid/inbound_emails#create
+                   rails_mandrill_inbound_health_check GET    /rails/action_mailbox/mandrill/inbound_emails(.:format)                                               action_mailbox/ingresses/mandrill/inbound_emails#health_check
+                         rails_mandrill_inbound_emails POST   /rails/action_mailbox/mandrill/inbound_emails(.:format)                                               action_mailbox/ingresses/mandrill/inbound_emails#create
+                          rails_mailgun_inbound_emails POST   /rails/action_mailbox/mailgun/inbound_emails/mime(.:format)                                           action_mailbox/ingresses/mailgun/inbound_emails#create
+                        rails_conductor_inbound_emails GET    /rails/conductor/action_mailbox/inbound_emails(.:format)                                              rails/conductor/action_mailbox/inbound_emails#index
+                                                       POST   /rails/conductor/action_mailbox/inbound_emails(.:format)                                              rails/conductor/action_mailbox/inbound_emails#create
+                     new_rails_conductor_inbound_email GET    /rails/conductor/action_mailbox/inbound_emails/new(.:format)                                          rails/conductor/action_mailbox/inbound_emails#new
+                         rails_conductor_inbound_email GET    /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                                          rails/conductor/action_mailbox/inbound_emails#show
+              new_rails_conductor_inbound_email_source GET    /rails/conductor/action_mailbox/inbound_emails/sources/new(.:format)                                  rails/conductor/action_mailbox/inbound_emails/sources#new
+                 rails_conductor_inbound_email_sources POST   /rails/conductor/action_mailbox/inbound_emails/sources(.:format)                                      rails/conductor/action_mailbox/inbound_emails/sources#create
+                 rails_conductor_inbound_email_reroute POST   /rails/conductor/action_mailbox/:inbound_email_id/reroute(.:format)                                   rails/conductor/action_mailbox/reroutes#create
+              rails_conductor_inbound_email_incinerate POST   /rails/conductor/action_mailbox/:inbound_email_id/incinerate(.:format)                                rails/conductor/action_mailbox/incinerates#create
+                                    rails_service_blob GET    /rails/active_storage/blobs/redirect/:signed_id/*filename(.:format)                                   active_storage/blobs/redirect#show
+                              rails_service_blob_proxy GET    /rails/active_storage/blobs/proxy/:signed_id/*filename(.:format)                                      active_storage/blobs/proxy#show
+                                                       GET    /rails/active_storage/blobs/:signed_id/*filename(.:format)                                            active_storage/blobs/redirect#show
+                             rails_blob_representation GET    /rails/active_storage/representations/redirect/:signed_blob_id/:variation_key/*filename(.:format)     active_storage/representations/redirect#show
+                       rails_blob_representation_proxy GET    /rails/active_storage/representations/proxy/:signed_blob_id/:variation_key/*filename(.:format)        active_storage/representations/proxy#show
+                                                       GET    /rails/active_storage/representations/:signed_blob_id/:variation_key/*filename(.:format)              active_storage/representations/redirect#show
+                                    rails_disk_service GET    /rails/active_storage/disk/:encoded_key/*filename(.:format)                                           active_storage/disk#show
+                             update_rails_disk_service PUT    /rails/active_storage/disk/:encoded_token(.:format)                                                   active_storage/disk#update
+                                  rails_direct_uploads POST   /rails/active_storage/direct_uploads(.:format)                                                        active_storage/direct_uploads#create

@@ -4,7 +4,7 @@
     
     <!-- Logo Section -->
     <div class="flex h-16 shrink-0 items-center">
-      <%= link_to dashboard_path, class: "flex items-center space-x-3 group" do %>
+      <%= link_to root_path, class: "flex items-center space-x-3 group" do %>
         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 shadow-lg group-hover:shadow-xl transition-shadow">
           <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
@@ -258,6 +258,78 @@
           </ul>
         </li>
 
+        <!-- AI-Powered Features Section -->
+        <li>
+          <div class="text-xs font-semibold leading-6 text-gray-400 uppercase tracking-wider mb-2">AI Features</div>
+          <ul role="list" class="-mx-2 space-y-1">
+            
+            <!-- Interactive Presentations -->
+            <li>
+              <%= link_to dashboard_ai_interactive_presentations_path, class: nav_link_classes('ai_presentations') do %>
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l-1-3m1 3l-1-3m-16.5-3h9v-9h-9v9z" />
+                </svg>
+                <span>Presentations</span>
+                <span class="ml-auto text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-medium">
+                  AI
+                </span>
+              <% end %>
+            </li>
+
+            <!-- AI Queries -->
+            <li>
+              <%= link_to ai_queries_path, class: nav_link_classes('ai_queries') do %>
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+                </svg>
+                <span>AI Queries</span>
+                <span class="ml-auto text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-medium">
+                  Smart
+                </span>
+              <% end %>
+            </li>
+
+            <!-- Real-time Analytics -->
+            <li>
+              <%= link_to dashboard_ai_real_time_analytics_path, class: nav_link_classes('ai_analytics') do %>
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                </svg>
+                <span>Real-time Analytics</span>
+                <span class="ml-auto text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-medium">
+                  Live
+                </span>
+              <% end %>
+            </li>
+
+            <!-- BI Agent -->
+            <li>
+              <%= link_to dashboard_ai_bi_agent_index_path, class: nav_link_classes('bi_agent') do %>
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                <span>BI Agent</span>
+                <span class="ml-auto text-xs bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-medium">
+                  Agent
+                </span>
+              <% end %>
+            </li>
+
+            <!-- Data Integration -->
+            <li>
+              <%= link_to dashboard_ai_data_integration_index_path, class: nav_link_classes('ai_integration') do %>
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                </svg>
+                <span>Data Integration</span>
+                <span class="ml-auto text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-medium">
+                  Auto
+                </span>
+              <% end %>
+            </li>
+          </ul>
+        </li>
+
         <!-- Management Section -->
         <li>
           <div class="text-xs font-semibold leading-6 text-gray-400 uppercase tracking-wider mb-2">Management</div>
@@ -402,4 +474,3 @@
     </div>
   </div>
 </div>
-

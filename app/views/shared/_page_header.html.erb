@@ -1,0 +1,131 @@
+<!-- Reusable Page Header Component -->
+<div class="page-header bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+  <div class="px-6 py-6">
+    <!-- Breadcrumb Navigation -->
+    <% if local_assigns[:breadcrumbs] %>
+      <nav class="flex mb-4" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+          <% breadcrumbs.each_with_index do |breadcrumb, index| %>
+            <li class="inline-flex items-center">
+              <% if index > 0 %>
+                <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+              <% end %>
+              <% if breadcrumb[:url] && index < breadcrumbs.length - 1 %>
+                <%= link_to breadcrumb[:url], class: "inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200" do %>
+                  <% if breadcrumb[:icon] && index == 0 %>
+                    <%= render "shared/icons/#{breadcrumb[:icon]}", class: "w-4 h-4 mr-2" %>
+                  <% end %>
+                  <%= breadcrumb[:text] %>
+                <% end %>
+              <% else %>
+                <span class="inline-flex items-center text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <% if breadcrumb[:icon] && index == 0 %>
+                    <%= render "shared/icons/#{breadcrumb[:icon]}", class: "w-4 h-4 mr-2" %>
+                  <% end %>
+                  <%= breadcrumb[:text] %>
+                </span>
+              <% end %>
+            </li>
+          <% end %>
+        </ol>
+      </nav>
+    <% end %>
+
+    <!-- Header Content -->
+    <div class="flex items-start justify-between">
+      <div class="flex-1">
+        <!-- Title Section -->
+        <div class="flex items-center mb-2">
+          <% if local_assigns[:icon] %>
+            <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mr-4">
+              <%= render "shared/icons/#{icon}", class: "w-6 h-6 text-indigo-600 dark:text-indigo-400" %>
+            </div>
+          <% end %>
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <%= title %>
+            </h1>
+            <% if local_assigns[:subtitle] %>
+              <p class="text-gray-600 dark:text-gray-400 mt-1">
+                <%= subtitle %>
+              </p>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Additional Description -->
+        <% if local_assigns[:description] %>
+          <div class="max-w-3xl">
+            <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+              <%= description %>
+            </p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Action Buttons -->
+      <% if local_assigns[:actions] %>
+        <div class="flex items-center space-x-3 ml-6">
+          <% actions.each do |action| %>
+            <% if action[:type] == 'link' %>
+              <%= link_to action[:url], 
+                  class: "inline-flex items-center px-4 py-2 #{action[:class] || 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'} font-medium rounded-lg transition-colors duration-200" do %>
+                <% if action[:icon] %>
+                  <%= render "shared/icons/#{action[:icon]}", class: "w-4 h-4 mr-2" %>
+                <% end %>
+                <%= action[:text] %>
+              <% end %>
+            <% elsif action[:type] == 'button' %>
+              <button type="<%= action[:button_type] || 'button' %>" 
+                      class="inline-flex items-center px-4 py-2 <%= action[:class] || 'bg-indigo-600 hover:bg-indigo-700 text-white' %> font-medium rounded-lg transition-colors duration-200"
+                      <% if action[:data] %>
+                        <% action[:data].each do |key, value| %>
+                          data-<%= key %>="<%= value %>"
+                        <% end %>
+                      <% end %>>
+                <% if action[:icon] %>
+                  <%= render "shared/icons/#{action[:icon]}", class: "w-4 h-4 mr-2" %>
+                <% end %>
+                <%= action[:text] %>
+              </button>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Status Indicators -->
+    <% if local_assigns[:status] %>
+      <div class="mt-4">
+        <div class="flex items-center space-x-4">
+          <% status.each do |stat| %>
+            <div class="flex items-center">
+              <div class="w-3 h-3 rounded-full mr-2 <%= stat[:color] || 'bg-gray-400' %>"></div>
+              <span class="text-sm text-gray-600 dark:text-gray-400">
+                <span class="font-medium"><%= stat[:label] %>:</span> <%= stat[:value] %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Tags/Labels -->
+    <% if local_assigns[:tags] %>
+      <div class="mt-4">
+        <div class="flex flex-wrap gap-2">
+          <% tags.each do |tag| %>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= tag[:class] || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200' %>">
+              <% if tag[:icon] %>
+                <%= render "shared/icons/#{tag[:icon]}", class: "w-3 h-3 mr-1" %>
+              <% end %>
+              <%= tag[:text] %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

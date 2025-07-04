@@ -13,6 +13,17 @@ class User < ApplicationRecord
   has_many :sent_invitations, class_name: "User", foreign_key: "invited_by_id", dependent: :nullify
   has_many :visualizations, dependent: :destroy
   has_many :notifications, dependent: :destroy
+  
+  # Task and pipeline associations
+  has_many :assigned_tasks, class_name: 'Task', foreign_key: 'assignee_id', dependent: :nullify
+  has_many :executed_tasks, class_name: 'TaskExecution', foreign_key: 'executed_by_id', dependent: :nullify
+  has_many :approved_pipelines, class_name: 'PipelineExecution', foreign_key: 'approved_by_id', dependent: :nullify
+  
+  # AI-related associations
+  has_many :ai_presentations, class_name: 'Ai::Presentation', dependent: :destroy
+  has_many :ai_presentation_views, class_name: 'Ai::PresentationView', dependent: :destroy
+  has_many :ai_presentation_interactions, class_name: 'Ai::PresentationInteraction', dependent: :destroy
+  has_many :ai_insights, class_name: 'Ai::Insight', dependent: :destroy
 
   # Active Storage associations
   has_one_attached :avatar do |attachable|
@@ -105,6 +116,85 @@ class User < ApplicationRecord
 
   def can_manage_api_keys?
     owner? || admin?
+  end
+  
+  # AI Presentation permissions
+  def can_create_presentations?
+    member? || admin? || owner?
+  end
+  
+  def can_edit_presentation?(presentation)
+    return true if admin? || owner?
+    return true if presentation.user_id == id
+    return true if presentation.collaborators&.include?(id)
+    false
+  end
+  
+  def can_view_presentation?(presentation)
+    return true if can_edit_presentation?(presentation)
+    return true if presentation.public?
+    return true if presentation.organization_id == organization_id
+    false
+  end
+  
+  def can_delete_presentation?(presentation)
+    return true if admin? || owner?
+    return true if presentation.user_id == id
+    false
+  end
+  
+  def presentation_count
+    ai_presentations.count
+  end
+  
+  def total_presentation_views
+    ai_presentations.joins(:ai_presentation_views).count
+  end
+  
+  def avg_engagement_score
+    presentations = ai_presentations.includes(:ai_presentation_interactions)
+    return 0 if presentations.empty?
+    
+    total_score = presentations.sum do |presentation|
+      presentation.engagement_score
+    end
+    
+    (total_score.to_f / presentations.count).round(2)
+  end
+  
+  def recent_presentation_activity(limit = 10)
+    activities = []
+    
+    # Recent presentations created
+    ai_presentations.where('created_at > ?', 30.days.ago).limit(limit).each do |presentation|
+      activities << {
+        type: 'presentation_created',
+        object: presentation,
+        timestamp: presentation.created_at,
+        description: "Created presentation '#{presentation.title}'"
+      }
+    end
+    
+    # Recent views (as viewer)
+    ai_presentation_views.where('created_at > ?', 30.days.ago).limit(limit).each do |view|
+      activities << {
+        type: 'presentation_viewed',
+        object: view.presentation,
+        timestamp: view.created_at,
+        description: "Viewed presentation '#{view.presentation.title}'"
+      }
+    end
+    
+    activities.sort_by { |a| a[:timestamp] }.reverse.first(limit)
+  end
+  
+  def presentation_dashboard_metrics
+    {
+      presentations_created: presentation_count,
+      total_views: total_presentation_views,
+      avg_engagement: avg_engagement_score,
+      recent_activity_count: recent_presentation_activity(30).count
+    }
   end
 
   def avatar_url(variant = :thumb)

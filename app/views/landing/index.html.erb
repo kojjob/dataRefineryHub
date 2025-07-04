@@ -1,441 +1,570 @@
-<% content_for :title, "DataReflow - Transform Your Business Data Into Growth" %>
+<% content_for :title, "DataReflow - Autonomous AI Business Intelligence That Predicts and Prevents" %>
 
-<div data-controller="landing-animation video-modal">
+<div data-controller="ai-landing-demo interactive-dashboard live-metrics" data-ai-landing-demo-personalization-value="<%= @personalization.to_json.html_safe %>">
 
-<!-- Hero Section with Animated Background -->
-<section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+<!-- AI-Powered Hero Section -->
+<section class="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 overflow-hidden">
   <!-- Animated Background Elements -->
   <div class="absolute inset-0">
-    <div class="absolute top-20 left-20 w-96 h-96 bg-purple-500 bg-opacity-10 rounded-full blur-3xl animate-pulse"></div>
-    <div class="absolute bottom-20 right-20 w-80 h-80 bg-blue-500 bg-opacity-10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500 bg-opacity-10 rounded-full blur-2xl animate-bounce delay-500"></div>
-  </div>
-  
-  <!-- Floating Data Visualization Elements -->
-  <div class="absolute inset-0 overflow-hidden">
-    <svg class="absolute top-10 right-10 w-32 h-32 text-purple-300 opacity-20 animate-spin" style="animation-duration: 20s;" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-    </svg>
-    <svg class="absolute bottom-20 left-10 w-24 h-24 text-blue-300 opacity-20 animate-bounce" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4zm2 2H5V5h14v14z"/>
-    </svg>
+    <div class="absolute top-20 left-10 w-64 h-64 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+    <div class="absolute top-40 right-10 w-72 h-72 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-2000"></div>
+    <div class="absolute bottom-20 left-1/3 w-80 h-80 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000"></div>
   </div>
 
-  <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 text-center">
-    <!-- Logo and Brand -->
-    <div class="flex items-center justify-center mb-8">
-      <div class="flex h-16 w-16 items-center justify-center rounded-3xl bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-20 shadow-2xl">
-        <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-        </svg>
-      </div>
-      <span class="ml-4 text-4xl font-bold text-white">DataReflow</span>
-    </div>
-
-    <!-- Main Headline -->
-    <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-      Transform Your
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300">
-        Business Data
-      </span>
-      Into Growth
-    </h1>
-
-    <!-- Subheadline -->
-    <p class="text-xl md:text-2xl text-blue-100 mb-8 max-w-4xl mx-auto leading-relaxed">
-      Connect all your business tools in minutes. Get real-time insights that actually drive decisions. 
-      Join 10,000+ SMBs growing faster with DataReflow.
-    </p>
-
-    <!-- CTA Buttons -->
-    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-      <%= link_to new_user_registration_path, class: "group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300" do %>
-        <span class="flex items-center">
-          Start Free Trial
-          <svg class="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+  <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <!-- Content Column -->
+      <div class="text-center lg:text-left">
+        <!-- AI Badge -->
+        <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600/10 to-purple-600/10 border border-blue-600/20 rounded-full text-sm font-medium text-blue-700 mb-8">
+          <svg class="h-4 w-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
           </svg>
-        </span>
-      <% end %>
-      
-      <button data-action="click->video-modal#open" class="px-8 py-4 border-2 border-white border-opacity-30 text-white font-semibold rounded-xl backdrop-blur-sm hover:bg-white hover:bg-opacity-10 transition-all duration-300">
-        Watch Demo
-      </button>
-    </div>
+          Powered by Autonomous AI
+        </div>
 
-    <!-- Trust Indicators -->
-    <div class="flex flex-wrap justify-center items-center gap-8 text-blue-200">
-      <div class="flex items-center">
-        <svg class="h-5 w-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-        </svg>
-        No Credit Card Required
+        <!-- Main Headline -->
+        <h1 class="text-5xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+          Business Intelligence
+          <br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
+            That Thinks Ahead
+          </span>
+        </h1>
+
+        <!-- Dynamic Subheadline Based on Personalization -->
+        <p class="text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed" data-ai-landing-demo-target="dynamicSubheadline">
+          <%= case @personalization[:likely_business_type]
+              when "ecommerce"
+                "AI agent monitors your store 24/7, predicts revenue drops, and alerts you to opportunities before your competitors notice."
+              when "saas"
+                "Autonomous intelligence that predicts churn, identifies expansion opportunities, and optimizes your entire customer journey."
+              when "agency"
+                "AI-powered insights that help you deliver better client results and identify new revenue streams across all campaigns."
+              else
+                "The first truly autonomous business intelligence platform. AI monitors your business, predicts outcomes, and prevents problems before they happen."
+              end %>
+        </p>
+
+        <!-- Value Proposition Points -->
+        <div class="flex flex-wrap gap-6 mb-8">
+          <div class="flex items-center text-gray-700">
+            <div class="h-2 w-2 bg-green-500 rounded-full mr-3"></div>
+            <span class="font-medium">Predicts Issues 2+ Weeks Early</span>
+          </div>
+          <div class="flex items-center text-gray-700">
+            <div class="h-2 w-2 bg-green-500 rounded-full mr-3"></div>
+            <span class="font-medium">94.7% Prediction Accuracy</span>
+          </div>
+          <div class="flex items-center text-gray-700">
+            <div class="h-2 w-2 bg-green-500 rounded-full mr-3"></div>
+            <span class="font-medium">Setup in 15 Minutes</span>
+          </div>
+        </div>
+
+        <!-- Dynamic CTA -->
+        <div class="flex flex-col sm:flex-row gap-4 items-center lg:items-start">
+          <%= link_to new_user_registration_path, 
+              class: "inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300",
+              data: { action: "click->ai-landing-demo#trackCTA" } do %>
+            <span data-ai-landing-demo-target="primaryCTA"><%= @personalization[:primary_cta] %></span>
+            <svg class="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          <% end %>
+          
+          <button class="inline-flex items-center px-6 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all duration-300"
+                  data-action="click->ai-landing-demo#showLiveDemo">
+            <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Watch AI in Action
+          </button>
+        </div>
+
+        <!-- Trust Indicators -->
+        <div class="mt-8 flex items-center gap-6 text-sm text-gray-500">
+          <div class="flex items-center">
+            <svg class="h-4 w-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            No Credit Card Required
+          </div>
+          <div class="flex items-center">
+            <svg class="h-4 w-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            14-Day Free Trial
+          </div>
+          <div class="flex items-center">
+            <svg class="h-4 w-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            Enterprise-Grade Security
+          </div>
+        </div>
       </div>
-      <div class="flex items-center">
-        <svg class="h-5 w-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-        </svg>
-        14-Day Free Trial
-      </div>
-      <div class="flex items-center">
-        <svg class="h-5 w-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-        </svg>
-        Setup in 15 Minutes
+
+      <!-- Interactive Demo Column -->
+      <div class="relative">
+        <!-- Live Metrics Dashboard Preview -->
+        <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200/50 p-6 transform hover:scale-105 transition-transform duration-300"
+             data-ai-landing-demo-target="liveDemo">
+          
+          <!-- Demo Header -->
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <div class="h-3 w-3 bg-green-500 rounded-full animate-pulse"></div>
+              <span class="text-sm font-medium text-gray-600">Live AI Monitoring</span>
+            </div>
+            <span class="text-xs text-gray-500" data-live-metrics-target="timestamp">Just now</span>
+          </div>
+
+          <!-- Live Metrics Grid -->
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-green-800">Revenue/Hour</span>
+                <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+              </div>
+              <div class="text-2xl font-bold text-green-900" data-live-metrics-target="revenue">$<%= @demo_data[:real_time_metrics][:revenue_rate] %></div>
+              <div class="text-xs text-green-700 flex items-center">
+                <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+                +12.3% vs last hour
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-200">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-blue-800">Active Users</span>
+                <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+              </div>
+              <div class="text-2xl font-bold text-blue-900" data-live-metrics-target="users"><%= @demo_data[:real_time_metrics][:customer_activity] %></div>
+              <div class="text-xs text-blue-700 flex items-center">
+                <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+                +8.5% trend
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Insights -->
+          <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-xl border border-purple-200">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="h-2 w-2 bg-purple-500 rounded-full animate-pulse"></div>
+              <span class="text-sm font-semibold text-purple-800">AI Insight</span>
+              <span class="text-xs bg-purple-200 text-purple-700 px-2 py-1 rounded-full">Live</span>
+            </div>
+            <p class="text-sm text-purple-700 mb-2" data-ai-landing-demo-target="liveInsight">
+              <%= @demo_data[:recent_insights].first[:description] %>
+            </p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-purple-600">Confidence: <%= @demo_data[:recent_insights].first[:confidence] %>%</span>
+              <span class="text-xs font-medium text-purple-800"><%= @demo_data[:recent_insights].first[:impact] %></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Elements -->
+        <div class="absolute -top-4 -right-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold animate-bounce">
+          Live Data!
+        </div>
+        
+        <div class="absolute -bottom-4 -left-4 bg-gradient-to-r from-green-400 to-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+          AI Working 24/7
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Scroll Indicator -->
   <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-    <svg class="h-6 w-6 text-white opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+    <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
     </svg>
   </div>
 </section>
 
-<!-- Stats Section -->
-<section class="py-20 bg-white">
+<!-- AI Stats Showcase -->
+<section class="py-16 bg-white">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-      <div class="text-center" data-landing-animation-target="counter">
-        <div class="text-4xl md:text-5xl font-bold text-purple-600 mb-2"><%= @stats[:businesses_served] %></div>
-        <div class="text-gray-600 font-medium">Businesses Served</div>
+    <div class="text-center mb-12">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Trusted by businesses processing</h2>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-8 items-center">
+      <div class="text-center">
+        <div class="text-3xl font-bold text-blue-600 mb-1"><%= @stats[:ai_insights_generated] %></div>
+        <div class="text-sm text-gray-600">AI Insights Generated</div>
       </div>
-      <div class="text-center" data-landing-animation-target="counter">
-        <div class="text-4xl md:text-5xl font-bold text-blue-600 mb-2"><%= @stats[:data_processed] %></div>
-        <div class="text-gray-600 font-medium">Records Processed</div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-green-600 mb-1"><%= @stats[:anomalies_detected] %></div>
+        <div class="text-sm text-gray-600">Anomalies Detected</div>
       </div>
-      <div class="text-center" data-landing-animation-target="counter">
-        <div class="text-4xl md:text-5xl font-bold text-green-600 mb-2"><%= @stats[:integrations] %></div>
-        <div class="text-gray-600 font-medium">Integrations</div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-purple-600 mb-1"><%= @stats[:businesses_served] %></div>
+        <div class="text-sm text-gray-600">Businesses Served</div>
       </div>
-      <div class="text-center" data-landing-animation-target="counter">
-        <div class="text-4xl md:text-5xl font-bold text-orange-600 mb-2"><%= @stats[:uptime] %></div>
-        <div class="text-gray-600 font-medium">Uptime SLA</div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-indigo-600 mb-1"><%= @stats[:predictions_accuracy] %></div>
+        <div class="text-sm text-gray-600">Prediction Accuracy</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-red-600 mb-1"><%= @stats[:data_processed] %></div>
+        <div class="text-sm text-gray-600">Records Processed</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-gray-900 mb-1"><%= @stats[:uptime] %></div>
+        <div class="text-sm text-gray-600">Uptime SLA</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Features Section -->
-<section id="features" class="py-20 bg-gray-50">
+<!-- AI Features Showcase -->
+<section class="py-24 bg-gradient-to-br from-gray-50 to-blue-50">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="text-center mb-16">
       <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-        Everything You Need to 
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Scale Your Business</span>
+        Meet Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">AI Business Partner</span>
       </h2>
       <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-        Stop drowning in disconnected data. DataReflow brings all your business metrics into one intelligent dashboard.
+        Unlike traditional BI tools that show you what happened, our AI agents predict what will happen and take action to optimize your business.
       </p>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-8">
-      <!-- Feature 1: Real-time Integration -->
-      <div class="group p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" data-landing-animation-target="feature">
-        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-          <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-          </svg>
-        </div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-4">Lightning-Fast Setup</h3>
-        <p class="text-gray-600 mb-6">Connect Shopify, QuickBooks, Google Analytics, and 20+ other tools in minutes, not weeks. Our smart connectors handle the heavy lifting.</p>
-        <div class="space-y-2">
-          <div class="flex items-center text-green-600">
-            <svg class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-            One-click integrations
-          </div>
-          <div class="flex items-center text-green-600">
-            <svg class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-            Auto-sync every 5 minutes
-          </div>
-          <div class="flex items-center text-green-600">
-            <svg class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-            Zero code required
-          </div>
-        </div>
-      </div>
-
-      <!-- Feature 2: Smart Analytics -->
-      <div class="group p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" data-landing-animation-target="feature">
-        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-          <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-          </svg>
-        </div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-4">AI-Powered Insights</h3>
-        <p class="text-gray-600 mb-6">Get automated alerts when revenue drops, inventory runs low, or customer satisfaction dips. Our AI spots trends you'd miss.</p>
-        <div class="space-y-2">
-          <div class="flex items-center text-green-600">
-            <svg class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-            Predictive analytics
-          </div>
-          <div class="flex items-center text-green-600">
-            <svg class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-            Smart anomaly detection
-          </div>
-          <div class="flex items-center text-green-600">
-            <svg class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-            Automated reports
-          </div>
-        </div>
-      </div>
-
-      <!-- Feature 3: Unified Dashboard -->
-      <div class="group p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" data-landing-animation-target="feature">
-        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-          <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
-          </svg>
-        </div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-4">Unified Command Center</h3>
-        <p class="text-gray-600 mb-6">See revenue, customers, inventory, and marketing performance in one beautiful dashboard. No more jumping between 15 different tools.</p>
-        <div class="space-y-2">
-          <div class="flex items-center text-green-600">
-            <svg class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-            Real-time updates
-          </div>
-          <div class="flex items-center text-green-600">
-            <svg class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-            Custom widgets
-          </div>
-          <div class="flex items-center text-green-600">
-            <svg class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-            Mobile optimized
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Data Flow Diagram Section -->
-<section class="py-20 bg-white">
-  <div class="max-w-7xl mx-auto px-6 lg:px-8">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-        How DataReflow 
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Connects Everything</span>
-      </h2>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-        See how your scattered business data flows seamlessly into actionable insights
-      </p>
-    </div>
-
-    <!-- Data Flow Visualization -->
-    <div class="relative">
-      <!-- Source Systems -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-        <div class="group text-center">
-          <div class="w-20 h-20 bg-gradient-to-r from-orange-400 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-            <svg class="h-10 w-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20C20.55 4 21 4.45 21 5S20.55 6 20 6H19V19C19 20.1 18.1 21 17 21H7C5.9 21 5 20.1 5 19V6H4C3.45 6 3 5.55 3 5S3.45 4 4 4H7ZM9 3V4H15V3H9ZM7 6V19H17V6H7Z"/>
-            </svg>
-          </div>
-          <div class="font-semibold text-gray-900">E-commerce</div>
-          <div class="text-sm text-gray-500">Shopify, WooCommerce</div>
-        </div>
-        
-        <div class="group text-center">
-          <div class="w-20 h-20 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-            <svg class="h-10 w-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"/>
-            </svg>
-          </div>
-          <div class="font-semibold text-gray-900">Accounting</div>
-          <div class="text-sm text-gray-500">QuickBooks, Xero</div>
-        </div>
-
-        <div class="group text-center">
-          <div class="w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-            <svg class="h-10 w-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z"/>
-            </svg>
-          </div>
-          <div class="font-semibold text-gray-900">Marketing</div>
-          <div class="text-sm text-gray-500">Mailchimp, HubSpot</div>
-        </div>
-
-        <div class="group text-center">
-          <div class="w-20 h-20 bg-gradient-to-r from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-            <svg class="h-10 w-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2L3.09 8.26L12 14L20.91 8.26L12 2ZM21 16L12 22L3 16L12 10L21 16Z"/>
-            </svg>
-          </div>
-          <div class="font-semibold text-gray-900">Analytics</div>
-          <div class="text-sm text-gray-500">Google Analytics, Mixpanel</div>
-        </div>
-      </div>
-
-      <!-- Flow Arrows -->
-      <div class="flex justify-center mb-8">
-        <svg class="h-16 w-64 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 256 64">
-          <defs>
-            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-              <polygon points="0 0, 10 3.5, 0 7" fill="currentColor" />
-            </marker>
-          </defs>
-          <path stroke-dasharray="5,5" stroke-width="2" marker-end="url(#arrowhead)" d="M 10 32 Q 128 10 246 32" class="animate-pulse"/>
-          <path stroke-dasharray="5,5" stroke-width="2" marker-end="url(#arrowhead)" d="M 10 32 Q 128 54 246 32" class="animate-pulse"/>
-        </svg>
-      </div>
-
-      <!-- DataReflow Platform -->
-      <div class="text-center mb-8">
-        <div class="inline-block p-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl shadow-2xl">
-          <div class="flex items-center text-white">
-            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mr-4">
-              <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="grid lg:grid-cols-3 gap-8">
+      <% @ai_features.each_with_index do |feature, index| %>
+        <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-8"
+             data-ai-landing-demo-target="featureCard">
+          
+          <!-- Feature Icon -->
+          <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+            <% case feature[:icon] %>
+            <% when "ai-brain" %>
+              <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              </svg>
+            <% when "anomaly-detection" %>
+              <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            <% when "data-intelligence" %>
+              <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            <% end %>
+          </div>
+
+          <h3 class="text-xl font-bold text-gray-900 mb-4"><%= feature[:title] %></h3>
+          <p class="text-gray-600 mb-6 leading-relaxed"><%= feature[:description] %></p>
+
+          <!-- Benefits -->
+          <div class="space-y-2 mb-6">
+            <% feature[:benefits].each do |benefit| %>
+              <div class="flex items-center text-sm text-gray-700">
+                <svg class="h-4 w-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <%= benefit %>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Demo Button -->
+          <% if feature[:demo_available] %>
+            <button class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform group-hover:scale-105"
+                    data-action="click->ai-landing-demo#showFeatureDemo"
+                    data-feature="<%= feature[:title].parameterize %>">
+              <span class="flex items-center justify-center">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                See Live Demo
+              </span>
+            </button>
+          <% end %>
+
+          <!-- Floating Badge -->
+          <div class="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+            LIVE
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- Real-Time Analytics Showcase -->
+<section class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <!-- Content -->
+      <div>
+        <h2 class="text-4xl font-bold text-gray-900 mb-6">
+          Watch Your Business
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">
+            In Real Time
+          </span>
+        </h2>
+        <p class="text-xl text-gray-600 mb-8">
+          Our AI monitors every aspect of your business continuously, detecting anomalies, predicting trends, and alerting you to opportunities the moment they appear.
+        </p>
+
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start gap-4">
+            <div class="h-6 w-6 bg-green-100 rounded-full flex items-center justify-center mt-1">
+              <svg class="h-3 w-3 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
               </svg>
             </div>
             <div>
-              <div class="text-2xl font-bold">DataReflow Platform</div>
-              <div class="text-blue-100">Real-time Processing & AI Analysis</div>
+              <h4 class="font-semibold text-gray-900">Predictive Anomaly Detection</h4>
+              <p class="text-gray-600">AI learns your business patterns and alerts you to issues 2+ weeks before they impact revenue.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="h-6 w-6 bg-blue-100 rounded-full flex items-center justify-center mt-1">
+              <svg class="h-3 w-3 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900">Smart Threshold Learning</h4>
+              <p class="text-gray-600">Dynamic thresholds adapt to your business size, seasonality, and growth patterns automatically.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="h-6 w-6 bg-purple-100 rounded-full flex items-center justify-center mt-1">
+              <svg class="h-3 w-3 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900">Actionable Insights</h4>
+              <p class="text-gray-600">Get specific recommendations with ROI estimates, not just charts and graphs.</p>
             </div>
           </div>
         </div>
+
+        <button class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white font-semibold rounded-lg hover:from-green-700 hover:to-blue-700 transition-all duration-300"
+                data-action="click->ai-landing-demo#showRealTimeDemo">
+          <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          See Real-Time Analytics
+        </button>
       </div>
 
-      <!-- Output Arrow -->
-      <div class="flex justify-center mb-8">
-        <svg class="h-16 w-32 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 128 64">
-          <path stroke-width="3" marker-end="url(#arrowhead2)" d="M 64 10 L 64 54" class="animate-pulse"/>
-          <defs>
-            <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="5" refY="3.5" orient="auto">
-              <polygon points="0 0, 10 3.5, 0 7" fill="currentColor" />
-            </marker>
-          </defs>
-        </svg>
+      <!-- Interactive Dashboard Preview -->
+      <div class="relative">
+        <!-- Embedded Real-Time Widget -->
+        <%= render 'dashboard/real_time_analytics_widget' %>
       </div>
+    </div>
+  </div>
+</section>
 
-      <!-- Insights Dashboard -->
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-2xl border border-green-200">
-          <div class="flex items-center mb-4">
-            <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mr-3">
-              <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
-              </svg>
-            </div>
-            <div class="font-semibold text-gray-900">Revenue Insights</div>
-          </div>
-          <div class="text-sm text-gray-600">Track sales trends, identify top products, optimize pricing</div>
+<!-- Enhanced Data Intelligence Demo -->
+<section class="py-24 bg-gradient-to-br from-purple-50 to-indigo-50">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-gray-900 mb-6">
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">
+          Smart Data Processing
+        </span>
+        <br>That Understands Your Business
+      </h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Upload any file and watch our AI instantly understand your business context, identify patterns, and suggest optimizations.
+      </p>
+    </div>
+
+    <!-- Interactive Data Upload Demo -->
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+        <div class="text-center mb-8">
+          <h3 class="text-xl font-semibold text-gray-900 mb-4">Try Our Enhanced Data Preview</h3>
+          <p class="text-gray-600">Upload a sample file or use our demo data to see AI business intelligence in action</p>
         </div>
 
-        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-200">
-          <div class="flex items-center mb-4">
-            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
-              <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M16 4C18.2 4 20 5.8 20 8C20 10.2 18.2 12 16 12C13.8 12 12 10.2 12 8C12 5.8 13.8 4 16 4ZM16 14C20.4 14 24 15.8 24 18V20H8V18C8 15.8 11.6 14 16 14Z"/>
-              </svg>
-            </div>
-            <div class="font-semibold text-gray-900">Customer Analytics</div>
+        <!-- Demo File Upload Area -->
+        <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-purple-400 transition-colors duration-300"
+             data-ai-landing-demo-target="uploadDemo">
+          <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"></path>
+          </svg>
+          <h4 class="text-lg font-semibold text-gray-900 mb-2">Drop your CSV, Excel, or JSON file</h4>
+          <p class="text-gray-600 mb-4">Or click to browse files</p>
+          
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <button class="px-6 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors duration-300"
+                    data-action="click->ai-landing-demo#triggerFileUpload">
+              Choose File
+            </button>
+            <button class="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-300"
+                    data-action="click->ai-landing-demo#useDemoData">
+              Use Demo Data
+            </button>
           </div>
-          <div class="text-sm text-gray-600">Understand behavior, predict churn, improve retention</div>
         </div>
 
-        <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-200">
-          <div class="flex items-center mb-4">
-            <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
-              <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L13.09 8.26L22 9L13.09 15.74L12 22L10.91 15.74L2 9L10.91 8.26L12 2Z"/>
-              </svg>
+        <!-- Demo Results Preview -->
+        <div class="mt-8 hidden" data-ai-landing-demo-target="demoResults">
+          <div class="grid md:grid-cols-3 gap-6">
+            <!-- Business Context Detection -->
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
+              <h4 class="font-semibold text-green-900 mb-3">Business Context Detected</h4>
+              <div class="space-y-2">
+                <div class="flex items-center text-sm text-green-800">
+                  <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  E-commerce Orders
+                </div>
+                <div class="flex items-center text-sm text-green-800">
+                  <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  Customer Data
+                </div>
+                <div class="flex items-center text-sm text-green-800">
+                  <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  Revenue Tracking
+                </div>
+              </div>
             </div>
-            <div class="font-semibold text-gray-900">Performance Alerts</div>
+
+            <!-- Data Quality Score -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
+              <h4 class="font-semibold text-blue-900 mb-3">Data Quality Score</h4>
+              <div class="text-3xl font-bold text-blue-900 mb-2"><%= @demo_data[:data_quality_preview][:overall_score] %>%</div>
+              <div class="text-sm text-blue-700">
+                <%= @demo_data[:data_quality_preview][:business_fields_detected] %> business fields detected
+              </div>
+            </div>
+
+            <!-- ROI Estimation -->
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200">
+              <h4 class="font-semibold text-purple-900 mb-3">Estimated ROI</h4>
+              <div class="text-3xl font-bold text-purple-900 mb-2">$24,500</div>
+              <div class="text-sm text-purple-700">
+                Monthly value from insights
+              </div>
+            </div>
           </div>
-          <div class="text-sm text-gray-600">Get notified of anomalies, opportunities, risks</div>
+
+          <!-- Insights Preview -->
+          <div class="mt-6 bg-gray-50 rounded-xl p-6">
+            <h4 class="font-semibold text-gray-900 mb-4">AI-Generated Insights</h4>
+            <div class="space-y-3">
+              <% @demo_data[:data_quality_preview][:quality_insights].each do |insight| %>
+                <div class="flex items-center text-sm text-gray-700">
+                  <svg class="h-4 w-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                  </svg>
+                  <%= insight %>
+                </div>
+              <% end %>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Integrations Section -->
-<section class="py-20 bg-gray-50">
+<!-- AI-Enhanced Integrations -->
+<section class="py-24 bg-white">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="text-center mb-16">
-      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-        Connects With 
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Everything You Use</span>
+      <h2 class="text-4xl font-bold text-gray-900 mb-6">
+        Connects With Everything,
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+          Understands Everything
+        </span>
       </h2>
       <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-        25+ pre-built integrations with more added every month. If we don't have it, we'll build it.
+        Our AI doesn't just connect to your tools—it understands what each data source means for your business and how they work together.
       </p>
     </div>
 
-    <!-- Integration Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+    <!-- Enhanced Integration Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-6 mb-12">
       <% @integrations.each do |integration| %>
-        <div class="group p-6 bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 text-center">
-          <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-50 transition-colors duration-300">
-            <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg"></div>
+        <div class="group relative bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-6 text-center border border-gray-200 hover:border-purple-300">
+          <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+            <div class="w-6 h-6 bg-white rounded-md"></div>
           </div>
-          <div class="font-medium text-gray-900"><%= integration %></div>
+          <div class="font-semibold text-gray-900 mb-1"><%= integration[:name] %></div>
+          <div class="text-xs text-purple-600 font-medium"><%= integration[:ai_feature] %></div>
+          
+          <!-- AI Enhancement Badge -->
+          <div class="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs px-2 py-1 rounded-full font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            AI+
+          </div>
         </div>
       <% end %>
     </div>
 
     <!-- Custom Integration CTA -->
     <div class="text-center">
-      <div class="inline-block p-6 bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl border border-purple-200">
+      <div class="inline-block p-8 bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl border border-purple-200">
         <div class="flex items-center justify-center mb-4">
           <svg class="h-8 w-8 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
           </svg>
           <span class="text-xl font-semibold text-gray-900">Need a custom integration?</span>
         </div>
-        <p class="text-gray-600 mb-4">We build custom connectors for enterprise clients at no extra cost.</p>
-        <button class="px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition-colors duration-300">
-          Request Integration
+        <p class="text-gray-600 mb-6">Our AI can learn any data source. We build custom connectors with intelligent data mapping at no extra cost.</p>
+        <button class="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300">
+          Request Custom Integration
         </button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Testimonials Section -->
-<section class="py-20 bg-white">
+<!-- Enhanced Testimonials with AI Highlights -->
+<section class="py-24 bg-gradient-to-br from-gray-50 to-blue-50">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="text-center mb-16">
-      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-        Loved by 
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Growing Businesses</span>
+      <h2 class="text-4xl font-bold text-gray-900 mb-6">
+        Real Results from
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">
+          Real Businesses
+        </span>
       </h2>
       <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-        See how DataReflow is transforming businesses just like yours
+        See how our AI transforms businesses like yours with predictive insights and autonomous monitoring
       </p>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-8">
-      <% @testimonials.each do |testimonial| %>
-        <div class="group p-8 bg-gray-50 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300" data-landing-animation-target="testimonial">
+    <div class="grid lg:grid-cols-3 gap-8">
+      <% @testimonials.each_with_index do |testimonial, index| %>
+        <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-8">
+          <!-- AI Feature Badge -->
+          <div class="absolute -top-3 left-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-1 rounded-full text-xs font-semibold">
+            <%= testimonial[:ai_feature] %>
+          </div>
+
           <!-- Stars Rating -->
-          <div class="flex mb-4">
+          <div class="flex mb-4 mt-4">
             <% testimonial[:rating].times do %>
               <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2L15.09 8.26L22 9L16 14.74L17.18 21.02L12 18.77L6.82 21.02L8 14.74L2 9L8.91 8.26L12 2Z"/>
               </svg>
             <% end %>
+          </div>
+
+          <!-- Highlight Box -->
+          <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-3 mb-4">
+            <div class="text-sm font-semibold text-green-800"><%= testimonial[:highlight] %></div>
           </div>
 
           <!-- Quote -->
@@ -459,28 +588,42 @@
   </div>
 </section>
 
-<!-- Pricing Section -->
-<section class="py-20 bg-gray-50">
+<!-- Updated Pricing with AI Value -->
+<section id="pricing" class="py-24 bg-white">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="text-center mb-16">
-      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-        Simple, 
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Transparent Pricing</span>
+      <h2 class="text-4xl font-bold text-gray-900 mb-6">
+        Simple Pricing,
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">
+          Extraordinary Value
+        </span>
       </h2>
       <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-        Start free, scale as you grow. No hidden fees, no surprises.
+        Start with our AI-powered free trial. No credit card required. See ROI in week one.
       </p>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-8">
+    <div class="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
       <!-- Free Trial -->
-      <div class="p-8 bg-white rounded-2xl shadow-lg border-2 border-gray-200">
+      <div class="relative bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-8">
         <div class="text-center mb-8">
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">Free Trial</h3>
+          <h3 class="text-2xl font-bold text-gray-900 mb-2">AI Trial</h3>
           <div class="text-4xl font-bold text-gray-900 mb-1">$0</div>
-          <div class="text-gray-600">14 days, no card required</div>
+          <div class="text-gray-600">14 days, full AI features</div>
         </div>
         <ul class="space-y-4 mb-8">
+          <li class="flex items-center">
+            <svg class="h-5 w-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
+            </svg>
+            AI Business Intelligence Agent
+          </li>
+          <li class="flex items-center">
+            <svg class="h-5 w-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
+            </svg>
+            Real-time anomaly detection
+          </li>
           <li class="flex items-center">
             <svg class="h-5 w-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
@@ -493,69 +636,65 @@
             </svg>
             10K records/month
           </li>
-          <li class="flex items-center">
-            <svg class="h-5 w-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
-            </svg>
-            Basic dashboard
-          </li>
-          <li class="flex items-center">
-            <svg class="h-5 w-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
-            </svg>
-            Email support
-          </li>
         </ul>
         <%= link_to new_user_registration_path, class: "w-full block text-center py-3 px-6 border-2 border-purple-600 text-purple-600 font-semibold rounded-lg hover:bg-purple-50 transition-all duration-300" do %>
-          Start Free Trial
+          Start AI Trial
         <% end %>
       </div>
 
       <!-- Starter Plan -->
-      <div class="p-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl shadow-xl text-white transform scale-105 relative">
-        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-semibold">
+      <div class="relative bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl shadow-xl text-white transform scale-105">
+        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-bold">
           Most Popular
         </div>
-        <div class="text-center mb-8">
-          <h3 class="text-2xl font-bold mb-2">Starter</h3>
-          <div class="text-4xl font-bold mb-1">$49</div>
-          <div class="text-purple-100">per month</div>
+        <div class="p-8">
+          <div class="text-center mb-8">
+            <h3 class="text-2xl font-bold mb-2">AI Starter</h3>
+            <div class="text-4xl font-bold mb-1">$49</div>
+            <div class="text-purple-100">per month</div>
+          </div>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-center">
+              <svg class="h-5 w-5 text-green-300 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
+              </svg>
+              Full AI agent with predictions
+            </li>
+            <li class="flex items-center">
+              <svg class="h-5 w-5 text-green-300 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
+              </svg>
+              Smart anomaly detection
+            </li>
+            <li class="flex items-center">
+              <svg class="h-5 w-5 text-green-300 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
+              </svg>
+              Up to 5 data sources
+            </li>
+            <li class="flex items-center">
+              <svg class="h-5 w-5 text-green-300 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
+              </svg>
+              100K records/month
+            </li>
+            <li class="flex items-center">
+              <svg class="h-5 w-5 text-green-300 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
+              </svg>
+              AI presentations & reports
+            </li>
+          </ul>
+          <button class="w-full py-3 px-6 bg-white text-purple-600 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300">
+            Start 14-Day Trial
+          </button>
         </div>
-        <ul class="space-y-4 mb-8">
-          <li class="flex items-center">
-            <svg class="h-5 w-5 text-green-300 mr-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
-            </svg>
-            Up to 5 data sources
-          </li>
-          <li class="flex items-center">
-            <svg class="h-5 w-5 text-green-300 mr-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
-            </svg>
-            100K records/month
-          </li>
-          <li class="flex items-center">
-            <svg class="h-5 w-5 text-green-300 mr-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
-            </svg>
-            Advanced analytics
-          </li>
-          <li class="flex items-center">
-            <svg class="h-5 w-5 text-green-300 mr-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
-            </svg>
-            Priority support
-          </li>
-        </ul>
-        <button class="w-full py-3 px-6 bg-white text-purple-600 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300">
-          Start 14-Day Trial
-        </button>
       </div>
 
       <!-- Growth Plan -->
-      <div class="p-8 bg-white rounded-2xl shadow-lg border-2 border-gray-200">
+      <div class="relative bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-8">
         <div class="text-center mb-8">
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">Growth</h3>
+          <h3 class="text-2xl font-bold text-gray-900 mb-2">AI Growth</h3>
           <div class="text-4xl font-bold text-gray-900 mb-1">$149</div>
           <div class="text-gray-600">per month</div>
         </div>
@@ -564,11 +703,23 @@
             <svg class="h-5 w-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
             </svg>
-            Up to 15 data sources
+            Advanced AI agent with scenarios
           </li>
           <li class="flex items-center">
             <svg class="h-5 w-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
+            </svg>
+            Competitive intelligence
+          </li>
+          <li class="flex items-center">
+            <svg class="h-5 w-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
+            </svg>
+            Up to 15 data sources
+          </li>
+          <li class="flex items-center">
+            <svg class="h-5 w-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L7.59 6.58L19 8L10 17Z"/>
             </svg>
             500K records/month
           </li>
@@ -576,13 +727,7 @@
             <svg class="h-5 w-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
             </svg>
-            AI insights & alerts
-          </li>
-          <li class="flex items-center">
-            <svg class="h-5 w-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
-            </svg>
-            24/7 chat support
+            Custom AI integrations
           </li>
         </ul>
         <button class="w-full py-3 px-6 border-2 border-purple-600 text-purple-600 font-semibold rounded-lg hover:bg-purple-50 transition-all duration-300">
@@ -591,130 +736,65 @@
       </div>
     </div>
 
-    <!-- Money Back Guarantee -->
+    <!-- ROI Guarantee -->
     <div class="text-center mt-12">
-      <div class="inline-flex items-center px-6 py-3 bg-green-100 rounded-full">
-        <svg class="h-6 w-6 text-green-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>
-        </svg>
-        <span class="text-green-800 font-semibold">30-day money-back guarantee on all plans</span>
+      <div class="inline-block bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
+        <h4 class="font-bold text-green-900 mb-2">AI ROI Guarantee</h4>
+        <p class="text-green-800">Our AI will identify opportunities worth more than your subscription cost in the first 30 days, or we'll refund 100%.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Final CTA Section -->
-<section class="py-20 bg-gradient-to-r from-purple-600 to-blue-600">
-  <div class="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-    <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
-      Ready to Transform Your Business?
+<!-- Final CTA with AI Focus -->
+<section class="py-24 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600">
+  <div class="max-w-4xl mx-auto px-6 lg:px-8 text-center text-white">
+    <h2 class="text-4xl md:text-5xl font-bold mb-6">
+      Ready to Put AI to Work
+      <br>For Your Business?
     </h2>
-    <p class="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
-      Join 10,000+ growing businesses that trust DataReflow to turn their data into competitive advantages.
+    <p class="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+      Join thousands of businesses using autonomous AI to predict problems, identify opportunities, and make better decisions faster.
     </p>
     
-    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-      <%= link_to new_user_registration_path, class: "group px-8 py-4 bg-white text-purple-600 font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300" do %>
-        <span class="flex items-center">
-          Start Your Free Trial
-          <svg class="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-          </svg>
-        </span>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+      <%= link_to new_user_registration_path, class: "px-8 py-4 bg-white text-purple-600 font-bold rounded-xl hover:bg-gray-100 transition-colors transform hover:scale-105 duration-300" do %>
+        Start AI Trial - Free for 14 Days
       <% end %>
       
-      <button class="px-8 py-4 border-2 border-white border-opacity-30 text-white font-semibold rounded-xl backdrop-blur-sm hover:bg-white hover:bg-opacity-10 transition-all duration-300">
-        Schedule Demo
+      <button class="px-6 py-4 border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-purple-600 transition-all duration-300"
+              data-action="click->ai-landing-demo#scheduleDemo">
+        Schedule AI Demo
       </button>
     </div>
 
-    <div class="mt-8 text-purple-200 text-sm">
-      No credit card required • 14-day free trial • Cancel anytime
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+      <div>
+        <div class="text-2xl font-bold mb-1">15 min</div>
+        <div class="text-sm opacity-75">Setup time</div>
+      </div>
+      <div>
+        <div class="text-2xl font-bold mb-1">24/7</div>
+        <div class="text-sm opacity-75">AI monitoring</div>
+      </div>
+      <div>
+        <div class="text-2xl font-bold mb-1">Week 1</div>
+        <div class="text-sm opacity-75">See ROI</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Video Modal -->
-<div data-video-modal-target="modal" class="hidden fixed inset-0 z-50 overflow-y-auto" data-action="click->video-modal#closeOnBackdrop">
+</div>
+
+<!-- Live Demo Modal -->
+<div data-ai-landing-demo-target="demoModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
   <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
-    <!-- Background overlay -->
     <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"></div>
-
-    <!-- Modal content -->
-    <div class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full sm:p-6">
-      <!-- Close button -->
-      <div class="absolute top-0 right-0 pt-4 pr-4">
-        <button type="button" class="bg-white rounded-md text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" data-action="click->video-modal#close">
-          <span class="sr-only">Close</span>
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Modal header -->
-      <div class="sm:flex sm:items-start">
-        <div class="w-full">
-          <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-            DataReflow Platform Demo
-          </h3>
-          
-          <!-- Video container with aspect ratio -->
-          <div class="relative w-full" style="padding-bottom: 56.25%; /* 16:9 aspect ratio */">
-            <video 
-              data-video-modal-target="video"
-              data-src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4"
-              class="absolute inset-0 w-full h-full rounded-lg"
-              controls
-              poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720'%3E%3Crect width='1280' height='720' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='48' fill='%236b7280'%3EDataReflow Demo%3C/text%3E%3C/svg%3E"
-            >
-              Your browser does not support the video tag.
-            </video>
-          </div>
-
-          <!-- Video description -->
-          <div class="mt-4">
-            <p class="text-sm text-gray-600">
-              See how DataReflow transforms your business data into actionable insights in under 15 minutes.
-            </p>
-            
-            <!-- Demo highlights -->
-            <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div class="flex items-center text-sm text-gray-600">
-                <svg class="h-4 w-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-                Quick Setup
-              </div>
-              <div class="flex items-center text-sm text-gray-600">
-                <svg class="h-4 w-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-                Real-time Insights
-              </div>
-              <div class="flex items-center text-sm text-gray-600">
-                <svg class="h-4 w-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-                Custom Dashboards
-              </div>
-            </div>
-          </div>
-
-          <!-- CTA buttons -->
-          <div class="mt-6 flex flex-col sm:flex-row gap-3">
-            <%= link_to new_user_registration_path, class: "inline-flex justify-center items-center px-6 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200" do %>
-              Start Free Trial
-              <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-              </svg>
-            <% end %>
-            
-            <button type="button" class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200" data-action="click->video-modal#close">
-              Continue Browsing
-            </button>
-          </div>
-        </div>
+    <div class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-6xl sm:w-full sm:p-6">
+      <!-- Modal content will be loaded dynamically -->
+      <div data-ai-landing-demo-target="modalContent">
+        <!-- Dynamic content based on demo type -->
       </div>
     </div>
   </div>

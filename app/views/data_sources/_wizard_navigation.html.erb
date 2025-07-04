@@ -1,0 +1,91 @@
+<!-- Wizard Navigation Footer -->
+<div class="wizard-navigation bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-6 py-4 mt-8">
+  <div class="flex items-center justify-between">
+    <!-- Previous Button -->
+    <button type="button" 
+            class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            data-data-source-wizard-target="prevButton"
+            data-action="click->data-source-wizard#previousStep"
+            disabled>
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+      </svg>
+      Previous
+    </button>
+
+    <!-- Step Indicator (Mobile) -->
+    <div class="flex items-center space-x-2 md:hidden">
+      <span class="text-sm text-gray-500 dark:text-gray-400">Step</span>
+      <span class="text-sm font-medium text-gray-900 dark:text-white" data-data-source-wizard-target="mobileStepIndicator">1</span>
+      <span class="text-sm text-gray-500 dark:text-gray-400">of 4</span>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex items-center space-x-3">
+      <!-- Save Draft Button -->
+      <button type="button" 
+              class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium rounded-lg transition-colors duration-200"
+              data-data-source-wizard-target="saveDraftButton"
+              data-action="click->data-source-wizard#saveDraft"
+              style="display: none;">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
+        </svg>
+        Save Draft
+      </button>
+
+      <!-- Continue Button -->
+      <button type="button" 
+              class="inline-flex items-center px-6 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 disabled:cursor-not-allowed"
+              data-data-source-wizard-target="nextButton"
+              data-action="click->data-source-wizard#nextStep">
+        <span data-data-source-wizard-target="nextButtonText">Continue</span>
+        <svg class="w-4 h-4 ml-2" data-data-source-wizard-target="nextButtonIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+        </svg>
+      </button>
+
+      <!-- Launch Button (Final Step) -->
+      <button type="submit" 
+              class="inline-flex items-center px-6 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 disabled:cursor-not-allowed"
+              data-data-source-wizard-target="launchButton"
+              style="display: none;"
+              data-action="click->data-source-wizard#submitForm">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+        </svg>
+        <span data-data-source-wizard-target="launchButtonText">Launch Data Source</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Progress Bar (Mobile) -->
+  <div class="mt-4 md:hidden">
+    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+      <div class="bg-indigo-600 h-2 rounded-full transition-all duration-300" 
+           data-data-source-wizard-target="mobileProgressBar" 
+           style="width: 25%"></div>
+    </div>
+  </div>
+
+  <!-- Loading State Overlay -->
+  <div class="absolute inset-0 bg-white dark:bg-gray-800 bg-opacity-75 dark:bg-opacity-75 flex items-center justify-center" 
+       data-data-source-wizard-target="loadingOverlay" 
+       style="display: none;">
+    <div class="flex items-center space-x-3">
+      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"></div>
+      <span class="text-gray-700 dark:text-gray-300 font-medium" data-data-source-wizard-target="loadingText">
+        Processing...
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- Keyboard Navigation Hints -->
+<div class="hidden md:block text-center mt-4">
+  <p class="text-xs text-gray-500 dark:text-gray-400">
+    <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">←</kbd> Previous • 
+    <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">→</kbd> Next • 
+    <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">Ctrl+S</kbd> Save Draft
+  </p>
+</div>

@@ -1,0 +1,275 @@
+<% content_for :title, "AI Business Intelligence" %>
+<% content_for :page_header do %>
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+        <span class="inline-flex items-center">
+          <svg class="w-8 h-8 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a9 9 0 117.072 0l-.548.547A3.374 3.374 0 0014.846 21H9.154a3.374 3.374 0 00-2.869-1.146l-.548-.547z"></path>
+          </svg>
+          AI Business Intelligence
+        </span>
+      </h1>
+      <p class="mt-2 text-lg text-gray-600 dark:text-gray-300">Ask questions about your business data in natural language</p>
+    </div>
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2 text-sm text-gray-500">
+        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+        <span>AI Ready</span>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" 
+     data-controller="ai-query" 
+     data-ai-query-process-url-value="<%= process_query_ai_queries_path %>"
+     data-ai-query-suggestions-url-value="<%= suggestions_ai_queries_path %>">
+
+  <!-- Main Query Interface -->
+  <div class="mb-12">
+    <div class="relative max-w-4xl mx-auto">
+      <!-- Query Input Card -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="p-8">
+          <div class="text-center mb-6">
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+              What would you like to know about your business?
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400">
+              Ask questions in plain English - our AI will analyze your data and provide insights
+            </p>
+          </div>
+
+          <!-- Query Form -->
+          <form data-action="submit->ai-query#submitQuery" class="space-y-4">
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
+              
+              <input type="text" 
+                     data-ai-query-target="queryInput"
+                     data-action="input->ai-query#handleInput focus->ai-query#showSuggestions"
+                     placeholder="e.g., Show me customers who haven't ordered in 30 days..."
+                     class="block w-full pl-12 pr-20 py-4 text-lg border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200">
+              
+              <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+                <button type="submit" 
+                        data-ai-query-target="submitButton"
+                        class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                  <span data-ai-query-target="submitText">Ask AI</span>
+                  <svg data-ai-query-target="loadingSpinner" class="hidden animate-spin ml-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
+                    <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" class="opacity-75"></path>
+                  </svg>
+                  <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Query Suggestions Dropdown -->
+            <div data-ai-query-target="suggestionsDropdown" class="hidden absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 max-h-64 overflow-y-auto">
+              <div data-ai-query-target="suggestionsList" class="py-2"></div>
+            </div>
+          </form>
+
+          <!-- Quick Actions -->
+          <div class="mt-6 flex flex-wrap gap-2 justify-center">
+            <% ["Revenue analysis", "Customer insights", "Product performance", "Sales trends"].each do |suggestion| %>
+              <button data-action="click->ai-query#selectSuggestion" 
+                      data-query="<%= suggestion %>"
+                      class="inline-flex items-center px-3 py-1.5 text-sm bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 rounded-full hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors duration-200">
+                <%= suggestion %>
+              </button>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Container -->
+      <div data-ai-query-target="resultsContainer" class="hidden mt-8">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">AI Analysis Results</h3>
+          </div>
+          <div data-ai-query-target="resultsContent" class="p-6">
+            <!-- Results will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Data Summary Card -->
+    <div class="lg:col-span-1">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+            <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4"></path>
+            </svg>
+            Your Data Overview
+          </h3>
+        </div>
+        <div class="p-6 space-y-4">
+          <% if @data_summary.present? %>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  <%= number_with_delimiter(@data_summary[:customers] || 0) %>
+                </div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Customers</div>
+              </div>
+              <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                <div class="text-2xl font-bold text-green-600 dark:text-green-400">
+                  <%= number_with_delimiter(@data_summary[:orders] || 0) %>
+                </div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Orders</div>
+              </div>
+              <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                  <%= number_with_delimiter(@data_summary[:products] || 0) %>
+                </div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Products</div>
+              </div>
+              <div class="text-center p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl">
+                <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                  <%= @data_summary[:data_sources] || 0 %>
+                </div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Data Sources</div>
+              </div>
+            </div>
+            
+            <% if @data_summary[:date_range][:latest] %>
+              <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="text-sm text-gray-600 dark:text-gray-400">
+                  <span class="font-medium">Last Updated:</span>
+                  <%= time_ago_in_words(@data_summary[:date_range][:latest]) %> ago
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="text-center py-8">
+              <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+              </svg>
+              <p class="text-gray-500 dark:text-gray-400">Connect your first data source to get started</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popular Queries Section -->
+    <div class="lg:col-span-2">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+            <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            Popular Business Questions
+          </h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Click any question to analyze your data</p>
+        </div>
+        <div class="p-6">
+          <% if @popular_queries.present? %>
+            <div class="space-y-6">
+              <% @popular_queries.each do |category| %>
+                <div>
+                  <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                    <span class="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
+                    <%= category[:category] %>
+                  </h4>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <% category[:queries].each do |query| %>
+                      <button data-action="click->ai-query#selectSuggestion" 
+                              data-query="<%= query %>"
+                              class="text-left p-4 bg-gray-50 dark:bg-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200 group">
+                        <div class="flex items-start justify-between">
+                          <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">
+                            <%= query %>
+                          </span>
+                          <svg class="w-4 h-4 text-gray-400 group-hover:text-indigo-500 transition-colors duration-200 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                          </svg>
+                        </div>
+                      </button>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="text-center py-8">
+              <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <p class="text-gray-500 dark:text-gray-400">Query examples will appear here</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Insights Section -->
+  <% if @recent_insights.present? && @recent_insights.any? %>
+    <div class="mt-8">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+            <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a9 9 0 117.072 0l-.548.547A3.374 3.374 0 0014.846 21H9.154a3.374 3.374 0 00-2.869-1.146l-.548-.547z"></path>
+            </svg>
+            Recent AI Insights
+          </h3>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% @recent_insights.each do |insight| %>
+              <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                <div class="flex items-start justify-between mb-2">
+                  <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 rounded-full">
+                    <%= insight.insight_type.humanize %>
+                  </span>
+                  <span class="text-xs text-gray-500 dark:text-gray-400">
+                    <%= time_ago_in_words(insight.created_at) %> ago
+                  </span>
+                </div>
+                <h4 class="font-semibold text-gray-900 dark:text-white text-sm mb-2">
+                  <%= insight.title %>
+                </h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                  <%= insight.description %>
+                </p>
+                <% if insight.actionable? %>
+                  <div class="mt-3 flex items-center text-xs text-green-600 dark:text-green-400">
+                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Actionable
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Toast Notification Container -->
+<div data-ai-query-target="toastContainer" 
+     class="fixed top-4 right-4 z-50 space-y-2"
+     style="pointer-events: none;">
+  <!-- Toast notifications will be inserted here -->
+</div>

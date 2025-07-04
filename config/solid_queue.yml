@@ -1,0 +1,175 @@
+# Solid Queue Configuration
+# Rails 8's built-in job processing system replacing Redis/Sidekiq
+# This configuration defines queue priorities, worker pools, and processing settings
+
+default: &default
+  # Queue dispatcher configuration
+  dispatchers:
+    - polling_interval: 1  # Check for new jobs every 1 second
+      batch_size: 500      # Process up to 500 jobs per batch
+      concurrency_maintenance:
+        # Perform maintenance operations
+        cleanup_interval: 300  # Cleanup every 5 minutes
+        prune_finished_jobs_after: 3600  # Keep finished jobs for 1 hour
+
+  # Worker configuration by queue priority
+  workers:
+    # Critical queue for high-priority operations
+    - queues: [critical]
+      threads: 5
+      processes: <%= ENV.fetch("CRITICAL_WORKER_PROCESSES", 2) %>
+      polling_interval: 0.5  # Check more frequently for critical jobs
+
+    # ETL extraction queue
+    - queues: [extraction]
+      threads: 3
+      processes: <%= ENV.fetch("EXTRACTION_WORKER_PROCESSES", 3) %>
+      polling_interval: 1
+
+    # ETL transformation queue
+    - queues: [transformation]
+      threads: 4
+      processes: <%= ENV.fetch("TRANSFORMATION_WORKER_PROCESSES", 3) %>
+      polling_interval: 1
+
+    # Data validation queue
+    - queues: [validation]
+      threads: 3
+      processes: <%= ENV.fetch("VALIDATION_WORKER_PROCESSES", 2) %>
+      polling_interval: 2
+
+    # Manual task execution queue
+    - queues: [manual_tasks]
+      threads: 2
+      processes: 1  # Single process for manual tasks to maintain order
+      polling_interval: 0.5
+
+    # Default queue for general jobs
+    - queues: [default, mailers]
+      threads: 3
+      processes: <%= ENV.fetch("DEFAULT_WORKER_PROCESSES", 2) %>
+      polling_interval: 2
+
+    # Low priority queue for background tasks
+    - queues: [low]
+      threads: 2
+      processes: <%= ENV.fetch("LOW_WORKER_PROCESSES", 1) %>
+      polling_interval: 5
+
+  # Recurring tasks configuration (cron-like scheduling)
+  recurring_tasks:
+    # Pipeline health check every 5 minutes
+    pipeline_health_check:
+      class: PipelineHealthCheckJob
+      queue: low
+      schedule: "*/5 * * * *"  # Every 5 minutes
+      description: "Check pipeline health and update metrics"
+
+    # Cleanup old executions daily
+    cleanup_old_executions:
+      class: CleanupOldExecutionsJob
+      queue: low
+      schedule: "0 2 * * *"  # Daily at 2 AM
+      description: "Remove old pipeline execution records"
+
+    # Update ETL metrics hourly
+    update_etl_metrics:
+      class: UpdateEtlMetricsJob
+      queue: low
+      schedule: "0 * * * *"  # Every hour
+      description: "Calculate and cache ETL performance metrics"
+
+development:
+  <<: *default
+  workers:
+    # Simplified configuration for development
+    - queues: "*"
+      threads: 5
+      processes: 1
+      polling_interval: 1
+
+test:
+  <<: *default
+  workers:
+    # Single worker for predictable test execution
+    - queues: "*"
+      threads: 1
+      processes: 1
+      polling_interval: 0.1
+
+production:
+  <<: *default
+  # Production overrides
+  dispatchers:
+    - polling_interval: 0.5  # More responsive in production
+      batch_size: 1000      # Larger batches for efficiency
+      concurrency_maintenance:
+        cleanup_interval: 600  # Cleanup every 10 minutes
+        prune_finished_jobs_after: 86400  # Keep finished jobs for 24 hours
+
+  # Production worker scaling
+  workers:
+    # Critical queue with more resources
+    - queues: [critical]
+      threads: 10
+      processes: <%= ENV.fetch("CRITICAL_WORKER_PROCESSES", 3) %>
+      polling_interval: 0.1
+
+    # ETL queues with production scaling
+    - queues: [extraction]
+      threads: 5
+      processes: <%= ENV.fetch("EXTRACTION_WORKER_PROCESSES", 5) %>
+      polling_interval: 0.5
+
+    - queues: [transformation]
+      threads: 8
+      processes: <%= ENV.fetch("TRANSFORMATION_WORKER_PROCESSES", 5) %>
+      polling_interval: 0.5
+
+    - queues: [validation]
+      threads: 5
+      processes: <%= ENV.fetch("VALIDATION_WORKER_PROCESSES", 3) %>
+      polling_interval: 1
+
+    # Manual tasks with dedicated resources
+    - queues: [manual_tasks]
+      threads: 5
+      processes: <%= ENV.fetch("MANUAL_TASK_WORKER_PROCESSES", 2) %>
+      polling_interval: 0.2
+
+    # Default queue with balanced resources
+    - queues: [default, mailers]
+      threads: 5
+      processes: <%= ENV.fetch("DEFAULT_WORKER_PROCESSES", 4) %>
+      polling_interval: 1
+
+    # Low priority with minimal resources
+    - queues: [low]
+      threads: 3
+      processes: <%= ENV.fetch("LOW_WORKER_PROCESSES", 2) %>
+      polling_interval: 3
+
+  # Additional production recurring tasks
+  recurring_tasks:
+    # All development recurring tasks plus:
+    
+    # Monitor queue depth every minute
+    monitor_queue_depth:
+      class: MonitorQueueDepthJob
+      queue: critical
+      schedule: "* * * * *"  # Every minute
+      description: "Monitor queue depths and alert on backlog"
+
+    # Generate daily reports
+    generate_daily_reports:
+      class: GenerateDailyReportsJob
+      queue: default
+      schedule: "0 6 * * *"  # Daily at 6 AM
+      description: "Generate and email daily ETL reports"
+
+    # Check data source connections
+    check_data_source_connections:
+      class: CheckDataSourceConnectionsJob
+      queue: validation
+      schedule: "*/30 * * * *"  # Every 30 minutes
+      description: "Verify all data source connections are healthy"

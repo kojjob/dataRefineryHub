@@ -28,17 +28,8 @@ Rails.application.routes.draw do
     end
   end
   
-  # Alternative nested routes under data sources
-  resources :data_sources, only: [] do
-    member do
-      # Data quality for specific data source
-      get :quality, to: 'data_quality#show'
-      post :validate_quality, to: 'data_quality#validate'
-      
-      # Quality reports
-      get 'quality/reports/:report_id', to: 'data_quality#report', as: :quality_report
-    end
-  end
+  # Note: data_sources routes are defined in main routes.rb
+  # Quality routes for data sources are added there to avoid conflicts
   
   # API routes for data quality
   namespace :api do

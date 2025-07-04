@@ -1,0 +1,523 @@
+<!-- AI-Powered Data Integration Widget -->
+<div class="bg-white rounded-lg border border-gray-200 mb-8" data-controller="ai-data-integration">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">AI Data Integration</h3>
+          <p class="text-sm text-gray-600">Intelligent data source mapping and optimization</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+          <div class="h-1.5 w-1.5 bg-indigo-500 rounded-full mr-1 animate-pulse"></div>
+          AI Enhanced
+        </span>
+        <button class="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                data-action="click->ai-data-integration#showHelp"
+                title="Show help">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="p-6">
+    <!-- Integration Overview -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
+      <!-- Active Sources -->
+      <div class="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold text-green-900">Active Sources</h4>
+          <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-2xl font-bold text-green-900" data-ai-data-integration-target="activeSources">--</span>
+          <span class="text-xs text-green-700">sources</span>
+        </div>
+        <div class="flex items-center gap-1 mt-1">
+          <span class="text-xs text-green-600" data-ai-data-integration-target="sourcesTrend">Loading...</span>
+        </div>
+      </div>
+      
+      <!-- Integration Health -->
+      <div class="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold text-blue-900">Integration Health</h4>
+          <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-2xl font-bold text-blue-900" data-ai-data-integration-target="healthScore">--</span>
+          <span class="text-xs text-blue-700">%</span>
+        </div>
+        <div class="flex items-center gap-1 mt-1">
+          <span class="text-xs text-blue-600" data-ai-data-integration-target="healthStatus">Loading...</span>
+        </div>
+      </div>
+      
+      <!-- Data Quality -->
+      <div class="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold text-purple-900">Data Quality</h4>
+          <svg class="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-2xl font-bold text-purple-900" data-ai-data-integration-target="qualityScore">--</span>
+          <span class="text-xs text-purple-700">%</span>
+        </div>
+        <div class="flex items-center gap-1 mt-1">
+          <span class="text-xs text-purple-600" data-ai-data-integration-target="qualityGrade">Loading...</span>
+        </div>
+      </div>
+      
+      <!-- Total Records -->
+      <div class="p-4 bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg border border-amber-200">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold text-amber-900">Total Records</h4>
+          <svg class="h-4 w-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <div class="flex items-end gap-2">
+          <span class="text-2xl font-bold text-amber-900" data-ai-data-integration-target="totalRecords">--</span>
+          <span class="text-xs text-amber-700">records</span>
+        </div>
+        <div class="flex items-center gap-1 mt-1">
+          <span class="text-xs text-amber-600" data-ai-data-integration-target="lastSync">Loading...</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="mb-6">
+      <h4 class="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h4>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <button class="p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg border border-gray-200 hover:border-indigo-200 transition-colors text-left group"
+                data-action="click->ai-data-integration#analyzeNewSource">
+          <div class="flex items-center gap-2 mb-1">
+            <svg class="h-4 w-4 text-gray-600 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            <span class="text-xs font-medium text-gray-900">Analyze Source</span>
+          </div>
+          <p class="text-xs text-gray-600">AI-powered source analysis</p>
+        </button>
+        
+        <button class="p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg border border-gray-200 hover:border-indigo-200 transition-colors text-left group"
+                data-action="click->ai-data-integration#generateFieldMapping">
+          <div class="flex items-center gap-2 mb-1">
+            <svg class="h-4 w-4 text-gray-600 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span class="text-xs font-medium text-gray-900">Field Mapping</span>
+          </div>
+          <p class="text-xs text-gray-600">Smart field mapping</p>
+        </button>
+        
+        <button class="p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg border border-gray-200 hover:border-indigo-200 transition-colors text-left group"
+                data-action="click->ai-data-integration#optimizeIntegrations">
+          <div class="flex items-center gap-2 mb-1">
+            <svg class="h-4 w-4 text-gray-600 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span class="text-xs font-medium text-gray-900">Optimize</span>
+          </div>
+          <p class="text-xs text-gray-600">Performance optimization</p>
+        </button>
+        
+        <button class="p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg border border-gray-200 hover:border-indigo-200 transition-colors text-left group"
+                data-action="click->ai-data-integration#suggestSources">
+          <div class="flex items-center gap-2 mb-1">
+            <svg class="h-4 w-4 text-gray-600 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+            <span class="text-xs font-medium text-gray-900">AI Suggestions</span>
+          </div>
+          <p class="text-xs text-gray-600">Recommended sources</p>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Recent Integration Activity -->
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h4 class="text-sm font-semibold text-gray-900">Recent Activity</h4>
+        <button class="text-xs text-indigo-600 hover:text-indigo-800 transition-colors"
+                data-action="click->ai-data-integration#refreshActivity">
+          Refresh
+        </button>
+      </div>
+      <div id="integration-activity" data-ai-data-integration-target="activityContainer" class="space-y-3 max-h-64 overflow-y-auto">
+        <!-- Activity will be populated dynamically -->
+        <div class="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+          <div class="h-2 w-2 bg-green-500 rounded-full mt-2"></div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h5 class="text-sm font-medium text-green-900">Source Analysis Complete</h5>
+              <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Success</span>
+            </div>
+            <p class="text-xs text-green-700">Shopify data source analyzed - 15 fields mapped automatically</p>
+            <div class="flex items-center gap-3 mt-2">
+              <span class="text-xs text-green-600">Confidence: 94%</span>
+              <span class="text-xs text-green-600">2 hours ago</span>
+              <button class="text-xs text-green-600 hover:text-green-800 font-medium"
+                      data-action="click->ai-data-integration#viewDetails"
+                      data-analysis-id="shopify-001">
+                View Details →
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div class="h-2 w-2 bg-blue-500 rounded-full mt-2"></div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h5 class="text-sm font-medium text-blue-900">Field Mapping Generated</h5>
+              <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Complete</span>
+            </div>
+            <p class="text-xs text-blue-700">Intelligent mapping created for Stripe transaction data</p>
+            <div class="flex items-center gap-3 mt-2">
+              <span class="text-xs text-blue-600">Accuracy: 89%</span>
+              <span class="text-xs text-blue-600">4 hours ago</span>
+              <button class="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                      data-action="click->ai-data-integration#viewMapping"
+                      data-mapping-id="stripe-001">
+                View Mapping →
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+          <div class="h-2 w-2 bg-yellow-500 rounded-full mt-2"></div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h5 class="text-sm font-medium text-yellow-900">Optimization Recommended</h5>
+              <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">Action Needed</span>
+            </div>
+            <p class="text-xs text-yellow-700">Sync frequency can be optimized for better performance</p>
+            <div class="flex items-center gap-3 mt-2">
+              <span class="text-xs text-yellow-600">Impact: Medium</span>
+              <span class="text-xs text-yellow-600">6 hours ago</span>
+              <button class="text-xs text-yellow-600 hover:text-yellow-800 font-medium"
+                      data-action="click->ai-data-integration#viewOptimization"
+                      data-optimization-id="sync-001">
+                View Details →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Integration Health Dashboard -->
+    <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+      <div class="flex items-center gap-3">
+        <button class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                data-action="click->ai-data-integration#openIntegrationDashboard">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          Integration Dashboard
+        </button>
+        
+        <button class="flex items-center gap-2 px-3 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                data-action="click->ai-data-integration#validateQuality">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Validate Quality
+        </button>
+        
+        <button class="flex items-center gap-2 px-3 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                data-action="click->ai-data-integration#exportPlan">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          Export Plan
+        </button>
+      </div>
+      
+      <div class="text-xs text-gray-500">
+        Last updated: <span data-ai-data-integration-target="lastUpdated">Loading...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI Data Integration Stimulus Controller -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const aiDataIntegrationController = {
+    activeSourcesTarget: null,
+    sourcesTrendTarget: null,
+    healthScoreTarget: null,
+    healthStatusTarget: null,
+    qualityScoreTarget: null,
+    qualityGradeTarget: null,
+    totalRecordsTarget: null,
+    lastSyncTarget: null,
+    activityContainerTarget: null,
+    lastUpdatedTarget: null,
+    
+    connect() {
+      console.log('AI Data Integration widget connected');
+      this.initializeTargets();
+      this.loadIntegrationStats();
+      this.startStatusUpdates();
+    },
+    
+    disconnect() {
+      if (this.statusUpdateInterval) {
+        clearInterval(this.statusUpdateInterval);
+      }
+    },
+    
+    initializeTargets() {
+      this.activeSourcesTarget = document.querySelector('[data-ai-data-integration-target="activeSources"]');
+      this.sourcesTrendTarget = document.querySelector('[data-ai-data-integration-target="sourcesTrend"]');
+      this.healthScoreTarget = document.querySelector('[data-ai-data-integration-target="healthScore"]');
+      this.healthStatusTarget = document.querySelector('[data-ai-data-integration-target="healthStatus"]');
+      this.qualityScoreTarget = document.querySelector('[data-ai-data-integration-target="qualityScore"]');
+      this.qualityGradeTarget = document.querySelector('[data-ai-data-integration-target="qualityGrade"]');
+      this.totalRecordsTarget = document.querySelector('[data-ai-data-integration-target="totalRecords"]');
+      this.lastSyncTarget = document.querySelector('[data-ai-data-integration-target="lastSync"]');
+      this.activityContainerTarget = document.querySelector('[data-ai-data-integration-target="activityContainer"]');
+      this.lastUpdatedTarget = document.querySelector('[data-ai-data-integration-target="lastUpdated"]');
+    },
+    
+    startStatusUpdates() {
+      // Update status every 60 seconds
+      this.statusUpdateInterval = setInterval(() => {
+        this.loadIntegrationStats();
+      }, 60000);
+    },
+    
+    loadIntegrationStats() {
+      fetch('/ai/data_integration/dashboard_stats')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            this.updateIntegrationStats(data.stats);
+          }
+        })
+        .catch(error => {
+          console.error('Failed to load integration stats:', error);
+        });
+    },
+    
+    updateIntegrationStats(stats) {
+      if (this.activeSourcesTarget) {
+        this.activeSourcesTarget.textContent = stats.active_sources || 0;
+      }
+      
+      if (this.sourcesTrendTarget) {
+        const trend = stats.sources_trend || { change: 0, direction: 'stable' };
+        this.sourcesTrendTarget.textContent = trend.direction === 'up' 
+          ? `+${trend.change} this month` 
+          : trend.direction === 'down' 
+          ? `-${trend.change} this month` 
+          : 'Stable';
+      }
+      
+      if (this.healthScoreTarget) {
+        this.healthScoreTarget.textContent = Math.round(stats.integration_health || 0);
+      }
+      
+      if (this.healthStatusTarget) {
+        const health = stats.integration_health || 0;
+        this.healthStatusTarget.textContent = health > 90 ? 'Excellent' : health > 75 ? 'Good' : 'Needs attention';
+      }
+      
+      if (this.qualityScoreTarget) {
+        this.qualityScoreTarget.textContent = Math.round(stats.data_quality_score || 0);
+      }
+      
+      if (this.qualityGradeTarget) {
+        const quality = stats.data_quality_score || 0;
+        this.qualityGradeTarget.textContent = quality > 90 ? 'Grade A' : quality > 80 ? 'Grade B' : quality > 70 ? 'Grade C' : 'Grade D';
+      }
+      
+      if (this.totalRecordsTarget) {
+        this.totalRecordsTarget.textContent = this.formatNumber(stats.total_records || 0);
+      }
+      
+      if (this.lastSyncTarget) {
+        this.lastSyncTarget.textContent = stats.last_sync ? this.formatTimeAgo(stats.last_sync) : 'Never';
+      }
+      
+      if (this.lastUpdatedTarget) {
+        this.lastUpdatedTarget.textContent = new Date().toLocaleTimeString();
+      }
+    },
+    
+    analyzeNewSource() {
+      this.showModal('Analyze New Data Source', 'source-analysis-modal');
+    },
+    
+    generateFieldMapping() {
+      this.showModal('Generate Field Mapping', 'field-mapping-modal');
+    },
+    
+    optimizeIntegrations() {
+      this.performAction('/ai/data_integration/optimize_all', 'Optimizing integrations...');
+    },
+    
+    suggestSources() {
+      this.performAction('/ai/data_integration/suggest_new_sources', 'Generating AI suggestions...');
+    },
+    
+    refreshActivity() {
+      this.loadIntegrationStats();
+      this.showNotification('Activity refreshed', 'success');
+    },
+    
+    viewDetails(event) {
+      const analysisId = event.currentTarget.dataset.analysisId;
+      window.location.href = `/ai/data_integration/analysis/${analysisId}`;
+    },
+    
+    viewMapping(event) {
+      const mappingId = event.currentTarget.dataset.mappingId;
+      window.location.href = `/ai/data_integration/mapping/${mappingId}`;
+    },
+    
+    viewOptimization(event) {
+      const optimizationId = event.currentTarget.dataset.optimizationId;
+      window.location.href = `/ai/data_integration/optimization/${optimizationId}`;
+    },
+    
+    openIntegrationDashboard() {
+      window.location.href = '/ai/data_integration/dashboard';
+    },
+    
+    validateQuality() {
+      this.performAction('/ai/data_integration/validate_quality', 'Validating data quality...');
+    },
+    
+    exportPlan() {
+      window.open('/ai/data_integration/export_integration_plan?format=csv', '_blank');
+    },
+    
+    showHelp() {
+      alert('AI Data Integration Help\\n\\nThis widget provides intelligent data source integration capabilities:\\n\\n• Smart source analysis\\n• Automatic field mapping\\n• Performance optimization\\n• Quality validation\\n• AI-powered recommendations');
+    },
+    
+    performAction(url, loadingMessage) {
+      this.showLoading(loadingMessage);
+      
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        this.hideLoading();
+        
+        if (data.success) {
+          this.showActionResults(data);
+          this.loadIntegrationStats(); // Refresh stats
+        } else {
+          this.showNotification(data.error, 'error');
+        }
+      })
+      .catch(error => {
+        this.hideLoading();
+        console.error('Action failed:', error);
+        this.showNotification('Action failed', 'error');
+      });
+    },
+    
+    showActionResults(data) {
+      console.log('Action results:', data);
+      this.showNotification('Action completed successfully!', 'success');
+    },
+    
+    showModal(title, modalId) {
+      alert(`${title}\\n\\nDetailed modal interface coming soon!`);
+    },
+    
+    showLoading(message) {
+      console.log('Loading:', message);
+    },
+    
+    hideLoading() {
+      console.log('Loading complete');
+    },
+    
+    showNotification(message, type) {
+      const color = type === 'success' ? 'green' : 'red';
+      console.log(`%c${message}`, `color: ${color}; font-weight: bold;`);
+      
+      if (type === 'error') {
+        alert(message);
+      }
+    },
+    
+    formatNumber(num) {
+      if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+      } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+      }
+      return num.toString();
+    },
+    
+    formatTimeAgo(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffHours = Math.floor((now - date) / (1000 * 60 * 60));
+      
+      if (diffHours < 1) return 'Just now';
+      if (diffHours < 24) return `${diffHours}h ago`;
+      
+      const diffDays = Math.floor(diffHours / 24);
+      if (diffDays < 7) return `${diffDays}d ago`;
+      
+      const diffWeeks = Math.floor(diffDays / 7);
+      return `${diffWeeks}w ago`;
+    }
+  };
+  
+  // Make controller globally available
+  window.aiDataIntegrationController = aiDataIntegrationController;
+  
+  // Initialize the controller
+  aiDataIntegrationController.connect();
+  
+  // Attach event listeners
+  document.querySelectorAll('[data-action*="ai-data-integration"]').forEach(element => {
+    const actions = element.getAttribute('data-action').split(' ');
+    actions.forEach(action => {
+      if (action.includes('ai-data-integration')) {
+        const [event, method] = action.split('->ai-data-integration#');
+        element.addEventListener(event, (e) => {
+          aiDataIntegrationController[method](e);
+        });
+      }
+    });
+  });
+  
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    aiDataIntegrationController.disconnect();
+  });
+});
+</script>

@@ -1,0 +1,16 @@
+<!-- Landing/Authentication Layout -->
+<div class="min-h-full bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+  <!-- Landing Navigation -->
+  <%= render 'shared/landing_navbar' %>
+  
+  <!-- Flash Messages -->
+  <div class="relative z-40">
+    <%= render 'shared/flash_messages' %>
+  </div>
+  
+  <!-- Page Content -->
+  <%= yield %>
+  
+  <!-- Landing Footer -->
+  <%= render 'shared/landing_footer' %>
+</div>
