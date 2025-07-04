@@ -70,6 +70,17 @@ class TaskExecution < ApplicationRecord
     status == 'cancelled'
   end
   
+  # Badge class helper
+  def status_badge_class
+    case status
+    when 'completed' then 'bg-green-100 text-green-800'
+    when 'failed' then 'bg-red-100 text-red-800'
+    when 'running' then 'bg-blue-100 text-blue-800'
+    when 'cancelled' then 'bg-gray-100 text-gray-800'
+    else 'bg-gray-50 text-gray-600'
+    end
+  end
+  
   # Metrics
   def duration
     return nil unless started_at && completed_at

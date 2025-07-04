@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   
   # Include data quality monitoring routes
   load Rails.root.join('config', 'routes', 'data_quality_routes.rb')
+  
+  # Include manual tasks routes
+  load Rails.root.join('config', 'routes', 'manual_tasks_routes.rb')
 
   # Analytics
   get "analytics", to: "analytics#index"

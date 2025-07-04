@@ -195,21 +195,21 @@ class Task < ApplicationRecord
   
   def execution_mode_badge_class
     case execution_mode
-    when 'automated' then 'badge-primary'
-    when 'manual' then 'badge-warning'
-    when 'approval_required' then 'badge-danger'
-    when 'hybrid' then 'badge-info'
+    when 'automated' then 'bg-blue-100 text-blue-800'
+    when 'manual' then 'bg-yellow-100 text-yellow-800'
+    when 'approval_required' then 'bg-red-100 text-red-800'
+    when 'hybrid' then 'bg-purple-100 text-purple-800'
     end
   end
   
   def status_badge_class
     case status
-    when 'completed' then 'badge-success'
-    when 'failed' then 'badge-danger'
-    when 'in_progress' then 'badge-primary'
-    when 'waiting_approval' then 'badge-warning'
-    when 'cancelled', 'skipped' then 'badge-secondary'
-    else 'badge-light'
+    when 'completed' then 'bg-green-100 text-green-800'
+    when 'failed' then 'bg-red-100 text-red-800'
+    when 'in_progress' then 'bg-blue-100 text-blue-800'
+    when 'waiting_approval' then 'bg-yellow-100 text-yellow-800'
+    when 'cancelled', 'skipped' then 'bg-gray-100 text-gray-800'
+    else 'bg-gray-50 text-gray-600'
     end
   end
   

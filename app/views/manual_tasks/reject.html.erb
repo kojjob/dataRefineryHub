@@ -1,0 +1,189 @@
+<div class="max-w-3xl mx-auto">
+  <div class="mb-6">
+    <%= link_to manual_task_path(@task), class: "text-blue-600 hover:text-blue-800 flex items-center gap-1" do %>
+      ← Back to Task Details
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-lg shadow">
+    <div class="p-6 border-b">
+      <h1 class="text-2xl font-bold text-gray-900">Reject Task</h1>
+      <p class="mt-2 text-gray-600">Provide a reason for rejecting this task. The pipeline will be halted.</p>
+    </div>
+
+    <div class="p-6 space-y-6">
+      <!-- Task summary -->
+      <div class="bg-red-50 rounded-lg p-4">
+        <h3 class="font-semibold mb-2"><%= @task.name %></h3>
+        <p class="text-gray-600 text-sm mb-3"><%= @task.description %></p>
+        <div class="flex items-center gap-4 text-sm">
+          <span class="flex items-center gap-1">
+            <strong>Type:</strong> <%= @task.task_type.humanize %>
+          </span>
+          <span class="flex items-center gap-1">
+            <strong>Priority:</strong> <%= @task.priority %>
+          </span>
+          <span class="flex items-center gap-1">
+            <strong>Pipeline:</strong> <%= @task.pipeline_execution.pipeline_name %>
+          </span>
+        </div>
+      </div>
+
+      <!-- Common rejection reasons -->
+      <div>
+        <h3 class="font-semibold mb-3">Common Rejection Reasons</h3>
+        <div class="space-y-2">
+          <button type="button" class="w-full text-left p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors rejection-reason"
+            data-reason="Data quality issues detected - requires further investigation">
+            <div class="flex items-start">
+              <svg class="w-5 h-5 text-gray-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+              <span class="text-sm">Data quality issues detected</span>
+            </div>
+          </button>
+          
+          <button type="button" class="w-full text-left p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors rejection-reason"
+            data-reason="Missing required approvals from stakeholders">
+            <div class="flex items-start">
+              <svg class="w-5 h-5 text-gray-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+              </svg>
+              <span class="text-sm">Missing required approvals</span>
+            </div>
+          </button>
+          
+          <button type="button" class="w-full text-left p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors rejection-reason"
+            data-reason="External system dependencies not ready">
+            <div class="flex items-start">
+              <svg class="w-5 h-5 text-gray-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <span class="text-sm">External dependencies not ready</span>
+            </div>
+          </button>
+          
+          <button type="button" class="w-full text-left p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors rejection-reason"
+            data-reason="Business requirements have changed - pipeline needs adjustment">
+            <div class="flex items-start">
+              <svg class="w-5 h-5 text-gray-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+              </svg>
+              <span class="text-sm">Business requirements changed</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Rejection form -->
+      <%= form_with url: reject_manual_task_path(@task), method: :post, local: true do |form| %>
+        <div class="space-y-4">
+          <!-- Rejection reason -->
+          <div>
+            <%= form.label :reason, "Rejection Reason", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.text_area :reason, 
+              rows: 4,
+              required: true,
+              class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+              placeholder: "Please provide a detailed reason for rejecting this task..." %>
+            <p class="mt-1 text-sm text-gray-500">
+              This reason will be recorded and sent to relevant stakeholders.
+            </p>
+          </div>
+
+          <!-- Impact assessment -->
+          <div>
+            <h4 class="font-medium mb-2">Impact of Rejection</h4>
+            <div class="bg-red-50 rounded-lg p-4">
+              <ul class="space-y-2 text-sm text-red-700">
+                <li class="flex items-start">
+                  <svg class="w-4 h-4 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                  </svg>
+                  The pipeline execution will be halted immediately
+                </li>
+                <li class="flex items-start">
+                  <svg class="w-4 h-4 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                  </svg>
+                  All downstream tasks will be cancelled
+                </li>
+                <li class="flex items-start">
+                  <svg class="w-4 h-4 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                  </svg>
+                  Notifications will be sent to pipeline owner and stakeholders
+                </li>
+                <li class="flex items-start">
+                  <svg class="w-4 h-4 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                  </svg>
+                  Manual intervention will be required to restart the pipeline
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Notification options -->
+          <div>
+            <h4 class="font-medium mb-2">Notification Options</h4>
+            <div class="space-y-2">
+              <label class="flex items-center">
+                <%= form.check_box :notify_owner, checked: true, class: "mr-2" %>
+                <span class="text-sm">Notify pipeline owner</span>
+              </label>
+              <label class="flex items-center">
+                <%= form.check_box :notify_stakeholders, checked: true, class: "mr-2" %>
+                <span class="text-sm">Notify all stakeholders</span>
+              </label>
+              <label class="flex items-center">
+                <%= form.check_box :create_incident, class: "mr-2" %>
+                <span class="text-sm">Create incident ticket for follow-up</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Confirmation -->
+          <div class="bg-gray-50 rounded-lg p-4">
+            <label class="flex items-start">
+              <%= form.check_box :confirm, class: "mt-1 mr-2" %>
+              <span class="text-sm text-gray-700">
+                I understand that rejecting this task will halt the pipeline and require manual intervention to restart.
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-between">
+          <div>
+            <%= link_to "Cancel", manual_task_path(@task), class: "btn btn-ghost" %>
+          </div>
+          <div class="flex items-center gap-2">
+            <%= link_to "Approve Instead", approve_manual_task_path(@task), 
+              class: "btn btn-secondary" %>
+            <%= form.submit "Reject Task", 
+              class: "btn btn-danger",
+              data: { 
+                disable_with: "Rejecting...",
+                turbo_confirm: "Are you sure you want to reject this task and halt the pipeline?"
+              } %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Handle clicking on common rejection reasons
+    document.querySelectorAll('.rejection-reason').forEach(button => {
+      button.addEventListener('click', function() {
+        const reason = this.getAttribute('data-reason');
+        const textarea = document.getElementById('reason');
+        textarea.value = reason;
+        textarea.focus();
+      });
+    });
+  });
+</script>
