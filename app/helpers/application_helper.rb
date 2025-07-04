@@ -32,6 +32,8 @@ module ApplicationHelper
       "data_sources"
     when "extraction_jobs", "transformation_jobs"
       "pipelines"
+    when "manual_tasks"
+      "manual_tasks"
     when "analytics", "dashboards"
       "analytics"
     when "customers", "processed_customers"

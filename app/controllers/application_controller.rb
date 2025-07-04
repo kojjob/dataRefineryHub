@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :log_session_debug, if: -> { Rails.env.development? }
   before_action :set_system_status, unless: :devise_controller?
+  before_action :set_manual_tasks_count, unless: :devise_controller?
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
@@ -104,6 +105,22 @@ class ApplicationController < ActionController::Base
         storage_used: "-- GB",
         last_updated: Time.current
       }
+    end
+  end
+  
+  def set_manual_tasks_count
+    return unless current_user&.organization
+    
+    begin
+      # Count pending manual tasks that are either unassigned or assigned to current user
+      @manual_tasks_count = Task.joins(:pipeline_execution)
+                                .where(pipeline_executions: { organization_id: current_organization.id })
+                                .where(execution_mode: 'manual', status: ['ready', 'waiting_approval'])
+                                .where('assignee_id IS NULL OR assignee_id = ?', current_user.id)
+                                .count
+    rescue => e
+      Rails.logger.error "Error counting manual tasks: #{e.message}"
+      @manual_tasks_count = 0
     end
   end
 end
