@@ -20,6 +20,9 @@ Rails.application.routes.draw do
   
   # Include manual tasks routes
   load Rails.root.join('config', 'routes', 'manual_tasks_routes.rb')
+  
+  # Include API pipeline routes
+  load Rails.root.join('config', 'routes', 'api_v1_pipeline_routes.rb')
 
   # Analytics
   get "analytics", to: "analytics#index"

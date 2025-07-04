@@ -1,0 +1,419 @@
+<!-- Premium Enhanced Manual Tasks Index -->
+<%= render 'shared/page_header', 
+  title: 'Manual Task Queue',
+  description: 'Tasks requiring manual intervention or approval',
+  actions: [
+    { text: 'Auto-assign Tasks', path: auto_assign_manual_tasks_path, method: :post, 
+      class: 'btn-secondary', data: { turbo_confirm: 'Auto-assign unassigned tasks to available users?' } },
+    current_user.admin? ? { text: 'Clear Stale', path: clear_stale_manual_tasks_path, method: :post, 
+      class: 'btn-ghost', data: { turbo_confirm: 'Clear stale task assignments?' } } : nil
+  ].compact
+%>
+
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+  <!-- Enhanced Sidebar with Premium Statistics -->
+  <div class="lg:col-span-1 space-y-6">
+    <!-- Queue Statistics with Animated Counters -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
+      <!-- Decorative gradient orb -->
+      <div class="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+      
+      <div class="relative p-6">
+        <h3 class="text-lg font-semibold mb-6 text-gray-900 dark:text-gray-100 flex items-center">
+          <svg class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          Queue Statistics
+        </h3>
+        
+        <dl class="space-y-4">
+          <!-- Total Pending with Animation -->
+          <div class="group cursor-pointer">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Pending</dt>
+            <dd class="mt-1 flex items-baseline">
+              <span class="text-3xl font-bold text-gray-900 dark:text-gray-100 transition-transform group-hover:scale-110" 
+                    data-counter-target="<%= @statistics[:total_pending] %>">0</span>
+              <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">tasks</span>
+            </dd>
+            <!-- Mini trend indicator -->
+            <div class="mt-2 flex items-center text-xs">
+              <svg class="w-4 h-4 <%= @statistics[:trend] == 'up' ? 'text-red-500' : 'text-green-500' %> mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M<%= @statistics[:trend] == 'up' ? '5.293 14.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0L14 12.586l5.293-5.293a1 1 0 111.414 1.414l-6 6a1 1 0 01-1.414 0L10 11.414l-3.293 3.293a1 1 0 01-1.414 0z' : '14.707 5.293a1 1 0 00-1.414 0L10 8.586 6.707 5.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0L14 7.414l3.293 3.293a1 1 0 001.414-1.414l-4-4z' %>" clip-rule="evenodd" />
+              </svg>
+              <span class="<%= @statistics[:trend] == 'up' ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400' %> font-medium">
+                <%= @statistics[:trend_value] %>%
+              </span>
+              <span class="text-gray-500 dark:text-gray-400 ml-1">vs last hour</span>
+            </div>
+          </div>
+          
+          <!-- Average Wait Time with Progress Ring -->
+          <div class="relative">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Avg Wait Time</dt>
+            <dd class="mt-2 flex items-center">
+              <!-- Circular progress -->
+              <div class="relative w-16 h-16 mr-4">
+                <svg class="w-16 h-16 transform -rotate-90">
+                  <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" stroke-width="4" class="text-gray-200 dark:text-gray-700" />
+                  <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" stroke-width="4" 
+                          class="text-blue-600 dark:text-blue-400 transition-all duration-1000"
+                          stroke-dasharray="<%= 176 %>" 
+                          stroke-dashoffset="<%= 176 - (176 * (@statistics[:average_wait_time] / 3600.0)) %>" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-xs font-bold text-gray-900 dark:text-gray-100">
+                    <%= (@statistics[:average_wait_time] / 60).round %>m
+                  </span>
+                </div>
+              </div>
+              <div>
+                <p class="text-2xl font-semibold text-gray-900 dark:text-gray-100" data-stat="avg-wait-time">
+                  <%= distance_of_time_in_words(@statistics[:average_wait_time]) %>
+                </p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  Target: < 30 min
+                </p>
+              </div>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+    
+    <!-- Priority Breakdown with Interactive Charts -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+      <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Priority Breakdown</h3>
+      
+      <div class="space-y-4">
+        <% ['high', 'medium', 'low'].each do |priority| %>
+          <% count = @statistics[:by_priority][priority.to_sym] %>
+          <% percentage = @statistics[:total_pending] > 0 ? (count.to_f / @statistics[:total_pending] * 100).round : 0 %>
+          
+          <div class="group cursor-pointer" data-priority-filter="<%= priority %>">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium <%= priority == 'high' ? 'text-red-600 dark:text-red-400' : priority == 'medium' ? 'text-amber-600 dark:text-amber-400' : 'text-gray-600 dark:text-gray-400' %>">
+                <%= priority.capitalize %> Priority
+              </span>
+              <span class="text-sm font-bold text-gray-900 dark:text-gray-100">
+                <%= count %>
+              </span>
+            </div>
+            <div class="relative h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div class="absolute inset-y-0 left-0 <%= priority == 'high' ? 'bg-gradient-to-r from-red-500 to-red-600' : priority == 'medium' ? 'bg-gradient-to-r from-amber-500 to-amber-600' : 'bg-gradient-to-r from-gray-400 to-gray-500' %> rounded-full transition-all duration-500 group-hover:opacity-80"
+                   style="width: <%= percentage %>%">
+                <!-- Animated shimmer effect -->
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-shimmer"></div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      
+      <!-- Visual pie chart -->
+      <div class="mt-6 flex justify-center">
+        <canvas id="priorityChart" width="120" height="120"></canvas>
+      </div>
+    </div>
+    
+    <!-- Enhanced Filters with Toggle Switches -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+      <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Filters</h3>
+      
+      <%= form_with url: manual_tasks_path, method: :get, data: { turbo_frame: "tasks" } do |f| %>
+        <div class="space-y-4">
+          <!-- Assigned to me toggle -->
+          <label class="flex items-center justify-between cursor-pointer group">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">
+              Assigned to me
+            </span>
+            <div class="relative">
+              <%= f.check_box :assigned_to_me, class: "sr-only peer", onchange: "this.form.requestSubmit()" %>
+              <div class="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </div>
+          </label>
+          
+          <!-- Pipeline filter with custom select -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Pipeline
+            </label>
+            <div class="relative">
+              <%= f.select :pipeline_name, 
+                options_for_select([['All Pipelines', '']] + @statistics[:by_pipeline].keys.map { |name| [name, name] }, params[:pipeline_name]),
+                {},
+                class: "appearance-none w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-2.5 pr-10",
+                onchange: "this.form.requestSubmit()" %>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  
+  <!-- Enhanced Main Content Area -->
+  <div class="lg:col-span-3">
+    <!-- Quick Actions Bar -->
+    <div class="mb-6 flex flex-wrap gap-2">
+      <button class="px-4 py-2 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+        <span class="mr-2">🎯</span> High Priority Only
+      </button>
+      <button class="px-4 py-2 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full hover:border-amber-500 dark:hover:border-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400">
+        <span class="mr-2">⏰</span> Oldest First
+      </button>
+      <button class="px-4 py-2 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full hover:border-green-500 dark:hover:border-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400">
+        <span class="mr-2">✅</span> Ready to Execute
+      </button>
+    </div>
+    
+    <!-- Enhanced Tasks List -->
+    <div id="tasks" class="space-y-4">
+      <% if @tasks.any? %>
+        <% @tasks.each_with_index do |task, index| %>
+          <!-- Premium Task Card -->
+          <div class="group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-2xl dark:shadow-none dark:hover:shadow-2xl dark:hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-0.5 overflow-hidden border border-gray-100 dark:border-gray-700"
+               data-task-id="<%= task.id %>"
+               data-aos="fade-up"
+               data-aos-delay="<%= index * 50 %>">
+            
+            <!-- Priority indicator bar -->
+            <div class="absolute top-0 left-0 w-1 h-full <%= task.priority >= 7 ? 'bg-gradient-to-b from-red-500 to-red-600' : task.priority >= 4 ? 'bg-gradient-to-b from-amber-500 to-amber-600' : 'bg-gradient-to-b from-gray-400 to-gray-500' %>"></div>
+            
+            <!-- Hover reveal quick actions -->
+            <div class="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <button class="p-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" title="Quick view">
+                <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+              <button class="p-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" title="Pin task">
+                <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+              </button>
+            </div>
+            
+            <div class="p-6">
+              <div class="flex items-start justify-between">
+                <div class="flex-1 min-w-0">
+                  <!-- Task header -->
+                  <div class="flex items-center space-x-3 mb-2">
+                    <!-- Task type icon with gradient background -->
+                    <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br <%= task.task_type == 'extraction' ? 'from-blue-500 to-blue-600' : task.task_type == 'transformation' ? 'from-purple-500 to-purple-600' : 'from-green-500 to-green-600' %> rounded-lg flex items-center justify-center">
+                      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <% if task.task_type == 'extraction' %>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                        <% elsif task.task_type == 'transformation' %>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                        <% else %>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <% end %>
+                      </svg>
+                    </div>
+                    
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-base font-semibold text-gray-900 dark:text-gray-100 truncate">
+                        <%= task.name %>
+                      </h4>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">
+                        <%= task.pipeline_execution.pipeline_name %>
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <!-- Task metadata -->
+                  <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <!-- Status badge with animation -->
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= task.status == 'ready' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' : 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300' %>">
+                      <% if task.status == 'waiting_approval' %>
+                        <span class="w-1.5 h-1.5 bg-current rounded-full mr-1.5 animate-pulse"></span>
+                      <% end %>
+                      <%= task.status.humanize %>
+                    </span>
+                    
+                    <!-- Execution mode badge -->
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= task.execution_mode_badge_class %>">
+                      <%= task.execution_mode.humanize %>
+                    </span>
+                    
+                    <!-- Priority indicator -->
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                      Priority: <%= task.priority %>
+                    </span>
+                    
+                    <!-- Time waiting -->
+                    <span class="inline-flex items-center text-xs text-gray-500 dark:text-gray-400">
+                      <svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <%= distance_of_time_in_words_to_now(task.created_at) %> ago
+                    </span>
+                  </div>
+                  
+                  <!-- Task description if available -->
+                  <% if task.description.present? %>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-3">
+                      <%= task.description %>
+                    </p>
+                  <% end %>
+                  
+                  <!-- Assignee info -->
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <% if task.assignee %>
+                        <div class="flex items-center space-x-2">
+                          <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-medium">
+                            <%= task.assignee.initials %>
+                          </div>
+                          <span class="text-sm text-gray-600 dark:text-gray-400">
+                            <%= task.assignee.name %>
+                          </span>
+                        </div>
+                      <% else %>
+                        <span class="text-sm text-gray-500 dark:text-gray-400 italic">
+                          Unassigned
+                        </span>
+                      <% end %>
+                    </div>
+                    
+                    <!-- Action buttons -->
+                    <div class="flex items-center space-x-2">
+                      <% if task.assignee.nil? && task.status == 'ready' %>
+                        <%= button_to "Assign to Me", 
+                          assign_manual_task_path(task), 
+                          method: :post,
+                          class: "px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg text-sm font-medium transition-colors duration-200" %>
+                      <% elsif task.can_execute? && (task.assignee == current_user || current_user.admin?) %>
+                        <%= link_to "Execute", 
+                          execute_manual_task_path(task), 
+                          class: "px-3 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md" %>
+                      <% elsif task.status == 'waiting_approval' && (task.assignee == current_user || current_user.admin?) %>
+                        <div class="flex space-x-2">
+                          <%= link_to "Approve", 
+                            approve_manual_task_path(task), 
+                            class: "px-3 py-1.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md" %>
+                          <%= link_to "Reject", 
+                            reject_manual_task_path(task), 
+                            class: "px-3 py-1.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg text-sm font-medium transition-colors duration-200" %>
+                        </div>
+                      <% end %>
+                      
+                      <%= link_to manual_task_path(task), 
+                        class: "p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors" do %>
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Progress indicator (if applicable) -->
+            <% if task.in_progress? %>
+              <div class="absolute bottom-0 left-0 w-full h-0.5 bg-gray-100 dark:bg-gray-700">
+                <div class="h-full bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse" style="width: 50%"></div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+        
+        <!-- Pagination -->
+        <div class="mt-8">
+          <%= paginate @tasks, theme: 'tailwind' %>
+        </div>
+      <% else %>
+        <!-- Empty state with illustration -->
+        <div class="text-center py-12">
+          <div class="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+            <svg class="w-12 h-12 text-gray-400 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">No tasks in queue</h3>
+          <p class="text-gray-500 dark:text-gray-400">All manual tasks have been processed!</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Premium JavaScript Enhancements -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Animate counters
+  document.querySelectorAll('[data-counter-target]').forEach(el => {
+    const target = parseInt(el.dataset.counterTarget);
+    const duration = 2000;
+    const step = target / (duration / 16);
+    let current = 0;
+    
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      el.textContent = Math.floor(current).toLocaleString();
+    }, 16);
+  });
+  
+  // Initialize priority pie chart
+  const ctx = document.getElementById('priorityChart');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['High', 'Medium', 'Low'],
+        datasets: [{
+          data: [
+            <%= @statistics[:by_priority][:high] %>,
+            <%= @statistics[:by_priority][:medium] %>,
+            <%= @statistics[:by_priority][:low] %>
+          ],
+          backgroundColor: [
+            'rgb(239, 68, 68)',
+            'rgb(245, 158, 11)',
+            'rgb(156, 163, 175)'
+          ],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+  }
+  
+  // Subscribe to real-time updates
+  const manualTaskQueue = window.manualTaskQueue;
+  if (manualTaskQueue) {
+    manualTaskQueue.refreshQueue();
+  }
+});
+
+// Add shimmer animation
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+`;
+document.head.appendChild(style);
+</script>
