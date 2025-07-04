@@ -125,49 +125,54 @@
         </div>
       </div>
 
-      <!-- Interactive Demo Column -->
-      <div class="relative">
-        <!-- Live Metrics Dashboard Preview -->
-        <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200/50 p-6 transform hover:scale-105 transition-transform duration-300"
+      <!-- Premium Interactive Demo Column -->
+      <div class="relative premium-animate-float">
+        <!-- Premium Live Metrics Dashboard Preview -->
+        <div class="premium-card premium-card-glass p-8 transform hover:scale-105 transition-all duration-500"
+             style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2);"
              data-ai-landing-demo-target="liveDemo">
-          
-          <!-- Demo Header -->
-          <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-3">
-              <div class="h-3 w-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span class="text-sm font-medium text-gray-600">Live AI Monitoring</span>
+
+          <!-- Premium Demo Header -->
+          <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+              <div class="h-4 w-4 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full premium-animate-pulse"></div>
+              <span class="text-lg font-semibold text-white">Live AI Monitoring</span>
             </div>
-            <span class="text-xs text-gray-500" data-live-metrics-target="timestamp">Just now</span>
+            <span class="text-sm text-white/70 bg-white/10 px-3 py-1 rounded-full" data-live-metrics-target="timestamp">Just now</span>
           </div>
 
-          <!-- Live Metrics Grid -->
-          <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-green-800">Revenue/Hour</span>
-                <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                </svg>
+          <!-- Premium Live Metrics Grid -->
+          <div class="premium-grid premium-grid-md-2 gap-6 mb-8">
+            <div class="premium-card p-6" style="background: rgba(16, 185, 129, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129, 0.3);">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-sm font-semibold text-white">Revenue/Hour</span>
+                <div class="h-8 w-8 bg-gradient-to-r from-green-400 to-emerald-400 rounded-lg flex items-center justify-center">
+                  <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                  </svg>
+                </div>
               </div>
-              <div class="text-2xl font-bold text-green-900" data-live-metrics-target="revenue">$<%= @demo_data[:real_time_metrics][:revenue_rate] %></div>
-              <div class="text-xs text-green-700 flex items-center">
-                <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="text-3xl font-bold text-white mb-2" data-live-metrics-target="revenue">$<%= @demo_data[:real_time_metrics][:revenue_rate] %></div>
+              <div class="text-sm text-white/80 flex items-center">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                 </svg>
                 +12.3% vs last hour
               </div>
             </div>
 
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-200">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-blue-800">Active Users</span>
-                <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                </svg>
+            <div class="premium-card p-6" style="background: rgba(59, 130, 246, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(59, 130, 246, 0.3);">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-sm font-semibold text-white">Active Users</span>
+                <div class="h-8 w-8 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-lg flex items-center justify-center">
+                  <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                  </svg>
+                </div>
               </div>
-              <div class="text-2xl font-bold text-blue-900" data-live-metrics-target="users"><%= @demo_data[:real_time_metrics][:customer_activity] %></div>
-              <div class="text-xs text-blue-700 flex items-center">
-                <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="text-3xl font-bold text-white mb-2" data-live-metrics-target="users"><%= @demo_data[:real_time_metrics][:customer_activity] %></div>
+              <div class="text-sm text-white/80 flex items-center">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                 </svg>
                 +8.5% trend
@@ -175,136 +180,143 @@
             </div>
           </div>
 
-          <!-- AI Insights -->
-          <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-xl border border-purple-200">
-            <div class="flex items-center gap-2 mb-3">
-              <div class="h-2 w-2 bg-purple-500 rounded-full animate-pulse"></div>
-              <span class="text-sm font-semibold text-purple-800">AI Insight</span>
-              <span class="text-xs bg-purple-200 text-purple-700 px-2 py-1 rounded-full">Live</span>
+          <!-- Premium AI Insights -->
+          <div class="premium-card p-6" style="background: rgba(139, 92, 246, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(139, 92, 246, 0.3);">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="h-3 w-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full premium-animate-pulse"></div>
+              <span class="text-lg font-semibold text-white">AI Insight</span>
+              <span class="text-xs bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 px-3 py-1 rounded-full font-bold">Live</span>
             </div>
-            <p class="text-sm text-purple-700 mb-2" data-ai-landing-demo-target="liveInsight">
+            <p class="text-white/90 mb-4 leading-relaxed" data-ai-landing-demo-target="liveInsight">
               <%= @demo_data[:recent_insights].first[:description] %>
             </p>
             <div class="flex items-center justify-between">
-              <span class="text-xs text-purple-600">Confidence: <%= @demo_data[:recent_insights].first[:confidence] %>%</span>
-              <span class="text-xs font-medium text-purple-800"><%= @demo_data[:recent_insights].first[:impact] %></span>
+              <span class="text-sm text-white/70">Confidence: <span class="font-semibold text-white"><%= @demo_data[:recent_insights].first[:confidence] %>%</span></span>
+              <span class="text-sm font-semibold text-white bg-white/10 px-3 py-1 rounded-full"><%= @demo_data[:recent_insights].first[:impact] %></span>
             </div>
           </div>
         </div>
 
-        <!-- Floating Elements -->
-        <div class="absolute -top-4 -right-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold animate-bounce">
+        <!-- Premium Floating Elements -->
+        <div class="absolute -top-6 -right-6 bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 px-4 py-2 rounded-full text-sm font-bold premium-animate-pulse shadow-xl">
           Live Data!
         </div>
-        
-        <div class="absolute -bottom-4 -left-4 bg-gradient-to-r from-green-400 to-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+
+        <div class="absolute -bottom-6 -left-6 bg-gradient-to-r from-green-400 to-blue-500 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-xl premium-animate-float">
           AI Working 24/7
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Scroll Indicator -->
-  <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-    <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-    </svg>
-  </div>
-</section>
-
-<!-- AI Stats Showcase -->
-<section class="py-16 bg-white">
-  <div class="max-w-7xl mx-auto px-6 lg:px-8">
-    <div class="text-center mb-12">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">Trusted by businesses processing</h2>
-    </div>
-    
-    <div class="grid grid-cols-2 md:grid-cols-6 gap-8 items-center">
-      <div class="text-center">
-        <div class="text-3xl font-bold text-blue-600 mb-1"><%= @stats[:ai_insights_generated] %></div>
-        <div class="text-sm text-gray-600">AI Insights Generated</div>
-      </div>
-      <div class="text-center">
-        <div class="text-3xl font-bold text-green-600 mb-1"><%= @stats[:anomalies_detected] %></div>
-        <div class="text-sm text-gray-600">Anomalies Detected</div>
-      </div>
-      <div class="text-center">
-        <div class="text-3xl font-bold text-purple-600 mb-1"><%= @stats[:businesses_served] %></div>
-        <div class="text-sm text-gray-600">Businesses Served</div>
-      </div>
-      <div class="text-center">
-        <div class="text-3xl font-bold text-indigo-600 mb-1"><%= @stats[:predictions_accuracy] %></div>
-        <div class="text-sm text-gray-600">Prediction Accuracy</div>
-      </div>
-      <div class="text-center">
-        <div class="text-3xl font-bold text-red-600 mb-1"><%= @stats[:data_processed] %></div>
-        <div class="text-sm text-gray-600">Records Processed</div>
-      </div>
-      <div class="text-center">
-        <div class="text-3xl font-bold text-gray-900 mb-1"><%= @stats[:uptime] %></div>
-        <div class="text-sm text-gray-600">Uptime SLA</div>
-      </div>
+  <!-- Premium Scroll Indicator -->
+  <div class="absolute bottom-12 left-1/2 transform -translate-x-1/2 premium-animate-float">
+    <div class="bg-white/20 backdrop-filter backdrop-blur-lg rounded-full p-3 border border-white/30">
+      <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
     </div>
   </div>
 </section>
 
-<!-- AI Features Showcase -->
-<section class="py-24 bg-gradient-to-br from-gray-50 to-blue-50">
-  <div class="max-w-7xl mx-auto px-6 lg:px-8">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-        Meet Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">AI Business Partner</span>
+<!-- Premium AI Stats Showcase -->
+<section class="premium-section bg-white">
+  <div class="premium-container">
+    <div class="premium-text-center premium-mb-16">
+      <h2 class="premium-heading-3 text-gray-900 premium-mb-4">Trusted by businesses processing</h2>
+      <div class="w-24 h-1 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto rounded-full"></div>
+    </div>
+
+    <div class="premium-grid premium-grid-md-3 premium-grid-lg-6 gap-8 items-center">
+      <div class="premium-text-center group">
+        <div class="premium-heading-2 premium-gradient-text premium-mb-2 group-hover:scale-110 transition-transform duration-300"><%= @stats[:ai_insights_generated] %></div>
+        <div class="premium-body-small text-gray-600 font-semibold">AI Insights Generated</div>
+      </div>
+      <div class="premium-text-center group">
+        <div class="premium-heading-2 premium-mb-2 group-hover:scale-110 transition-transform duration-300" style="background: linear-gradient(135deg, #10b981, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><%= @stats[:anomalies_detected] %></div>
+        <div class="premium-body-small text-gray-600 font-semibold">Anomalies Detected</div>
+      </div>
+      <div class="premium-text-center group">
+        <div class="premium-heading-2 premium-mb-2 group-hover:scale-110 transition-transform duration-300" style="background: linear-gradient(135deg, #8b5cf6, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><%= @stats[:businesses_served] %></div>
+        <div class="premium-body-small text-gray-600 font-semibold">Businesses Served</div>
+      </div>
+      <div class="premium-text-center group">
+        <div class="premium-heading-2 premium-mb-2 group-hover:scale-110 transition-transform duration-300" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><%= @stats[:predictions_accuracy] %></div>
+        <div class="premium-body-small text-gray-600 font-semibold">Prediction Accuracy</div>
+      </div>
+      <div class="premium-text-center group">
+        <div class="premium-heading-2 premium-mb-2 group-hover:scale-110 transition-transform duration-300" style="background: linear-gradient(135deg, #ef4444, #f87171); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><%= @stats[:data_processed] %></div>
+        <div class="premium-body-small text-gray-600 font-semibold">Records Processed</div>
+      </div>
+      <div class="premium-text-center group">
+        <div class="premium-heading-2 text-gray-900 premium-mb-2 group-hover:scale-110 transition-transform duration-300"><%= @stats[:uptime] %></div>
+        <div class="premium-body-small text-gray-600 font-semibold">Uptime SLA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Premium AI Features Showcase -->
+<section id="features" class="premium-section" style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);">
+  <div class="premium-container">
+    <div class="premium-text-center premium-mb-20">
+      <h2 class="premium-heading-1 text-gray-900 premium-mb-8">
+        Meet Your <span class="premium-gradient-text">AI Business Partner</span>
       </h2>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+      <p class="premium-body-large text-gray-600 max-w-4xl mx-auto leading-relaxed">
         Unlike traditional BI tools that show you what happened, our AI agents predict what will happen and take action to optimize your business.
       </p>
+      <div class="w-32 h-1 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto rounded-full mt-8"></div>
     </div>
 
-    <div class="grid lg:grid-cols-3 gap-8">
+    <div class="premium-grid premium-grid-lg-3 gap-10">
       <% @ai_features.each_with_index do |feature, index| %>
-        <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-8"
+        <div class="group premium-card premium-card-glass relative overflow-hidden transform hover:-translate-y-6 transition-all duration-500"
+             style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3);"
              data-ai-landing-demo-target="featureCard">
-          
-          <!-- Feature Icon -->
-          <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+
+          <!-- Premium Feature Icon -->
+          <div class="w-20 h-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-3xl flex items-center justify-center premium-mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-xl">
             <% case feature[:icon] %>
             <% when "ai-brain" %>
-              <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
               </svg>
             <% when "anomaly-detection" %>
-              <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
               </svg>
             <% when "data-intelligence" %>
-              <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
               </svg>
             <% end %>
           </div>
 
-          <h3 class="text-xl font-bold text-gray-900 mb-4"><%= feature[:title] %></h3>
-          <p class="text-gray-600 mb-6 leading-relaxed"><%= feature[:description] %></p>
+          <h3 class="premium-heading-3 text-gray-900 premium-mb-6"><%= feature[:title] %></h3>
+          <p class="premium-body text-gray-600 premium-mb-8 leading-relaxed"><%= feature[:description] %></p>
 
-          <!-- Benefits -->
-          <div class="space-y-2 mb-6">
+          <!-- Premium Benefits -->
+          <div class="space-y-4 premium-mb-8">
             <% feature[:benefits].each do |benefit| %>
-              <div class="flex items-center text-sm text-gray-700">
-                <svg class="h-4 w-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-                <%= benefit %>
+              <div class="flex items-center premium-body text-gray-700">
+                <div class="h-5 w-5 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full mr-4 flex items-center justify-center">
+                  <svg class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+                <span class="font-medium"><%= benefit %></span>
               </div>
             <% end %>
           </div>
 
-          <!-- Demo Button -->
+          <!-- Premium Demo Button -->
           <% if feature[:demo_available] %>
-            <button class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform group-hover:scale-105"
+            <button class="premium-btn premium-btn-primary w-full group-hover:scale-105 transition-all duration-500"
                     data-action="click->ai-landing-demo#showFeatureDemo"
                     data-feature="<%= feature[:title].parameterize %>">
               <span class="flex items-center justify-center">
-                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-5 w-5 mr-3 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
                 See Live Demo
@@ -312,8 +324,8 @@
             </button>
           <% end %>
 
-          <!-- Floating Badge -->
-          <div class="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+          <!-- Premium Floating Badge -->
+          <div class="absolute -top-4 -right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-xl premium-animate-pulse">
             LIVE
           </div>
         </div>

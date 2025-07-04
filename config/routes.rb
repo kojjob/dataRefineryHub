@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "pipeline_dashboard/index"
+  get "pipeline_dashboard/show"
   devise_for :users, controllers: {
     registrations: 'users/registrations',
     sessions: 'users/sessions'
