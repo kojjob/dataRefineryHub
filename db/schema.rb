@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_21_234454) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_04_110100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,105 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_234454) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "ai_insights", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "user_id"
+    t.bigint "presentation_id"
+    t.bigint "data_source_id"
+    t.string "insight_type", null: false
+    t.string "title", null: false
+    t.text "description", null: false
+    t.decimal "confidence_score", precision: 3, scale: 2, null: false
+    t.string "impact_level", null: false
+    t.boolean "actionable", default: false, null: false
+    t.json "metadata", default: {}
+    t.json "recommendations", default: []
+    t.datetime "read_at"
+    t.bigint "read_by"
+    t.datetime "acknowledged_at"
+    t.bigint "acknowledged_by"
+    t.datetime "dismissed_at"
+    t.text "dismissal_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["acknowledged_at"], name: "index_ai_insights_on_acknowledged_at"
+    t.index ["actionable", "impact_level"], name: "index_ai_insights_on_actionable_and_impact_level"
+    t.index ["actionable"], name: "index_ai_insights_on_actionable"
+    t.index ["confidence_score"], name: "index_ai_insights_on_confidence_score", where: "(confidence_score > 0.7)"
+    t.index ["data_source_id"], name: "index_ai_insights_on_data_source_id"
+    t.index ["dismissed_at"], name: "index_ai_insights_on_dismissed_at"
+    t.index ["impact_level"], name: "index_ai_insights_on_impact_level"
+    t.index ["insight_type"], name: "index_ai_insights_on_insight_type"
+    t.index ["organization_id", "created_at"], name: "index_ai_insights_on_organization_id_and_created_at"
+    t.index ["organization_id", "impact_level"], name: "index_ai_insights_on_organization_id_and_impact_level"
+    t.index ["organization_id", "insight_type"], name: "index_ai_insights_on_organization_id_and_insight_type"
+    t.index ["organization_id"], name: "index_ai_insights_on_organization_id"
+    t.index ["presentation_id"], name: "index_ai_insights_on_presentation_id"
+    t.index ["read_at"], name: "index_ai_insights_on_read_at"
+    t.index ["user_id"], name: "index_ai_insights_on_user_id"
+  end
+
+  create_table "ai_presentation_interactions", force: :cascade do |t|
+    t.bigint "presentation_id", null: false
+    t.bigint "user_id"
+    t.bigint "organization_id", null: false
+    t.string "interaction_type", null: false
+    t.string "element_id"
+    t.string "element_type"
+    t.text "coordinates"
+    t.text "metadata"
+    t.text "form_data"
+    t.datetime "timestamp"
+    t.string "session_id"
+    t.string "ip_address"
+    t.text "user_agent"
+    t.string "page_url"
+    t.string "referrer"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["interaction_type"], name: "index_ai_presentation_interactions_on_interaction_type"
+    t.index ["organization_id", "created_at"], name: "idx_on_organization_id_created_at_9ffea752e8"
+    t.index ["organization_id"], name: "index_ai_presentation_interactions_on_organization_id"
+    t.index ["presentation_id", "created_at"], name: "idx_on_presentation_id_created_at_00cdb8309d"
+    t.index ["presentation_id"], name: "index_ai_presentation_interactions_on_presentation_id"
+    t.index ["session_id"], name: "index_ai_presentation_interactions_on_session_id"
+    t.index ["timestamp"], name: "index_ai_presentation_interactions_on_timestamp"
+    t.index ["user_id", "created_at"], name: "index_ai_presentation_interactions_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_ai_presentation_interactions_on_user_id"
+  end
+
+  create_table "ai_presentation_views", force: :cascade do |t|
+    t.bigint "presentation_id", null: false
+    t.bigint "user_id"
+    t.bigint "organization_id", null: false
+    t.string "session_id", null: false
+    t.string "ip_address", null: false
+    t.text "user_agent"
+    t.datetime "started_at"
+    t.datetime "ended_at"
+    t.integer "duration"
+    t.boolean "completed", default: false
+    t.string "referrer"
+    t.string "device_type"
+    t.string "browser"
+    t.string "os"
+    t.string "country"
+    t.string "city"
+    t.string "utm_source"
+    t.string "utm_medium"
+    t.string "utm_campaign"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["completed"], name: "index_ai_presentation_views_on_completed"
+    t.index ["organization_id", "created_at"], name: "index_ai_presentation_views_on_organization_id_and_created_at"
+    t.index ["organization_id"], name: "index_ai_presentation_views_on_organization_id"
+    t.index ["presentation_id", "created_at"], name: "index_ai_presentation_views_on_presentation_id_and_created_at"
+    t.index ["presentation_id"], name: "index_ai_presentation_views_on_presentation_id"
+    t.index ["session_id"], name: "index_ai_presentation_views_on_session_id"
+    t.index ["user_id", "created_at"], name: "index_ai_presentation_views_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_ai_presentation_views_on_user_id"
   end
 
   create_table "audit_logs", force: :cascade do |t|
@@ -150,6 +249,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_234454) do
     t.index ["status"], name: "index_extraction_jobs_on_status"
   end
 
+  create_table "landing_page_contents", force: :cascade do |t|
+    t.string "section", null: false
+    t.string "title", null: false
+    t.text "content", null: false
+    t.json "metadata", default: {}
+    t.boolean "active", default: true, null: false
+    t.integer "display_order", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_landing_page_contents_on_active"
+    t.index ["display_order"], name: "index_landing_page_contents_on_display_order"
+    t.index ["section", "active", "display_order"], name: "index_landing_contents_on_section_active_order"
+    t.index ["section"], name: "index_landing_page_contents_on_section"
+  end
+
   create_table "notifications", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "organization_id", null: false
@@ -210,15 +324,62 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_234454) do
     t.text "error_details"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "execution_mode", default: "automatic"
+    t.boolean "manual_intervention_required", default: false
+    t.string "approval_status"
+    t.bigint "approved_by_id"
+    t.datetime "last_manual_task_at"
+    t.bigint "organization_id", null: false
+    t.index ["approved_by_id"], name: "index_pipeline_executions_on_approved_by_id"
     t.index ["data_source_id", "status"], name: "index_pipeline_executions_on_data_source_id_and_status"
     t.index ["data_source_id"], name: "index_pipeline_executions_on_data_source_id"
     t.index ["execution_id"], name: "index_pipeline_executions_on_execution_id", unique: true
+    t.index ["execution_mode", "status"], name: "index_pipeline_executions_on_execution_mode_and_status"
+    t.index ["execution_mode"], name: "index_pipeline_executions_on_execution_mode"
+    t.index ["manual_intervention_required"], name: "index_pipeline_executions_on_manual_intervention_required"
+    t.index ["organization_id"], name: "index_pipeline_executions_on_organization_id"
     t.index ["pipeline_name", "status"], name: "index_pipeline_executions_on_pipeline_name_and_status"
     t.index ["pipeline_name"], name: "index_pipeline_executions_on_pipeline_name"
     t.index ["started_at", "status"], name: "index_pipeline_executions_on_started_at_and_status"
     t.index ["started_at"], name: "index_pipeline_executions_on_started_at"
     t.index ["status"], name: "index_pipeline_executions_on_status"
     t.index ["user_id"], name: "index_pipeline_executions_on_user_id"
+  end
+
+  create_table "presentations", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "template_type", null: false
+    t.string "output_format", null: false
+    t.string "status", default: "generating", null: false
+    t.string "file_path"
+    t.string "download_url"
+    t.text "content"
+    t.integer "progress_percentage", default: 0
+    t.text "error_message"
+    t.datetime "generated_at"
+    t.datetime "failed_at"
+    t.bigint "organization_id", null: false
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "configuration"
+    t.text "metadata"
+    t.text "interactive_elements"
+    t.string "presentation_type"
+    t.decimal "engagement_score", precision: 5, scale: 2, default: "0.0"
+    t.integer "views_count", default: 0
+    t.boolean "live_data_enabled", default: false
+    t.boolean "shared", default: false
+    t.datetime "published_at"
+    t.index ["engagement_score"], name: "index_presentations_on_engagement_score"
+    t.index ["organization_id", "created_at"], name: "index_presentations_on_organization_id_and_created_at"
+    t.index ["organization_id"], name: "index_presentations_on_organization_id"
+    t.index ["presentation_type"], name: "index_presentations_on_presentation_type"
+    t.index ["published_at"], name: "index_presentations_on_published_at"
+    t.index ["shared", "published_at"], name: "index_presentations_on_shared_and_published_at"
+    t.index ["status", "created_at"], name: "index_presentations_on_status_and_created_at"
+    t.index ["template_type"], name: "index_presentations_on_template_type"
+    t.index ["user_id"], name: "index_presentations_on_user_id"
   end
 
   create_table "raw_data_records", force: :cascade do |t|
@@ -246,6 +407,60 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_234454) do
     t.index ["record_type"], name: "index_raw_data_records_on_record_type"
   end
 
+  create_table "scheduled_task_runs", force: :cascade do |t|
+    t.bigint "scheduled_task_id", null: false
+    t.bigint "pipeline_execution_id"
+    t.bigint "task_id"
+    t.string "status", default: "pending", null: false
+    t.datetime "started_at", null: false
+    t.datetime "completed_at"
+    t.integer "duration_seconds"
+    t.text "error_message"
+    t.jsonb "output", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pipeline_execution_id"], name: "index_scheduled_task_runs_on_pipeline_execution_id"
+    t.index ["scheduled_task_id", "started_at"], name: "index_scheduled_task_runs_on_scheduled_task_id_and_started_at"
+    t.index ["scheduled_task_id"], name: "index_scheduled_task_runs_on_scheduled_task_id"
+    t.index ["started_at"], name: "index_scheduled_task_runs_on_started_at"
+    t.index ["status"], name: "index_scheduled_task_runs_on_status"
+    t.index ["task_id"], name: "index_scheduled_task_runs_on_task_id"
+  end
+
+  create_table "scheduled_tasks", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "task_template_id", null: false
+    t.bigint "created_by_id", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "status", default: "active", null: false
+    t.string "schedule_type", null: false
+    t.datetime "scheduled_at"
+    t.time "time_of_day"
+    t.string "days_of_week", default: [], array: true
+    t.integer "day_of_month"
+    t.string "cron_expression"
+    t.date "start_date"
+    t.date "end_date"
+    t.integer "max_runs"
+    t.integer "run_count", default: 0
+    t.datetime "next_run_at"
+    t.jsonb "configuration", default: {}
+    t.jsonb "task_overrides", default: {}
+    t.datetime "paused_at"
+    t.datetime "resumed_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_scheduled_tasks_on_created_by_id"
+    t.index ["next_run_at"], name: "index_scheduled_tasks_on_next_run_at"
+    t.index ["organization_id", "status"], name: "index_scheduled_tasks_on_organization_id_and_status"
+    t.index ["organization_id"], name: "index_scheduled_tasks_on_organization_id"
+    t.index ["schedule_type"], name: "index_scheduled_tasks_on_schedule_type"
+    t.index ["status"], name: "index_scheduled_tasks_on_status"
+    t.index ["task_template_id"], name: "index_scheduled_tasks_on_task_template_id"
+  end
+
   create_table "scheduled_uploads", force: :cascade do |t|
     t.bigint "data_source_id", null: false
     t.bigint "user_id", null: false
@@ -270,6 +485,100 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_234454) do
     t.index ["next_run_at"], name: "index_scheduled_uploads_on_next_run_at"
     t.index ["user_id", "active"], name: "index_scheduled_uploads_on_user_id_and_active"
     t.index ["user_id"], name: "index_scheduled_uploads_on_user_id"
+  end
+
+  create_table "task_executions", force: :cascade do |t|
+    t.bigint "task_id", null: false
+    t.uuid "execution_id", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.jsonb "result", default: {}
+    t.text "error_message"
+    t.jsonb "error_details", default: {}
+    t.bigint "executed_by_id"
+    t.integer "duration_seconds"
+    t.jsonb "metadata", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["executed_by_id"], name: "index_task_executions_on_executed_by_id"
+    t.index ["execution_id"], name: "index_task_executions_on_execution_id", unique: true
+    t.index ["started_at"], name: "index_task_executions_on_started_at"
+    t.index ["status"], name: "index_task_executions_on_status"
+    t.index ["task_id", "created_at"], name: "index_task_executions_on_task_id_and_created_at"
+    t.index ["task_id"], name: "index_task_executions_on_task_id"
+  end
+
+  create_table "task_templates", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name"
+    t.text "description"
+    t.string "task_type"
+    t.string "execution_mode"
+    t.jsonb "template_config"
+    t.integer "default_timeout"
+    t.integer "default_priority"
+    t.integer "default_weight"
+    t.string "category"
+    t.string "tags"
+    t.boolean "active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_task_templates_on_active"
+    t.index ["organization_id"], name: "index_task_templates_on_organization_id"
+  end
+
+  create_table "tasks", force: :cascade do |t|
+    t.bigint "pipeline_execution_id", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "task_type", null: false
+    t.string "execution_mode", default: "automated", null: false
+    t.string "status", default: "pending", null: false
+    t.integer "priority", default: 0
+    t.integer "position"
+    t.jsonb "configuration", default: {}
+    t.jsonb "metadata", default: {}
+    t.text "error_message"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.integer "retry_count", default: 0
+    t.integer "max_retries", default: 3
+    t.integer "timeout_seconds", default: 300
+    t.bigint "assignee_id"
+    t.uuid "execution_id"
+    t.string "depends_on", default: [], array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "task_template_id"
+    t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
+    t.index ["created_at"], name: "index_tasks_on_created_at"
+    t.index ["execution_id"], name: "index_tasks_on_execution_id", unique: true
+    t.index ["execution_mode"], name: "index_tasks_on_execution_mode"
+    t.index ["pipeline_execution_id", "position"], name: "index_tasks_on_pipeline_execution_id_and_position"
+    t.index ["pipeline_execution_id", "status"], name: "index_tasks_on_pipeline_execution_id_and_status"
+    t.index ["pipeline_execution_id"], name: "index_tasks_on_pipeline_execution_id"
+    t.index ["priority"], name: "index_tasks_on_priority"
+    t.index ["status", "execution_mode"], name: "index_tasks_on_status_and_execution_mode"
+    t.index ["status"], name: "index_tasks_on_status"
+    t.index ["task_template_id"], name: "index_tasks_on_task_template_id"
+  end
+
+  create_table "testimonials", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "company", null: false
+    t.string "role", null: false
+    t.text "quote", null: false
+    t.integer "rating", null: false
+    t.string "highlight", null: false
+    t.string "ai_feature", null: false
+    t.boolean "active", default: true, null: false
+    t.integer "display_order", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active", "display_order"], name: "index_testimonials_on_active_and_display_order"
+    t.index ["active"], name: "index_testimonials_on_active"
+    t.index ["display_order"], name: "index_testimonials_on_display_order"
   end
 
   create_table "transformation_jobs", force: :cascade do |t|
@@ -371,6 +680,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_234454) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "ai_insights", "data_sources"
+  add_foreign_key "ai_insights", "organizations"
+  add_foreign_key "ai_insights", "presentations"
+  add_foreign_key "ai_insights", "users"
+  add_foreign_key "ai_presentation_interactions", "organizations"
+  add_foreign_key "ai_presentation_interactions", "presentations"
+  add_foreign_key "ai_presentation_interactions", "users"
+  add_foreign_key "ai_presentation_views", "organizations"
+  add_foreign_key "ai_presentation_views", "presentations"
+  add_foreign_key "ai_presentation_views", "users"
   add_foreign_key "audit_logs", "organizations"
   add_foreign_key "audit_logs", "users"
   add_foreign_key "data_quality_reports", "data_sources"
@@ -380,12 +699,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_21_234454) do
   add_foreign_key "notifications", "organizations"
   add_foreign_key "notifications", "users"
   add_foreign_key "pipeline_executions", "data_sources"
+  add_foreign_key "pipeline_executions", "organizations"
   add_foreign_key "pipeline_executions", "users"
+  add_foreign_key "pipeline_executions", "users", column: "approved_by_id"
+  add_foreign_key "presentations", "organizations"
+  add_foreign_key "presentations", "users"
   add_foreign_key "raw_data_records", "data_sources"
   add_foreign_key "raw_data_records", "extraction_jobs"
   add_foreign_key "raw_data_records", "organizations"
+  add_foreign_key "scheduled_task_runs", "pipeline_executions"
+  add_foreign_key "scheduled_task_runs", "scheduled_tasks"
+  add_foreign_key "scheduled_task_runs", "tasks"
+  add_foreign_key "scheduled_tasks", "organizations"
+  add_foreign_key "scheduled_tasks", "task_templates"
+  add_foreign_key "scheduled_tasks", "users", column: "created_by_id"
   add_foreign_key "scheduled_uploads", "data_sources"
   add_foreign_key "scheduled_uploads", "users"
+  add_foreign_key "task_executions", "tasks"
+  add_foreign_key "task_executions", "users", column: "executed_by_id"
+  add_foreign_key "task_templates", "organizations"
+  add_foreign_key "tasks", "pipeline_executions"
+  add_foreign_key "tasks", "task_templates"
+  add_foreign_key "tasks", "users", column: "assignee_id"
   add_foreign_key "transformation_jobs", "organizations"
   add_foreign_key "upload_logs", "scheduled_uploads"
   add_foreign_key "users", "organizations"

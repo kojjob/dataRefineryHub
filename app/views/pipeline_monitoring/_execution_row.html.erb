@@ -1,0 +1,51 @@
+<div class="px-4 py-3 hover:bg-gray-50">
+  <div class="flex items-center justify-between">
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center">
+        <p class="text-sm font-medium text-gray-900 truncate">
+          <%= execution.pipeline_name %>
+        </p>
+        <% if execution.status == 'running' %>
+          <span class="ml-2 flex h-2 w-2 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+          </span>
+        <% end %>
+      </div>
+      <div class="mt-1 flex items-center text-xs text-gray-500">
+        <span>Started <%= time_ago_in_words(execution.started_at) %> ago</span>
+        <% if execution.user %>
+          <span class="mx-1">•</span>
+          <span>by <%= execution.user.first_name %></span>
+        <% end %>
+      </div>
+    </div>
+    <div class="flex items-center space-x-3">
+      <!-- Progress -->
+      <div class="w-32">
+        <div class="flex items-center">
+          <div class="flex-1">
+            <div class="relative">
+              <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                <div style="width: <%= execution.progress %>%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500 transition-all duration-500"></div>
+              </div>
+            </div>
+          </div>
+          <span class="ml-2 text-xs text-gray-600"><%= execution.progress.to_i %>%</span>
+        </div>
+      </div>
+      
+      <!-- Stage -->
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+        <%= execution.current_stage&.humanize || 'Initializing' %>
+      </span>
+      
+      <!-- View Details -->
+      <%= link_to pipeline_monitoring_path(execution), class: "text-indigo-600 hover:text-indigo-900", data: { turbo_frame: "_top" } do %>
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,28 +1,46 @@
-/* DataReflow Design System */
+/* DataReflow Premium Design System */
 
 :root {
-  /* Brand Colors */
-  --dataflow-primary-50: #faf5ff;
-  --dataflow-primary-100: #f3e8ff;
-  --dataflow-primary-200: #e9d5ff;
-  --dataflow-primary-300: #d8b4fe;
-  --dataflow-primary-400: #c084fc;
+  /* Premium Brand Colors - Sophisticated Palette */
+  --dataflow-primary-50: #faf7ff;
+  --dataflow-primary-100: #f4edff;
+  --dataflow-primary-200: #e9d8ff;
+  --dataflow-primary-300: #d6b8ff;
+  --dataflow-primary-400: #bc8cff;
   --dataflow-primary-500: #a855f7;
   --dataflow-primary-600: #9333ea;
-  --dataflow-primary-700: #7c3aed;
-  --dataflow-primary-800: #6b21a8;
-  --dataflow-primary-900: #581c87;
+  --dataflow-primary-700: #7c2d8a;
+  --dataflow-primary-800: #6b1f6b;
+  --dataflow-primary-900: #4a1545;
 
-  --dataflow-secondary-50: #eff6ff;
-  --dataflow-secondary-100: #dbeafe;
-  --dataflow-secondary-200: #bfdbfe;
-  --dataflow-secondary-300: #93c5fd;
-  --dataflow-secondary-400: #60a5fa;
-  --dataflow-secondary-500: #3b82f6;
-  --dataflow-secondary-600: #2563eb;
-  --dataflow-secondary-700: #1d4ed8;
-  --dataflow-secondary-800: #1e40af;
-  --dataflow-secondary-900: #1e3a8a;
+  --dataflow-secondary-50: #f0f9ff;
+  --dataflow-secondary-100: #e0f2fe;
+  --dataflow-secondary-200: #bae6fd;
+  --dataflow-secondary-300: #7dd3fc;
+  --dataflow-secondary-400: #38bdf8;
+  --dataflow-secondary-500: #0ea5e9;
+  --dataflow-secondary-600: #0284c7;
+  --dataflow-secondary-700: #0369a1;
+  --dataflow-secondary-800: #075985;
+  --dataflow-secondary-900: #0c4a6e;
+
+  /* Premium Neutral Palette */
+  --dataflow-neutral-50: #fafafa;
+  --dataflow-neutral-100: #f5f5f5;
+  --dataflow-neutral-200: #e5e5e5;
+  --dataflow-neutral-300: #d4d4d4;
+  --dataflow-neutral-400: #a3a3a3;
+  --dataflow-neutral-500: #737373;
+  --dataflow-neutral-600: #525252;
+  --dataflow-neutral-700: #404040;
+  --dataflow-neutral-800: #262626;
+  --dataflow-neutral-900: #171717;
+
+  /* Premium Accent Colors */
+  --dataflow-accent-emerald: #10b981;
+  --dataflow-accent-amber: #f59e0b;
+  --dataflow-accent-rose: #f43f5e;
+  --dataflow-accent-violet: #8b5cf6;
 
   /* Accent Colors */
   --dataflow-success-500: #10b981;

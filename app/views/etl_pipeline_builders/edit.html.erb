@@ -1,0 +1,22 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Page Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="py-6">
+        <div class="flex items-center">
+          <%= link_to etl_pipeline_builder_path(@pipeline), class: "mr-4 text-gray-400 hover:text-gray-500" do %>
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
+          <% end %>
+          <h1 class="text-3xl font-bold text-gray-900">Edit Pipeline</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= form_with model: @pipeline, url: etl_pipeline_builder_path(@pipeline), method: :patch, local: false, data: { controller: "pipeline-builder" } do |form| %>
+    <!-- Use the same form structure as new.html.erb but with pre-filled values -->
+    <%= render 'form', form: form, pipeline: @pipeline %>
+  <% end %>
+</div>

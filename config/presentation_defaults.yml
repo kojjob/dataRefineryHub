@@ -1,0 +1,87 @@
+# Presentation Configuration Defaults
+# These values can be overridden by environment variables or user preferences
+
+default: &default
+  presentation:
+    # Default presentation settings
+    type: 'executive_summary'
+    refresh_interval: 30 # seconds
+    chapter_duration: 45 # seconds
+    
+    # Feature defaults
+    live_data_enabled: true
+    real_time_updates: true
+    collaboration_enabled: false
+    audience_interaction: false
+    auto_advance: false
+    interactive_elements: true
+    ai_commentary: true
+    mobile_optimized: true
+    sharing_enabled: false
+    
+    # Enhancement defaults
+    add_live_data: false
+    upgrade_charts: false
+    enable_collaboration: false
+    optimize_performance: false
+    add_ai_insights: false
+    mobile_optimization: false
+    accessibility_features: false
+    
+    # Collaboration defaults
+    max_editors: 10
+    requires_approval: false
+    comment_notifications: true
+    real_time_editing: true
+    version_history: true
+    
+    # Dashboard defaults
+    default_panels:
+      - 'kpi'
+      - 'revenue'
+      - 'customers'
+      - 'operations'
+    
+    # Data story defaults
+    narrative_type: 'business_journey'
+    audience_level: 'executive'
+    detail_depth: 'medium'
+    focus_areas:
+      - 'revenue'
+      - 'growth'
+      - 'efficiency'
+    
+    # Performance thresholds
+    performance:
+      load_time_threshold: 3.0 # seconds
+      engagement_threshold: 300 # seconds
+      error_rate_threshold: 2.0 # percentage
+      
+    # Analytics defaults
+    analytics:
+      default_time_range: '7d'
+      metrics_refresh_interval: 300 # seconds
+      
+    # Export defaults
+    export:
+      default_format: 'pdf'
+      max_file_size: 10485760 # 10MB in bytes
+      
+    # Monitoring defaults
+    monitoring:
+      alert_threshold: 5 # minutes
+      health_check_interval: 60 # seconds
+      
+development:
+  <<: *default
+  
+test:
+  <<: *default
+  presentation:
+    refresh_interval: 5 # faster for testing
+    
+production:
+  <<: *default
+  presentation:
+    performance:
+      load_time_threshold: 2.0 # stricter in production

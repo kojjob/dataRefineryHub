@@ -12,11 +12,7 @@ class Users::SessionsController < Devise::SessionsController
         Rails.logger.info "Session ID: #{session.id}" if session.respond_to?(:id)
         Rails.logger.info "Remember created at: #{resource.remember_created_at.present?}"
         
-        # Ensure session persistence
-        session[:user_id] = resource.id
-        session[:organization_id] = resource.organization_id
-        
-        # Log session configuration
+        # Log session configuration (removed manual session setting to avoid conflicts with Devise)
         Rails.logger.info "Session store: #{Rails.application.config.session_store}"
         Rails.logger.info "Session options: #{Rails.application.config.session_options}"
       else

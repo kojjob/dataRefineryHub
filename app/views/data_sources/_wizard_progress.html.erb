@@ -1,0 +1,97 @@
+<!-- Enhanced Wizard Progress Indicator -->
+<div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-8 py-6">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-8">
+      <!-- Step 1: Select -->
+      <div class="flex items-center" data-data-source-wizard-target="step1Indicator">
+        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white bg-opacity-20 text-white font-semibold text-sm border-2 border-white transition-all duration-300"
+             data-data-source-wizard-target="step1Circle">
+          <span data-data-source-wizard-target="step1Number">1</span>
+          <svg class="w-5 h-5 hidden" data-data-source-wizard-target="step1Check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <div class="ml-3 text-white">
+          <p class="text-sm font-medium" data-data-source-wizard-target="step1Title">Select</p>
+          <p class="text-xs opacity-80">Choose platform</p>
+        </div>
+      </div>
+      
+      <!-- Connector 1 -->
+      <div class="flex-1 h-px bg-white bg-opacity-30 transition-all duration-300" 
+           data-data-source-wizard-target="connector1"></div>
+      
+      <!-- Step 2: Configure -->
+      <div class="flex items-center" data-data-source-wizard-target="step2Indicator">
+        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white bg-opacity-10 text-white font-semibold text-sm border-2 border-white border-opacity-30 transition-all duration-300"
+             data-data-source-wizard-target="step2Circle">
+          <span data-data-source-wizard-target="step2Number">2</span>
+          <svg class="w-5 h-5 hidden" data-data-source-wizard-target="step2Check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <div class="ml-3 text-white">
+          <p class="text-sm font-medium opacity-60" data-data-source-wizard-target="step2Title">Configure</p>
+          <p class="text-xs opacity-50">Setup connection</p>
+        </div>
+      </div>
+      
+      <!-- Connector 2 -->
+      <div class="flex-1 h-px bg-white bg-opacity-30 transition-all duration-300" 
+           data-data-source-wizard-target="connector2"></div>
+      
+      <!-- Step 3: Preview -->
+      <div class="flex items-center" data-data-source-wizard-target="step3Indicator">
+        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white bg-opacity-10 text-white font-semibold text-sm border-2 border-white border-opacity-30 transition-all duration-300"
+             data-data-source-wizard-target="step3Circle">
+          <span data-data-source-wizard-target="step3Number">3</span>
+          <svg class="w-5 h-5 hidden" data-data-source-wizard-target="step3Check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <div class="ml-3 text-white">
+          <p class="text-sm font-medium opacity-60" data-data-source-wizard-target="step3Title">Preview</p>
+          <p class="text-xs opacity-50">Test & validate</p>
+        </div>
+      </div>
+      
+      <!-- Connector 3 -->
+      <div class="flex-1 h-px bg-white bg-opacity-30 transition-all duration-300" 
+           data-data-source-wizard-target="connector3"></div>
+      
+      <!-- Step 4: Launch -->
+      <div class="flex items-center" data-data-source-wizard-target="step4Indicator">
+        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white bg-opacity-10 text-white font-semibold text-sm border-2 border-white border-opacity-30 transition-all duration-300"
+             data-data-source-wizard-target="step4Circle">
+          <span data-data-source-wizard-target="step4Number">4</span>
+          <svg class="w-5 h-5 hidden" data-data-source-wizard-target="step4Check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <div class="ml-3 text-white">
+          <p class="text-sm font-medium opacity-60" data-data-source-wizard-target="step4Title">Launch</p>
+          <p class="text-xs opacity-50">Go live</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Progress Percentage -->
+    <div class="text-white text-sm opacity-80" data-data-source-wizard-target="progressText">
+      <span class="inline-flex items-center">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+        <span data-data-source-wizard-target="progressPercentage">25%</span> Complete
+      </span>
+    </div>
+  </div>
+  
+  <!-- Progress Bar -->
+  <div class="mt-4">
+    <div class="w-full bg-white bg-opacity-20 rounded-full h-2">
+      <div class="bg-white h-2 rounded-full transition-all duration-500 ease-out" 
+           data-data-source-wizard-target="progressBar"
+           style="width: 25%"></div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :pipeline_dashboard, only: [:index, :show]
   devise_for :users, controllers: {
     registrations: 'users/registrations',
     sessions: 'users/sessions'
@@ -16,6 +17,38 @@ Rails.application.routes.draw do
   
   # Include data quality monitoring routes
   load Rails.root.join('config', 'routes', 'data_quality_routes.rb')
+  
+  # Include manual tasks routes
+  load Rails.root.join('config', 'routes', 'manual_tasks_routes.rb')
+  
+  # Include API pipeline routes
+  load Rails.root.join('config', 'routes', 'api_v1_pipeline_routes.rb')
+
+  # ETL Pipeline Builder routes
+  resources :etl_pipeline_builders do
+    member do
+      post :execute
+      post :test
+    end
+    collection do
+      get :available_extractors
+      post :transformation_preview
+      post :validate_pipeline
+      get :export_pipeline
+      post :import_pipeline
+    end
+  end
+  
+  # Pipeline Monitoring routes
+  resources :pipeline_monitoring, only: [:index, :show] do
+    member do
+      get :live_updates
+    end
+    collection do
+      get :system_health
+      get :alerts
+    end
+  end
 
   # Analytics
   get "analytics", to: "analytics#index"

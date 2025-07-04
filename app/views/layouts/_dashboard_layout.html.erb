@@ -1,0 +1,36 @@
+<!-- Dashboard Layout -->
+<div class="min-h-full" data-controller="mobile-menu">
+  
+  <!-- Mobile menu overlay -->
+  <div class="relative z-50 lg:hidden hidden" data-mobile-menu-target="overlay" data-action="click->mobile-menu#closeOnOverlay">
+    <div class="fixed inset-0 bg-gray-900/80 opacity-0 transition-opacity duration-300"></div>
+    
+    <!-- Mobile menu sidebar -->
+    <div class="fixed inset-y-0 left-0 z-50 w-full max-w-xs bg-white transform -translate-x-full transition-transform duration-300" data-mobile-menu-target="sidebar">
+      <%= render 'shared/mobile_navigation' %>
+    </div>
+  </div>
+  
+  <!-- Enhanced Desktop Sidebar -->
+  <%= render 'shared/enhanced_navigation' %>
+  
+  <!-- Main Content Area -->
+  <div class="lg:pl-72">
+    <!-- Top Navigation -->
+    <%= render 'shared/enhanced_navbar' %>
+    
+    <!-- Main Content -->
+    <main class="py-6">
+      <div class="px-4 sm:px-6 lg:px-8">
+        <!-- Flash Messages -->
+        <%= render 'shared/flash_messages' %>
+        
+        <!-- Page Content -->
+        <%= yield %>
+      </div>
+    </main>
+    
+    <!-- Footer -->
+    <%= render 'shared/footer' %>
+  </div>
+</div>

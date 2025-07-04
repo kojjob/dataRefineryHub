@@ -1,0 +1,165 @@
+<!-- Step 2: Configuration -->
+<div class="wizard-step" id="step-2" data-data-source-wizard-target="step" style="display: none;" role="tabpanel" aria-labelledby="step-2-tab">
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <div class="mb-8">
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
+        <div class="w-8 h-8 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mr-3">
+          <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </div>
+        Configuration
+      </h3>
+      <p class="text-gray-600 dark:text-gray-400">
+        Configure your data source settings and sync preferences.
+      </p>
+    </div>
+
+    <!-- Basic Configuration -->
+    <div class="space-y-6">
+      <!-- Data Source Name -->
+      <div class="form-group">
+        <%= form.label :name, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" do %>
+          Data Source Name
+          <span class="text-red-500">*</span>
+        <% end %>
+        <%= form.text_field :name, 
+            class: "w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition-colors duration-200",
+            placeholder: "Enter a descriptive name for this data source",
+            data: {
+              data_source_wizard_target: "nameField",
+              auto_save_target: "input"
+            },
+            aria_describedby: "name-help",
+            required: true %>
+        <p id="name-help" class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          Choose a name that helps you identify this data source easily.
+        </p>
+        <div class="error-message" data-data-source-wizard-target="nameError" style="display: none;"></div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <%= form.label :description, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" do %>
+          Description
+          <span class="text-gray-400 text-xs">(Optional)</span>
+        <% end %>
+        <%= form.text_area :description, 
+            class: "w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition-colors duration-200",
+            placeholder: "Describe what this data source contains and how it will be used",
+            rows: 3,
+            data: {
+              auto_save_target: "input"
+            },
+            aria_describedby: "description-help" %>
+        <p id="description-help" class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          Optional description to help team members understand this data source.
+        </p>
+      </div>
+
+      <!-- Sync Frequency -->
+      <div class="form-group">
+        <%= form.label :sync_frequency, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" do %>
+          Sync Frequency
+          <span class="text-red-500">*</span>
+        <% end %>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" 
+             data-controller="frequency-selector" 
+             data-frequency-selector-target="container">
+          <% sync_frequencies.each do |frequency| %>
+            <label class="frequency-option relative flex items-center p-4 border border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+                   data-frequency-selector-target="option"
+                   data-frequency="<%= frequency[:value] %>">
+              <%= form.radio_button :sync_frequency, frequency[:value], 
+                  class: "sr-only",
+                  data: {
+                    frequency_selector_target: "input",
+                    data_source_wizard_target: "frequencyField",
+                    auto_save_target: "input"
+                  } %>
+              <div class="flex items-center w-full">
+                <div class="flex-shrink-0 mr-3">
+                  <div class="w-8 h-8 bg-gray-100 dark:bg-gray-600 rounded-lg flex items-center justify-center">
+                    <%= render "shared/icons/#{frequency[:icon]}", class: "w-4 h-4 text-gray-500 dark:text-gray-400" if frequency[:icon] %>
+                  </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 dark:text-white"><%= frequency[:label] %></p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 truncate"><%= frequency[:description] %></p>
+                </div>
+                <div class="flex-shrink-0 ml-2">
+                  <div class="w-4 h-4 border-2 border-gray-300 dark:border-gray-600 rounded-full frequency-radio"></div>
+                </div>
+              </div>
+              <!-- Selected state indicator -->
+              <div class="absolute inset-0 border-2 border-indigo-500 rounded-lg opacity-0 frequency-selected"></div>
+            </label>
+          <% end %>
+        </div>
+        <div class="error-message" data-data-source-wizard-target="frequencyError" style="display: none;"></div>
+      </div>
+
+      <!-- Platform-specific Configuration -->
+      <div class="platform-config-section" 
+           data-data-source-wizard-target="platformConfig" 
+           style="display: none;">
+        <div class="border-t border-gray-200 dark:border-gray-600 pt-6">
+          <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+            </svg>
+            Platform-specific Configuration
+          </h4>
+          
+          <!-- Dynamic configuration fields will be loaded here -->
+          <div data-data-source-wizard-target="configFields" class="space-y-4">
+            <!-- Configuration fields will be dynamically inserted here based on selected platform -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Test Connection -->
+      <div class="test-connection-section" 
+           data-data-source-wizard-target="testSection" 
+           style="display: none;">
+        <div class="border-t border-gray-200 dark:border-gray-600 pt-6">
+          <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+            <div class="flex items-start">
+              <div class="flex-shrink-0">
+                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div class="ml-3 flex-1">
+                <h5 class="text-sm font-medium text-blue-800 dark:text-blue-200 mb-1">
+                  Test Your Connection
+                </h5>
+                <p class="text-sm text-blue-700 dark:text-blue-300 mb-3">
+                  Verify that your configuration is correct before proceeding.
+                </p>
+                <button type="button" 
+                        class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                        data-controller="connection-tester"
+                        data-connection-tester-target="testButton"
+                        data-action="click->connection-tester#testConnection">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span data-connection-tester-target="buttonText">Test Connection</span>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Test Results -->
+            <div class="mt-4" data-connection-tester-target="results" style="display: none;">
+              <div class="border-t border-blue-200 dark:border-blue-700 pt-3">
+                <div data-connection-tester-target="resultContent"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

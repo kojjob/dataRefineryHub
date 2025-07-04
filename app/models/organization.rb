@@ -13,6 +13,18 @@ class Organization < ApplicationRecord
   has_many :api_keys, dependent: :destroy
   has_many :audit_logs, dependent: :destroy
   has_many :visualizations, dependent: :destroy
+  has_many :presentations, dependent: :destroy
+  has_many :pipeline_executions, dependent: :destroy
+  has_many :pipeline_configurations, dependent: :destroy
+  has_many :task_templates, dependent: :destroy
+  has_many :scheduled_tasks, dependent: :destroy
+  
+  # AI-related associations
+  has_many :ai_presentations, class_name: 'Ai::Presentation', dependent: :destroy
+  has_many :ai_presentation_views, class_name: 'Ai::PresentationView', dependent: :destroy
+  has_many :ai_presentation_interactions, class_name: 'Ai::PresentationInteraction', dependent: :destroy
+  has_many :ai_insights, class_name: 'Ai::Insight', dependent: :destroy
+  has_many :alerts, dependent: :destroy
 
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
   validates :plan, inclusion: { in: PLANS }
@@ -59,6 +71,33 @@ class Organization < ApplicationRecord
 
   def trial?
     status == "trial"
+  end
+
+  def suspended?
+    status == "suspended"
+  end
+
+  # Alias method for subscription_plan to maintain compatibility
+  def subscription_plan
+    plan
+  end
+
+  # Method to get formatted plan name for display
+  def subscription_plan_name
+    case plan
+    when "free_trial"
+      "Free Trial"
+    when "starter"
+      "Starter Plan"
+    when "growth"
+      "Growth Plan"
+    when "scale"
+      "Scale Plan"
+    when "enterprise"
+      "Enterprise Plan"
+    else
+      plan.humanize
+    end
   end
 
   def monthly_data_limit
@@ -112,6 +151,77 @@ class Organization < ApplicationRecord
   def can_add_data_source?
     data_sources.count < max_data_sources
   end
+  
+  # AI Presentation methods
+  def monthly_presentation_limit
+    case plan
+    when "free_trial" then 5
+    when "starter" then 25
+    when "growth" then 100
+    when "scale" then 500
+    when "enterprise" then Float::INFINITY
+    else 0
+    end
+  end
+  
+  def monthly_view_limit
+    case plan
+    when "free_trial" then 100
+    when "starter" then 1000
+    when "growth" then 10000
+    when "scale" then 50000
+    when "enterprise" then Float::INFINITY
+    else 0
+    end
+  end
+  
+  def presentations_this_month
+    ai_presentations.where(
+      'created_at >= ? AND created_at <= ?',
+      Time.current.beginning_of_month,
+      Time.current.end_of_month
+    ).count
+  end
+  
+  def views_this_month
+    ai_presentation_views.where(
+      'created_at >= ? AND created_at <= ?',
+      Time.current.beginning_of_month,
+      Time.current.end_of_month
+    ).count
+  end
+  
+  def within_presentation_limit?
+    presentations_this_month < monthly_presentation_limit
+  end
+  
+  def within_view_limit?
+    views_this_month < monthly_view_limit
+  end
+  
+  def recent_presentations(limit = 10)
+    ai_presentations.includes(:user)
+                   .order(created_at: :desc)
+                   .limit(limit)
+  end
+  
+  def engagement_metrics(days = 30)
+    start_date = days.days.ago
+    
+    presentations = ai_presentations.where('created_at >= ?', start_date)
+    views = ai_presentation_views.where('created_at >= ?', start_date)
+    interactions = ai_presentation_interactions.where('timestamp >= ?', start_date)
+    
+    {
+      total_presentations: presentations.count,
+      total_views: views.count,
+      total_interactions: interactions.count,
+      unique_viewers: views.distinct.count(:user_id),
+      avg_view_duration: views.average(:duration)&.to_f&.round(2) || 0,
+      completion_rate: calculate_completion_rate(views),
+      engagement_score: calculate_engagement_score(interactions)
+    }
+  end
 
   private
 
@@ -125,5 +235,28 @@ class Organization < ApplicationRecord
 
   def normalize_name
     self.name = name&.strip
+  end
+  
+  def calculate_completion_rate(views)
+    return 0 if views.empty?
+    
+    completed_views = views.where('completion_percentage >= ?', 80).count
+    (completed_views.to_f / views.count * 100).round(2)
+  end
+  
+  def calculate_engagement_score(interactions)
+    return 0 if interactions.empty?
+    
+    total_score = interactions.sum do |interaction|
+      case interaction.interaction_type
+      when 'click', 'button_press' then 3
+      when 'form_submit', 'poll_response' then 5
+      when 'share', 'bookmark' then 4
+      when 'comment', 'feedback' then 6
+      else 1
+      end
+    end
+    
+    (total_score.to_f / interactions.count).round(2)
   end
 end

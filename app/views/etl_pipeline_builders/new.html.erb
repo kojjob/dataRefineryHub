@@ -1,0 +1,405 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Page Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="py-6">
+        <div class="flex items-center">
+          <%= link_to etl_pipeline_builders_path, class: "mr-4 text-gray-400 hover:text-gray-500" do %>
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
+          <% end %>
+          <h1 class="text-3xl font-bold text-gray-900">Create New Pipeline</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= form_with model: @pipeline, url: etl_pipeline_builders_path, local: false, data: { controller: "pipeline-builder" } do |form| %>
+    <!-- Pipeline Configuration Steps -->
+    <div class="px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Step Navigation -->
+      <nav aria-label="Progress">
+        <ol class="flex items-center justify-center space-x-5">
+          <li data-pipeline-builder-target="step1Nav" class="relative">
+            <div class="flex items-center">
+              <span class="h-10 w-10 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-medium">1</span>
+              <span class="ml-4 text-sm font-medium text-gray-900">Basic Info</span>
+            </div>
+          </li>
+          <li data-pipeline-builder-target="step2Nav" class="relative">
+            <div class="absolute left-0 top-5 -ml-px mt-0.5 h-0.5 w-full bg-gray-300"></div>
+            <div class="group relative flex items-center">
+              <span class="h-10 w-10 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">2</span>
+              <span class="ml-4 text-sm font-medium text-gray-500">Source</span>
+            </div>
+          </li>
+          <li data-pipeline-builder-target="step3Nav" class="relative">
+            <div class="absolute left-0 top-5 -ml-px mt-0.5 h-0.5 w-full bg-gray-300"></div>
+            <div class="group relative flex items-center">
+              <span class="h-10 w-10 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">3</span>
+              <span class="ml-4 text-sm font-medium text-gray-500">Transformations</span>
+            </div>
+          </li>
+          <li data-pipeline-builder-target="step4Nav" class="relative">
+            <div class="absolute left-0 top-5 -ml-px mt-0.5 h-0.5 w-full bg-gray-300"></div>
+            <div class="group relative flex items-center">
+              <span class="h-10 w-10 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">4</span>
+              <span class="ml-4 text-sm font-medium text-gray-500">Destination</span>
+            </div>
+          </li>
+          <li data-pipeline-builder-target="step5Nav" class="relative">
+            <div class="absolute left-0 top-5 -ml-px mt-0.5 h-0.5 w-full bg-gray-300"></div>
+            <div class="group relative flex items-center">
+              <span class="h-10 w-10 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">5</span>
+              <span class="ml-4 text-sm font-medium text-gray-500">Schedule</span>
+            </div>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Step 1: Basic Information -->
+      <div data-pipeline-builder-target="step1" class="mt-8">
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-medium text-gray-900">Basic Information</h2>
+          </div>
+          <div class="p-6 space-y-6">
+            <div>
+              <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
+              <%= form.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", placeholder: "e.g., Daily Customer Data Sync" %>
+            </div>
+
+            <div>
+              <%= form.label :description, class: "block text-sm font-medium text-gray-700" %>
+              <%= form.text_area :description, rows: 3, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", placeholder: "Describe what this pipeline does..." %>
+            </div>
+
+            <div>
+              <%= form.label :pipeline_type, "Pipeline Type", class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <label class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
+                  <%= form.radio_button :pipeline_type, 'etl', class: "sr-only", data: { action: "change->pipeline-builder#updatePipelineType" } %>
+                  <div class="flex flex-1">
+                    <div class="flex flex-col">
+                      <span class="block text-sm font-medium text-gray-900">ETL</span>
+                      <span class="mt-1 flex items-center text-sm text-gray-500">Extract, Transform, then Load</span>
+                    </div>
+                  </div>
+                  <svg class="h-5 w-5 text-indigo-600 hidden" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  <div class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></div>
+                </label>
+
+                <label class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
+                  <%= form.radio_button :pipeline_type, 'elt', class: "sr-only", data: { action: "change->pipeline-builder#updatePipelineType" } %>
+                  <div class="flex flex-1">
+                    <div class="flex flex-col">
+                      <span class="block text-sm font-medium text-gray-900">ELT</span>
+                      <span class="mt-1 flex items-center text-sm text-gray-500">Extract, Load, then Transform</span>
+                    </div>
+                  </div>
+                  <svg class="h-5 w-5 text-indigo-600 hidden" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  <div class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></div>
+                </label>
+
+                <label class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
+                  <%= form.radio_button :pipeline_type, 'streaming', class: "sr-only", data: { action: "change->pipeline-builder#updatePipelineType" } %>
+                  <div class="flex flex-1">
+                    <div class="flex flex-col">
+                      <span class="block text-sm font-medium text-gray-900">Streaming</span>
+                      <span class="mt-1 flex items-center text-sm text-gray-500">Real-time data processing</span>
+                    </div>
+                  </div>
+                  <svg class="h-5 w-5 text-indigo-600 hidden" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  <div class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Source Configuration -->
+      <div data-pipeline-builder-target="step2" class="mt-8 hidden">
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-medium text-gray-900">Data Source</h2>
+          </div>
+          <div class="p-6 space-y-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Source Type</label>
+              <div class="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <button type="button" data-action="click->pipeline-builder#selectSourceType" data-source-type="database" class="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <div class="flex flex-col items-center">
+                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                    </svg>
+                    <span class="mt-2 text-sm font-medium text-gray-900">Database</span>
+                  </div>
+                </button>
+
+                <button type="button" data-action="click->pipeline-builder#selectSourceType" data-source-type="api" class="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <div class="flex flex-col items-center">
+                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                    </svg>
+                    <span class="mt-2 text-sm font-medium text-gray-900">API</span>
+                  </div>
+                </button>
+
+                <button type="button" data-action="click->pipeline-builder#selectSourceType" data-source-type="cloud_storage" class="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <div class="flex flex-col items-center">
+                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
+                    </svg>
+                    <span class="mt-2 text-sm font-medium text-gray-900">Cloud Storage</span>
+                  </div>
+                </button>
+
+                <button type="button" data-action="click->pipeline-builder#selectSourceType" data-source-type="streaming" class="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <div class="flex flex-col items-center">
+                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                    </svg>
+                    <span class="mt-2 text-sm font-medium text-gray-900">Streaming</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic source configuration based on type -->
+            <div data-pipeline-builder-target="sourceConfig" class="mt-6">
+              <!-- Configuration will be loaded dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Transformations (Visual Builder) -->
+      <div data-pipeline-builder-target="step3" class="mt-8 hidden">
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-medium text-gray-900">Transformations</h2>
+              <button type="button" data-action="click->pipeline-builder#addTransformation" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg class="-ml-0.5 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add Transformation
+              </button>
+            </div>
+          </div>
+          
+          <div class="p-6">
+            <!-- Visual Pipeline Canvas -->
+            <div class="mb-6 border-2 border-dashed border-gray-300 rounded-lg p-8 min-h-[400px]" data-pipeline-builder-target="canvas">
+              <div class="text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No transformations yet</h3>
+                <p class="mt-1 text-sm text-gray-500">Get started by adding a transformation rule above.</p>
+              </div>
+            </div>
+
+            <!-- Transformation Rules List -->
+            <div data-pipeline-builder-target="transformationsList" class="space-y-3">
+              <!-- Transformation rules will be added here dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Destination Configuration -->
+      <div data-pipeline-builder-target="step4" class="mt-8 hidden">
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-medium text-gray-900">Destination</h2>
+          </div>
+          <div class="p-6 space-y-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Destination Type</label>
+              <div class="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <button type="button" data-action="click->pipeline-builder#selectDestinationType" data-destination-type="warehouse" class="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <div class="flex flex-col items-center">
+                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
+                    </svg>
+                    <span class="mt-2 text-sm font-medium text-gray-900">Data Warehouse</span>
+                  </div>
+                </button>
+
+                <button type="button" data-action="click->pipeline-builder#selectDestinationType" data-destination-type="database" class="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <div class="flex flex-col items-center">
+                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                    </svg>
+                    <span class="mt-2 text-sm font-medium text-gray-900">Database</span>
+                  </div>
+                </button>
+
+                <button type="button" data-action="click->pipeline-builder#selectDestinationType" data-destination-type="api" class="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <div class="flex flex-col items-center">
+                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                    </svg>
+                    <span class="mt-2 text-sm font-medium text-gray-900">API</span>
+                  </div>
+                </button>
+
+                <button type="button" data-action="click->pipeline-builder#selectDestinationType" data-destination-type="cloud_storage" class="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <div class="flex flex-col items-center">
+                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
+                    </svg>
+                    <span class="mt-2 text-sm font-medium text-gray-900">Cloud Storage</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic destination configuration based on type -->
+            <div data-pipeline-builder-target="destinationConfig" class="mt-6">
+              <!-- Configuration will be loaded dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5: Schedule & Settings -->
+      <div data-pipeline-builder-target="step5" class="mt-8 hidden">
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-medium text-gray-900">Schedule & Settings</h2>
+          </div>
+          <div class="p-6 space-y-6">
+            <!-- Schedule Configuration -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Schedule Type</label>
+              <div class="mt-2 space-y-4">
+                <label class="flex items-center">
+                  <input type="radio" name="schedule_type" value="manual" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" checked>
+                  <span class="ml-3 text-sm text-gray-700">Manual (Run on demand)</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="radio" name="schedule_type" value="interval" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                  <span class="ml-3 text-sm text-gray-700">Fixed Interval</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="radio" name="schedule_type" value="cron" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                  <span class="ml-3 text-sm text-gray-700">Cron Expression</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="radio" name="schedule_type" value="daily" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                  <span class="ml-3 text-sm text-gray-700">Daily at specific time</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Error Handling -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Error Handling Strategy</label>
+              <select name="error_handling_strategy" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option value="circuit_breaker">Circuit Breaker (recommended)</option>
+                <option value="retry_with_backoff">Retry with Exponential Backoff</option>
+                <option value="fail_fast">Fail Fast</option>
+                <option value="ignore_errors">Continue on Error</option>
+              </select>
+            </div>
+
+            <!-- Retry Policy -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Max Retries</label>
+                <input type="number" name="max_retries" value="3" min="0" max="10" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Retry Delay (seconds)</label>
+                <input type="number" name="retry_delay" value="60" min="1" max="3600" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              </div>
+            </div>
+
+            <!-- Notifications -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Notifications</label>
+              <div class="space-y-2">
+                <label class="flex items-center">
+                  <input type="checkbox" name="notify_on_success" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                  <span class="ml-2 text-sm text-gray-700">Notify on successful completion</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="checkbox" name="notify_on_failure" checked class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                  <span class="ml-2 text-sm text-gray-700">Notify on failure</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="checkbox" name="notify_on_warning" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                  <span class="ml-2 text-sm text-gray-700">Notify on warnings</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="mt-8 flex justify-between">
+        <button type="button" data-action="click->pipeline-builder#previousStep" data-pipeline-builder-target="prevButton" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+          Previous
+        </button>
+
+        <div class="flex space-x-3">
+          <button type="button" data-action="click->pipeline-builder#testPipeline" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611l-3.98.793a2.125 2.125 0 01-1.113-.825L12 15M8.25 12h4.5" />
+            </svg>
+            Test Pipeline
+          </button>
+          
+          <button type="button" data-action="click->pipeline-builder#nextStep" data-pipeline-builder-target="nextButton" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            Next
+            <svg class="-mr-1 ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+
+          <%= form.submit "Create Pipeline", data: { pipeline_builder_target: "submitButton" }, class: "hidden inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Transformation Rule Modal -->
+<div data-pipeline-builder-target="transformationModal" class="hidden fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+      <div>
+        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+          Add Transformation Rule
+        </h3>
+        <div class="mt-4" data-pipeline-builder-target="transformationForm">
+          <!-- Dynamic form content will be loaded here -->
+        </div>
+      </div>
+      <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+        <button type="button" data-action="click->pipeline-builder#saveTransformation" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm">
+          Add Rule
+        </button>
+        <button type="button" data-action="click->pipeline-builder#closeTransformationModal" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

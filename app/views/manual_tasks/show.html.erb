@@ -1,0 +1,267 @@
+<div class="max-w-6xl mx-auto">
+  <div class="mb-6">
+    <%= link_to manual_tasks_path, class: "text-blue-600 hover:text-blue-800 flex items-center gap-1" do %>
+      ← Back to Task Queue
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main task details -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Task header -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900 mb-2"><%= @task.name %></h1>
+            <div class="flex items-center gap-3">
+              <span class="<%= @task.execution_mode_badge_class %> px-3 py-1 text-sm rounded-full">
+                <%= @task.execution_mode.humanize %>
+              </span>
+              <span class="<%= @task.status_badge_class %> px-3 py-1 text-sm rounded-full">
+                <%= @task.status.humanize %>
+              </span>
+              <span class="text-gray-500">
+                Priority: <strong class="text-gray-900"><%= @task.priority %></strong>
+              </span>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <% if @task.can_execute? && (@task.assignee == current_user || current_user.admin?) %>
+              <% if @task.status == 'waiting_approval' %>
+                <%= link_to "Approve", approve_manual_task_path(@task), 
+                  class: "btn btn-primary" %>
+                <%= link_to "Reject", reject_manual_task_path(@task), 
+                  class: "btn btn-danger" %>
+              <% else %>
+                <%= link_to "Execute Task", execute_manual_task_path(@task), 
+                  class: "btn btn-primary" %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <% if @task.description.present? %>
+          <div class="prose max-w-none">
+            <p class="text-gray-600"><%= @task.description %></p>
+          </div>
+        <% end %>
+
+        <div class="mt-6 pt-6 border-t grid grid-cols-2 gap-4">
+          <div>
+            <dt class="text-sm text-gray-500">Task Type</dt>
+            <dd class="text-sm font-medium text-gray-900"><%= @task.task_type.humanize %></dd>
+          </div>
+          <div>
+            <dt class="text-sm text-gray-500">Created</dt>
+            <dd class="text-sm font-medium text-gray-900">
+              <%= @task.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm text-gray-500">Timeout</dt>
+            <dd class="text-sm font-medium text-gray-900"><%= @task.timeout_seconds %> seconds</dd>
+          </div>
+          <div>
+            <dt class="text-sm text-gray-500">Max Retries</dt>
+            <dd class="text-sm font-medium text-gray-900">
+              <%= @task.retry_count %> / <%= @task.max_retries %>
+            </dd>
+          </div>
+        </div>
+
+        <% if @task.assignee %>
+          <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+            <p class="text-sm">
+              Assigned to <strong><%= @task.assignee.name %></strong>
+              <% if @task.metadata['assigned_at'] %>
+                on <%= Time.parse(@task.metadata['assigned_at']).strftime("%B %d at %I:%M %p") %>
+              <% end %>
+            </p>
+          </div>
+        <% end %>
+
+        <% if @task.error_message.present? %>
+          <div class="mt-4 p-4 bg-red-50 rounded-lg">
+            <h4 class="text-sm font-semibold text-red-800 mb-1">Last Error</h4>
+            <p class="text-sm text-red-700"><%= @task.error_message %></p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Task configuration -->
+      <% if @task.configuration.present? && @task.configuration.any? %>
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-lg font-semibold mb-4">Configuration</h3>
+          <pre class="bg-gray-50 p-4 rounded overflow-x-auto text-sm"><%= JSON.pretty_generate(@task.configuration) %></pre>
+        </div>
+      <% end %>
+
+      <!-- Dependencies -->
+      <% if @task.depends_on.present? && @task.depends_on.any? %>
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-lg font-semibold mb-4">Dependencies</h3>
+          <ul class="space-y-2">
+            <% @task.depends_on.each do |dep_name| %>
+              <% dep_task = @task.pipeline_execution.tasks.find_by(name: dep_name) %>
+              <li class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                <span class="font-medium"><%= dep_name %></span>
+                <% if dep_task %>
+                  <span class="<%= dep_task.status_badge_class %> px-2 py-1 text-xs rounded-full">
+                    <%= dep_task.status.humanize %>
+                  </span>
+                <% else %>
+                  <span class="text-gray-500 text-sm">Not found</span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- Execution history -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold mb-4">Execution History</h3>
+        <% if @task_executions.any? %>
+          <div class="space-y-3">
+            <% @task_executions.each do |execution| %>
+              <div class="border rounded-lg p-4 <%= execution.failed? ? 'border-red-200 bg-red-50' : 'border-gray-200' %>">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <div class="flex items-center gap-3 mb-1">
+                      <span class="text-sm font-medium">
+                        <%= execution.started_at.strftime("%B %d at %I:%M %p") %>
+                      </span>
+                      <span class="<%= execution.status_badge_class %> px-2 py-1 text-xs rounded-full">
+                        <%= execution.status.humanize %>
+                      </span>
+                    </div>
+                    <% if execution.executed_by %>
+                      <p class="text-sm text-gray-600">
+                        Executed by <%= execution.executed_by.name %>
+                      </p>
+                    <% end %>
+                    <% if execution.error_message %>
+                      <p class="text-sm text-red-600 mt-1">
+                        <%= execution.error_message %>
+                      </p>
+                    <% end %>
+                  </div>
+                  <% if execution.duration_seconds %>
+                    <span class="text-sm text-gray-500">
+                      <%= execution.duration_formatted %>
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-gray-500">No execution history yet.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Sidebar with pipeline info -->
+    <div class="lg:col-span-1 space-y-6">
+      <!-- Pipeline information -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold mb-4">Pipeline Information</h3>
+        <dl class="space-y-3">
+          <div>
+            <dt class="text-sm text-gray-500">Pipeline</dt>
+            <dd class="text-sm font-medium text-gray-900">
+              <%= link_to @pipeline_execution.pipeline_name, 
+                pipeline_execution_path(@pipeline_execution),
+                class: "text-blue-600 hover:text-blue-800" %>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm text-gray-500">Execution ID</dt>
+            <dd class="text-xs font-mono text-gray-700">
+              <%= @pipeline_execution.execution_id %>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm text-gray-500">Pipeline Status</dt>
+            <dd>
+              <span class="<%= @pipeline_execution.status == 'completed' ? 'bg-green-100 text-green-800' : @pipeline_execution.status == 'failed' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' %> px-2 py-1 text-xs rounded-full">
+                <%= @pipeline_execution.status.humanize %>
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm text-gray-500">Progress</dt>
+            <dd>
+              <div class="flex items-center gap-2">
+                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                  <div class="bg-blue-600 h-2 rounded-full" style="width: <%= @pipeline_execution.progress %>%"></div>
+                </div>
+                <span class="text-sm font-medium text-gray-700"><%= @pipeline_execution.progress %>%</span>
+              </div>
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- Data source information -->
+      <% if @data_source %>
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-lg font-semibold mb-4">Data Source</h3>
+          <dl class="space-y-3">
+            <div>
+              <dt class="text-sm text-gray-500">Name</dt>
+              <dd class="text-sm font-medium text-gray-900">
+                <%= link_to @data_source.name, 
+                  data_source_path(@data_source),
+                  class: "text-blue-600 hover:text-blue-800" %>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm text-gray-500">Type</dt>
+              <dd class="text-sm font-medium text-gray-900">
+                <%= @data_source.source_type.humanize %>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm text-gray-500">Status</dt>
+              <dd>
+                <span class="<%= @data_source.connected? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %> px-2 py-1 text-xs rounded-full">
+                  <%= @data_source.status.humanize %>
+                </span>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      <% end %>
+
+      <!-- Quick actions -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
+        <div class="space-y-2">
+          <% if @task.can_cancel? %>
+            <%= button_to "Cancel Task", 
+              cancel_manual_task_path(@task),
+              method: :post,
+              class: "btn btn-secondary btn-sm w-full",
+              data: { turbo_confirm: "Are you sure you want to cancel this task?" } %>
+          <% end %>
+          
+          <% if @task.failed? && current_user.admin? %>
+            <%= button_to "Retry Task", 
+              retry_manual_task_path(@task),
+              method: :post,
+              class: "btn btn-secondary btn-sm w-full" %>
+          <% end %>
+          
+          <%= link_to "View Full Pipeline", 
+            pipeline_execution_path(@pipeline_execution),
+            class: "btn btn-ghost btn-sm w-full" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Subscribe to real-time updates for this task -->
+<%= turbo_stream_from @task %>

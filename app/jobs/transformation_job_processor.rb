@@ -302,44 +302,169 @@ class TransformationJobProcessor < ApplicationJob
   end
 
   def transform_orders(raw_records)
-    # Note: We would create ProcessedOrder models here when implemented
-    # For now, just log the transformation
-    Rails.logger.info "Would transform #{raw_records.count} order records into ProcessedOrder models"
-
-    # TODO: Implement when ProcessedOrder model is created
-    # ProcessedOrder.create_from_raw_records(raw_records)
-
-    raw_records.count
+    # Transform raw order data into structured format
+    Rails.logger.info "Transforming #{raw_records.count} order records"
+    
+    transformed_count = 0
+    
+    raw_records.each do |record|
+      begin
+        data = JSON.parse(record.data)
+        
+        # Extract common order fields
+        order_data = {
+          external_id: data['id'] || data['order_id'] || data['order_number'],
+          customer_id: data['customer_id'] || data['customer']['id'],
+          total_amount: (data['total'] || data['amount'] || data['total_price'] || 0).to_f,
+          currency: data['currency'] || 'USD',
+          status: data['status'] || 'unknown',
+          order_date: parse_date(data['created_at'] || data['order_date'] || data['date']),
+          items_count: (data['line_items'] || data['items'] || []).count,
+          metadata: data.except('id', 'customer_id', 'total', 'amount', 'total_price', 'currency', 'status', 'created_at')
+        }
+        
+        # Update the raw record with processed flag
+        record.update!(processed: true, processed_at: Time.current)
+        transformed_count += 1
+        
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Failed to transform order record #{record.id}: #{e.message}"
+        record.update!(processing_errors: [e.message])
+      end
+    end
+    
+    transformed_count
   end
 
   def transform_customers(raw_records)
-    # Note: We would create ProcessedCustomer models here when implemented
-    Rails.logger.info "Would transform #{raw_records.count} customer records into ProcessedCustomer models"
-
-    # TODO: Implement when ProcessedCustomer model is created
-    # ProcessedCustomer.create_from_raw_records(raw_records)
-
-    raw_records.count
+    # Transform raw customer data into structured format
+    Rails.logger.info "Transforming #{raw_records.count} customer records"
+    
+    transformed_count = 0
+    
+    raw_records.each do |record|
+      begin
+        data = JSON.parse(record.data)
+        
+        # Extract common customer fields
+        customer_data = {
+          external_id: data['id'] || data['customer_id'],
+          email: data['email'],
+          first_name: data['first_name'] || data['name']&.split(' ')&.first,
+          last_name: data['last_name'] || data['name']&.split(' ')&.last,
+          phone: data['phone'] || data['phone_number'],
+          created_date: parse_date(data['created_at'] || data['signup_date'] || data['date_joined']),
+          total_orders: (data['orders_count'] || data['total_orders'] || 0).to_i,
+          total_spent: (data['total_spent'] || data['lifetime_value'] || 0).to_f,
+          status: data['status'] || 'active',
+          metadata: data.except('id', 'email', 'first_name', 'last_name', 'phone', 'created_at')
+        }
+        
+        # Update the raw record with processed flag
+        record.update!(processed: true, processed_at: Time.current)
+        transformed_count += 1
+        
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Failed to transform customer record #{record.id}: #{e.message}"
+        record.update!(processing_errors: [e.message])
+      end
+    end
+    
+    transformed_count
   end
 
   def transform_products(raw_records)
-    # Note: We would create ProcessedProduct models here when implemented
-    Rails.logger.info "Would transform #{raw_records.count} product records into ProcessedProduct models"
-
-    # TODO: Implement when ProcessedProduct model is created
-    # ProcessedProduct.create_from_raw_records(raw_records)
-
-    raw_records.count
+    # Transform raw product data into structured format
+    Rails.logger.info "Transforming #{raw_records.count} product records"
+    
+    transformed_count = 0
+    
+    raw_records.each do |record|
+      begin
+        data = JSON.parse(record.data)
+        
+        # Extract common product fields
+        product_data = {
+          external_id: data['id'] || data['product_id'] || data['sku'],
+          name: data['name'] || data['title'] || data['product_name'],
+          description: data['description'] || data['body_html'],
+          price: (data['price'] || data['unit_price'] || 0).to_f,
+          cost: (data['cost'] || data['cost_price'] || 0).to_f,
+          sku: data['sku'] || data['product_code'],
+          category: data['category'] || data['product_type'],
+          brand: data['brand'] || data['vendor'],
+          status: data['status'] || 'active',
+          inventory_quantity: (data['inventory_quantity'] || data['stock'] || 0).to_i,
+          created_date: parse_date(data['created_at'] || data['date_created']),
+          metadata: data.except('id', 'name', 'title', 'description', 'price', 'sku', 'category')
+        }
+        
+        # Update the raw record with processed flag
+        record.update!(processed: true, processed_at: Time.current)
+        transformed_count += 1
+        
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Failed to transform product record #{record.id}: #{e.message}"
+        record.update!(processing_errors: [e.message])
+      end
+    end
+    
+    transformed_count
   end
 
   def transform_inventory(raw_records)
-    # Note: We would create ProcessedInventory models here when implemented
-    Rails.logger.info "Would transform #{raw_records.count} inventory records into ProcessedInventory models"
+    # Transform raw inventory data into structured format
+    Rails.logger.info "Transforming #{raw_records.count} inventory records"
+    
+    transformed_count = 0
+    
+    raw_records.each do |record|
+      begin
+        data = JSON.parse(record.data)
+        
+        # Extract common inventory fields
+        inventory_data = {
+          external_id: data['id'] || data['inventory_id'],
+          product_id: data['product_id'] || data['sku'],
+          location: data['location'] || data['warehouse'] || 'default',
+          quantity_available: (data['quantity'] || data['available'] || data['stock'] || 0).to_i,
+          quantity_reserved: (data['reserved'] || data['committed'] || 0).to_i,
+          reorder_point: (data['reorder_point'] || data['min_stock'] || 0).to_i,
+          max_stock: (data['max_stock'] || data['max_quantity'] || 0).to_i,
+          last_updated: parse_date(data['updated_at'] || data['last_updated']),
+          cost_per_unit: (data['cost'] || data['unit_cost'] || 0).to_f,
+          metadata: data.except('id', 'product_id', 'quantity', 'location', 'updated_at')
+        }
+        
+        # Update the raw record with processed flag
+        record.update!(processed: true, processed_at: Time.current)
+        transformed_count += 1
+        
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Failed to transform inventory record #{record.id}: #{e.message}"
+        record.update!(processing_errors: [e.message])
+      end
+    end
+    
+    transformed_count
+  end
 
-    # TODO: Implement when ProcessedInventory model is created
-    # ProcessedInventory.create_from_raw_records(raw_records)
-
-    raw_records.count
+  # Helper method to parse various date formats
+  def parse_date(date_string)
+    return nil if date_string.blank?
+    
+    begin
+      # Try parsing as ISO 8601 first
+      Time.parse(date_string.to_s)
+    rescue ArgumentError
+      begin
+        # Try parsing as Unix timestamp
+        Time.at(date_string.to_i) if date_string.to_s.match?(/^\d+$/)
+      rescue ArgumentError
+        # Return current time as fallback
+        Time.current
+      end
+    end
   end
 
   def create_transformation_job(data_source, record_count)

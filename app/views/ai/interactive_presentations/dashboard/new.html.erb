@@ -1,0 +1,282 @@
+<!-- New Interactive Presentation Dashboard -->
+<div data-controller="interactive-presentations-new" class="min-h-screen bg-gray-50">
+  <!-- Page Header -->
+  <div class="mb-8">
+    <div class="flex items-center gap-4 mb-4">
+      <%= link_to "← Back to Dashboard", ai_interactive_presentations_dashboard_path, 
+          class: "inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors" %>
+    </div>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Create New Interactive Presentation</h1>
+        <p class="mt-2 text-gray-600">
+          Build AI-powered presentations with real-time data integration and interactive elements.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Steps -->
+  <div class="mb-8">
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <div class="h-8 w-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-medium">1</div>
+            <span class="text-sm font-medium text-gray-900">Basic Information</span>
+          </div>
+          <div class="h-px w-12 bg-gray-300"></div>
+          <div class="flex items-center gap-2">
+            <div class="h-8 w-8 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-sm font-medium">2</div>
+            <span class="text-sm text-gray-600">Data Sources</span>
+          </div>
+          <div class="h-px w-12 bg-gray-300"></div>
+          <div class="flex items-center gap-2">
+            <div class="h-8 w-8 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-sm font-medium">3</div>
+            <span class="text-sm text-gray-600">AI Configuration</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Form -->
+  <%= form_with model: [@ai_presentation || Ai::Presentation.new], 
+      url: ai_interactive_presentations_dashboard_index_path, 
+      local: true, 
+      data: { controller: "form-validation", action: "submit->interactive-presentations-new#handleSubmit" },
+      class: "space-y-8" do |form| %>
+    
+    <!-- Basic Information Section -->
+    <div class="bg-white rounded-lg border border-gray-200">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Basic Information</h3>
+        <p class="text-sm text-gray-600 mt-1">Set up the fundamental details of your presentation</p>
+      </div>
+      <div class="p-6 space-y-6">
+        <!-- Title -->
+        <div>
+          <%= form.label :title, class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.text_field :title, 
+              placeholder: "Enter presentation title",
+              class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent",
+              data: { target: "form-validation.field", required: true } %>
+          <p class="text-xs text-gray-500 mt-1">Choose a descriptive title for your presentation</p>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <%= form.label :description, class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.text_area :description, 
+              rows: 3,
+              placeholder: "Describe the purpose and content of your presentation",
+              class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" %>
+        </div>
+
+        <!-- Presentation Type -->
+        <div>
+          <%= form.label :presentation_type, "Presentation Type", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <label class="relative flex cursor-pointer rounded-lg border border-gray-300 p-4 focus:outline-none hover:bg-gray-50">
+              <%= form.radio_button :presentation_type, "interactive", 
+                  class: "sr-only", 
+                  data: { action: "change->interactive-presentations-new#updateType" } %>
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-medium text-gray-900">Interactive</p>
+                  <p class="text-sm text-gray-600">Real-time data with user interaction</p>
+                </div>
+              </div>
+            </label>
+            
+            <label class="relative flex cursor-pointer rounded-lg border border-gray-300 p-4 focus:outline-none hover:bg-gray-50">
+              <%= form.radio_button :presentation_type, "data_story", 
+                  class: "sr-only", 
+                  data: { action: "change->interactive-presentations-new#updateType" } %>
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-medium text-gray-900">Data Story</p>
+                  <p class="text-sm text-gray-600">Narrative-driven insights</p>
+                </div>
+              </div>
+            </label>
+            
+            <label class="relative flex cursor-pointer rounded-lg border border-gray-300 p-4 focus:outline-none hover:bg-gray-50">
+              <%= form.radio_button :presentation_type, "monitoring", 
+                  class: "sr-only", 
+                  data: { action: "change->interactive-presentations-new#updateType" } %>
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-medium text-gray-900">Monitoring</p>
+                  <p class="text-sm text-gray-600">Real-time alerts & KPIs</p>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Template Selection -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Start from Template (Optional)</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% [@templates || []].flatten.each do |template| %>
+              <label class="relative flex cursor-pointer rounded-lg border border-gray-300 p-4 focus:outline-none hover:bg-gray-50">
+                <%= form.radio_button :template_id, template[:id] || "", class: "sr-only" %>
+                <div class="w-full">
+                  <p class="font-medium text-gray-900"><%= template[:name] || "Custom Template" %></p>
+                  <p class="text-sm text-gray-600 mt-1"><%= template[:description] || "Build from scratch" %></p>
+                </div>
+              </label>
+            <% end %>
+            
+            <!-- Default: Start from scratch -->
+            <label class="relative flex cursor-pointer rounded-lg border border-gray-300 p-4 focus:outline-none hover:bg-gray-50">
+              <%= form.radio_button :template_id, "", class: "sr-only", checked: true %>
+              <div class="w-full">
+                <p class="font-medium text-gray-900">Start from Scratch</p>
+                <p class="text-sm text-gray-600 mt-1">Build a completely custom presentation</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Sources Section -->
+    <div class="bg-white rounded-lg border border-gray-200">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Data Sources</h3>
+        <p class="text-sm text-gray-600 mt-1">Select the data sources for your presentation</p>
+      </div>
+      <div class="p-6">
+        <div class="space-y-4">
+          <% (@available_data_sources || []).each do |source| %>
+            <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+              <%= check_box_tag "data_sources[]", source[:id], false, 
+                  class: "h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500" %>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <p class="font-medium text-gray-900"><%= source[:name] || "Data Source #{source[:id]}" %></p>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                    <%= source[:status] || "Active" %>
+                  </span>
+                </div>
+                <p class="text-sm text-gray-600 mt-1"><%= source[:description] || "Real-time data connection" %></p>
+                <p class="text-xs text-gray-500 mt-1">Last updated: <%= source[:last_updated] || "Just now" %></p>
+              </div>
+            </label>
+          <% end %>
+          
+          <!-- Default message if no data sources -->
+          <% if (@available_data_sources || []).empty? %>
+            <div class="text-center py-8">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">No data sources available</h3>
+              <p class="mt-1 text-sm text-gray-500">Connect your data sources first to create presentations.</p>
+              <div class="mt-6">
+                <%= link_to "Connect Data Sources", "#", 
+                    class: "inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Configuration Section -->
+    <div class="bg-white rounded-lg border border-gray-200">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">AI Configuration</h3>
+        <p class="text-sm text-gray-600 mt-1">Configure AI-powered features for your presentation</p>
+      </div>
+      <div class="p-6 space-y-6">
+        <!-- AI Features -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-3">AI Features</label>
+          <div class="space-y-3">
+            <label class="flex items-center gap-3">
+              <%= form.check_box :ai_insights_enabled, class: "h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500" %>
+              <div>
+                <p class="font-medium text-gray-900">AI Insights</p>
+                <p class="text-sm text-gray-600">Automatically generate insights from your data</p>
+              </div>
+            </label>
+            
+            <label class="flex items-center gap-3">
+              <%= form.check_box :real_time_updates, class: "h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500" %>
+              <div>
+                <p class="font-medium text-gray-900">Real-time Updates</p>
+                <p class="text-sm text-gray-600">Keep presentation data synchronized with live sources</p>
+              </div>
+            </label>
+            
+            <label class="flex items-center gap-3">
+              <%= form.check_box :interactive_elements, class: "h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500" %>
+              <div>
+                <p class="font-medium text-gray-900">Interactive Elements</p>
+                <p class="text-sm text-gray-600">Allow audience interaction and Q&A</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Update Frequency -->
+        <div>
+          <%= form.label :update_frequency, "Update Frequency", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.select :update_frequency, 
+              options_for_select([
+                ['Real-time', 'real_time'],
+                ['Every 5 minutes', '5_minutes'],
+                ['Every 15 minutes', '15_minutes'],
+                ['Every hour', 'hourly'],
+                ['Daily', 'daily']
+              ], 'real_time'),
+              {},
+              { class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="flex items-center justify-between pt-6">
+      <%= link_to "Cancel", ai_interactive_presentations_dashboard_path, 
+          class: "px-6 py-2 text-gray-600 hover:text-gray-900 transition-colors" %>
+      
+      <div class="flex items-center gap-3">
+        <%= form.submit "Save as Draft", 
+            name: "draft",
+            class: "px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" %>
+        <%= form.submit "Create Presentation", 
+            class: "px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Loading Overlay -->
+<div data-interactive-presentations-new-target="loadingOverlay" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+    <div class="flex items-center gap-3">
+      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+      <p class="text-gray-900 font-medium">Creating your presentation...</p>
+    </div>
+    <p class="text-sm text-gray-600 mt-2">This may take a few moments while we set up your AI-powered presentation.</p>
+  </div>
+</div>

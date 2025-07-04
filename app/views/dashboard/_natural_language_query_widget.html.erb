@@ -1,0 +1,659 @@
+<!-- Natural Language Query Interface Widget -->
+<div class="bg-white rounded-lg border border-gray-200 mb-8" data-controller="natural-language-query">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Ask Your Data</h3>
+          <p class="text-sm text-gray-600">Ask questions in plain English and get instant insights</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          <div class="h-1.5 w-1.5 bg-blue-500 rounded-full mr-1 animate-pulse"></div>
+          AI Powered
+        </span>
+        <button class="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                data-action="click->natural-language-query#showHelp"
+                title="Show help">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="p-6">
+    <!-- Query Input Section -->
+    <div class="mb-6">
+      <div class="relative">
+        <input type="text" 
+               id="nlq-input"
+               data-natural-language-query-target="queryInput"
+               data-action="input->natural-language-query#handleInput keydown->natural-language-query#handleKeydown"
+               placeholder="Ask me anything about your business data..."
+               class="w-full px-4 py-3 pr-12 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 hover:bg-white transition-colors">
+        
+        <button class="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                data-action="click->natural-language-query#processQuery"
+                data-natural-language-query-target="submitButton">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Query Suggestions Dropdown -->
+      <div id="nlq-suggestions" 
+           data-natural-language-query-target="suggestionsDropdown"
+           class="hidden absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <!-- Suggestions will be populated dynamically -->
+      </div>
+      
+      <!-- Validation Feedback -->
+      <div id="nlq-validation" 
+           data-natural-language-query-target="validationFeedback"
+           class="hidden mt-2 p-2 text-sm rounded-lg">
+        <!-- Validation messages will appear here -->
+      </div>
+    </div>
+    
+    <!-- Quick Query Examples -->
+    <div class="mb-6">
+      <h4 class="text-sm font-semibold text-gray-900 mb-3">Try these examples:</h4>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <% example_queries = [
+          "Show me customers who haven't ordered in 30 days",
+          "What's my revenue this month vs last month?",
+          "Which products are trending up this week?",
+          "Show me orders over $500 this quarter"
+        ] %>
+        
+        <% example_queries.each do |query| %>
+          <button class="text-left p-3 bg-gray-50 hover:bg-blue-50 rounded-lg border border-gray-100 hover:border-blue-200 transition-colors group"
+                  data-action="click->natural-language-query#useExample"
+                  data-query="<%= query %>">
+            <div class="flex items-center gap-2">
+              <svg class="h-3 w-3 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="text-xs text-gray-700 group-hover:text-blue-700"><%= query %></span>
+            </div>
+          </button>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Loading State -->
+    <div id="nlq-loading" 
+         data-natural-language-query-target="loadingState"
+         class="hidden text-center py-8">
+      <div class="inline-flex items-center">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+        <span class="ml-3 text-sm text-gray-600">Analyzing your question...</span>
+      </div>
+    </div>
+    
+    <!-- Results Section -->
+    <div id="nlq-results" 
+         data-natural-language-query-target="resultsContainer"
+         class="hidden">
+      
+      <!-- Query Understanding -->
+      <div class="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+        <h5 class="text-sm font-medium text-blue-900 mb-1">I understood:</h5>
+        <p class="text-sm text-blue-700" data-natural-language-query-target="queryUnderstanding"></p>
+      </div>
+      
+      <!-- Results Display -->
+      <div class="space-y-4">
+        <!-- Summary -->
+        <div class="p-4 bg-gray-50 rounded-lg">
+          <h5 class="text-sm font-semibold text-gray-900 mb-2">Summary</h5>
+          <p class="text-sm text-gray-700" data-natural-language-query-target="resultsSummary"></p>
+        </div>
+        
+        <!-- Data Results -->
+        <div id="nlq-data-results" data-natural-language-query-target="dataResults">
+          <!-- Dynamic data results will be inserted here -->
+        </div>
+        
+        <!-- Suggested Visualizations -->
+        <div id="nlq-visualizations" 
+             data-natural-language-query-target="visualizationSuggestions"
+             class="hidden">
+          <h5 class="text-sm font-semibold text-gray-900 mb-2">Suggested Visualizations</h5>
+          <div class="flex gap-2" data-natural-language-query-target="visualizationButtons">
+            <!-- Visualization buttons will be added dynamically -->
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="flex items-center gap-3 pt-4 border-t border-gray-200">
+          <button class="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                  data-action="click->natural-language-query#exportResults"
+                  data-natural-language-query-target="exportButton">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Export Results
+          </button>
+          
+          <button class="flex items-center gap-2 px-3 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  data-action="click->natural-language-query#saveQuery">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+            </svg>
+            Save Query
+          </button>
+          
+          <button class="flex items-center gap-2 px-3 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  data-action="click->natural-language-query#refineQuery">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Refine Query
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Error State -->
+    <div id="nlq-error" 
+         data-natural-language-query-target="errorState"
+         class="hidden p-4 bg-red-50 rounded-lg border border-red-200">
+      <div class="flex items-start gap-3">
+        <svg class="h-5 w-5 text-red-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+          <h5 class="text-sm font-medium text-red-900">Couldn't process your query</h5>
+          <p class="text-sm text-red-700 mt-1" data-natural-language-query-target="errorMessage"></p>
+          <div class="mt-2">
+            <h6 class="text-xs font-medium text-red-900 mb-1">Try these instead:</h6>
+            <ul class="text-xs text-red-700 space-y-1" data-natural-language-query-target="errorSuggestions">
+              <!-- Error suggestions will be populated -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Help Modal (Hidden by default) -->
+<div id="nlq-help-modal" 
+     data-natural-language-query-target="helpModal"
+     class="hidden fixed inset-0 z-50 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen px-4">
+    <div class="fixed inset-0 bg-black opacity-50"></div>
+    <div class="relative bg-white rounded-lg max-w-2xl w-full p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">How to Ask Your Data Questions</h3>
+        <button class="text-gray-400 hover:text-gray-600"
+                data-action="click->natural-language-query#hideHelp">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="space-y-4 text-sm text-gray-700">
+        <div>
+          <h4 class="font-medium text-gray-900 mb-2">Question Types You Can Ask:</h4>
+          <ul class="space-y-2 ml-4">
+            <li class="flex items-start gap-2">
+              <span class="text-blue-500">•</span>
+              <span><strong>Customer Analysis:</strong> "Show me customers who haven't ordered in 30 days"</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-blue-500">•</span>
+              <span><strong>Revenue Queries:</strong> "What's my revenue this month vs last month?"</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-blue-500">•</span>
+              <span><strong>Product Analysis:</strong> "Which products are trending up this week?"</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-blue-500">•</span>
+              <span><strong>Order Analysis:</strong> "Show me orders over $500 this quarter"</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="font-medium text-gray-900 mb-2">Tips for Better Results:</h4>
+          <ul class="space-y-2 ml-4">
+            <li class="flex items-start gap-2">
+              <span class="text-green-500">✓</span>
+              <span>Be specific about time periods: "this month", "last 30 days", "this quarter"</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500">✓</span>
+              <span>Use exact amounts when filtering: "orders over $1000", "customers who spent more than $500"</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500">✓</span>
+              <span>Ask for comparisons: "compare this month to last month", "revenue vs last year"</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500">✓</span>
+              <span>Request specific metrics: "top 10 customers", "best selling products", "average order value"</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Natural Language Query Stimulus Controller -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const nlqController = {
+    queryInputTarget: null,
+    suggestionsDropdownTarget: null,
+    loadingStateTarget: null,
+    resultsContainerTarget: null,
+    errorStateTarget: null,
+    helpModalTarget: null,
+    
+    currentQuery: '',
+    currentResults: null,
+    debounceTimer: null,
+    
+    connect() {
+      console.log('Natural Language Query widget connected');
+      this.initializeTargets();
+      this.setupEventListeners();
+    },
+    
+    initializeTargets() {
+      this.queryInputTarget = document.querySelector('[data-natural-language-query-target="queryInput"]');
+      this.suggestionsDropdownTarget = document.querySelector('[data-natural-language-query-target="suggestionsDropdown"]');
+      this.loadingStateTarget = document.querySelector('[data-natural-language-query-target="loadingState"]');
+      this.resultsContainerTarget = document.querySelector('[data-natural-language-query-target="resultsContainer"]');
+      this.errorStateTarget = document.querySelector('[data-natural-language-query-target="errorState"]');
+      this.helpModalTarget = document.querySelector('[data-natural-language-query-target="helpModal"]');
+    },
+    
+    setupEventListeners() {
+      // Close suggestions when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#nlq-suggestions') && !e.target.closest('#nlq-input')) {
+          this.hideSuggestions();
+        }
+      });
+    },
+    
+    handleInput(event) {
+      const query = event.target.value.trim();
+      this.currentQuery = query;
+      
+      // Clear previous debounce
+      if (this.debounceTimer) {
+        clearTimeout(this.debounceTimer);
+      }
+      
+      if (query.length > 2) {
+        // Debounce suggestions
+        this.debounceTimer = setTimeout(() => {
+          this.fetchSuggestions(query);
+        }, 300);
+      } else {
+        this.hideSuggestions();
+      }
+    },
+    
+    handleKeydown(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        this.processQuery();
+      } else if (event.key === 'Escape') {
+        this.hideSuggestions();
+      }
+    },
+    
+    processQuery() {
+      const query = this.queryInputTarget.value.trim();
+      
+      if (!query) {
+        this.showError('Please enter a question');
+        return;
+      }
+      
+      this.hideAllStates();
+      this.showLoading();
+      
+      fetch('/ai/queries/process', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ query: query })
+      })
+      .then(response => response.json())
+      .then(data => {
+        this.hideLoading();
+        
+        if (data.success) {
+          this.showResults(data.result, data.suggestions);
+        } else {
+          this.showError(data.error, data.suggestions);
+        }
+      })
+      .catch(error => {
+        console.error('Query processing error:', error);
+        this.hideLoading();
+        this.showError('Failed to process your query. Please try again.');
+      });
+    },
+    
+    fetchSuggestions(query) {
+      fetch(`/ai/queries/suggestions?q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+          this.showSuggestions(data.suggestions);
+        })
+        .catch(error => {
+          console.error('Suggestions fetch error:', error);
+        });
+    },
+    
+    showSuggestions(suggestions) {
+      if (!suggestions || suggestions.length === 0) {
+        this.hideSuggestions();
+        return;
+      }
+      
+      const html = suggestions.map(suggestion => 
+        `<div class="px-4 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
+              onclick="nlqController.useSuggestion('${suggestion.replace(/'/g, "\\'")}')">
+           <span class="text-sm text-gray-700">${suggestion}</span>
+         </div>`
+      ).join('');
+      
+      this.suggestionsDropdownTarget.innerHTML = html;
+      this.suggestionsDropdownTarget.classList.remove('hidden');
+    },
+    
+    hideSuggestions() {
+      this.suggestionsDropdownTarget.classList.add('hidden');
+    },
+    
+    useSuggestion(suggestion) {
+      this.queryInputTarget.value = suggestion;
+      this.hideSuggestions();
+      this.processQuery();
+    },
+    
+    useExample(event) {
+      const query = event.currentTarget.dataset.query;
+      this.queryInputTarget.value = query;
+      this.processQuery();
+    },
+    
+    showLoading() {
+      this.loadingStateTarget.classList.remove('hidden');
+    },
+    
+    hideLoading() {
+      this.loadingStateTarget.classList.add('hidden');
+    },
+    
+    showResults(result, suggestions) {
+      this.currentResults = result;
+      
+      // Update query understanding
+      const understandingEl = document.querySelector('[data-natural-language-query-target="queryUnderstanding"]');
+      if (understandingEl) {
+        understandingEl.textContent = result.query_analysis?.intent || 'Analyzed your business data query';
+      }
+      
+      // Update results summary
+      const summaryEl = document.querySelector('[data-natural-language-query-target="resultsSummary"]');
+      if (summaryEl) {
+        summaryEl.textContent = result.response || 'Query completed successfully';
+      }
+      
+      // Show data results
+      this.renderDataResults(result.results);
+      
+      // Show visualization suggestions
+      if (result.visualizations && result.visualizations.length > 0) {
+        this.showVisualizationSuggestions(result.visualizations);
+      }
+      
+      this.resultsContainerTarget.classList.remove('hidden');
+    },
+    
+    renderDataResults(results) {
+      const container = document.querySelector('[data-natural-language-query-target="dataResults"]');
+      if (!container || !results) return;
+      
+      let html = '';
+      
+      if (results.customers) {
+        html += this.renderCustomerResults(results);
+      } else if (results.total_revenue !== undefined) {
+        html += this.renderRevenueResults(results);
+      } else if (results.total_orders !== undefined) {
+        html += this.renderOrderResults(results);
+      } else if (results.message) {
+        html += `<div class="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                   <p class="text-sm text-yellow-800">${results.message}</p>
+                 </div>`;
+      }
+      
+      container.innerHTML = html;
+    },
+    
+    renderCustomerResults(results) {
+      let html = `<div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                      <h6 class="text-sm font-medium text-gray-900">Found ${results.count} customers</h6>
+                      ${results.has_more ? '<span class="text-xs text-gray-500">Showing first 20 results</span>' : ''}
+                    </div>`;
+      
+      if (results.customers && results.customers.length > 0) {
+        html += '<div class="overflow-x-auto"><table class="min-w-full text-sm"><thead class="bg-gray-50"><tr>';
+        html += '<th class="px-3 py-2 text-left font-medium text-gray-900">Customer</th>';
+        html += '<th class="px-3 py-2 text-left font-medium text-gray-900">Email</th>';
+        html += '<th class="px-3 py-2 text-left font-medium text-gray-900">Last Order</th>';
+        html += '<th class="px-3 py-2 text-left font-medium text-gray-900">Total Spent</th>';
+        html += '</tr></thead><tbody class="divide-y divide-gray-200">';
+        
+        results.customers.forEach(customer => {
+          html += `<tr class="hover:bg-gray-50">
+                     <td class="px-3 py-2 text-gray-900">${customer.name || customer.id}</td>
+                     <td class="px-3 py-2 text-gray-600">${customer.email || 'N/A'}</td>
+                     <td class="px-3 py-2 text-gray-600">${customer.last_order || 'Never'}</td>
+                     <td class="px-3 py-2 text-gray-900">$${customer.total_spent || 0}</td>
+                   </tr>`;
+        });
+        
+        html += '</tbody></table></div>';
+      }
+      
+      html += '</div>';
+      return html;
+    },
+    
+    renderRevenueResults(results) {
+      return `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <h6 class="text-sm font-medium text-green-900">Total Revenue</h6>
+                  <p class="text-2xl font-bold text-green-900">${results.formatted_revenue}</p>
+                  <p class="text-xs text-green-700">${results.time_period}</p>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <h6 class="text-sm font-medium text-blue-900">Orders</h6>
+                  <p class="text-2xl font-bold text-blue-900">${results.order_count}</p>
+                  <p class="text-xs text-blue-700">Total orders</p>
+                </div>
+                <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                  <h6 class="text-sm font-medium text-purple-900">Avg Order Value</h6>
+                  <p class="text-2xl font-bold text-purple-900">$${results.average_order_value.toFixed(2)}</p>
+                  <p class="text-xs text-purple-700">Per order</p>
+                </div>
+              </div>`;
+    },
+    
+    renderOrderResults(results) {
+      let html = `<div class="space-y-3">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div class="p-3 bg-blue-50 rounded-lg">
+                        <h6 class="text-sm font-medium text-blue-900">Total Orders</h6>
+                        <p class="text-xl font-bold text-blue-900">${results.total_orders}</p>
+                      </div>
+                      <div class="p-3 bg-green-50 rounded-lg">
+                        <h6 class="text-sm font-medium text-green-900">Total Value</h6>
+                        <p class="text-xl font-bold text-green-900">$${results.summary?.total_value?.toFixed(2) || 0}</p>
+                      </div>
+                      <div class="p-3 bg-purple-50 rounded-lg">
+                        <h6 class="text-sm font-medium text-purple-900">Average Value</h6>
+                        <p class="text-xl font-bold text-purple-900">$${results.summary?.average_value?.toFixed(2) || 0}</p>
+                      </div>
+                    </div>`;
+      
+      if (results.orders && results.orders.length > 0) {
+        html += '<h6 class="text-sm font-medium text-gray-900 mb-2">Recent Orders</h6>';
+        html += '<div class="overflow-x-auto"><table class="min-w-full text-sm"><thead class="bg-gray-50"><tr>';
+        html += '<th class="px-3 py-2 text-left font-medium text-gray-900">Order ID</th>';
+        html += '<th class="px-3 py-2 text-left font-medium text-gray-900">Date</th>';
+        html += '<th class="px-3 py-2 text-left font-medium text-gray-900">Total</th>';
+        html += '<th class="px-3 py-2 text-left font-medium text-gray-900">Status</th>';
+        html += '</tr></thead><tbody class="divide-y divide-gray-200">';
+        
+        results.orders.forEach(order => {
+          html += `<tr class="hover:bg-gray-50">
+                     <td class="px-3 py-2 text-gray-900">${order.id}</td>
+                     <td class="px-3 py-2 text-gray-600">${order.date || 'N/A'}</td>
+                     <td class="px-3 py-2 text-gray-900">$${order.total || 0}</td>
+                     <td class="px-3 py-2 text-gray-600">${order.status || 'N/A'}</td>
+                   </tr>`;
+        });
+        
+        html += '</tbody></table></div>';
+      }
+      
+      html += '</div>';
+      return html;
+    },
+    
+    showVisualizationSuggestions(visualizations) {
+      const container = document.querySelector('[data-natural-language-query-target="visualizationSuggestions"]');
+      const buttonsContainer = document.querySelector('[data-natural-language-query-target="visualizationButtons"]');
+      
+      if (!container || !buttonsContainer) return;
+      
+      const html = visualizations.map(viz => 
+        `<button class="flex items-center gap-2 px-3 py-2 bg-white text-gray-700 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                 onclick="nlqController.createVisualization('${viz.type}', '${viz.title}')">
+           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+           </svg>
+           ${viz.title}
+         </button>`
+      ).join('');
+      
+      buttonsContainer.innerHTML = html;
+      container.classList.remove('hidden');
+    },
+    
+    createVisualization(type, title) {
+      console.log(`Creating ${type} visualization: ${title}`);
+      // This would integrate with visualization creation
+      alert(`Creating ${type} chart: ${title}\n\nVisualization creation coming soon!`);
+    },
+    
+    showError(message, suggestions = []) {
+      const errorMessageEl = document.querySelector('[data-natural-language-query-target="errorMessage"]');
+      const errorSuggestionsEl = document.querySelector('[data-natural-language-query-target="errorSuggestions"]');
+      
+      if (errorMessageEl) {
+        errorMessageEl.textContent = message;
+      }
+      
+      if (errorSuggestionsEl && suggestions.length > 0) {
+        const suggestionsHtml = suggestions.map(suggestion => 
+          `<li class="cursor-pointer hover:text-red-900" onclick="nlqController.useSuggestion('${suggestion.replace(/'/g, "\\'")}')">
+             ${suggestion}
+           </li>`
+        ).join('');
+        errorSuggestionsEl.innerHTML = suggestionsHtml;
+      }
+      
+      this.errorStateTarget.classList.remove('hidden');
+    },
+    
+    hideAllStates() {
+      this.resultsContainerTarget.classList.add('hidden');
+      this.errorStateTarget.classList.add('hidden');
+      this.hideSuggestions();
+    },
+    
+    showHelp() {
+      this.helpModalTarget.classList.remove('hidden');
+    },
+    
+    hideHelp() {
+      this.helpModalTarget.classList.add('hidden');
+    },
+    
+    exportResults() {
+      if (!this.currentResults) {
+        alert('No results to export');
+        return;
+      }
+      
+      // This would trigger an export
+      console.log('Exporting results:', this.currentResults);
+      alert('Export functionality coming soon!');
+    },
+    
+    saveQuery() {
+      const query = this.queryInputTarget.value.trim();
+      if (!query) {
+        alert('No query to save');
+        return;
+      }
+      
+      // This would save the query
+      console.log('Saving query:', query);
+      alert('Query saved successfully!');
+    },
+    
+    refineQuery() {
+      // This would help refine the query
+      alert('Query refinement suggestions coming soon!');
+    }
+  };
+  
+  // Make controller globally available
+  window.nlqController = nlqController;
+  
+  // Initialize the controller
+  nlqController.connect();
+  
+  // Attach event listeners to elements with data-action attributes
+  document.querySelectorAll('[data-action*="natural-language-query"]').forEach(element => {
+    const actions = element.getAttribute('data-action').split(' ');
+    actions.forEach(action => {
+      if (action.includes('natural-language-query')) {
+        const [event, method] = action.split('->natural-language-query#');
+        element.addEventListener(event, (e) => {
+          nlqController[method](e);
+        });
+      }
+    });
+  });
+});
+</script>

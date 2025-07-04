@@ -1,0 +1,245 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Pipeline Monitoring</h1>
+          <p class="mt-1 text-sm text-gray-500">Real-time monitoring and analytics for your data pipelines</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <%= link_to system_health_pipeline_monitoring_index_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" do %>
+            <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            System Health
+          <% end %>
+          <%= link_to alerts_pipeline_monitoring_index_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" do %>
+            <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            Alerts
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert Banner -->
+  <% if @alert_conditions.any? %>
+    <div class="bg-yellow-50 border-b border-yellow-200">
+      <div class="px-4 sm:px-6 lg:px-8 py-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <svg class="h-5 w-5 text-yellow-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            <span class="text-sm font-medium text-yellow-800">
+              <%= pluralize(@alert_conditions.count, 'alert condition') %> detected
+            </span>
+          </div>
+          <button type="button" class="text-yellow-400 hover:text-yellow-500">
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Key Metrics -->
+  <div class="px-4 sm:px-6 lg:px-8 py-6">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Health Score -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="rounded-md p-3 <%= @pipeline_health[:health_score] >= 80 ? 'bg-green-100' : @pipeline_health[:health_score] >= 60 ? 'bg-yellow-100' : 'bg-red-100' %>">
+                <svg class="h-6 w-6 <%= @pipeline_health[:health_score] >= 80 ? 'text-green-600' : @pipeline_health[:health_score] >= 60 ? 'text-yellow-600' : 'text-red-600' %>" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Health Score</dt>
+                <dd class="flex items-baseline">
+                  <div class="text-2xl font-semibold text-gray-900"><%= @pipeline_health[:health_score] %>%</div>
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Pipelines -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="rounded-md bg-blue-100 p-3">
+                <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Active Pipelines</dt>
+                <dd class="flex items-baseline">
+                  <div class="text-2xl font-semibold text-gray-900"><%= @pipeline_health[:active_pipelines] %></div>
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Rate -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="rounded-md bg-green-100 p-3">
+                <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Success Rate (30d)</dt>
+                <dd class="flex items-baseline">
+                  <div class="text-2xl font-semibold text-gray-900"><%= @pipeline_stats[:success_rate] %>%</div>
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Queue Depth -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="rounded-md bg-purple-100 p-3">
+                <svg class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Queue Depth</dt>
+                <dd class="flex items-baseline">
+                  <div class="text-2xl font-semibold text-gray-900"><%= @pipeline_health[:queue_depth] %></div>
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity Timeline -->
+  <div class="px-4 sm:px-6 lg:px-8">
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Pipeline Activity</h3>
+        <p class="mt-1 text-sm text-gray-500">Real-time view of pipeline executions</p>
+      </div>
+
+      <div class="flex">
+        <!-- Active Executions -->
+        <div class="w-1/2 border-r border-gray-200">
+          <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+            <h4 class="text-sm font-medium text-gray-700">Active Executions</h4>
+          </div>
+          <div class="overflow-hidden">
+            <% if @active_executions.any? %>
+              <div class="divide-y divide-gray-200">
+                <% @active_executions.each do |execution| %>
+                  <%= turbo_frame_tag "execution_#{execution.id}" do %>
+                    <%= render 'execution_row', execution: execution %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="px-4 py-8 text-center text-sm text-gray-500">
+                No active executions
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Recent Completions -->
+        <div class="w-1/2">
+          <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+            <h4 class="text-sm font-medium text-gray-700">Recent Completions</h4>
+          </div>
+          <div class="overflow-hidden">
+            <% if @recent_completions.any? %>
+              <div class="divide-y divide-gray-200">
+                <% @recent_completions.each do |execution| %>
+                  <div class="px-4 py-3 hover:bg-gray-50">
+                    <div class="flex items-center justify-between">
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">
+                          <%= execution.pipeline_name %>
+                        </p>
+                        <p class="text-xs text-gray-500">
+                          <%= execution.completed_at ? time_ago_in_words(execution.completed_at) : 'N/A' %> ago
+                        </p>
+                      </div>
+                      <div class="flex items-center">
+                        <% if execution.status == 'completed' %>
+                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Success
+                          </span>
+                        <% else %>
+                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            Failed
+                          </span>
+                        <% end %>
+                        <%= link_to pipeline_monitoring_path(execution), class: "ml-2 text-indigo-600 hover:text-indigo-900" do %>
+                          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          </svg>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="px-4 py-8 text-center text-sm text-gray-500">
+                No recent completions
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hourly Activity Chart -->
+  <div class="px-4 sm:px-6 lg:px-8 py-6">
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">24-Hour Activity</h3>
+      </div>
+      <div class="p-6">
+        <div class="h-64" data-controller="pipeline-activity-chart" data-pipeline-activity-chart-data-value="<%= @hourly_metrics.to_json %>">
+          <canvas data-pipeline-activity-chart-target="canvas"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Auto-refresh for active executions -->
+<%= turbo_stream_from "pipeline_executions_#{current_organization.id}" %>

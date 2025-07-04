@@ -1,41 +1,58 @@
-<nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" data-controller="landing-navbar">
-  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white/10 backdrop-blur-xl border-b border-white/20 transition-all duration-500" data-controller="landing-navbar">
+  <div class="premium-container">
     <div class="flex items-center justify-between h-20">
-      <!-- Logo and Brand -->
-      <%= link_to root_path, class: "flex items-center space-x-3 group" do %>
-        <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-20 shadow-lg group-hover:scale-105 transition-transform duration-300">
-          <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Premium Logo and Brand -->
+      <%= link_to root_path, class: "flex items-center space-x-4 group" do %>
+        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-purple-500 to-blue-500 shadow-xl group-hover:scale-110 transition-all duration-300">
+          <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
         </div>
-        <span class="text-2xl font-bold text-white">DataReflow</span>
+        <span class="text-2xl font-bold text-white group-hover:text-white/90 transition-colors duration-300">DataReflow</span>
       <% end %>
 
-      <!-- Desktop Navigation -->
-      <div class="hidden md:flex items-center space-x-8">
-        <a href="#features" class="text-white/80 hover:text-white transition-colors duration-300 font-medium">Features</a>
-        <a href="#integrations" class="text-white/80 hover:text-white transition-colors duration-300 font-medium">Integrations</a>
-        <a href="#testimonials" class="text-white/80 hover:text-white transition-colors duration-300 font-medium">Testimonials</a>
-        <a href="#pricing" class="text-white/80 hover:text-white transition-colors duration-300 font-medium">Pricing</a>
-        
-        <div class="flex items-center space-x-4 ml-8">
-          <%= link_to new_user_session_path, class: "text-white/80 hover:text-white transition-colors duration-300 font-medium" do %>
-            Sign In
-          <% end %>
-          
-          <%= link_to new_user_registration_path, class: "group px-6 py-2.5 bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-30 text-white font-semibold rounded-lg hover:bg-opacity-20 transition-all duration-300" do %>
-            <span class="flex items-center">
+      <!-- Premium Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-10">
+        <a href="#features" class="text-white/80 hover:text-white transition-all duration-300 font-semibold text-lg relative group">
+          Features
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-pink-400 group-hover:w-full transition-all duration-300"></span>
+        </a>
+        <a href="#integrations" class="text-white/80 hover:text-white transition-all duration-300 font-semibold text-lg relative group">
+          Integrations
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-400 group-hover:w-full transition-all duration-300"></span>
+        </a>
+        <a href="#testimonials" class="text-white/80 hover:text-white transition-all duration-300 font-semibold text-lg relative group">
+          Testimonials
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-400 to-emerald-400 group-hover:w-full transition-all duration-300"></span>
+        </a>
+        <a href="#pricing" class="text-white/80 hover:text-white transition-all duration-300 font-semibold text-lg relative group">
+          Pricing
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-yellow-400 to-orange-400 group-hover:w-full transition-all duration-300"></span>
+        </a>
+
+        <div class="flex items-center space-x-6 ml-12">
+          <% if user_signed_in? %>
+            <%= link_to dashboard_path, class: "text-white/80 hover:text-white transition-colors duration-300 font-semibold text-lg" do %>
+              Dashboard
+            <% end %>
+
+            <%= link_to destroy_user_session_path, method: :delete, class: "premium-btn premium-btn-secondary text-white border-white/30 hover:bg-white hover:text-gray-900" do %>
+              Sign Out
+            <% end %>
+          <% else %>
+            <%= link_to new_user_session_path, class: "text-white/80 hover:text-white transition-colors duration-300 font-semibold text-lg" do %>
+              Sign In
+            <% end %>
+
+            <%= link_to new_user_registration_path, class: "premium-btn premium-btn-primary" do %>
               Start Free Trial
-              <svg class="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-              </svg>
-            </span>
+            <% end %>
           <% end %>
         </div>
       </div>
 
-      <!-- Mobile Menu Button -->
-      <button class="md:hidden relative w-8 h-8 flex items-center justify-center" data-action="click->landing-navbar#toggleMobile">
+      <!-- Premium Mobile Menu Button -->
+      <button class="md:hidden relative w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-lg rounded-xl border border-white/20" data-action="click->landing-navbar#toggleMobile">
         <div class="w-6 h-0.5 bg-white rounded-full transition-all duration-300 absolute" data-landing-navbar-target="hamburgerTop"></div>
         <div class="w-6 h-0.5 bg-white rounded-full transition-all duration-300 absolute" data-landing-navbar-target="hamburgerMiddle"></div>
         <div class="w-6 h-0.5 bg-white rounded-full transition-all duration-300 absolute" data-landing-navbar-target="hamburgerBottom"></div>
@@ -43,26 +60,31 @@
     </div>
   </div>
 
-  <!-- Mobile Menu -->
-  <div class="md:hidden fixed inset-0 top-20 bg-gradient-to-b from-purple-900/95 to-blue-900/95 backdrop-blur-lg transform translate-x-full transition-transform duration-300" data-landing-navbar-target="mobileMenu">
-    <div class="flex flex-col items-center justify-center h-full space-y-8 px-8">
-      <a href="#features" class="text-2xl text-white/80 hover:text-white transition-colors duration-300 font-medium" data-action="click->landing-navbar#closeMobile">Features</a>
-      <a href="#integrations" class="text-2xl text-white/80 hover:text-white transition-colors duration-300 font-medium" data-action="click->landing-navbar#closeMobile">Integrations</a>
-      <a href="#testimonials" class="text-2xl text-white/80 hover:text-white transition-colors duration-300 font-medium" data-action="click->landing-navbar#closeMobile">Testimonials</a>
-      <a href="#pricing" class="text-2xl text-white/80 hover:text-white transition-colors duration-300 font-medium" data-action="click->landing-navbar#closeMobile">Pricing</a>
-      
-      <div class="flex flex-col items-center space-y-4 pt-8">
-        <%= link_to new_user_session_path, class: "text-xl text-white/80 hover:text-white transition-colors duration-300 font-medium" do %>
-          Sign In
-        <% end %>
-        
-        <%= link_to new_user_registration_path, class: "group px-8 py-3 bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-30 text-white font-semibold rounded-lg hover:bg-opacity-20 transition-all duration-300" do %>
-          <span class="flex items-center">
+  <!-- Premium Mobile Menu -->
+  <div class="md:hidden fixed inset-0 top-20 bg-gradient-to-br from-purple-900/95 to-blue-900/95 backdrop-blur-xl border-t border-white/20 transform translate-x-full transition-transform duration-500" data-landing-navbar-target="mobileMenu">
+    <div class="flex flex-col items-center justify-center h-full space-y-12 px-8">
+      <a href="#features" class="text-3xl text-white hover:text-white/80 transition-colors duration-300 font-semibold" data-action="click->landing-navbar#closeMobile">Features</a>
+      <a href="#integrations" class="text-3xl text-white hover:text-white/80 transition-colors duration-300 font-semibold" data-action="click->landing-navbar#closeMobile">Integrations</a>
+      <a href="#testimonials" class="text-3xl text-white hover:text-white/80 transition-colors duration-300 font-semibold" data-action="click->landing-navbar#closeMobile">Testimonials</a>
+      <a href="#pricing" class="text-3xl text-white hover:text-white/80 transition-colors duration-300 font-semibold" data-action="click->landing-navbar#closeMobile">Pricing</a>
+
+      <div class="flex flex-col items-center space-y-6 pt-12">
+        <% if user_signed_in? %>
+          <%= link_to dashboard_path, class: "text-2xl text-white hover:text-white/80 transition-colors duration-300 font-semibold", data: { action: "click->landing-navbar#closeMobile" } do %>
+            Dashboard
+          <% end %>
+
+          <%= link_to destroy_user_session_path, method: :delete, class: "premium-btn premium-btn-secondary text-white border-white/30 hover:bg-white hover:text-gray-900" do %>
+            Sign Out
+          <% end %>
+        <% else %>
+          <%= link_to new_user_session_path, class: "text-2xl text-white hover:text-white/80 transition-colors duration-300 font-semibold" do %>
+            Sign In
+          <% end %>
+
+          <%= link_to new_user_registration_path, class: "premium-btn premium-btn-primary premium-btn-large" do %>
             Start Free Trial
-            <svg class="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-            </svg>
-          </span>
+          <% end %>
         <% end %>
       </div>
     </div>

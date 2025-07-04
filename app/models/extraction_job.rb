@@ -14,7 +14,7 @@ class ExtractionJob < ApplicationRecord
 
   scope :by_status, ->(status) { where(status: status) }
   scope :by_priority, ->(priority) { where(priority: priority) }
-  scope :needs_retry, -> { where(status: "failed", 'next_retry_at <= ?': Time.current) }
+  scope :needs_retry, -> { where(status: "failed").where('next_retry_at <= ?', Time.current) }
   scope :running, -> { where(status: "running") }
   scope :completed, -> { where(status: "completed") }
   scope :successful, -> { where(status: "completed") }

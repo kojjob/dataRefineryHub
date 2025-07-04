@@ -1,1027 +1,223 @@
-<% content_for :title, "Add New Data Source" %>
-<% content_for :breadcrumb do %>
-  <nav class="flex" aria-label="Breadcrumb">
-    <ol class="inline-flex items-center space-x-1 md:space-x-3">
-      <li class="inline-flex items-center">
-        <%= link_to root_path, class: "inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600" do %>
-          <svg class="w-3 h-3 mr-2.5" fill="currentColor" viewBox="0 0 20 20">
-            <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
-          </svg>
-          Dashboard
-        <% end %>
-      </li>
-      <li>
-        <div class="flex items-center">
-          <svg class="w-3 h-3 text-gray-400 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-          <%= link_to data_sources_path, class: "ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2" do %>
-            Data Sources
-          <% end %>
-        </div>
-      </li>
-      <li aria-current="page">
-        <div class="flex items-center">
-          <svg class="w-3 h-3 text-gray-400 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-          <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Add New</span>
-        </div>
-      </li>
-    </ol>
-  </nav>
+<% content_for :title, "Connect Data Source" %>
+<% content_for :page_header do %>
+  <%= render 'shared/page_header', 
+        title: 'Connect Data Source',
+        subtitle: 'Seamlessly integrate your business data for powerful insights',
+        icon: 'data-source',
+        breadcrumbs: [
+          { text: 'Dashboard', path: dashboard_path },
+          { text: 'Data Sources', path: data_sources_path },
+          { text: 'Connect New', current: true }
+        ] %>
 <% end %>
 
-<%# Load data source configurations from DataSourceRegistry service %>
-<% 
-  # Get configurations from the centralized registry
-  data_source_configs = DataSourceRegistry.configurations
-  
-  # Merge UI styling with configurations
-  data_source_configs.each do |key, config|
-    styling = get_ui_styling(config[:category])
-    data_source_configs[key] = config.merge(styling)
-  end
-  
-  # Sync frequency options
-  sync_frequency_options = [
-    { value: 'realtime', label: 'Real-time', description: 'Sync data as it changes (when supported)' },
-    { value: 'hourly', label: 'Hourly', description: 'Sync every hour' },
-    { value: 'daily', label: 'Daily', description: 'Sync once per day' },
-    { value: 'weekly', label: 'Weekly', description: 'Sync once per week' },
-    { value: 'monthly', label: 'Monthly', description: 'Sync once per month' }
-  ]
-  
-  # Enhanced file upload settings with comprehensive format support
-  file_upload_settings = {
-    max_size: 104857600, # 100MB (increased from 50MB)
-    accepted_types: [
-      'text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
-      'application/json', 'text/plain', 'application/xml', 'text/xml',
-      'application/octet-stream', # For Parquet files
-      'text/tab-separated-values', 'application/x-yaml', 'text/yaml',
-      'application/vnd.sqlite3', # SQLite database files
-      'application/x-sqlite3', 'text/x-sql', # SQL files
-      'application/vnd.apache.parquet' # Parquet files
-    ],
-    type_descriptions: {
-      'text/csv' => 'CSV files (Comma-separated values)',
-      'application/vnd.ms-excel' => 'Excel files (.xls)',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel files (.xlsx)',
-      'application/json' => 'JSON files (JavaScript Object Notation)',
-      'text/plain' => 'Text files (.txt)',
-      'application/xml' => 'XML files (Extensible Markup Language)',
-      'text/xml' => 'XML files',
-      'application/octet-stream' => 'Parquet files (Columnar storage)',
-      'text/tab-separated-values' => 'TSV files (Tab-separated values)',
-      'application/x-yaml' => 'YAML files (YAML Ain\'t Markup Language)',
-      'text/yaml' => 'YAML files',
-      'application/vnd.sqlite3' => 'SQLite database files',
-      'application/x-sqlite3' => 'SQLite database files',
-      'text/x-sql' => 'SQL script files',
-      'application/vnd.apache.parquet' => 'Apache Parquet files'
-    },
-    file_extensions: ['csv', 'xls', 'xlsx', 'json', 'txt', 'xml', 'parquet', 'tsv', 'yaml', 'yml', 'sqlite', 'sqlite3', 'sql']
-  }
+<%
+  # Initialize data for the wizard
+  @wizard_data = DataSourceWizardService.new.prepare_wizard_data
+  data_source_configs = @wizard_data[:configurations]
+  sync_frequencies = @wizard_data[:sync_frequencies]
+  file_config = @wizard_data[:file_config]
 %>
 
-<div class="min-h-screen bg-gray-50 py-8">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Add New Data Source</h1>
-      <p class="mt-2 text-lg text-gray-600">Connect your data sources to start analyzing and transforming your data.</p>
-    </div>
-
-    <!-- Wizard Container -->
-    <div data-controller="data-source-wizard connection-tester" 
-         data-connection-tester-csrf-token-value="<%= form_authenticity_token %>"
-         data-connection-tester-test-url-value="<%= test_connection_data_sources_path %>"
-         class="bg-white shadow-xl rounded-lg overflow-hidden">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8" 
+       data-controller="data-source-wizard auto-save" 
+       data-auto-save-url-value="<%= auto_save_data_sources_path %>">
+    
+    <!-- Main Card Container -->
+    <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700">
       
-      <!-- Progress Bar -->
-      <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-sm font-medium text-gray-700">Step <span data-data-source-wizard-target="currentStepNumber">1</span> of 4</span>
-          <span class="text-sm text-gray-500" data-data-source-wizard-target="stepTitle">Choose Data Source</span>
+      <!-- Enhanced Progress Indicator -->
+      <%= render 'wizard_progress' %>
+      
+      <!-- Auto-save Status -->
+      <div class="px-8 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-gray-600 dark:text-gray-300" data-auto-save-target="status">
+            <span class="inline-flex items-center">
+              <svg class="w-4 h-4 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              All changes saved
+            </span>
+          </div>
+          <div class="text-xs text-gray-500 dark:text-gray-400" data-auto-save-target="timestamp">
+            Last saved: <span data-auto-save-target="time">--</span>
+          </div>
         </div>
-        <div class="w-full bg-gray-200 rounded-full h-2">
-          <div class="bg-indigo-600 h-2 rounded-full transition-all duration-300" 
-               data-data-source-wizard-target="progressBar" style="width: 25%"></div>
+      </div>
+      
+      <!-- Progress Indicator -->
+      <div class="bg-gradient-to-r from-indigo-500 to-blue-600 px-8 py-6">
+        <div data-controller="data-source-wizard" 
+             data-data-source-wizard-total-steps-value="4"
+             class="space-y-4">
+          
+          <!-- Step Info -->
+          <div class="flex items-center justify-between text-white">
+            <div>
+              <h2 class="text-xl font-semibold" data-data-source-wizard-target="stepTitle">Choose Your Platform</h2>
+              <p class="text-indigo-100 text-sm" data-data-source-wizard-target="stepDescription">Select the platform you want to connect</p>
+            </div>
+            <div class="text-right">
+              <div class="text-sm font-medium">
+                Step <span data-data-source-wizard-target="currentStep">1</span> of 4
+              </div>
+              <div class="text-xs text-indigo-100" data-data-source-wizard-target="progressPercent">25% Complete</div>
+            </div>
+          </div>
+          
+          <!-- Progress Bar -->
+          <div class="w-full bg-indigo-400 bg-opacity-30 rounded-full h-2">
+            <div class="bg-white h-2 rounded-full transition-all duration-500 ease-out" 
+                 data-data-source-wizard-target="progressBar" 
+                 style="width: 25%"></div>
+          </div>
+          
+          <!-- Step Indicators -->
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center text-white">
+              <div class="w-6 h-6 bg-white bg-opacity-30 rounded-full flex items-center justify-center mr-2">
+                <span class="font-semibold text-indigo-600">1</span>
+              </div>
+              Platform
+            </div>
+            <div class="flex items-center text-indigo-200">
+              <div class="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-2">
+                <span class="font-semibold">2</span>
+              </div>
+              Configure
+            </div>
+            <div class="flex items-center text-indigo-200">
+              <div class="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-2">
+                <span class="font-semibold">3</span>
+              </div>
+              Preview
+            </div>
+            <div class="flex items-center text-indigo-200">
+              <div class="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-2">
+                <span class="font-semibold">4</span>
+              </div>
+              Launch
+            </div>
+          </div>
         </div>
       </div>
 
-      <%= form_with model: @data_source, local: true, html: { 
-        class: "space-y-6", 
-        data: { 
-          "data-source-wizard-target" => "form",
-          "connection-tester-target" => "form"
-        } 
-      } do |form| %>
+      <!-- Enhanced Form Container -->
+      <%= form_with model: @data_source, local: true, 
+                    data: { 
+                      data_source_wizard_target: "form",
+                      auto_save_target: "form",
+                      turbo: false 
+                    }, 
+                    class: "h-full",
+                    html: { 
+                      'aria-label': 'Data Source Configuration Wizard',
+                      role: 'form' 
+                    } do |form| %>
         
-        <!-- Step 1: Data Source Selection -->
-        <div data-data-source-wizard-target="step" data-step="1" class="p-6">
-          <div class="mb-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-2">Choose Your Data Source</h2>
-            <p class="text-gray-600">Select the type of data source you want to connect to your platform.</p>
-          </div>
-
-          <!-- Data Source Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <% data_source_configs.each do |source_type, config| %>
-              <% next if source_type == :google_analytics %> <%# Move to coming soon section %>
-              <div class="relative <%= config[:status] == 'coming_soon' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer' %> group" 
-                   data-controller="source-selector"
-                   data-source-type="<%= source_type %>"
-                   data-source-status="<%= config[:status] %>"
-                   data-action="<%= config[:status] == 'coming_soon' ? 'click->source-selector#handleDisabledSourceClick' : 'click->source-selector#selectSource' %>">
-                <input type="radio" 
-                       name="data_source[source_type]" 
-                       value="<%= source_type %>" 
-                       class="sr-only" 
-                       id="source_<%= source_type %>"
-                       <%= 'disabled' if config[:status] == 'coming_soon' %>>
-                <div class="border-2 <%= config[:status] == 'coming_soon' ? 'border-gray-100 bg-gray-50' : 'border-gray-200' %> rounded-lg p-6 <%= config[:status] == 'coming_soon' ? '' : "hover:border-#{config[:border_color].split('-').last} hover:shadow-md" %> transition-all duration-200 <%= config[:status] == 'coming_soon' ? '' : "group-hover:#{config[:bg_color]}" %>">
-                  <div class="flex items-center mb-4">
-                    <div class="w-12 h-12 <%= config[:bg_color] %> rounded-lg flex items-center justify-center mr-4">
-                      <% case source_type %>
-                      <% when :shopify %>
-                        <svg class="w-6 h-6 <%= config[:icon_color] %>" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M15.8 2.1c-.8-.1-1.4.6-1.4 1.4v.1c0 .8-.7 1.5-1.5 1.5s-1.5-.7-1.5-1.5v-.1c0-.8-.6-1.5-1.4-1.4C8.6 2.2 7.5 3.4 7.5 4.8v14.4c0 1.4 1.1 2.6 2.5 2.8.8.1 1.4-.6 1.4-1.4v-.1c0-.8.7-1.5 1.5-1.5s1.5.7 1.5 1.5v.1c0 .8.6 1.5 1.4 1.4 1.4-.2 2.5-1.4 2.5-2.8V4.8c.1-1.4-1-2.6-2.3-2.7z"/>
-                        </svg>
-                      <% when :woocommerce %>
-                        <svg class="w-6 h-6 <%= config[:icon_color] %>" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                      <% when :amazon_seller_central %>
-                        <svg class="w-6 h-6 <%= config[:icon_color] %>" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                      <% when :quickbooks %>
-                        <svg class="w-6 h-6 <%= config[:icon_color] %>" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-                        </svg>
-                      <% when :stripe %>
-                        <svg class="w-6 h-6 <%= config[:icon_color] %>" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                        </svg>
-                      <% when :file_upload %>
-                        <svg class="w-6 h-6 <%= config[:icon_color] %>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                        </svg>
-                      <% end %>
-                    </div>
-                    <div>
-                      <h3 class="text-lg font-semibold text-gray-900"><%= config[:name] %></h3>
-                      <p class="text-sm text-gray-500">
-                        <% case source_type %>
-                        <% when :shopify, :woocommerce %>
-                          E-commerce platform
-                        <% when :amazon_seller_central %>
-                          Marketplace platform
-                        <% when :quickbooks %>
-                          Accounting software
-                        <% when :stripe %>
-                          Payment processor
-                        <% when :file_upload %>
-                          Direct file import
-                        <% end %>
-                      </p>
-                    </div>
-                  </div>
-                  <p class="text-gray-600 text-sm mb-4"><%= config[:description] %></p>
-                  <div class="flex items-center justify-between">
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= case config[:status] when 'available' then 'bg-green-100 text-green-800' when 'beta' then 'bg-yellow-100 text-yellow-800' when 'coming_soon' then 'bg-gray-100 text-gray-600' end %>">
-                      <%= case config[:status] when 'available' then 'Available' when 'beta' then 'Beta' when 'coming_soon' then 'Coming Soon' end %>
-                    </span>
-                    <span class="text-xs <%= config[:status] == 'coming_soon' ? 'text-gray-300' : 'text-gray-400' %>">
-                      <% if config[:supports_realtime] && config[:status] != 'coming_soon' %>
-                        Real-time sync
-                      <% elsif source_type == :file_upload %>
-                        Manual upload
-                      <% elsif config[:status] != 'coming_soon' %>
-                        Scheduled sync
-                      <% else %>
-                        Available soon
-                      <% end %>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            <% end %>
-          </div>
-
-          <!-- Additional Sources Coming Soon -->
-          <div class="border-t border-gray-200 pt-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">More Integrations Coming Soon</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div class="text-center p-4 bg-gray-50 rounded-lg">
-                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                </div>
-                <p class="text-sm font-medium text-gray-700">Google Analytics</p>
-              </div>
-              <div class="text-center p-4 bg-gray-50 rounded-lg">
-                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                  </svg>
-                </div>
-                <p class="text-sm font-medium text-gray-700">Twitter</p>
-              </div>
-              <div class="text-center p-4 bg-gray-50 rounded-lg">
-                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
-                </div>
-                <p class="text-sm font-medium text-gray-700">Facebook</p>
-              </div>
-              <div class="text-center p-4 bg-gray-50 rounded-lg">
-                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                  </svg>
-                </div>
-                <p class="text-sm font-medium text-gray-700">More...</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Selection Display -->
-          <div data-source-selector-target="selection" class="hidden mt-6">
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div class="flex items-center">
-                <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                </svg>
-                <span class="text-sm font-medium text-blue-800" data-source-selector-target="selectionText">Selected: </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 2: Configuration & Authentication -->
-        <div data-data-source-wizard-target="step" data-step="2" class="p-6 hidden">
-          <div class="mb-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-2">Configuration & Authentication</h2>
-            <p class="text-gray-600">Provide the necessary credentials and settings to connect to your data source.</p>
-          </div>
-
-          <!-- Basic Information -->
-          <div class="space-y-6 mb-8">
-            <div>
-              <%= form.label :name, class: "block text-sm font-medium text-gray-700 mb-2" %>
-              <%= form.text_field :name, 
-                    class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500",
-                    placeholder: "Enter a descriptive name for this data source" %>
-            </div>
-
-            <div>
-              <%= form.label :description, class: "block text-sm font-medium text-gray-700 mb-2" %>
-              <%= form.text_area :description, 
-                    rows: 3,
-                    class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500",
-                    placeholder: "Optional description of this data source" %>
-            </div>
-
-            <div>
-              <%= form.label :sync_frequency, class: "block text-sm font-medium text-gray-700 mb-2" %>
-              <%= form.select :sync_frequency, 
-                    options_for_select(sync_frequency_options.map { |option| [option[:label], option[:value]] }, 'daily'),
-                    {},
-                    { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" } %>
-            </div>
-          </div>
-
-          <!-- Dynamic Configuration Section -->
-          <div id="configuration-section" class="space-y-6">
-            <!-- Configuration fields will be loaded dynamically based on source type -->
-          </div>
-
-          <!-- Connection Test Section -->
-          <div class="mt-8 p-4 bg-gray-50 rounded-lg">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-medium text-gray-900">Test Connection</h3>
-              <button type="button" 
-                      data-connection-tester-target="testButton"
-                      data-action="click->connection-tester#testConnection"
-                      class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-                Test Connection
-              </button>
-            </div>
-            
-            <!-- Connection Status -->
-            <div data-connection-tester-target="status" class="hidden"></div>
-            
-            <!-- Connection Results -->
-            <div data-connection-tester-target="result" class="hidden"></div>
-          </div>
-        </div>
-
-        <!-- Step 3: Data Preview & Mapping -->
-        <div data-data-source-wizard-target="step" data-step="3" class="p-6 hidden">
-          <div class="mb-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-2">Data Preview & Mapping</h2>
-            <p class="text-gray-600">Preview your data and configure how it should be processed.</p>
-          </div>
-
-          <!-- File Upload Section (for file_upload source type) -->
-          <div id="file-upload-section" class="hidden">
-            <div data-controller="file-upload"
-                 data-file-upload-max-size-value="<%= file_upload_settings[:max_size] %>"
-                 data-file-upload-accepted-types-value='<%= file_upload_settings[:accepted_types].to_json %>'
-                 class="space-y-6">
-              
-              <!-- Enhanced Drop Zone -->
-              <div class="border-2 border-gray-300 border-dashed rounded-lg p-8 text-center hover:border-gray-400 transition-colors"
-                   data-file-upload-target="dropZone"
-                   data-action="dragover->file-upload#dragOver dragenter->file-upload#dragEnter dragleave->file-upload#dragLeave drop->file-upload#drop click->file-upload#openFileDialog">
-                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                  <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <div class="mt-4">
-                  <p class="text-lg font-medium text-gray-900 drop-text">Drag and drop files here, or click to select</p>
-                  <p class="text-sm text-gray-500 mt-2">Supports <strong><%= file_upload_settings[:file_extensions].count %> file formats</strong> including CSV, Excel, JSON, XML, Parquet, YAML, SQLite & more</p>
-                  <p class="text-xs text-gray-400 mt-1">Maximum file size: <%= number_to_human_size(file_upload_settings[:max_size]) %> | Multiple files supported</p>
-                  
-                  <!-- Sample file download section -->
-                  <div class="mt-4 pt-4 border-t border-gray-200">
-                    <p class="text-xs text-gray-600 mb-3">Need examples? Download sample files:</p>
-                    <div class="flex justify-center space-x-2">
-                      <%= link_to download_sample_csv_data_sources_path, 
-                                  class: "inline-flex items-center px-2 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500",
-                                  onclick: "event.stopPropagation();" do %>
-                        <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        CSV
-                      <% end %>
-                      <%= link_to download_sample_excel_data_sources_path, 
-                                  class: "inline-flex items-center px-2 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500",
-                                  onclick: "event.stopPropagation();" do %>
-                        <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        Excel
-                      <% end %>
-                      <%= link_to download_sample_json_data_sources_path, 
-                                  class: "inline-flex items-center px-2 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500",
-                                  onclick: "event.stopPropagation();" do %>
-                        <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        JSON
-                      <% end %>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Hidden File Input -->
-              <input type="file" 
-                     multiple 
-                     accept="<%= file_upload_settings[:file_extensions].map { |ext| ".#{ext}" }.join(',') %>"
-                     data-file-upload-target="input"
-                     data-action="change->file-upload#handleFiles"
-                     class="hidden">
-
-              <!-- File List -->
-              <div data-file-upload-target="fileList" class="space-y-2"></div>
-
-              <!-- Upload Progress -->
-              <div data-file-upload-target="progressContainer" class="hidden">
-                <div class="mb-2">
-                  <div class="flex justify-between text-sm font-medium text-gray-700">
-                    <span>Processing files...</span>
-                    <span>0%</span>
-                  </div>
-                  <div class="mt-1 w-full bg-gray-200 rounded-full h-2">
-                    <div data-file-upload-target="batchProgress" 
-                         class="bg-indigo-600 h-2 rounded-full transition-all duration-300" 
-                         style="width: 0%"></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Upload Status -->
-              <div data-file-upload-target="uploadStatus" class="hidden"></div>
-
-              <!-- Data Preview -->
-              <div data-file-upload-target="dataPreview" class="space-y-4"></div>
-
-              <!-- Enhanced Data Insights Panel -->
-              <div data-file-upload-target="dataInsights" class="hidden mt-6 bg-white border border-gray-200 rounded-lg p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Data Insights & Recommendations</h3>
-                
-                <!-- Quick Stats -->
-                <div class="grid grid-cols-4 gap-4 mb-6">
-                  <div class="bg-blue-50 rounded-lg p-4 text-center">
-                    <div class="text-2xl font-bold text-blue-600" data-file-upload-target="totalRows">-</div>
-                    <div class="text-sm text-gray-600">Total Rows</div>
-                  </div>
-                  <div class="bg-green-50 rounded-lg p-4 text-center">
-                    <div class="text-2xl font-bold text-green-600" data-file-upload-target="totalColumns">-</div>
-                    <div class="text-sm text-gray-600">Columns</div>
-                  </div>
-                  <div class="bg-yellow-50 rounded-lg p-4 text-center">
-                    <div class="text-2xl font-bold text-yellow-600" data-file-upload-target="qualityScore">-</div>
-                    <div class="text-sm text-gray-600">Quality Score</div>
-                  </div>
-                  <div class="bg-purple-50 rounded-lg p-4 text-center">
-                    <div class="text-2xl font-bold text-purple-600" data-file-upload-target="completeness">-</div>
-                    <div class="text-sm text-gray-600">Completeness</div>
-                  </div>
-                </div>
-
-                <!-- Data Quality Issues -->
-                <div class="mb-6">
-                  <h4 class="text-sm font-medium text-gray-900 mb-3">Data Quality Assessment</h4>
-                  <div data-file-upload-target="qualityIssues" class="space-y-2">
-                    <!-- Quality issues will be populated dynamically -->
-                  </div>
-                </div>
-
-                <!-- Suggested Transformations -->
-                <div class="mb-6">
-                  <h4 class="text-sm font-medium text-gray-900 mb-3">Suggested Data Transformations</h4>
-                  <div data-file-upload-target="suggestedTransformations" class="space-y-2">
-                    <!-- Transformations will be populated dynamically -->
-                  </div>
-                </div>
-
-                <!-- Column Analysis -->
-                <div class="mb-6">
-                  <h4 class="text-sm font-medium text-gray-900 mb-3">Column Analysis</h4>
-                  <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200" data-file-upload-target="columnAnalysisTable">
-                      <thead class="bg-gray-50">
-                        <tr>
-                          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Column</th>
-                          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Completeness</th>
-                          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Unique Values</th>
-                          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody class="bg-white divide-y divide-gray-200">
-                        <!-- Column analysis rows will be populated dynamically -->
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Process Files Button -->
-              <div class="flex justify-center">
-                <button type="button" 
-                        data-action="click->file-upload#processFiles"
-                        class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                  Process Files
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- API Data Preview Section (for API source types) -->
-          <div id="api-preview-section" class="hidden">
-            <div class="bg-gray-50 rounded-lg p-6">
-              <h3 class="text-lg font-medium text-gray-900 mb-4">Sample Data Preview</h3>
-              <p class="text-gray-600 mb-4">Here's a preview of the data that will be imported from your connected source:</p>
-              
-              <div class="bg-white border border-gray-200 rounded-md p-4">
-                <div class="text-sm text-gray-500 mb-2">Loading sample data...</div>
-                <div class="animate-pulse">
-                  <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div class="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                  <div class="h-4 bg-gray-200 rounded w-5/6"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 4: Final Setup & Sync Options -->
-        <div data-data-source-wizard-target="step" data-step="4" class="p-6 hidden">
-          <div class="mb-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-2">Review & Finalize</h2>
-            <p class="text-gray-600">Review your configuration and complete the setup of your data source.</p>
-          </div>
-
-          <!-- Configuration Summary -->
-          <div class="bg-gray-50 rounded-lg p-6 mb-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Configuration Summary</h3>
-            <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
-              <div>
-                <dt class="text-sm font-medium text-gray-500">Data Source Type</dt>
-                <dd class="mt-1 text-sm text-gray-900" data-data-source-wizard-target="summarySourceType">-</dd>
-              </div>
-              <div>
-                <dt class="text-sm font-medium text-gray-500">Name</dt>
-                <dd class="mt-1 text-sm text-gray-900" data-data-source-wizard-target="summaryName">-</dd>
-              </div>
-              <div>
-                <dt class="text-sm font-medium text-gray-500">Sync Frequency</dt>
-                <dd class="mt-1 text-sm text-gray-900" data-data-source-wizard-target="summarySyncFrequency">-</dd>
-              </div>
-              <div>
-                <dt class="text-sm font-medium text-gray-500">Connection Status</dt>
-                <dd class="mt-1 text-sm text-gray-900" data-data-source-wizard-target="summaryConnectionStatus">
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                    Not Tested
-                  </span>
-                </dd>
-              </div>
-            </dl>
-          </div>
-
-          <!-- Initial Sync Options -->
-          <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Initial Sync Options</h3>
-            <div class="space-y-4">
-              <div class="flex items-center">
-                <input type="checkbox" 
-                       id="perform_initial_sync" 
-                       name="data_source[perform_initial_sync]" 
-                       value="1" 
-                       checked
-                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                <label for="perform_initial_sync" class="ml-2 block text-sm text-gray-900">
-                  Perform initial data sync after creation
-                </label>
-              </div>
-              <div class="flex items-center">
-                <input type="checkbox" 
-                       id="enable_auto_sync" 
-                       name="data_source[enable_auto_sync]" 
-                       value="1" 
-                       checked
-                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                <label for="enable_auto_sync" class="ml-2 block text-sm text-gray-900">
-                  Enable automatic syncing based on the selected frequency
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Navigation Buttons -->
-        <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-between">
-          <button type="button" 
-                  data-data-source-wizard-target="prevButton"
-                  data-action="click->data-source-wizard#prevStep"
-                  class="hidden inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-            Previous
-          </button>
+        <!-- Step 1: Platform Selection -->
+        <div class="wizard-step" data-data-source-wizard-target="step1" data-step="1" role="tabpanel" aria-labelledby="step1-tab">
+          <%= render 'platform_selection', 
+                data_source_configs: data_source_configs.reject { |k, v| v[:status] == 'coming_soon' },
+                form: form %>
           
-          <div class="flex space-x-3">
-            <button type="button" 
-                    data-data-source-wizard-target="nextButton"
-                    data-action="click->data-source-wizard#nextStep"
-                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Next
-              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </button>
-            
-            <button type="submit" 
-                    data-data-source-wizard-target="submitButton"
-                    data-action="click->data-source-wizard#submitForm"
-                    class="hidden inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              Create Data Source
-            </button>
-          </div>
+          <!-- Coming Soon Platforms -->
+          <%= render 'coming_soon_platforms', 
+                data_source_configs: data_source_configs.select { |k, v| v[:status] == 'coming_soon' } %>
         </div>
+
+        <!-- Step 2: Configuration -->
+        <div class="wizard-step hidden" data-data-source-wizard-target="step2" data-step="2" role="tabpanel" aria-labelledby="step2-tab">
+          <%= render 'configuration_step', 
+                form: form,
+                sync_frequencies: sync_frequencies %>
+        </div>
+
+        <!-- Step 3: Data Preview -->
+        <div class="wizard-step hidden" data-data-source-wizard-target="step3" data-step="3" role="tabpanel" aria-labelledby="step3-tab">
+          <%= render 'data_preview_step', 
+                file_config: file_config %>
+        </div>
+
+        <!-- Step 4: Final Setup -->
+        <div class="wizard-step hidden" data-data-source-wizard-target="step4" data-step="4" role="tabpanel" aria-labelledby="step4-tab">
+          <%= render 'final_setup_step', 
+                form: form %>
+        </div>
+
+        <!-- Enhanced Navigation Footer -->
+        <%= render 'wizard_navigation' %>
 
       <% end %>
     </div>
 
-    <!-- Enhanced Error Display & User Feedback -->
-    <% if @data_source.errors.any? %>
-      <div class="mt-6 bg-red-50 border border-red-200 rounded-md p-4">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L10 10.586l2.707-2.707a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-            </svg>
+    <!-- Additional Help Section -->
+    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Setup Guide -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+          <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+          Integration Guides
+        </h3>
+        <div class="space-y-3">
+          <% ['Shopify', 'QuickBooks', 'Stripe'].each do |platform| %>
+            <a href="#" class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+              <span class="text-sm font-medium text-gray-900 dark:text-white">How to connect <%= platform %></span>
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+              </svg>
+            </a>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Support -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+          <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Need Help?
+        </h3>
+        <div class="space-y-4">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            Our support team is here to help you get connected quickly and securely.
+          </p>
+          <div class="flex space-x-3">
+            <a href="mailto:support@datarefinery.com" 
+               class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+              Email Support
+            </a>
+            <a href="#" 
+               class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              Live Chat
+            </a>
           </div>
-          <div class="ml-3">
-            <h3 class="text-sm font-medium text-red-800">There were errors with your submission:</h3>
-            <div class="mt-2 text-sm text-red-700">
-              <ul class="list-disc pl-5 space-y-1">
-                <% @data_source.errors.full_messages.each do |message| %>
-                  <li><%= message %></li>
-                <% end %>
-              </ul>
-            </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Display -->
+    <% if @data_source.errors.any? %>
+      <div class="mt-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6">
+        <div class="flex items-start">
+          <svg class="w-6 h-6 text-red-400 mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+          <div>
+            <h3 class="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">Please fix the following errors:</h3>
+            <ul class="list-disc list-inside space-y-1 text-red-700 dark:text-red-300">
+              <% @data_source.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
           </div>
         </div>
       </div>
     <% end %>
-
-    <!-- Enhanced Help & Tips Section -->
-    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-      <div class="flex items-start">
-        <div class="flex-shrink-0">
-          <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189 11.95 11.95 0 013.17-1.043 3.48 3.48 0 011.33-.134c.844 0 1.66.269 2.34.707a6.018 6.018 0 00-6.33-3.841zm0 5.25a6.01 6.01 0 01-1.5-.189 11.95 11.95 0 01-3.17-1.043 3.48 3.48 0 01-1.33-.134c-.844 0-1.66.269-2.34.707a6.018 6.018 0 006.33-3.841z" />
-          </svg>
-        </div>
-        <div class="ml-3">
-          <h3 class="text-sm font-medium text-blue-900">Pro Tips for Better Data Integration</h3>
-          <div class="mt-2 text-sm text-blue-800">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-              <div>
-                <h4 class="font-medium mb-2">📁 File Upload Best Practices:</h4>
-                <ul class="text-sm space-y-1 text-blue-700">
-                  <li>• Use clear, descriptive column headers</li>
-                  <li>• Remove empty rows and columns</li>
-                  <li>• Ensure consistent date formats</li>
-                  <li>• Include unique identifiers (IDs)</li>
-                  <li>• Keep files under 100MB for optimal performance</li>
-                </ul>
-              </div>
-              <div>
-                <h4 class="font-medium mb-2">🔌 API Connections:</h4>
-                <ul class="text-sm space-y-1 text-blue-700">
-                  <li>• Verify API credentials before connecting</li>
-                  <li>• Test with small data sets first</li>
-                  <li>• Set appropriate sync frequencies</li>
-                  <li>• Monitor data quality after initial sync</li>
-                  <li>• Review connection permissions</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Supported Data Formats Information -->
-    <div class="mt-6 bg-white border border-gray-200 rounded-lg p-6">
-      <h3 class="text-lg font-medium text-gray-900 mb-4">Supported Data Formats & File Types</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div>
-          <h4 class="font-medium text-gray-900 mb-3 flex items-center">
-            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-            Structured Data
-          </h4>
-          <div class="space-y-2 text-sm text-gray-600">
-            <div class="flex justify-between">
-              <span>CSV (Comma-separated)</span>
-              <span class="text-green-600 font-medium">✓</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Excel (.xls, .xlsx)</span>
-              <span class="text-green-600 font-medium">✓</span>
-            </div>
-            <div class="flex justify-between">
-              <span>TSV (Tab-separated)</span>
-              <span class="text-green-600 font-medium">✓</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Parquet (Columnar)</span>
-              <span class="text-green-600 font-medium">✓</span>
-            </div>
-          </div>
-        </div>
-        <div>
-          <h4 class="font-medium text-gray-900 mb-3 flex items-center">
-            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-            Semi-Structured Data
-          </h4>
-          <div class="space-y-2 text-sm text-gray-600">
-            <div class="flex justify-between">
-              <span>JSON (JavaScript Object)</span>
-              <span class="text-green-600 font-medium">✓</span>
-            </div>
-            <div class="flex justify-between">
-              <span>XML (Extensible Markup)</span>
-              <span class="text-green-600 font-medium">✓</span>
-            </div>
-            <div class="flex justify-between">
-              <span>YAML (.yml, .yaml)</span>
-              <span class="text-green-600 font-medium">✓</span>
-            </div>
-          </div>
-        </div>
-        <div>
-          <h4 class="font-medium text-gray-900 mb-3 flex items-center">
-            <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-            Database & Other
-          </h4>
-          <div class="space-y-2 text-sm text-gray-600">
-            <div class="flex justify-between">
-              <span>SQLite Database</span>
-              <span class="text-green-600 font-medium">✓</span>
-            </div>
-            <div class="flex justify-between">
-              <span>SQL Scripts</span>
-              <span class="text-green-600 font-medium">✓</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Plain Text (.txt)</span>
-              <span class="text-green-600 font-medium">✓</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="mt-4 p-3 bg-gray-50 rounded-lg">
-        <p class="text-sm text-gray-600">
-          <strong>Note:</strong> All uploaded files are securely processed and stored with encryption. 
-          Large files are processed in chunks to ensure optimal performance and reliability.
-        </p>
-      </div>
-    </div>
   </div>
 </div>
-
-<!-- Dynamic Configuration Templates -->
-<% data_source_configs.each do |source_type, config| %>
-  <% next unless config[:implemented] %>
-  <script type="text/template" id="<%= source_type %>-config-template">
-    <div class="space-y-6">
-      <% case source_type %>
-      <% when :shopify %>
-        <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-              </svg>
-            </div>
-            <div class="ml-3">
-              <h3 class="text-sm font-medium text-blue-800">Shopify Connection</h3>
-              <div class="mt-2 text-sm text-blue-700">
-                <p>You'll need your Shopify store domain and a private app access token. <a href="#" class="underline">Learn how to create one</a>.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Shop Domain *</label>
-          <div class="relative">
-            <input type="text" 
-                   name="data_source[config][shop_domain]" 
-                   placeholder="your-shop-name"
-                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-24">
-            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <span class="text-gray-500 text-sm">.myshopify.com</span>
-            </div>
-          </div>
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Access Token *</label>
-          <input type="password" 
-                 name="data_source[config][access_token]" 
-                 placeholder="Enter your Shopify access token"
-                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-      <% when :woocommerce %>
-        <div class="bg-purple-50 border border-purple-200 rounded-md p-4">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-              </svg>
-            </div>
-            <div class="ml-3">
-              <h3 class="text-sm font-medium text-purple-800">WooCommerce Connection</h3>
-              <div class="mt-2 text-sm text-purple-700">
-                <p>Connect to your WooCommerce store using REST API credentials. <a href="#" class="underline">Setup guide</a>.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Site URL *</label>
-          <input type="url" 
-                 name="data_source[config][site_url]" 
-                 placeholder="https://your-store.com"
-                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Consumer Key *</label>
-          <input type="text" 
-                 name="data_source[config][consumer_key]" 
-                 placeholder="ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Consumer Secret *</label>
-          <input type="password" 
-                 name="data_source[config][consumer_secret]" 
-                 placeholder="cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-      <% when :amazon_seller_central %>
-        <div class="bg-orange-50 border border-orange-200 rounded-md p-4">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-              </svg>
-            </div>
-            <div class="ml-3">
-              <h3 class="text-sm font-medium text-orange-800">Amazon Seller Central</h3>
-              <div class="mt-2 text-sm text-orange-700">
-                <p>Connect using your Amazon MWS or SP-API credentials. <a href="#" class="underline">API setup guide</a>.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Marketplace ID *</label>
-          <input type="text" 
-                 name="data_source[config][marketplace_id]" 
-                 placeholder="ATVPDKIKX0DER"
-                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Seller ID *</label>
-          <input type="text" 
-                 name="data_source[config][seller_id]" 
-                 placeholder="Your Amazon Seller ID"
-                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Access Key ID *</label>
-          <input type="text" 
-                 name="data_source[config][access_key_id]" 
-                 placeholder="AKIAIOSFODNN7EXAMPLE"
-                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Secret Access Key *</label>
-          <input type="password" 
-                 name="data_source[config][secret_access_key]" 
-                 placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-      <% when :file_upload %>
-        <div class="bg-gray-50 border border-gray-200 rounded-md p-4">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-              </svg>
-            </div>
-            <div class="ml-3">
-              <h3 class="text-sm font-medium text-gray-800">File Upload</h3>
-              <div class="mt-2 text-sm text-gray-700">
-                <p>Upload your data files directly. Supported formats: <%= file_upload_settings[:type_descriptions].values.join(', ') %>.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="text-center text-gray-500">
-          <p>File upload configuration will be handled in the next step.</p>
-          <div class="mt-4">
-            <p class="text-sm font-medium text-gray-700 mb-2">Need help with file format? Download sample files:</p>
-            <div class="flex justify-center space-x-3">
-              <%= link_to download_sample_csv_data_sources_path, 
-                          class: "inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
-                <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                Sample CSV
-              <% end %>
-              <%= link_to download_sample_excel_data_sources_path, 
-                          class: "inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
-                <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                Sample Excel
-              <% end %>
-              <%= link_to download_sample_json_data_sources_path, 
-                          class: "inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
-                <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                Sample JSON
-              <% end %>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </script>
-<% end %>
-
-<script>
-  // Dynamic configuration loading
-  document.addEventListener('DOMContentLoaded', function() {
-    const configSection = document.getElementById('configuration-section')
-    const fileUploadSection = document.getElementById('file-upload-section')
-    const apiPreviewSection = document.getElementById('api-preview-section')
-    
-    // Available source types from Ruby configuration
-    const availableSourceTypes = <%= data_source_configs.select { |_, config| config[:implemented] }.keys.to_json.html_safe %>;
-    const dataSourceConfigs = <%= data_source_configs.to_json.html_safe %>;
-    const fileUploadSettings = <%= file_upload_settings.to_json.html_safe %>;
-    
-    function loadConfiguration(sourceType) {
-      const template = document.getElementById(`${sourceType}-config-template`)
-      if (template && configSection && availableSourceTypes.includes(sourceType)) {
-        configSection.innerHTML = template.innerHTML
-      } else if (configSection) {
-        const sourceConfig = dataSourceConfigs[sourceType];
-        const sourceName = sourceConfig ? sourceConfig.name : sourceType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-        configSection.innerHTML = `
-          <div class="text-center py-8 text-gray-500">
-            <div class="mb-4">
-              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">${sourceName}</h3>
-            <p class="text-sm">Configuration for ${sourceName} is currently in development. We're working hard to bring you this integration!</p>
-            <div class="mt-4">
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                In Development
-              </span>
-            </div>
-          </div>
-        `;
-      }
-      
-      // Show/hide appropriate preview sections
-      if (sourceType === 'file_upload') {
-        fileUploadSection?.classList.remove('hidden')
-        apiPreviewSection?.classList.add('hidden')
-      } else {
-        fileUploadSection?.classList.add('hidden')
-        apiPreviewSection?.classList.remove('hidden')
-      }
-      
-      // Update connection tester source type
-      const connectionTester = document.querySelector('[data-controller*="connection-tester"]')
-      if (connectionTester) {
-        connectionTester.setAttribute('data-connection-tester-source-type-value', sourceType)
-      }
-    }
-    
-    // Listen for source selection events
-    document.addEventListener('source-selector:sourceSelected', function(event) {
-      loadConfiguration(event.detail.sourceType)
-    })
-    
-    // File upload handling with dynamic settings
-    const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) {
-      fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-          // Check file size
-          if (file.size > fileUploadSettings.max_size) {
-            alert(`File size exceeds maximum allowed size of ${(fileUploadSettings.max_size / (1024 * 1024)).toFixed(1)}MB`);
-            this.value = '';
-            return;
-          }
-          
-          // Check file type
-          const fileType = file.type;
-          const fileName = file.name.toLowerCase();
-          const isValidType = fileUploadSettings.accepted_types.some(type => {
-            if (type.includes('*')) {
-              const baseType = type.split('/')[0];
-              return fileType.startsWith(baseType);
-            }
-            return fileType === type;
-          });
-          
-          if (!isValidType) {
-            alert(`File type not supported. Please upload: ${Object.values(fileUploadSettings.type_descriptions).join(', ')}`);
-            this.value = '';
-            return;
-          }
-        }
-      });
-    }
-  })
-</script>
