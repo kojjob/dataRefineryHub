@@ -7,10 +7,86 @@
   </div>
 
   <div class="premium-container relative z-10 py-16">
-    <div class="premium-grid premium-grid-md-2 premium-grid-lg-4 gap-12">
+    <!-- Premium Integrations Showcase -->
+    <div class="premium-mb-16">
+      <div class="premium-text-center premium-mb-12">
+        <h2 class="premium-heading-2 text-white premium-mb-4"
+            role="heading"
+            aria-level="2"
+            aria-label="Trusted Integrations">
+          Trusted Integrations
+        </h2>
+        <p class="premium-body-large text-white/80 max-w-2xl mx-auto">
+          Connect with your favorite tools and unlock AI-powered insights across your entire business ecosystem
+        </p>
+      </div>
+
+      <!-- Dynamic Integrations Grid -->
+      <div class="premium-grid premium-grid-sm-2 premium-grid-md-4 premium-grid-lg-5 gap-6"
+           role="list"
+           aria-label="Available integrations">
+        <% if defined?(@integrations) && @integrations.present? %>
+          <% @integrations.first(10).each do |integration| %>
+            <div class="footer-integration-card group premium-card premium-card-glass relative overflow-hidden text-center p-4"
+                 style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2);"
+                 role="listitem"
+                 aria-label="<%= integration[:name] %> integration with <%= integration[:ai_feature] %>">
+
+              <!-- Integration Icon -->
+              <div class="integration-icon w-10 h-10 bg-gradient-to-r from-white/20 to-white/10 rounded-xl flex items-center justify-center mx-auto premium-mb-3 shadow-lg">
+                <div class="w-5 h-5 bg-white rounded-lg flex items-center justify-center">
+                  <div class="w-2.5 h-2.5 bg-gradient-to-r from-purple-500 to-blue-500 rounded-sm"></div>
+                </div>
+              </div>
+
+              <!-- Integration Name -->
+              <div class="premium-body-small font-semibold text-white premium-mb-2 truncate">
+                <%= integration[:name] %>
+              </div>
+
+              <!-- AI Feature Badge -->
+              <div class="premium-body-tiny text-white/70 bg-white/10 px-2 py-1 rounded-full text-xs truncate">
+                <%= integration[:ai_feature] %>
+              </div>
+
+              <!-- Premium Hover Effect -->
+              <div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+            </div>
+          <% end %>
+        <% else %>
+          <!-- Fallback integrations if data not available -->
+          <% %w[Shopify QuickBooks Stripe Mailchimp Analytics HubSpot Zendesk Slack Salesforce Airtable].each do |integration| %>
+            <div class="footer-integration-card group premium-card premium-card-glass relative overflow-hidden text-center p-4"
+                 style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2);"
+                 role="listitem"
+                 aria-label="<%= integration %> integration with AI enhancement">
+
+              <div class="integration-icon w-10 h-10 bg-gradient-to-r from-white/20 to-white/10 rounded-xl flex items-center justify-center mx-auto premium-mb-3 shadow-lg">
+                <div class="w-5 h-5 bg-white rounded-lg flex items-center justify-center">
+                  <div class="w-2.5 h-2.5 bg-gradient-to-r from-purple-500 to-blue-500 rounded-sm"></div>
+                </div>
+              </div>
+
+              <div class="premium-body-small font-semibold text-white premium-mb-2 truncate">
+                <%= integration %>
+              </div>
+
+              <div class="premium-body-tiny text-white/70 bg-white/10 px-2 py-1 rounded-full text-xs">
+                AI Enhanced
+              </div>
+
+              <div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Footer Links Grid -->
+    <div class="premium-grid premium-grid-md-2 premium-grid-lg-3 gap-12">
 
       <!-- Premium Company Info -->
-      <div class="lg:col-span-2">
+      <div class="lg:col-span-1">
         <div class="flex items-center space-x-4 premium-mb-8">
           <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-purple-500 to-blue-500 shadow-xl">
             <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

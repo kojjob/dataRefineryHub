@@ -261,9 +261,15 @@
 .premium-mb-16 { margin-bottom: var(--premium-space-16); }
 
 /* Enhanced Responsive Design */
+@media (min-width: 640px) {
+  .premium-grid-sm-2 { grid-template-columns: repeat(2, 1fr); }
+  .premium-grid-sm-3 { grid-template-columns: repeat(3, 1fr); }
+}
+
 @media (min-width: 768px) {
   .premium-grid-md-2 { grid-template-columns: repeat(2, 1fr); }
   .premium-grid-md-3 { grid-template-columns: repeat(3, 1fr); }
+  .premium-grid-md-4 { grid-template-columns: repeat(4, 1fr); }
 }
 
 @media (min-width: 1024px) {
@@ -415,5 +421,35 @@
 @media (prefers-color-scheme: dark) {
   .premium-landing {
     color-scheme: dark;
+  }
+}
+
+/* Footer Integration Cards */
+.footer-integration-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footer-integration-card:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+/* Integration icon animations */
+.integration-icon {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footer-integration-card:hover .integration-icon {
+  transform: scale(1.1) rotate(3deg);
+}
+
+/* Responsive text sizing for footer */
+@media (max-width: 640px) {
+  .footer-integration-card {
+    padding: 1rem;
+  }
+
+  .footer-integration-card .integration-icon {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }

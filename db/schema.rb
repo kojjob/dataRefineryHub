@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_04_104500) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_04_110100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -407,6 +407,60 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_104500) do
     t.index ["record_type"], name: "index_raw_data_records_on_record_type"
   end
 
+  create_table "scheduled_task_runs", force: :cascade do |t|
+    t.bigint "scheduled_task_id", null: false
+    t.bigint "pipeline_execution_id"
+    t.bigint "task_id"
+    t.string "status", default: "pending", null: false
+    t.datetime "started_at", null: false
+    t.datetime "completed_at"
+    t.integer "duration_seconds"
+    t.text "error_message"
+    t.jsonb "output", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pipeline_execution_id"], name: "index_scheduled_task_runs_on_pipeline_execution_id"
+    t.index ["scheduled_task_id", "started_at"], name: "index_scheduled_task_runs_on_scheduled_task_id_and_started_at"
+    t.index ["scheduled_task_id"], name: "index_scheduled_task_runs_on_scheduled_task_id"
+    t.index ["started_at"], name: "index_scheduled_task_runs_on_started_at"
+    t.index ["status"], name: "index_scheduled_task_runs_on_status"
+    t.index ["task_id"], name: "index_scheduled_task_runs_on_task_id"
+  end
+
+  create_table "scheduled_tasks", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "task_template_id", null: false
+    t.bigint "created_by_id", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "status", default: "active", null: false
+    t.string "schedule_type", null: false
+    t.datetime "scheduled_at"
+    t.time "time_of_day"
+    t.string "days_of_week", default: [], array: true
+    t.integer "day_of_month"
+    t.string "cron_expression"
+    t.date "start_date"
+    t.date "end_date"
+    t.integer "max_runs"
+    t.integer "run_count", default: 0
+    t.datetime "next_run_at"
+    t.jsonb "configuration", default: {}
+    t.jsonb "task_overrides", default: {}
+    t.datetime "paused_at"
+    t.datetime "resumed_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_scheduled_tasks_on_created_by_id"
+    t.index ["next_run_at"], name: "index_scheduled_tasks_on_next_run_at"
+    t.index ["organization_id", "status"], name: "index_scheduled_tasks_on_organization_id_and_status"
+    t.index ["organization_id"], name: "index_scheduled_tasks_on_organization_id"
+    t.index ["schedule_type"], name: "index_scheduled_tasks_on_schedule_type"
+    t.index ["status"], name: "index_scheduled_tasks_on_status"
+    t.index ["task_template_id"], name: "index_scheduled_tasks_on_task_template_id"
+  end
+
   create_table "scheduled_uploads", force: :cascade do |t|
     t.bigint "data_source_id", null: false
     t.bigint "user_id", null: false
@@ -653,6 +707,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_104500) do
   add_foreign_key "raw_data_records", "data_sources"
   add_foreign_key "raw_data_records", "extraction_jobs"
   add_foreign_key "raw_data_records", "organizations"
+  add_foreign_key "scheduled_task_runs", "pipeline_executions"
+  add_foreign_key "scheduled_task_runs", "scheduled_tasks"
+  add_foreign_key "scheduled_task_runs", "tasks"
+  add_foreign_key "scheduled_tasks", "organizations"
+  add_foreign_key "scheduled_tasks", "task_templates"
+  add_foreign_key "scheduled_tasks", "users", column: "created_by_id"
   add_foreign_key "scheduled_uploads", "data_sources"
   add_foreign_key "scheduled_uploads", "users"
   add_foreign_key "task_executions", "tasks"

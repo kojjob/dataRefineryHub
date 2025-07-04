@@ -43,6 +43,12 @@ default: &default
       threads: 2
       processes: 1  # Single process for manual tasks to maintain order
       polling_interval: 0.5
+    
+    # Scheduled tasks queue
+    - queues: [scheduled_tasks]
+      threads: 2
+      processes: 1
+      polling_interval: 1
 
     # Default queue for general jobs
     - queues: [default, mailers]
@@ -78,6 +84,13 @@ default: &default
       queue: low
       schedule: "0 * * * *"  # Every hour
       description: "Calculate and cache ETL performance metrics"
+    
+    # Check for due scheduled tasks every minute
+    check_scheduled_tasks:
+      class: ScheduledTaskCheckerJob
+      queue: scheduled_tasks
+      schedule: "* * * * *"  # Every minute
+      description: "Check and execute due scheduled tasks"
 
 development:
   <<: *default
@@ -136,6 +149,12 @@ production:
       threads: 5
       processes: <%= ENV.fetch("MANUAL_TASK_WORKER_PROCESSES", 2) %>
       polling_interval: 0.2
+    
+    # Scheduled tasks with dedicated resources
+    - queues: [scheduled_tasks]
+      threads: 3
+      processes: <%= ENV.fetch("SCHEDULED_TASK_WORKER_PROCESSES", 2) %>
+      polling_interval: 0.5
 
     # Default queue with balanced resources
     - queues: [default, mailers]

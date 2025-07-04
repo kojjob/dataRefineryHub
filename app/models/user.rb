@@ -18,6 +18,7 @@ class User < ApplicationRecord
   has_many :assigned_tasks, class_name: 'Task', foreign_key: 'assignee_id', dependent: :nullify
   has_many :executed_tasks, class_name: 'TaskExecution', foreign_key: 'executed_by_id', dependent: :nullify
   has_many :approved_pipelines, class_name: 'PipelineExecution', foreign_key: 'approved_by_id', dependent: :nullify
+  has_many :created_scheduled_tasks, class_name: 'ScheduledTask', foreign_key: 'created_by_id', dependent: :nullify
   
   # AI-related associations
   has_many :ai_presentations, class_name: 'Ai::Presentation', dependent: :destroy
