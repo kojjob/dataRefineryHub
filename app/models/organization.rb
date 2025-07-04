@@ -15,6 +15,7 @@ class Organization < ApplicationRecord
   has_many :visualizations, dependent: :destroy
   has_many :presentations, dependent: :destroy
   has_many :pipeline_executions, dependent: :destroy
+  has_many :pipeline_configurations, dependent: :destroy
   has_many :task_templates, dependent: :destroy
   has_many :scheduled_tasks, dependent: :destroy
   
@@ -70,6 +71,33 @@ class Organization < ApplicationRecord
 
   def trial?
     status == "trial"
+  end
+
+  def suspended?
+    status == "suspended"
+  end
+
+  # Alias method for subscription_plan to maintain compatibility
+  def subscription_plan
+    plan
+  end
+
+  # Method to get formatted plan name for display
+  def subscription_plan_name
+    case plan
+    when "free_trial"
+      "Free Trial"
+    when "starter"
+      "Starter Plan"
+    when "growth"
+      "Growth Plan"
+    when "scale"
+      "Scale Plan"
+    when "enterprise"
+      "Enterprise Plan"
+    else
+      plan.humanize
+    end
   end
 
   def monthly_data_limit
