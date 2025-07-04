@@ -4,6 +4,7 @@
 # Tracks the execution of ETL pipelines for monitoring and auditing
 # Supports multiple execution modes: automatic, manual, scheduled, triggered
 class PipelineExecution < ApplicationRecord
+  belongs_to :organization
   belongs_to :data_source, optional: true
   belongs_to :user, optional: true
   belongs_to :approved_by, class_name: 'User', optional: true

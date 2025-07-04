@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   before_action :log_session_debug, if: -> { Rails.env.development? }
   before_action :set_system_status, unless: :devise_controller?
   before_action :set_manual_tasks_count, unless: :devise_controller?
+  before_action :set_running_pipelines_count, unless: :devise_controller?
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
@@ -121,6 +122,17 @@ class ApplicationController < ActionController::Base
     rescue => e
       Rails.logger.error "Error counting manual tasks: #{e.message}"
       @manual_tasks_count = 0
+    end
+  end
+  
+  def set_running_pipelines_count
+    return unless current_user&.organization
+    
+    begin
+      @running_pipelines_count = current_organization.pipeline_executions.running.count
+    rescue => e
+      Rails.logger.error "Error counting running pipelines: #{e.message}"
+      @running_pipelines_count = 0
     end
   end
 end

@@ -14,6 +14,7 @@ class Organization < ApplicationRecord
   has_many :audit_logs, dependent: :destroy
   has_many :visualizations, dependent: :destroy
   has_many :presentations, dependent: :destroy
+  has_many :pipeline_executions, dependent: :destroy
   
   # AI-related associations
   has_many :ai_presentations, class_name: 'Ai::Presentation', dependent: :destroy

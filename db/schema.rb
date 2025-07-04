@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_04_090246) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_04_101932) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -314,6 +314,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_090246) do
     t.string "approval_status"
     t.bigint "approved_by_id"
     t.datetime "last_manual_task_at"
+    t.bigint "organization_id", null: false
     t.index ["approved_by_id"], name: "index_pipeline_executions_on_approved_by_id"
     t.index ["data_source_id", "status"], name: "index_pipeline_executions_on_data_source_id_and_status"
     t.index ["data_source_id"], name: "index_pipeline_executions_on_data_source_id"
@@ -321,6 +322,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_090246) do
     t.index ["execution_mode", "status"], name: "index_pipeline_executions_on_execution_mode_and_status"
     t.index ["execution_mode"], name: "index_pipeline_executions_on_execution_mode"
     t.index ["manual_intervention_required"], name: "index_pipeline_executions_on_manual_intervention_required"
+    t.index ["organization_id"], name: "index_pipeline_executions_on_organization_id"
     t.index ["pipeline_name", "status"], name: "index_pipeline_executions_on_pipeline_name_and_status"
     t.index ["pipeline_name"], name: "index_pipeline_executions_on_pipeline_name"
     t.index ["started_at", "status"], name: "index_pipeline_executions_on_started_at_and_status"
@@ -590,6 +592,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_090246) do
   add_foreign_key "notifications", "organizations"
   add_foreign_key "notifications", "users"
   add_foreign_key "pipeline_executions", "data_sources"
+  add_foreign_key "pipeline_executions", "organizations"
   add_foreign_key "pipeline_executions", "users"
   add_foreign_key "pipeline_executions", "users", column: "approved_by_id"
   add_foreign_key "presentations", "organizations"
