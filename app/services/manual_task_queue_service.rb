@@ -28,9 +28,9 @@ class ManualTaskQueueService
   # Get tasks grouped by priority
   def tasks_by_priority
     {
-      high: pending_tasks.where('priority >= ?', 7),
-      medium: pending_tasks.where(priority: 4..6),
-      low: pending_tasks.where('priority <= ?', 3)
+      high: Task.for_manual_queue.includes(:pipeline_execution, :assignee).where('priority >= ?', 7).by_priority,
+      medium: Task.for_manual_queue.includes(:pipeline_execution, :assignee).where(priority: 4..6).by_priority,
+      low: Task.for_manual_queue.includes(:pipeline_execution, :assignee).where('priority <= ?', 3).by_priority
     }
   end
   
@@ -108,9 +108,10 @@ class ManualTaskQueueService
         medium: pending_tasks.where(priority: 4..6).count,
         low: pending_tasks.where('priority <= ?', 3).count
       },
-      by_pipeline: pending_tasks.joins(:pipeline_execution)
-                                .group('pipeline_executions.pipeline_name')
-                                .count,
+      by_pipeline: Task.for_manual_queue
+                       .joins(:pipeline_execution)
+                       .group('pipeline_executions.pipeline_name')
+                       .count,
       assigned: pending_tasks.where.not(assignee_id: nil).count,
       unassigned: pending_tasks.where(assignee_id: nil).count,
       average_wait_time: calculate_average_wait_time,

@@ -19,6 +19,11 @@ export default class extends Controller {
 
   disconnect() {
     this.stopLiveUpdates()
+
+    if (this.eventSource) {
+      this.eventSource.close()
+      this.eventSource = null
+    }
   }
 
   initializePersonalization() {
@@ -54,7 +59,10 @@ export default class extends Controller {
   }
 
   startLiveUpdates() {
-    // Simulate live data updates
+    // Try to connect to real-time data stream first
+    this.connectToRealTimeData()
+
+    // Fallback to simulated updates if real-time connection fails
     this.updateInterval = setInterval(() => {
       this.updateLiveMetrics()
       this.rotateInsights()
@@ -62,6 +70,48 @@ export default class extends Controller {
 
     // Start the animation sequence
     this.animateFeatureCards()
+  }
+
+  connectToRealTimeData() {
+    // Try to connect to real-time metrics endpoint
+    if (typeof EventSource !== 'undefined') {
+      try {
+        this.eventSource = new EventSource('/api/v1/realtime/metrics_stream')
+
+        this.eventSource.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data)
+            this.updateMetricsFromRealData(data)
+          } catch (e) {
+            console.log('Real-time data parsing error:', e)
+          }
+        }
+
+        this.eventSource.onerror = () => {
+          console.log('Real-time connection failed, using simulated data')
+          this.eventSource.close()
+          this.eventSource = null
+        }
+      } catch (e) {
+        console.log('EventSource not supported, using simulated data')
+      }
+    }
+  }
+
+  updateMetricsFromRealData(data) {
+    if (data.metrics) {
+      // Update revenue rate
+      const revenueTarget = this.element.querySelector('[data-live-metrics-target="revenue"]')
+      if (revenueTarget && data.metrics.revenue_rate) {
+        this.animateNumberChange(revenueTarget, data.metrics.revenue_rate)
+      }
+
+      // Update user count
+      const usersTarget = this.element.querySelector('[data-live-metrics-target="users"]')
+      if (usersTarget && data.metrics.customer_activity) {
+        this.animateNumberChange(usersTarget, data.metrics.customer_activity)
+      }
+    }
   }
 
   stopLiveUpdates() {
@@ -581,5 +631,39 @@ export default class extends Controller {
     this.featureCardTargets.forEach(card => {
       this.observer.observe(card)
     })
+  }
+
+  animateNumberChange(element, newValue) {
+    const currentValue = parseInt(element.textContent.replace(/[^0-9]/g, '')) || 0
+    const difference = newValue - currentValue
+    const steps = 20
+    const stepValue = difference / steps
+    let currentStep = 0
+
+    const animation = setInterval(() => {
+      currentStep++
+      const value = Math.round(currentValue + (stepValue * currentStep))
+
+      // Preserve any prefix/suffix (like $ or +)
+      const originalText = element.textContent
+      const prefix = originalText.match(/^[^0-9]*/)[0]
+      const suffix = originalText.match(/[^0-9]*$/)[0]
+
+      element.textContent = prefix + value.toLocaleString() + suffix
+
+      if (currentStep >= steps) {
+        clearInterval(animation)
+        element.textContent = prefix + newValue.toLocaleString() + suffix
+      }
+    }, 50)
+  }
+
+  trackEvent(eventName, properties = {}) {
+    // Track user interactions for analytics
+    if (typeof gtag !== 'undefined') {
+      gtag('event', eventName, properties)
+    }
+
+    console.log(`Event: ${eventName}`, properties)
   }
 }

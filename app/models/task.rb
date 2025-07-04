@@ -4,6 +4,7 @@
 class Task < ApplicationRecord
   belongs_to :pipeline_execution
   belongs_to :assignee, class_name: 'User', optional: true
+  belongs_to :task_template, optional: true
   has_many :task_executions, dependent: :destroy
   
   # Broadcast changes for real-time updates

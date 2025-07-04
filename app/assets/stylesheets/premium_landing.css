@@ -339,3 +339,81 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Additional Responsive Utilities */
+.premium-hide-mobile {
+  display: block;
+}
+
+.premium-show-mobile {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .premium-hide-mobile {
+    display: none;
+  }
+
+  .premium-show-mobile {
+    display: block;
+  }
+
+  .premium-stack-mobile {
+    flex-direction: column;
+  }
+
+  .premium-center-mobile {
+    text-align: center;
+  }
+
+  .premium-full-width-mobile {
+    width: 100%;
+  }
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+  .premium-btn:hover {
+    transform: none;
+  }
+
+  .premium-card:hover {
+    transform: none;
+  }
+
+  .premium-btn:active {
+    transform: scale(0.98);
+  }
+
+  .premium-card:active {
+    transform: scale(0.99);
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .premium-card-glass {
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .premium-animate-float,
+  .premium-animate-pulse {
+    animation: none;
+  }
+
+  .premium-btn,
+  .premium-card {
+    transition: none;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .premium-landing {
+    color-scheme: dark;
+  }
+}

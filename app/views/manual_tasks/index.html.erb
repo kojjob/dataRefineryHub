@@ -4,8 +4,8 @@
   actions: [
     { text: 'Auto-assign Tasks', path: auto_assign_manual_tasks_path, method: :post, 
       class: 'btn-secondary', data: { turbo_confirm: 'Auto-assign unassigned tasks to available users?' } },
-    { text: 'Clear Stale', path: clear_stale_manual_tasks_path, method: :post, 
-      class: 'btn-ghost', data: { turbo_confirm: 'Clear stale task assignments?' } } if current_user.admin?
+    current_user.admin? ? { text: 'Clear Stale', path: clear_stale_manual_tasks_path, method: :post, 
+      class: 'btn-ghost', data: { turbo_confirm: 'Clear stale task assignments?' } } : nil
   ].compact
 %>
 

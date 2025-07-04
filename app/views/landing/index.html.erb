@@ -3,7 +3,10 @@
 <div class="premium-landing" data-controller="ai-landing-demo interactive-dashboard live-metrics" data-ai-landing-demo-personalization-value="<%= @personalization.to_json.html_safe %>">
 
 <!-- Premium AI-Powered Hero Section -->
-<section class="relative min-h-screen flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden"
+         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"
+         role="banner"
+         aria-label="Hero section with AI business intelligence introduction">
   <!-- Premium Animated Background Elements -->
   <div class="absolute inset-0">
     <!-- Floating geometric shapes -->
@@ -37,10 +40,15 @@
         </div>
 
         <!-- Premium Main Headline -->
-        <h1 class="premium-heading-1 text-white mb-8 leading-tight">
+        <h1 class="premium-heading-1 text-white mb-8 leading-tight"
+            role="heading"
+            aria-level="1"
+            aria-label="Business Intelligence That Thinks Ahead - AI-powered platform">
           Business Intelligence
           <br>
-          <span class="premium-gradient-text" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          <span class="premium-gradient-text"
+                style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"
+                aria-label="That Thinks Ahead">
             That Thinks Ahead
           </span>
         </h1>

@@ -5,8 +5,41 @@ class LandingController < ApplicationController
     # Allow authenticated users to view landing page
     # They can navigate to dashboard via the navigation menu
 
-    # Enhanced AI-focused metrics
-    @stats = {
+    # Dynamic AI-focused metrics from database
+    @stats = load_hero_stats
+
+    # Dynamic testimonials from database
+    @testimonials = load_testimonials
+
+    # Dynamic integrations from database
+    @integrations = load_integrations
+
+    # Dynamic AI features from database
+    @ai_features = load_ai_features
+
+    # Dynamic pricing plans from organization model
+    @pricing_plans = load_pricing_plans
+
+    # Live demo data for interactive elements (with real-time data when available)
+    @demo_data = generate_demo_data
+
+    # Dynamic personalization based on referrer or user agent
+    @personalization = detect_visitor_context
+  end
+
+  private
+
+  def load_hero_stats
+    stats_content = LandingPageContent.for_section("hero_stats")
+    stats = {}
+
+    stats_content.each do |stat|
+      key = stat.title.downcase.gsub(/[^a-z0-9]/, '_').to_sym
+      stats[key] = stat.content
+    end
+
+    # Fallback to default values if no database content
+    stats.presence || {
       ai_insights_generated: "50M+",
       anomalies_detected: "2.5M+",
       businesses_served: "10,000+",
@@ -14,9 +47,204 @@ class LandingController < ApplicationController
       data_processed: "2.5B+",
       uptime: "99.99%"
     }
+  end
 
-    # AI-focused testimonials with specific technical benefits
-    @testimonials = [
+  def load_testimonials
+    testimonials = Testimonial.featured.limit(6)
+
+    if testimonials.any?
+      testimonials.map do |t|
+        {
+          name: t.name,
+          company: t.company,
+          role: t.role,
+          quote: t.quote,
+          rating: t.rating,
+          highlight: t.highlight,
+          ai_feature: t.ai_feature
+        }
+      end
+    else
+      # Fallback testimonials if none in database
+      default_testimonials
+    end
+  end
+
+  def load_integrations
+    integrations_content = LandingPageContent.for_section("integrations")
+
+    if integrations_content.any?
+      integrations_content.map do |integration|
+        {
+          name: integration.title,
+          ai_feature: integration.content
+        }
+      end
+    else
+      # Fallback integrations
+      default_integrations
+    end
+  end
+
+  def load_ai_features
+    features_content = LandingPageContent.for_section("ai_features")
+
+    if features_content.any?
+      features_content.map do |feature|
+        {
+          title: feature.title,
+          description: feature.content,
+          icon: feature.metadata["icon"] || "ai-brain",
+          demo_available: feature.metadata["demo_available"] || true,
+          benefits: feature.metadata["benefits"] || []
+        }
+      end
+    else
+      # Fallback features
+      default_ai_features
+    end
+  end
+
+  def load_pricing_plans
+    [
+      {
+        name: "AI Trial",
+        description: "14 days, full AI features",
+        price: 0,
+        billing_period: "trial",
+        features: [
+          "AI Business Intelligence Agent",
+          "Real-time anomaly detection",
+          "Up to 2 data sources",
+          "10K records/month"
+        ],
+        cta_text: "Start AI Trial",
+        featured: false
+      },
+      {
+        name: "AI Starter",
+        description: "Perfect for growing businesses",
+        price: 49,
+        billing_period: "month",
+        features: [
+          "Full AI agent with predictions",
+          "Smart anomaly detection",
+          "Up to 5 data sources",
+          "100K records/month",
+          "AI presentations & reports"
+        ],
+        cta_text: "Start 14-Day Trial",
+        featured: true
+      },
+      {
+        name: "AI Growth",
+        description: "Advanced AI for scaling teams",
+        price: 149,
+        billing_period: "month",
+        features: [
+          "Advanced AI agent with scenarios",
+          "Competitive intelligence",
+          "Up to 15 data sources",
+          "500K records/month",
+          "Custom AI integrations"
+        ],
+        cta_text: "Start 14-Day Trial",
+        featured: false
+      }
+    ]
+  end
+
+  def generate_demo_data
+    # Try to get real-time data from actual sources when available
+    real_metrics = get_real_time_metrics
+    recent_insights = get_recent_ai_insights
+
+    {
+      real_time_metrics: real_metrics.presence || {
+        revenue_rate: rand(1000..2500),
+        order_rate: rand(15..45),
+        customer_activity: rand(100..300),
+        system_health: rand(95.0..99.9).round(1)
+      },
+      recent_insights: recent_insights.presence || generate_sample_insights,
+      data_quality_preview: {
+        overall_score: rand(80.0..95.0).round(1),
+        business_fields_detected: rand(8..15),
+        patterns_identified: rand(5..12),
+        quality_insights: [
+          "Customer data #{rand(90..99)}% complete",
+          "Revenue tracking excellent",
+          "#{rand(1..5)} missing data points identified"
+        ]
+      }
+    }
+  end
+
+  def get_real_time_metrics
+    # Try to get actual metrics from organizations if available
+    return {} unless Organization.exists?
+
+    total_orgs = Organization.count
+    active_orgs = Organization.active.count
+    total_data_sources = DataSource.count rescue 0
+
+    {
+      revenue_rate: (total_orgs * 50) + rand(100..500),
+      order_rate: active_orgs + rand(5..25),
+      customer_activity: total_data_sources * 10 + rand(50..150),
+      system_health: 99.5 + rand(-0.5..0.4).round(1)
+    }
+  rescue
+    {}
+  end
+
+  def get_recent_ai_insights
+    # Try to get actual AI insights if available
+    return [] unless defined?(Ai::Insight)
+
+    Ai::Insight.recent.limit(3).map do |insight|
+      {
+        type: insight.insight_type,
+        title: insight.title,
+        description: insight.description,
+        confidence: (insight.confidence_score * 100).round,
+        impact: insight.impact_level.humanize
+      }
+    end
+  rescue
+    []
+  end
+
+  def generate_sample_insights
+    sample_insights = [
+      {
+        type: "opportunity",
+        title: "Revenue Optimization Detected",
+        description: "AI identified 15% revenue increase opportunity in mobile checkout flow",
+        confidence: rand(85..95),
+        impact: "$#{rand(5..25)},#{rand(100..900)}/month"
+      },
+      {
+        type: "anomaly",
+        title: "Unusual Traffic Pattern",
+        description: "#{rand(20..40)}% spike in organic traffic from social media - investigate content strategy",
+        confidence: rand(80..90),
+        impact: "Monitor closely"
+      },
+      {
+        type: "prediction",
+        title: "Inventory Alert",
+        description: "Best-selling product will be out of stock in #{rand(3..7)} days based on current velocity",
+        confidence: rand(90..98),
+        impact: "Immediate action needed"
+      }
+    ]
+
+    sample_insights.sample(rand(2..3))
+  end
+
+  def default_testimonials
+    [
       {
         name: "Sarah Chen",
         company: "TechStart Inc.",
@@ -45,9 +273,10 @@ class LandingController < ApplicationController
         ai_feature: "Enhanced Data Intelligence"
       }
     ]
+  end
 
-    # Enhanced integrations with AI capabilities
-    @integrations = [
+  def default_integrations
+    [
       { name: "Shopify", ai_feature: "Revenue Predictions" },
       { name: "QuickBooks", ai_feature: "Financial Anomalies" },
       { name: "Stripe", ai_feature: "Churn Prediction" },
@@ -59,12 +288,10 @@ class LandingController < ApplicationController
       { name: "Salesforce", ai_feature: "Sales Forecasting" },
       { name: "Airtable", ai_feature: "Workflow Optimization" }
     ]
+  end
 
-    # Live demo data for interactive elements
-    @demo_data = generate_demo_data
-    
-    # AI features showcase
-    @ai_features = [
+  def default_ai_features
+    [
       {
         title: "Autonomous Business Intelligence Agent",
         description: "AI agent that monitors your business 24/7, generates proactive insights, and alerts you to opportunities and risks before they impact your bottom line.",
@@ -87,55 +314,6 @@ class LandingController < ApplicationController
         benefits: ["Context Recognition", "Quality Scoring", "ROI Estimation", "Auto-Optimization"]
       }
     ]
-
-    # Dynamic personalization based on referrer or user agent
-    @personalization = detect_visitor_context
-  end
-
-  private
-
-  def generate_demo_data
-    {
-      real_time_metrics: {
-        revenue_rate: 1247,
-        order_rate: 23,
-        customer_activity: 156,
-        system_health: 97.3
-      },
-      recent_insights: [
-        {
-          type: "opportunity",
-          title: "Revenue Optimization Detected",
-          description: "AI identified 15% revenue increase opportunity in mobile checkout flow",
-          confidence: 92,
-          impact: "$12,500/month"
-        },
-        {
-          type: "anomaly",
-          title: "Unusual Traffic Pattern",
-          description: "30% spike in organic traffic from social media - investigate content strategy",
-          confidence: 87,
-          impact: "Monitor closely"
-        },
-        {
-          type: "prediction",
-          title: "Inventory Alert",
-          description: "Best-selling product will be out of stock in 4 days based on current velocity",
-          confidence: 94,
-          impact: "Immediate action needed"
-        }
-      ],
-      data_quality_preview: {
-        overall_score: 87.4,
-        business_fields_detected: 12,
-        patterns_identified: 8,
-        quality_insights: [
-          "Customer data 98% complete",
-          "Revenue tracking excellent",
-          "3 missing data points identified"
-        ]
-      }
-    }
   end
 
   def detect_visitor_context

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_04_101932) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_04_104500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -249,6 +249,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_101932) do
     t.index ["status"], name: "index_extraction_jobs_on_status"
   end
 
+  create_table "landing_page_contents", force: :cascade do |t|
+    t.string "section", null: false
+    t.string "title", null: false
+    t.text "content", null: false
+    t.json "metadata", default: {}
+    t.boolean "active", default: true, null: false
+    t.integer "display_order", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_landing_page_contents_on_active"
+    t.index ["display_order"], name: "index_landing_page_contents_on_display_order"
+    t.index ["section", "active", "display_order"], name: "index_landing_contents_on_section_active_order"
+    t.index ["section"], name: "index_landing_page_contents_on_section"
+  end
+
   create_table "notifications", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "organization_id", null: false
@@ -440,6 +455,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_101932) do
     t.index ["task_id"], name: "index_task_executions_on_task_id"
   end
 
+  create_table "task_templates", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name"
+    t.text "description"
+    t.string "task_type"
+    t.string "execution_mode"
+    t.jsonb "template_config"
+    t.integer "default_timeout"
+    t.integer "default_priority"
+    t.integer "default_weight"
+    t.string "category"
+    t.string "tags"
+    t.boolean "active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_task_templates_on_active"
+    t.index ["organization_id"], name: "index_task_templates_on_organization_id"
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.bigint "pipeline_execution_id", null: false
     t.string "name", null: false
@@ -462,6 +496,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_101932) do
     t.string "depends_on", default: [], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "task_template_id"
     t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
     t.index ["created_at"], name: "index_tasks_on_created_at"
     t.index ["execution_id"], name: "index_tasks_on_execution_id", unique: true
@@ -472,6 +507,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_101932) do
     t.index ["priority"], name: "index_tasks_on_priority"
     t.index ["status", "execution_mode"], name: "index_tasks_on_status_and_execution_mode"
     t.index ["status"], name: "index_tasks_on_status"
+    t.index ["task_template_id"], name: "index_tasks_on_task_template_id"
+  end
+
+  create_table "testimonials", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "company", null: false
+    t.string "role", null: false
+    t.text "quote", null: false
+    t.integer "rating", null: false
+    t.string "highlight", null: false
+    t.string "ai_feature", null: false
+    t.boolean "active", default: true, null: false
+    t.integer "display_order", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active", "display_order"], name: "index_testimonials_on_active_and_display_order"
+    t.index ["active"], name: "index_testimonials_on_active"
+    t.index ["display_order"], name: "index_testimonials_on_display_order"
   end
 
   create_table "transformation_jobs", force: :cascade do |t|
@@ -604,7 +657,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_101932) do
   add_foreign_key "scheduled_uploads", "users"
   add_foreign_key "task_executions", "tasks"
   add_foreign_key "task_executions", "users", column: "executed_by_id"
+  add_foreign_key "task_templates", "organizations"
   add_foreign_key "tasks", "pipeline_executions"
+  add_foreign_key "tasks", "task_templates"
   add_foreign_key "tasks", "users", column: "assignee_id"
   add_foreign_key "transformation_jobs", "organizations"
   add_foreign_key "upload_logs", "scheduled_uploads"
