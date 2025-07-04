@@ -1,5 +1,5 @@
 class DataSourcesController < ApplicationController
-  before_action :set_data_source, only: [ :show, :edit, :update, :destroy, :sync_now, :process_files, :preview_file, :analyze_file ]
+  before_action :set_data_source, only: [ :show, :edit, :update, :destroy, :sync_now, :process_files, :preview_file, :analyze_file, :enhanced_preview ]
 
   def index
     @data_sources = policy_scope(DataSource).includes(:extraction_jobs).order(:created_at)
@@ -67,6 +67,9 @@ class DataSourcesController < ApplicationController
   def new
     @data_source = current_organization.data_sources.build
     authorize @data_source
+    
+    # Initialize wizard data for the view
+    @wizard_data = DataSourceWizardService.new.prepare_wizard_data
   end
 
   def create
@@ -150,6 +153,23 @@ class DataSourcesController < ApplicationController
     end
   end
 
+  def auto_save
+    # Auto-save wizard data to session or temporary storage
+    session[:data_source_wizard_draft] = params.except(:authenticity_token, :controller, :action)
+    session[:data_source_wizard_draft][:updated_at] = Time.current
+    
+    render json: { 
+      success: true, 
+      message: "Draft saved successfully",
+      saved_at: Time.current.strftime("%I:%M %p")
+    }
+  rescue => e
+    render json: { 
+      success: false, 
+      message: "Failed to save draft: #{e.message}" 
+    }, status: :unprocessable_entity
+  end
+
   def sync_now
     authorize @data_source, :sync_now?
 
@@ -158,8 +178,44 @@ class DataSourcesController < ApplicationController
       return
     end
 
-    # TODO: Implement manual sync functionality
-    redirect_to @data_source, notice: "Manual sync initiated successfully."
+    # Initiate manual sync based on data source type
+    begin
+      case @data_source.source_type
+      when 'api'
+        # Queue API extraction job
+        job = ExtractionJob.create!(
+          data_source: @data_source,
+          organization: current_organization,
+          job_type: 'manual_sync',
+          status: 'pending'
+        )
+        
+        # Process the job asynchronously
+        TransformationJobProcessor.perform_async(job.id)
+        
+        redirect_to @data_source, notice: "Manual sync initiated successfully. Job ##{job.id} is processing."
+      when 'database'
+        # Queue database extraction job
+        job = ExtractionJob.create!(
+          data_source: @data_source,
+          organization: current_organization,
+          job_type: 'manual_sync',
+          status: 'pending'
+        )
+        
+        TransformationJobProcessor.perform_async(job.id)
+        redirect_to @data_source, notice: "Database sync initiated successfully. Job ##{job.id} is processing."
+      when 'cloud_storage'
+        # Sync cloud storage files
+        CloudStorageService.new(@data_source).sync_files
+        redirect_to @data_source, notice: "Cloud storage sync completed successfully."
+      else
+        redirect_to @data_source, alert: "Manual sync is not supported for this data source type."
+      end
+    rescue StandardError => e
+      Rails.logger.error "Manual sync failed for data source #{@data_source.id}: #{e.message}"
+      redirect_to @data_source, alert: "Manual sync failed: #{e.message}"
+    end
   end
 
   def process_files
@@ -215,6 +271,65 @@ class DataSourcesController < ApplicationController
     respond_to do |format|
       format.json { render json: { error: e.message }, status: :unprocessable_entity }
       format.html { redirect_to @data_source, alert: "Error previewing file: #{e.message}" }
+    end
+  end
+
+  def enhanced_preview
+    authorize @data_source, :show?
+
+    file_id = params[:file_id]
+    file_attachment = @data_source.uploaded_files.find(file_id)
+
+    preview_service = EnhancedDataPreviewService.new(
+      data_source: @data_source,
+      file: file_attachment,
+      user: current_user
+    )
+
+    @enhanced_preview_data = preview_service.generate_enhanced_preview
+    
+    respond_to do |format|
+      format.json { 
+        render json: {
+          success: true,
+          preview_data: @enhanced_preview_data,
+          component_html: render_to_string(
+            partial: 'enhanced_data_preview_component',
+            locals: { 
+              preview_data: @enhanced_preview_data,
+              data_source: @data_source,
+              user: current_user
+            }
+          )
+        }
+      }
+      format.html {
+        @preview_component = EnhancedDataPreviewComponent.new(
+          preview_data: @enhanced_preview_data,
+          data_source: @data_source,
+          user: current_user
+        )
+      }
+    end
+  rescue => e
+    Rails.logger.error "Enhanced preview error: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    
+    respond_to do |format|
+      format.json { 
+        render json: { 
+          success: false,
+          error: e.message,
+          suggestions: [
+            "Check file format and structure",
+            "Ensure file is not corrupted", 
+            "Try a smaller sample file first"
+          ]
+        }, status: :unprocessable_entity 
+      }
+      format.html { 
+        redirect_to @data_source, alert: "Error generating enhanced preview: #{e.message}" 
+      }
     end
   end
 

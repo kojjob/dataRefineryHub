@@ -1,0 +1,692 @@
+<div class="enhanced-data-preview max-w-full mx-auto bg-white shadow-lg rounded-lg overflow-hidden" data-controller="enhanced-preview">
+  <% if success %>
+    <!-- Header with file info and quick stats -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold mb-2">📊 Enhanced Data Preview</h2>
+          <p class="text-blue-100">
+            <span class="font-medium"><%= file_info[:name] %></span> • 
+            <%= file_info[:size] %> • 
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= complexity_color(file_info[:processing_complexity]) %>">
+              <%= file_info[:processing_complexity] %> Processing
+            </span>
+          </p>
+        </div>
+        <div class="text-right">
+          <div class="text-3xl font-bold"><%= structure_summary[:total_rows] || 0 %></div>
+          <div class="text-sm text-blue-200">Total Rows</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats Bar -->
+    <div class="bg-gray-50 px-6 py-4 border-b">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-gray-800"><%= structure_summary[:total_columns] || 0 %></div>
+          <div class="text-sm text-gray-600">Columns</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold">
+            <span class="<%= quality_grade_color(data_quality[:grade]) %> px-3 py-1 rounded-full text-lg font-bold">
+              <%= data_quality[:grade] || 'N/A' %>
+            </span>
+          </div>
+          <div class="text-sm text-gray-600">Data Quality</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold">
+            <span class="<%= impact_level_color(business_impact[:impact_level]) %> px-3 py-1 rounded-full text-lg font-bold">
+              <%= business_impact[:impact_level] || 'TBD' %>
+            </span>
+          </div>
+          <div class="text-sm text-gray-600">Business Impact</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-gray-800"><%= detected_entities_list.length %></div>
+          <div class="text-sm text-gray-600">Business Fields</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="border-b border-gray-200" data-enhanced-preview-target="tabs">
+      <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+        <button class="tab-button active border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" 
+                data-action="click->enhanced-preview#switchTab" 
+                data-tab="overview">
+          🔍 Overview
+        </button>
+        <button class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" 
+                data-action="click->enhanced-preview#switchTab" 
+                data-tab="business">
+          💼 Business Insights
+        </button>
+        <button class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" 
+                data-action="click->enhanced-preview#switchTab" 
+                data-tab="quality">
+          ✅ Data Quality
+        </button>
+        <button class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" 
+                data-action="click->enhanced-preview#switchTab" 
+                data-tab="preview">
+          📋 Data Preview
+        </button>
+        <button class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" 
+                data-action="click->enhanced-preview#switchTab" 
+                data-tab="next-steps">
+          🚀 Next Steps
+        </button>
+      </nav>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="p-6">
+      <!-- Overview Tab -->
+      <div class="tab-content active" data-enhanced-preview-target="tabContent" data-tab="overview">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Structure Summary -->
+          <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 Structure Analysis</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Total Rows:</span>
+                <span class="font-medium"><%= number_with_delimiter(structure_summary[:total_rows] || 0) %></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Total Columns:</span>
+                <span class="font-medium"><%= structure_summary[:total_columns] || 0 %></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Processing Time:</span>
+                <span class="font-medium"><%= structure_summary[:estimated_processing_time] || 'Calculating...' %></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Structure Quality:</span>
+                <span class="<%= quality_color_class(structure_summary[:structure_quality] == 'Excellent' ? 95 : 75) %> px-2 py-1 rounded-full text-xs font-medium">
+                  <%= structure_summary[:structure_quality] || 'Good' %>
+                </span>
+              </div>
+            </div>
+            
+            <% if structure_summary[:structure_notes]&.any? %>
+              <div class="mt-4 pt-4 border-t border-gray-200">
+                <h4 class="text-sm font-medium text-gray-700 mb-2">Structure Notes:</h4>
+                <ul class="text-sm text-gray-600 space-y-1">
+                  <% structure_summary[:structure_notes].each do |note| %>
+                    <li class="flex items-center">
+                      <span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+                      <%= note %>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Business Impact Overview -->
+          <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">🎯 Business Impact</h3>
+            <div class="text-center mb-4">
+              <div class="text-4xl font-bold text-gray-800 mb-2"><%= business_impact[:overall_score] || 0 %></div>
+              <div class="text-lg">
+                <span class="<%= impact_level_color(business_impact[:impact_level]) %> px-3 py-1 rounded-full font-medium">
+                  <%= business_impact[:impact_level] || 'Calculating...' %> Impact
+                </span>
+              </div>
+            </div>
+            
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Data Richness:</span>
+                <span class="font-medium"><%= data_richness_percentage %>%</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Analytical Potential:</span>
+                <span class="font-medium"><%= analytical_potential_percentage %>%</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Time to Insights:</span>
+                <span class="font-medium"><%= time_to_insights %></span>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-gray-200">
+              <h4 class="text-sm font-medium text-gray-700 mb-2">ROI Estimate:</h4>
+              <p class="text-sm text-gray-600"><%= roi_estimate %></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary Business Area -->
+        <div class="mt-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">🏢 Primary Business Area</h3>
+          <div class="text-2xl font-bold text-blue-700 mb-2">
+            <%= business_insights[:primary_business_area] || 'General Business Intelligence' %>
+          </div>
+          <p class="text-gray-600 mb-4">
+            Your data appears to be primarily focused on <%= (business_insights[:primary_business_area] || 'general business operations').downcase %>. 
+            This opens up several analytical opportunities for your organization.
+          </p>
+          
+          <% if detected_entities_list.any? %>
+            <div class="flex flex-wrap gap-2">
+              <% detected_entities_list.each do |entity| %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border <%= entity[:color] %>">
+                  <%= entity[:icon] %> <%= entity[:name] %>
+                </span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Business Insights Tab -->
+      <div class="tab-content hidden" data-enhanced-preview-target="tabContent" data-tab="business">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Detected Business Fields -->
+          <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">🔍 Detected Business Fields</h3>
+            <% if business_insights[:detected_entities]&.any? %>
+              <div class="space-y-3">
+                <% detected_entities_list.each do |entity| %>
+                  <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center">
+                      <span class="text-xl mr-3"><%= entity[:icon] %></span>
+                      <span class="font-medium"><%= entity[:name] %></span>
+                    </div>
+                    <span class="<%= entity[:color] %> px-2 py-1 rounded-full text-xs font-medium">
+                      Detected
+                    </span>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-gray-500 italic">No specific business field patterns detected. Your data may contain general business information.</p>
+            <% end %>
+          </div>
+
+          <!-- Analysis Opportunities -->
+          <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">📈 Analysis Opportunities</h3>
+            <% if analysis_opportunities_preview.any? %>
+              <ul class="space-y-2">
+                <% analysis_opportunities_preview.each do |opportunity| %>
+                  <li class="flex items-center p-2 bg-blue-50 rounded-lg">
+                    <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                    <span class="text-sm"><%= opportunity %></span>
+                  </li>
+                <% end %>
+              </ul>
+            <% else %>
+              <p class="text-gray-500 italic">Analysis opportunities will be identified after processing your data.</p>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Automation Suggestions -->
+        <div class="mt-6 bg-white border border-gray-200 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">🤖 Automation Opportunities</h3>
+          <% if automation_opportunities_preview.any? %>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <% automation_opportunities_preview.each do |automation| %>
+                <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div class="text-green-700 font-medium mb-2"><%= automation %></div>
+                  <p class="text-sm text-green-600">Available after data processing</p>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-gray-500 italic">Automation opportunities will be suggested based on your data patterns.</p>
+          <% end %>
+        </div>
+
+        <!-- Integration Potential -->
+        <% if business_insights[:integration_potential] %>
+          <div class="mt-6 bg-purple-50 border border-purple-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-purple-900 mb-3">🔗 Integration Potential</h3>
+            <p class="text-purple-700"><%= business_insights[:integration_potential] %></p>
+            
+            <% if has_cross_reference_opportunities? %>
+              <div class="mt-4">
+                <h4 class="text-sm font-medium text-purple-800 mb-2">Cross-Reference Opportunities:</h4>
+                <ul class="space-y-1">
+                  <% business_insights[:cross_reference_opportunities].each do |opportunity| %>
+                    <li class="text-sm text-purple-600 flex items-center">
+                      <span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2"></span>
+                      <%= opportunity %>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <!-- Business Outcomes -->
+        <div class="mt-6 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">🎯 Predicted Business Outcomes</h3>
+          <% if business_outcomes_preview.any? %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <% business_outcomes_preview.each do |outcome| %>
+                <div class="flex items-center p-3 bg-white border border-gray-200 rounded-lg">
+                  <span class="w-3 h-3 bg-green-500 rounded-full mr-3"></span>
+                  <span class="text-sm font-medium"><%= outcome %></span>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-gray-500 italic">Business outcomes will be predicted after analyzing your data structure.</p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Data Quality Tab -->
+      <div class="tab-content hidden" data-enhanced-preview-target="tabContent" data-tab="quality">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Quality Score -->
+          <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 Quality Assessment</h3>
+            <div class="text-center mb-6">
+              <div class="text-5xl font-bold mb-2">
+                <span class="<%= quality_color_class(data_quality[:overall_score]) %> px-4 py-2 rounded-lg">
+                  <%= data_quality[:overall_score] || 0 %>
+                </span>
+              </div>
+              <div class="text-lg">
+                <span class="<%= quality_grade_color(data_quality[:grade]) %> px-3 py-1 rounded-full font-bold">
+                  Grade <%= data_quality[:grade] || 'N/A' %>
+                </span>
+              </div>
+              <p class="text-sm text-gray-600 mt-2"><%= data_quality[:impact_assessment] %></p>
+            </div>
+
+            <% if data_quality[:metrics] %>
+              <div class="space-y-3">
+                <% data_quality[:metrics].each do |metric, score| %>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600 capitalize"><%= metric.to_s.humanize %>:</span>
+                    <div class="flex items-center">
+                      <div class="w-16 bg-gray-200 rounded-full h-2 mr-3">
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: <%= format_metric_value(score) %>"></div>
+                      </div>
+                      <span class="font-medium w-12 text-right"><%= format_metric_value(score) %></span>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Quality Issues & Recommendations -->
+          <div class="space-y-6">
+            <!-- Issues -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+              <h4 class="text-lg font-semibold text-gray-900 mb-3">⚠️ Quality Issues</h4>
+              <% if data_quality[:issues]&.any? %>
+                <ul class="space-y-2">
+                  <% data_quality[:issues].first(5).each do |issue| %>
+                    <li class="flex items-start">
+                      <span class="w-2 h-2 bg-red-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                      <span class="text-sm text-gray-600"><%= issue %></span>
+                    </li>
+                  <% end %>
+                </ul>
+                <% if data_quality[:issues].length > 5 %>
+                  <p class="text-xs text-gray-500 mt-3">+ <%= data_quality[:issues].length - 5 %> more issues</p>
+                <% end %>
+              <% else %>
+                <p class="text-green-600 text-sm">✅ No significant quality issues detected</p>
+              <% end %>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+              <h4 class="text-lg font-semibold text-gray-900 mb-3">💡 Recommendations</h4>
+              <% if processing_recommendations.any? %>
+                <ul class="space-y-2">
+                  <% processing_recommendations.each do |recommendation| %>
+                    <li class="flex items-start">
+                      <span class="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                      <span class="text-sm text-gray-600"><%= recommendation %></span>
+                    </li>
+                  <% end %>
+                </ul>
+              <% else %>
+                <p class="text-gray-500 text-sm italic">Recommendations will be generated after quality analysis.</p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transformation Suggestions -->
+        <% if transformation_suggestions[:recommended]&.any? || transformation_suggestions[:optional]&.any? %>
+          <div class="mt-6 bg-white border border-gray-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">🔧 Suggested Transformations</h3>
+            
+            <!-- Recommended Transformations -->
+            <% if transformation_suggestions[:recommended]&.any? %>
+              <div class="mb-6">
+                <h4 class="text-md font-medium text-green-700 mb-3">✅ Recommended (High Confidence)</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <% transformation_suggestions[:recommended].each do |transformation| %>
+                    <div class="p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <div class="flex justify-between items-start mb-2">
+                        <span class="font-medium text-green-800"><%= transformation[:description] %></span>
+                        <span class="<%= transformation_confidence_color(transformation[:confidence]) %> px-2 py-1 rounded-full text-xs font-medium">
+                          <%= format_confidence(transformation[:confidence]) %>
+                        </span>
+                      </div>
+                      <p class="text-sm text-green-600"><%= transformation[:business_value] %></p>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <!-- Optional Transformations -->
+            <% if transformation_suggestions[:optional]&.any? %>
+              <div>
+                <h4 class="text-md font-medium text-blue-700 mb-3">💡 Optional (Lower Confidence)</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <% transformation_suggestions[:optional].each do |transformation| %>
+                    <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div class="flex justify-between items-start mb-2">
+                        <span class="font-medium text-blue-800"><%= transformation[:description] %></span>
+                        <span class="<%= transformation_confidence_color(transformation[:confidence]) %> px-2 py-1 rounded-full text-xs font-medium">
+                          <%= format_confidence(transformation[:confidence]) %>
+                        </span>
+                      </div>
+                      <p class="text-sm text-blue-600"><%= transformation[:business_value] %></p>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <% if transformation_suggestions[:estimated_improvement] %>
+              <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">
+                  <strong>Estimated Improvement:</strong> <%= transformation_suggestions[:estimated_improvement] %>
+                </p>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Data Preview Tab -->
+      <div class="tab-content hidden" data-enhanced-preview-target="tabContent" data-tab="preview">
+        <% if sample_rows.any? %>
+          <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+              <h3 class="text-lg font-semibold text-gray-900">📋 Sample Data</h3>
+              <p class="text-sm text-gray-600 mt-1">
+                Showing first <%= sample_rows.length %> rows • 
+                Business fields highlighted • 
+                Quality flags shown
+              </p>
+            </div>
+            
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                    <% sample_headers.each do |header| %>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <%= truncate_text(header.to_s, 20) %>
+                      </th>
+                    <% end %>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <% sample_rows.each do |row_data| %>
+                    <tr class="<%= has_quality_flags?(row_data) ? 'bg-yellow-50' : 'hover:bg-gray-50' %>">
+                      <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                        <%= row_data[:row_index] %>
+                      </td>
+                      <% sample_headers.each do |header| %>
+                        <% annotation = get_business_annotation(row_data, header) %>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm">
+                          <div class="flex items-center">
+                            <% if annotation %>
+                              <span class="text-lg mr-2" title="<%= annotation[:insights] %>"><%= annotation[:icon] %></span>
+                            <% end %>
+                            <span class="<%= annotation ? 'font-medium' : 'text-gray-900' %>">
+                              <%= truncate_text(row_data[:data][header].to_s, 30) %>
+                            </span>
+                          </div>
+                        </td>
+                      <% end %>
+                      <td class="px-4 py-3 whitespace-nowrap text-sm">
+                        <% if has_quality_flags?(row_data) %>
+                          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            ⚠️ Issues
+                          </span>
+                        <% else %>
+                          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            ✅ Good
+                          </span>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Row Insights -->
+          <% if sample_data[:row_insights] %>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                <div class="text-2xl font-bold text-blue-700">
+                  <%= sample_data[:row_insights][:business_field_coverage] || '0%' %>
+                </div>
+                <div class="text-sm text-blue-600">Business Field Coverage</div>
+              </div>
+              <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                <div class="text-2xl font-bold text-green-700">
+                  <%= sample_data[:row_insights][:quality_issue_rate] || '0%' %>
+                </div>
+                <div class="text-sm text-green-600">Quality Issue Rate</div>
+              </div>
+              <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
+                <div class="text-2xl font-bold text-purple-700">
+                  <%= sample_data[:row_insights][:transformation_opportunities] || 0 %>
+                </div>
+                <div class="text-sm text-purple-600">Transformation Opportunities</div>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Pattern Detection -->
+          <% if sample_data[:pattern_detection]&.any? %>
+            <div class="mt-6 bg-white border border-gray-200 rounded-lg p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">🔍 Detected Patterns</h3>
+              <div class="space-y-2">
+                <% sample_data[:pattern_detection].each do |field, pattern| %>
+                  <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                    <span class="font-medium"><%= field %></span>
+                    <span class="text-sm text-gray-600"><%= pattern %></span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="text-center py-12">
+            <div class="text-gray-400 text-6xl mb-4">📋</div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Preview Data Available</h3>
+            <p class="text-gray-600">Unable to generate data preview. Please check your file format and try again.</p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Next Steps Tab -->
+      <div class="tab-content hidden" data-enhanced-preview-target="tabContent" data-tab="next-steps">
+        <!-- Immediate Actions -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">🚀 Immediate Actions</h3>
+          <% if next_steps[:immediate_actions]&.any? %>
+            <div class="space-y-3">
+              <% next_steps[:immediate_actions].each do |step| %>
+                <div class="flex items-start p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <span class="text-2xl mr-4 flex-shrink-0"><%= step[:icon] %></span>
+                  <div class="flex-1">
+                    <h4 class="font-medium text-red-900"><%= step[:action] %></h4>
+                    <p class="text-sm text-red-700 mt-1"><%= step[:description] %></p>
+                    <div class="flex items-center mt-2">
+                      <span class="<%= priority_color(step[:priority]) %> px-2 py-1 rounded-full text-xs font-medium mr-3">
+                        <%= step[:priority]&.humanize %>
+                      </span>
+                      <span class="text-xs text-red-600">⏱️ <%= step[:estimated_time] %></span>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-gray-500 italic">No immediate actions required. Your data appears ready for processing.</p>
+          <% end %>
+        </div>
+
+        <!-- Short-term Opportunities -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">📈 Short-term Opportunities</h3>
+          <% if next_steps[:short_term_opportunities]&.any? %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <% next_steps[:short_term_opportunities].each do |step| %>
+                <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                  <div class="flex items-start">
+                    <span class="text-xl mr-3 flex-shrink-0"><%= step[:icon] %></span>
+                    <div class="flex-1">
+                      <h4 class="font-medium text-orange-900 mb-1"><%= step[:action] %></h4>
+                      <p class="text-sm text-orange-700 mb-2"><%= step[:description] %></p>
+                      <span class="text-xs text-orange-600">⏱️ <%= step[:estimated_time] %></span>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-gray-500 italic">Short-term opportunities will be identified after processing your data.</p>
+          <% end %>
+        </div>
+
+        <!-- Long-term Strategies -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">🎯 Long-term Strategies</h3>
+          <% if next_steps[:long_term_strategies]&.any? %>
+            <div class="space-y-3">
+              <% next_steps[:long_term_strategies].each do |step| %>
+                <div class="flex items-start p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <span class="text-xl mr-3 flex-shrink-0"><%= step[:icon] %></span>
+                  <div class="flex-1">
+                    <h4 class="font-medium text-blue-900"><%= step[:action] %></h4>
+                    <p class="text-sm text-blue-700 mt-1"><%= step[:description] %></p>
+                    <span class="text-xs text-blue-600 mt-2 inline-block">⏱️ <%= step[:estimated_time] %></span>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-gray-500 italic">Long-term strategies will be personalized based on your data and business goals.</p>
+          <% end %>
+        </div>
+
+        <!-- Setup Time Summary -->
+        <div class="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">⏰ Time Investment Summary</h3>
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-2xl font-bold text-green-700"><%= estimated_setup_time %></div>
+              <div class="text-sm text-green-600">Total estimated setup time</div>
+            </div>
+            <div class="text-right">
+              <div class="text-lg font-medium text-gray-800">
+                <%= immediate_actions_count + short_term_opportunities_count %> Actions
+              </div>
+              <div class="text-sm text-gray-600">
+                <%= immediate_actions_count %> immediate + <%= short_term_opportunities_count %> short-term
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-green-200">
+            <p class="text-sm text-green-700">
+              💡 <strong>Pro Tip:</strong> Start with immediate actions to get quick wins, then gradually implement 
+              short-term opportunities to maximize your data's business value.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+      <div class="flex items-center justify-between">
+        <div class="text-sm text-gray-600">
+          <span class="font-medium">Ready to process?</span> 
+          This data looks good for <%= business_insights[:primary_business_area]&.downcase || 'business analysis' %>.
+        </div>
+        <div class="flex space-x-3">
+          <button type="button" 
+                  class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  data-action="click->enhanced-preview#downloadReport">
+            📄 Download Report
+          </button>
+          <button type="button" 
+                  class="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  data-action="click->enhanced-preview#processData">
+            🚀 Process Data
+          </button>
+        </div>
+      </div>
+    </div>
+
+  <% else %>
+    <!-- Error State -->
+    <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+      <div class="flex items-center mb-4">
+        <span class="text-3xl mr-3">❌</span>
+        <h2 class="text-xl font-semibold text-red-900">Preview Generation Failed</h2>
+      </div>
+      
+      <div class="mb-4">
+        <p class="text-red-700 mb-2">
+          <strong>Error:</strong> <%= error_message %>
+        </p>
+      </div>
+
+      <% if error_suggestions.any? %>
+        <div class="mb-6">
+          <h3 class="text-lg font-medium text-red-900 mb-2">💡 Suggestions:</h3>
+          <ul class="space-y-1">
+            <% error_suggestions.each do |suggestion| %>
+              <li class="flex items-center text-red-700">
+                <span class="w-2 h-2 bg-red-400 rounded-full mr-3"></span>
+                <%= suggestion %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="flex space-x-3">
+        <button type="button" 
+                class="inline-flex items-center px-4 py-2 border border-red-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                data-action="click->enhanced-preview#retryPreview">
+          🔄 Retry
+        </button>
+        <button type="button" 
+                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                data-action="click->enhanced-preview#contactSupport">
+          📞 Contact Support
+        </button>
+      </div>
+    </div>
+  <% end %>
+</div>

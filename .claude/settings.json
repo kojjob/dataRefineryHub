@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "don't ask complete the tasks"
+      "Complete the next task without asking for permissions",
+      "Bash(ls:*)",
+      "WebFetch"
     ],
     "deny": []
   }
