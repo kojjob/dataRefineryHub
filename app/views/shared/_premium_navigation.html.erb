@@ -213,7 +213,7 @@
             
             <!-- Dashboard -->
             <li>
-              <%= link_to dashboard_index_path, 
+              <%= link_to dashboard_path, 
                   class: nav_link_classes.('dashboard'),
                   data: {
                     controller: "magnetic-button ripple-effect",
@@ -311,7 +311,7 @@
 
             <!-- Pipelines -->
             <li>
-              <%= link_to pipeline_dashboard_path, 
+              <%= link_to pipeline_dashboard_index_path, 
                   class: nav_link_classes.('pipelines'),
                   data: {
                     controller: "magnetic-button ripple-effect",
@@ -498,7 +498,7 @@
             <% else %>
               <div class="relative h-10 w-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center ring-2 ring-white/50 shadow-xl">
                 <span class="text-white font-bold text-sm">
-                  <%= current_user&.name&.first || 'U' %>
+                  <%= current_user&.first_name&.first || 'U' %>
                 </span>
               </div>
             <% end %>
@@ -506,7 +506,7 @@
           
           <div class="flex-1">
             <p class="text-sm font-semibold text-slate-900">
-              <%= current_user&.name || 'User' %>
+              <%= current_user&.full_name || 'User' %>
             </p>
             <p class="text-xs text-slate-500">
               <%= current_user&.email %>

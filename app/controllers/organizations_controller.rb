@@ -77,13 +77,13 @@ class OrganizationsController < ApplicationController
 
     # Count extraction jobs as API calls
     api_calls = @organization.extraction_jobs
-                             .where("created_at >= ?", start_of_month)
+                             .where("extraction_jobs.created_at >= ?", start_of_month)
                              .where(job_type: [ "api_sync", "manual_sync" ])
                              .count
 
     # Add AI service calls if available
     ai_calls = @organization.ai_insights
-                            .where("created_at >= ?", start_of_month)
+                            .where("ai_insights.created_at >= ?", start_of_month)
                             .count
 
     api_calls + ai_calls

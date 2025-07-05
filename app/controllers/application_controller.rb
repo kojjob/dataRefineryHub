@@ -68,7 +68,7 @@ class ApplicationController < ActionController::Base
 
     # Simplified system status for navigation
     begin
-      total_jobs = current_user.organization.extraction_jobs.where("created_at >= ?", 24.hours.ago)
+      total_jobs = current_user.organization.extraction_jobs.where("extraction_jobs.created_at >= ?", 24.hours.ago)
       running_jobs = total_jobs.running.count
       failed_jobs_rate = total_jobs.failed.count.to_f / [ total_jobs.count, 1 ].max
 
