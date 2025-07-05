@@ -27,9 +27,9 @@ class CreateTasks < ActiveRecord::Migration[8.0]
       t.index :status
       t.index :execution_mode
       t.index :priority
-      t.index [:pipeline_execution_id, :position]
-      t.index [:pipeline_execution_id, :status]
-      t.index [:status, :execution_mode]
+      t.index [ :pipeline_execution_id, :position ]
+      t.index [ :pipeline_execution_id, :status ]
+      t.index [ :status, :execution_mode ]
       t.index :execution_id, unique: true
       t.index :created_at
     end

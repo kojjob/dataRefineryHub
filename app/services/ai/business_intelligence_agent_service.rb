@@ -3,23 +3,23 @@
 module Ai
   class BusinessIntelligenceAgentService
     include ActiveModel::Model
-    
+
     attr_accessor :organization, :agent_config, :learning_enabled
-    
+
     AGENT_CAPABILITIES = [
-      'trend_analysis',
-      'anomaly_detection',
-      'predictive_analytics',
-      'opportunity_identification',
-      'risk_assessment',
-      'performance_optimization',
-      'competitive_intelligence',
-      'customer_behavior_analysis'
+      "trend_analysis",
+      "anomaly_detection",
+      "predictive_analytics",
+      "opportunity_identification",
+      "risk_assessment",
+      "performance_optimization",
+      "competitive_intelligence",
+      "customer_behavior_analysis"
     ].freeze
-    
+
     REPORT_FREQUENCIES = %w[daily weekly monthly quarterly].freeze
     PRIORITY_LEVELS = %w[low medium high critical].freeze
-    
+
     def initialize(organization:, agent_config: nil, learning_enabled: true)
       @organization = organization
       @agent_config = agent_config || default_agent_config
@@ -29,39 +29,39 @@ module Ai
       @analytics_service = Ai::RealTimeAnalyticsService.new(organization: organization)
       @agent_memory = initialize_agent_memory
     end
-    
+
     def start_autonomous_monitoring
       Rails.logger.info "Starting autonomous BI agent for #{@organization.name}"
-      
+
       # Initialize agent state
       initialize_agent_state
-      
+
       # Start main agent loop
       run_agent_cycle
     end
-    
+
     def generate_proactive_insights
       # Agent proactively analyzes data and generates insights
       Rails.logger.info "Agent generating proactive insights for #{@organization.name}"
-      
+
       current_context = build_comprehensive_context
       historical_patterns = analyze_historical_patterns
-      
+
       # Use AI to generate insights
       insights = @llm_service.analyze_business_metrics(
         current_context.merge(historical_patterns),
         "Act as an autonomous business intelligence agent. Analyze the data and generate proactive insights, opportunities, and recommendations."
       )
-      
+
       # Enhance with specialized analysis
       enhanced_insights = enhance_insights_with_agent_intelligence(insights, current_context)
-      
+
       # Prioritize insights based on business impact
       prioritized_insights = prioritize_insights_by_impact(enhanced_insights)
-      
+
       # Learn from insights generation
       learn_from_insights(prioritized_insights) if @learning_enabled
-      
+
       {
         proactive_insights: prioritized_insights,
         agent_confidence: calculate_agent_confidence(enhanced_insights),
@@ -73,24 +73,24 @@ module Ai
         agent_version: "1.0"
       }
     end
-    
+
     def generate_weekly_intelligence_report
       # Comprehensive weekly report with strategic insights
       Rails.logger.info "Agent generating weekly intelligence report for #{@organization.name}"
-      
+
       # Gather comprehensive data
       week_data = gather_weekly_business_data
       competitive_data = gather_competitive_intelligence
       market_data = gather_market_intelligence
-      
+
       # Generate AI-powered analysis
       report_prompt = build_weekly_report_prompt(week_data, competitive_data, market_data)
       ai_analysis = @llm_service.analyze_business_metrics(week_data, report_prompt)
-      
+
       # Create comprehensive report
       {
         report_type: "weekly_intelligence",
-        week_ending: Date.current.end_of_week.strftime('%Y-%m-%d'),
+        week_ending: Date.current.end_of_week.strftime("%Y-%m-%d"),
         executive_summary: generate_executive_summary(week_data, ai_analysis),
         key_developments: identify_key_developments(week_data),
         performance_analysis: analyze_weekly_performance(week_data),
@@ -106,17 +106,17 @@ module Ai
         generated_at: Time.current.iso8601
       }
     end
-    
+
     def monitor_customer_lifecycle
       # Continuously monitor customer behavior and lifecycle stages
       customer_data = gather_customer_lifecycle_data
-      
+
       # AI-powered customer analysis
       customer_insights = @llm_service.analyze_business_metrics(
         customer_data,
         "Analyze customer lifecycle patterns, identify at-risk customers, high-value prospects, and optimization opportunities."
       )
-      
+
       {
         churn_predictions: predict_customer_churn(customer_data),
         expansion_opportunities: identify_expansion_opportunities(customer_data),
@@ -129,29 +129,29 @@ module Ai
         generated_at: Time.current.iso8601
       }
     end
-    
+
     def detect_business_anomalies_and_opportunities
       # Advanced anomaly detection with opportunity identification
       current_metrics = @analytics_service.get_real_time_dashboard_data
       historical_data = gather_historical_benchmark_data
-      
+
       # AI-powered anomaly and opportunity detection
       analysis = @llm_service.detect_anomalies(historical_data, current_metrics[:metrics])
-      
-      anomalies = analysis.select { |item| item[:type] == 'anomaly' }
-      opportunities = analysis.select { |item| item[:type] == 'opportunity' }
-      
+
+      anomalies = analysis.select { |item| item[:type] == "anomaly" }
+      opportunities = analysis.select { |item| item[:type] == "opportunity" }
+
       {
         anomalies: {
-          revenue_anomalies: filter_anomalies_by_type(anomalies, 'revenue'),
-          customer_anomalies: filter_anomalies_by_type(anomalies, 'customer'),
-          operational_anomalies: filter_anomalies_by_type(anomalies, 'operational'),
+          revenue_anomalies: filter_anomalies_by_type(anomalies, "revenue"),
+          customer_anomalies: filter_anomalies_by_type(anomalies, "customer"),
+          operational_anomalies: filter_anomalies_by_type(anomalies, "operational"),
           severity_assessment: assess_anomaly_severity(anomalies)
         },
         opportunities: {
-          revenue_opportunities: filter_opportunities_by_type(opportunities, 'revenue'),
-          market_opportunities: filter_opportunities_by_type(opportunities, 'market'),
-          operational_opportunities: filter_opportunities_by_type(opportunities, 'operational'),
+          revenue_opportunities: filter_opportunities_by_type(opportunities, "revenue"),
+          market_opportunities: filter_opportunities_by_type(opportunities, "market"),
+          operational_opportunities: filter_opportunities_by_type(opportunities, "operational"),
           impact_assessment: assess_opportunity_impact(opportunities)
         },
         immediate_actions: determine_immediate_actions(anomalies, opportunities),
@@ -160,17 +160,17 @@ module Ai
         generated_at: Time.current.iso8601
       }
     end
-    
+
     def predict_business_scenarios
       # Generate predictive scenarios and business forecasts
       historical_trends = analyze_long_term_trends
       current_state = build_comprehensive_context
       external_factors = gather_external_factors
-      
+
       # AI-powered scenario prediction
       prediction_prompt = build_scenario_prediction_prompt(historical_trends, current_state, external_factors)
       predictions = @llm_service.analyze_business_metrics(current_state, prediction_prompt)
-      
+
       {
         scenarios: {
           optimistic: generate_optimistic_scenario(predictions, current_state),
@@ -187,17 +187,17 @@ module Ai
         generated_at: Time.current.iso8601
       }
     end
-    
+
     def perform_competitive_analysis
       # Automated competitive intelligence and analysis
       competitive_data = gather_competitive_data
       market_positioning = analyze_market_positioning
-      
+
       competitive_insights = @llm_service.analyze_business_metrics(
         competitive_data.merge(market_positioning),
         "Perform competitive analysis and identify strategic positioning opportunities."
       )
-      
+
       {
         competitive_landscape: analyze_competitive_landscape(competitive_data),
         market_position: assess_market_position(market_positioning),
@@ -210,25 +210,25 @@ module Ai
         generated_at: Time.current.iso8601
       }
     end
-    
+
     def learn_and_adapt
       # Agent learning and adaptation mechanism
       return unless @learning_enabled
-      
+
       Rails.logger.info "Agent learning and adapting for #{@organization.name}"
-      
+
       # Analyze past predictions vs actual outcomes
       prediction_accuracy = analyze_prediction_accuracy
-      
+
       # Learn from user feedback on insights
       user_feedback = gather_user_feedback_on_insights
-      
+
       # Adapt agent behavior based on learning
       adapt_agent_behavior(prediction_accuracy, user_feedback)
-      
+
       # Update agent memory
       update_agent_memory(prediction_accuracy, user_feedback)
-      
+
       {
         learning_summary: {
           prediction_accuracy: prediction_accuracy,
@@ -240,15 +240,15 @@ module Ai
         updated_at: Time.current.iso8601
       }
     end
-    
+
     private
-    
+
     def default_agent_config
       {
-        monitoring_frequency: 'hourly',
-        report_frequency: 'weekly',
-        alert_threshold: 'medium',
-        learning_rate: 'adaptive',
+        monitoring_frequency: "hourly",
+        report_frequency: "weekly",
+        alert_threshold: "medium",
+        learning_rate: "adaptive",
         capabilities: AGENT_CAPABILITIES,
         auto_insights: true,
         proactive_alerts: true,
@@ -257,7 +257,7 @@ module Ai
         custom_goals: []
       }
     end
-    
+
     def initialize_agent_memory
       # Initialize agent's memory and learning state
       {
@@ -271,41 +271,41 @@ module Ai
         last_learning_update: Time.current.iso8601
       }
     end
-    
+
     def initialize_agent_state
       # Set up agent's initial state and context
       @agent_state = {
-        status: 'active',
+        status: "active",
         last_analysis: Time.current,
         insights_generated: 0,
         alerts_sent: 0,
         reports_created: 0,
         learning_enabled: @learning_enabled,
-        confidence_level: 'medium'
+        confidence_level: "medium"
       }
     end
-    
+
     def run_agent_cycle
       # Main agent processing cycle
       begin
         # Generate proactive insights
         insights = generate_proactive_insights
-        
+
         # Check for immediate actions needed
         check_immediate_actions(insights)
-        
+
         # Update agent state
         update_agent_state(insights)
-        
+
         # Schedule next cycle
         schedule_next_cycle
-        
+
       rescue => e
         Rails.logger.error "Agent cycle error: #{e.message}"
         handle_agent_error(e)
       end
     end
-    
+
     def build_comprehensive_context
       # Build complete business context for analysis
       {
@@ -320,33 +320,33 @@ module Ai
         business_goals: @agent_config[:custom_goals] || []
       }
     end
-    
+
     def enhance_insights_with_agent_intelligence(insights, context)
       # Enhance AI insights with agent-specific intelligence
       enhanced = insights.dup
-      
+
       # Add business impact scoring
       enhanced[:business_impact_score] = calculate_business_impact_score(insights, context)
-      
+
       # Add urgency assessment
       enhanced[:urgency_level] = assess_insight_urgency(insights, context)
-      
+
       # Add implementation feasibility
       enhanced[:implementation_feasibility] = assess_implementation_feasibility(insights)
-      
+
       # Add resource requirements
       enhanced[:resource_requirements] = estimate_resource_requirements(insights)
-      
+
       # Add success probability
       enhanced[:success_probability] = calculate_success_probability(insights, context)
-      
+
       enhanced
     end
-    
+
     def prioritize_insights_by_impact(insights)
       # Prioritize insights based on business impact and urgency
       return [] unless insights[:key_insights]
-      
+
       prioritized = insights[:key_insights].map do |insight|
         insight.merge(
           priority_score: calculate_priority_score(insight),
@@ -354,71 +354,71 @@ module Ai
           urgency_category: categorize_urgency(insight)
         )
       end
-      
+
       prioritized.sort_by { |insight| -insight[:priority_score] }
     end
-    
+
     def generate_actionable_recommendations(insights)
       # Generate specific, actionable recommendations
       recommendations = []
-      
+
       insights.each do |insight|
         case insight[:category]
-        when 'revenue'
+        when "revenue"
           recommendations.concat(generate_revenue_recommendations(insight))
-        when 'customer'
+        when "customer"
           recommendations.concat(generate_customer_recommendations(insight))
-        when 'operational'
+        when "operational"
           recommendations.concat(generate_operational_recommendations(insight))
-        when 'product'
+        when "product"
           recommendations.concat(generate_product_recommendations(insight))
         end
       end
-      
+
       recommendations.sort_by { |rec| -rec[:impact_score] }.first(10)
     end
-    
+
     def identify_emerging_opportunities(context)
       # Identify business opportunities from current context
       opportunities = []
-      
+
       # Revenue opportunities
       if context[:current_metrics][:revenue] && context[:recent_trends][:revenue]
         opportunities.concat(identify_revenue_opportunities(context))
       end
-      
+
       # Customer opportunities
       if context[:customer_data]
         opportunities.concat(identify_customer_opportunities(context))
       end
-      
+
       # Market opportunities
       if context[:market_context]
         opportunities.concat(identify_market_opportunities(context))
       end
-      
+
       opportunities.sort_by { |opp| -opp[:potential_impact] }
     end
-    
+
     def assess_business_risks(context)
       # Assess potential business risks
       risks = []
-      
+
       # Financial risks
       risks.concat(assess_financial_risks(context))
-      
+
       # Customer risks
       risks.concat(assess_customer_risks(context))
-      
+
       # Operational risks
       risks.concat(assess_operational_risks(context))
-      
+
       # Market risks
       risks.concat(assess_market_risks(context))
-      
+
       risks.sort_by { |risk| -risk[:severity_score] }
     end
-    
+
     def plan_next_actions(insights)
       # Plan immediate and future actions based on insights
       {
@@ -428,9 +428,9 @@ module Ai
         monitoring: plan_monitoring_actions(insights)
       }
     end
-    
+
     # Placeholder methods for complex functionality
-    
+
     def analyze_historical_patterns; {}; end
     def calculate_agent_confidence(insights)
       return "low" if insights.blank?
@@ -469,14 +469,14 @@ module Ai
     def calculate_overall_customer_health(data)
       # Calculate customer health based on available data
       return 75.0 if data.blank?
-      
+
       # Factors that would influence customer health in a real implementation:
       # - Churn rate, engagement scores, support tickets, payment history, etc.
       base_health = 70.0
       data_quality_bonus = data.any? ? 10.0 : 0.0
       stability_bonus = 5.0 + rand(10.0) # Some variation for realism
-      
-      [base_health + data_quality_bonus + stability_bonus, 100.0].min.round(1)
+
+      [ base_health + data_quality_bonus + stability_bonus, 100.0 ].min.round(1)
     end
     def gather_historical_benchmark_data; {}; end
     def filter_anomalies_by_type(anomalies, type); []; end
@@ -484,7 +484,7 @@ module Ai
     def assess_anomaly_severity(anomalies)
       return "low" if anomalies.blank?
       # In production, this would analyze the actual anomaly data
-      severity_levels = ["low", "medium", "high", "critical"]
+      severity_levels = [ "low", "medium", "high", "critical" ]
       anomaly_count = anomalies.is_a?(Array) ? anomalies.length : 1
       case anomaly_count
       when 0..1 then "low"
@@ -493,7 +493,7 @@ module Ai
       else "critical"
       end
     end
-    
+
     def assess_opportunity_impact(opportunities)
       return "low" if opportunities.blank?
       # In production, this would analyze potential revenue/business impact
@@ -511,8 +511,8 @@ module Ai
       # Calculate based on opportunity count and quality
       opportunity_count = opportunities.is_a?(Array) ? opportunities.length : 1
       base_probability = 0.6
-      count_factor = [opportunity_count * 0.05, 0.3].min
-      [base_probability + count_factor, 0.95].min.round(2)
+      count_factor = [ opportunity_count * 0.05, 0.3 ].min
+      [ base_probability + count_factor, 0.95 ].min.round(2)
     end
     def analyze_long_term_trends; {}; end
     def gather_external_factors; {}; end
@@ -543,7 +543,7 @@ module Ai
     def calculate_user_satisfaction(feedback)
       return 0.5 if feedback.blank?
       # Calculate satisfaction based on feedback quality and type
-      positive_feedback = feedback.count { |f| f[:feedback_type] == 'helpful' || f[:feedback_type] == 'accurate' }
+      positive_feedback = feedback.count { |f| f[:feedback_type] == "helpful" || f[:feedback_type] == "accurate" }
       total_feedback = feedback.length
       return 0.75 if total_feedback == 0
       (positive_feedback.to_f / total_feedback * 0.4 + 0.5).round(2)
@@ -576,14 +576,14 @@ module Ai
       customer_factor = context[:customer_data]&.any? ? 1.5 : 1.0
       base_score * revenue_factor * customer_factor / 2.0
     end
-    
+
     def assess_insight_urgency(insights, context)
       # Assess urgency based on trends and business context
       return "high" if context[:recent_trends]&.values&.any? { |trend| trend.is_a?(Numeric) && trend < -10 }
       return "low" if context[:recent_trends]&.values&.all? { |trend| trend.is_a?(Numeric) && trend > 5 }
       "medium"
     end
-    
+
     def assess_implementation_feasibility(insights)
       # Assess based on complexity and resource requirements
       complexity_indicators = insights.to_s.scan(/complex|difficult|challenging/).length
@@ -591,7 +591,7 @@ module Ai
       return "high" if complexity_indicators == 0
       "medium"
     end
-    
+
     def estimate_resource_requirements(insights)
       # Estimate based on scope and complexity
       scope_indicators = insights.to_s.scan(/large|extensive|comprehensive|major/).length
@@ -599,34 +599,34 @@ module Ai
       return "low" if scope_indicators == 0
       "medium"
     end
-    
+
     def calculate_success_probability(insights, context)
       # Calculate based on business context and feasibility
       base_probability = 0.6
       confidence_boost = context[:current_metrics] ? 0.15 : 0.0
       trend_boost = context[:recent_trends]&.values&.any? { |t| t.is_a?(Numeric) && t > 0 } ? 0.1 : 0.0
-      [base_probability + confidence_boost + trend_boost, 0.95].min
+      [ base_probability + confidence_boost + trend_boost, 0.95 ].min
     end
-    
+
     def calculate_priority_score(insight)
       # Calculate priority based on impact, urgency, and confidence
       impact_score = insight[:business_impact_score] || 5.0
       urgency_multiplier = case insight[:urgency_level]
-        when "high" then 1.5
-        when "low" then 0.7
-        else 1.0
+      when "high" then 1.5
+      when "low" then 0.7
+      else 1.0
       end
       confidence_score = insight[:success_probability] || 0.5
       (impact_score * urgency_multiplier * confidence_score).round(1)
     end
-    
+
     def categorize_impact(insight)
       score = insight[:business_impact_score] || insight[:priority_score] || 5.0
       return "high" if score >= 7.0
       return "low" if score <= 4.0
       "medium"
     end
-    
+
     def categorize_urgency(insight)
       case insight[:urgency_level]
       when "high", "critical" then "high"

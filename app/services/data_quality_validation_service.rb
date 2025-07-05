@@ -463,7 +463,7 @@ class DataQualityValidationService
           message: "Created date is required"
         }
       ],
-      
+
       # E-commerce platforms
       shopify: [
         {
@@ -489,7 +489,7 @@ class DataQualityValidationService
           message: "Customer ID should be present"
         }
       ],
-      
+
       woocommerce: [
         {
           name: "billing_email_format",
@@ -507,7 +507,7 @@ class DataQualityValidationService
           message: "Order status is required"
         }
       ],
-      
+
       # Financial platforms
       quickbooks: [
         {
@@ -525,7 +525,7 @@ class DataQualityValidationService
           message: "Account reference is required"
         }
       ],
-      
+
       stripe: [
         {
           name: "payment_amount_positive",
@@ -543,7 +543,7 @@ class DataQualityValidationService
           message: "Currency code is required"
         }
       ],
-      
+
       # Analytics platforms
       google_analytics: [
         {
@@ -562,7 +562,7 @@ class DataQualityValidationService
           message: "Page views must be numeric"
         }
       ],
-      
+
       # Marketing platforms
       mailchimp: [
         {
@@ -582,7 +582,7 @@ class DataQualityValidationService
           message: "Subscription status must be valid"
         }
       ],
-      
+
       # CRM platforms
       hubspot: [
         {
@@ -594,7 +594,7 @@ class DataQualityValidationService
           message: "Contact email must be valid"
         }
       ],
-      
+
       zendesk: [
         {
           name: "ticket_subject_presence",
@@ -612,7 +612,7 @@ class DataQualityValidationService
           message: "Requester email must be valid"
         }
       ],
-      
+
       # Advertising platforms
       google_ads: [
         {
@@ -631,7 +631,7 @@ class DataQualityValidationService
           message: "Cost should not be negative"
         }
       ],
-      
+
       facebook_ads: [
         {
           name: "ad_set_id_presence",
@@ -649,7 +649,7 @@ class DataQualityValidationService
           message: "Spend should not be negative"
         }
       ],
-      
+
       # Sales platforms
       salesforce: [
         {
@@ -668,7 +668,7 @@ class DataQualityValidationService
           message: "Lead status is required"
         }
       ],
-      
+
       # Marketplace platforms
       amazon_seller_central: [
         {
@@ -687,7 +687,7 @@ class DataQualityValidationService
           message: "Price must be positive"
         }
       ],
-      
+
       # File upload and custom sources
       file_upload: [
         {
@@ -698,7 +698,7 @@ class DataQualityValidationService
           message: "Record should have an identifier"
         }
       ],
-      
+
       custom_api: [
         {
           name: "api_response_structure",

@@ -3,15 +3,15 @@
 module Ai
   class DataIntegrationService
     include ActiveModel::Model
-    
+
     attr_accessor :organization, :data_source, :sample_data, :integration_config
-    
+
     SUPPORTED_SOURCE_TYPES = %w[
-      api database file csv json xml 
-      shopify stripe quickbooks google_analytics 
+      api database file csv json xml
+      shopify stripe quickbooks google_analytics
       mailchimp zendesk hubspot salesforce
     ].freeze
-    
+
     COMMON_FIELD_PATTERNS = {
       customer: %w[
         customer_id user_id client_id account_id external_id id
@@ -44,7 +44,7 @@ module Ai
         created_at added_date product_created updated_at modified_date
       ]
     }.freeze
-    
+
     def initialize(organization:, data_source: nil, sample_data: nil, integration_config: nil)
       @organization = organization
       @data_source = data_source
@@ -52,11 +52,11 @@ module Ai
       @integration_config = integration_config || {}
       @llm_service = Ai::LlmService.new(organization: organization)
     end
-    
+
     def analyze_data_source(source_type:, connection_params: {}, sample_data: nil)
       # Comprehensive analysis of a potential data source
       Rails.logger.info "Analyzing data source: #{source_type} for #{@organization.name}"
-      
+
       analysis_result = {
         source_type: source_type,
         connection_validation: validate_connection(source_type, connection_params),
@@ -70,31 +70,31 @@ module Ai
         sync_strategy: recommend_sync_strategy(source_type, sample_data),
         generated_at: Time.current.iso8601
       }
-      
+
       # Store analysis for future reference
       store_integration_analysis(analysis_result)
-      
+
       analysis_result
     end
-    
+
     def generate_intelligent_field_mapping(sample_data)
       # AI-powered field mapping with confidence scoring
       return {} unless sample_data&.any?
-      
+
       Rails.logger.info "Generating intelligent field mapping for #{@organization.name}"
-      
+
       # Extract fields from sample data
       detected_fields = extract_fields_from_sample(sample_data)
-      
+
       # Generate AI-powered mapping suggestions
       ai_mapping = generate_ai_field_mapping(detected_fields, sample_data)
-      
+
       # Combine with pattern-based mapping
       pattern_mapping = generate_pattern_based_mapping(detected_fields)
-      
+
       # Create comprehensive mapping with confidence scores
       field_mapping = {}
-      
+
       detected_fields.each do |field_name|
         field_mapping[field_name] = {
           original_name: field_name,
@@ -106,18 +106,18 @@ module Ai
           transformation_needed: assess_transformation_needs(field_name, sample_data)
         }
       end
-      
+
       field_mapping
     end
-    
+
     def optimize_data_source_configuration(data_source)
       # AI-powered optimization recommendations for existing data sources
       Rails.logger.info "Optimizing data source configuration: #{data_source.name}"
-      
+
       current_config = analyze_current_configuration(data_source)
       performance_metrics = gather_performance_metrics(data_source)
       data_patterns = analyze_data_patterns(data_source)
-      
+
       optimization_suggestions = {
         sync_frequency: optimize_sync_frequency(performance_metrics, data_patterns),
         field_mappings: optimize_field_mappings(data_source),
@@ -128,13 +128,13 @@ module Ai
         data_quality_improvements: recommend_quality_enhancements(data_source),
         cost_optimization: analyze_cost_efficiency(data_source, performance_metrics)
       }
-      
+
       # Generate AI insights on optimization impact
       ai_optimization_analysis = @llm_service.analyze_business_metrics(
         optimization_suggestions.merge(current_config),
         "Analyze data source optimization recommendations and estimate impact on data quality, performance, and business value."
       )
-      
+
       {
         current_performance: current_config,
         optimization_suggestions: optimization_suggestions,
@@ -144,19 +144,19 @@ module Ai
         generated_at: Time.current.iso8601
       }
     end
-    
+
     def suggest_new_data_sources
       # AI-powered suggestions for additional data sources based on business context
       Rails.logger.info "Suggesting new data sources for #{@organization.name}"
-      
+
       current_sources = analyze_current_data_ecosystem
       business_context = build_business_context
       industry_patterns = identify_industry_patterns
-      
+
       # Generate AI-powered data source recommendations
       recommendation_prompt = build_data_source_recommendation_prompt(current_sources, business_context)
       ai_recommendations = @llm_service.analyze_business_metrics(business_context, recommendation_prompt)
-      
+
       suggested_sources = {
         high_priority: identify_high_priority_sources(current_sources, business_context),
         complementary: find_complementary_sources(current_sources),
@@ -165,10 +165,10 @@ module Ai
         cost_effective: identify_cost_effective_sources(business_context),
         ai_recommendations: JSON.parse(ai_recommendations)
       }
-      
+
       # Prioritize and score recommendations
       prioritized_suggestions = prioritize_data_source_suggestions(suggested_sources)
-      
+
       {
         current_ecosystem: current_sources,
         suggested_sources: prioritized_suggestions,
@@ -178,11 +178,11 @@ module Ai
         generated_at: Time.current.iso8601
       }
     end
-    
+
     def validate_data_integration_quality(data_source)
       # Comprehensive quality assessment of integrated data
       Rails.logger.info "Validating data integration quality for #{data_source.name}"
-      
+
       quality_metrics = {
         completeness: assess_data_completeness(data_source),
         accuracy: evaluate_data_accuracy(data_source),
@@ -192,13 +192,13 @@ module Ai
         uniqueness: detect_duplicate_records(data_source),
         integrity: check_referential_integrity(data_source)
       }
-      
+
       # AI-powered quality insights
       quality_analysis_prompt = build_quality_analysis_prompt(quality_metrics, data_source)
       ai_quality_insights = @llm_service.validate_data_quality(quality_metrics, quality_analysis_prompt)
-      
+
       overall_score = calculate_overall_quality_score(quality_metrics)
-      
+
       {
         quality_metrics: quality_metrics,
         overall_score: overall_score,
@@ -210,33 +210,33 @@ module Ai
         generated_at: Time.current.iso8601
       }
     end
-    
+
     private
-    
+
     def validate_connection(source_type, connection_params)
       # Validate connection to data source
       case source_type
-      when 'api'
+      when "api"
         validate_api_connection(connection_params)
-      when 'database'
+      when "database"
         validate_database_connection(connection_params)
-      when 'file'
+      when "file"
         validate_file_access(connection_params)
       when *%w[shopify stripe quickbooks]
         validate_oauth_connection(source_type, connection_params)
       else
-        { status: 'unknown', message: 'Connection validation not implemented for this source type' }
+        { status: "unknown", message: "Connection validation not implemented for this source type" }
       end
     end
-    
+
     def fetch_sample_data(source_type, connection_params)
       # Fetch sample data for analysis
       case source_type
-      when 'api'
+      when "api"
         fetch_api_sample(connection_params)
-      when 'database'
+      when "database"
         fetch_database_sample(connection_params)
-      when 'file'
+      when "file"
         fetch_file_sample(connection_params)
       else
         []
@@ -245,10 +245,10 @@ module Ai
       Rails.logger.warn "Failed to fetch sample data: #{e.message}"
       []
     end
-    
+
     def analyze_schema(sample_data)
       return {} unless sample_data&.any?
-      
+
       # Analyze data structure and schema
       schema_analysis = {
         record_count: sample_data.length,
@@ -260,85 +260,85 @@ module Ai
         unique_constraints: detect_unique_fields(sample_data),
         relationships: infer_relationships(sample_data)
       }
-      
+
       schema_analysis
     end
-    
+
     def assess_data_quality(sample_data)
       return { score: 0, issues: [] } unless sample_data&.any?
-      
+
       quality_issues = []
       quality_score = 100.0
-      
+
       # Check for common quality issues
       missing_data_pct = calculate_missing_data_percentage(sample_data)
       if missing_data_pct > 10
         quality_issues << "High missing data rate: #{missing_data_pct.round(1)}%"
         quality_score -= (missing_data_pct * 0.5)
       end
-      
+
       # Check for duplicate records
       duplicate_pct = calculate_duplicate_percentage(sample_data)
       if duplicate_pct > 5
         quality_issues << "Duplicate records detected: #{duplicate_pct.round(1)}%"
         quality_score -= (duplicate_pct * 0.8)
       end
-      
+
       # Check data consistency
       consistency_issues = detect_consistency_issues(sample_data)
       if consistency_issues.any?
         quality_issues.concat(consistency_issues)
         quality_score -= (consistency_issues.length * 5)
       end
-      
+
       {
-        score: [quality_score, 0].max.round(1),
+        score: [ quality_score, 0 ].max.round(1),
         grade: quality_grade(quality_score),
         issues: quality_issues,
         recommendations: generate_quality_recommendations(quality_issues)
       }
     end
-    
+
     def generate_integration_recommendations(source_type, sample_data)
       recommendations = []
-      
+
       # Source-specific recommendations
       case source_type
-      when 'api'
+      when "api"
         recommendations << "Implement rate limiting and retry logic for API calls"
         recommendations << "Set up webhook endpoints for real-time updates if available"
-      when 'database'
+      when "database"
         recommendations << "Use incremental sync based on timestamp fields"
         recommendations << "Consider read replicas to minimize impact on source system"
-      when 'file'
+      when "file"
         recommendations << "Implement file validation and backup procedures"
         recommendations << "Set up automated file processing and archival"
       end
-      
+
       # Data-specific recommendations
       if sample_data&.any?
         field_count = extract_fields_from_sample(sample_data).length
         if field_count > 50
           recommendations << "Consider selective field sync to improve performance"
         end
-        
+
         if detect_nested_structures(sample_data).any?
           recommendations << "Plan for complex data transformation and flattening"
         end
       end
-      
+
       recommendations
     end
-    
+
     def calculate_integration_complexity(source_type, sample_data)
       base_complexity = case source_type
-      when 'file', 'csv' then 1
-      when 'api', 'json' then 2
-      when 'database' then 3
+      when "file", "csv" then 1
+      when "api", "json" then 2
+      when "database" then 3
       when *%w[shopify stripe quickbooks] then 4
       else 3
       end
-      
+
       if sample_data&.any?
         field_count = extract_fields_from_sample(sample_data).length
         complexity_multiplier = case field_count
@@ -347,120 +347,120 @@ module Ai
         when 26..50 then 1.5
         else 2.0
         end
-        
+
         nested_complexity = detect_nested_structures(sample_data).any? ? 1.3 : 1.0
-        
+
         base_complexity * complexity_multiplier * nested_complexity
       else
         base_complexity
       end
     end
-    
+
     def detect_potential_conflicts(sample_data)
       conflicts = []
-      
+
       return conflicts unless sample_data&.any?
-      
+
       # Check for ID field conflicts
       existing_id_fields = @organization.data_sources.joins(:raw_data_records)
         .pluck("DISTINCT jsonb_object_keys(data)")
-        .select { |key| key.include?('id') }
-      
+        .select { |key| key.include?("id") }
+
       new_id_fields = extract_fields_from_sample(sample_data)
-        .select { |field| field.include?('id') }
-      
+        .select { |field| field.include?("id") }
+
       conflicting_ids = existing_id_fields & new_id_fields
       if conflicting_ids.any?
         conflicts << {
-          type: 'id_field_conflict',
+          type: "id_field_conflict",
           fields: conflicting_ids,
           description: "ID fields may conflict with existing data"
         }
       end
-      
+
       conflicts
     end
-    
+
     def suggest_data_transformations(sample_data)
       transformations = []
-      
+
       return transformations unless sample_data&.any?
-      
+
       fields = extract_fields_from_sample(sample_data)
-      
+
       fields.each do |field_name|
         sample_values = extract_sample_values(field_name, sample_data)
-        
+
         # Suggest transformations based on field patterns
         if field_name.match?(/date|time|created|updated/i)
           transformations << {
             field: field_name,
-            type: 'date_normalization',
+            type: "date_normalization",
             description: "Normalize date format to ISO 8601"
           }
         end
-        
-        if field_name.match?(/email/i) && sample_values.any? { |v| v&.include?(' ') }
+
+        if field_name.match?(/email/i) && sample_values.any? { |v| v&.include?(" ") }
           transformations << {
             field: field_name,
-            type: 'email_cleaning',
+            type: "email_cleaning",
             description: "Clean and validate email addresses"
           }
         end
-        
+
         if field_name.match?(/price|amount|cost|total/i)
           transformations << {
             field: field_name,
-            type: 'currency_normalization',
+            type: "currency_normalization",
             description: "Normalize currency values to consistent format"
           }
         end
       end
-      
+
       transformations
     end
-    
+
     def recommend_sync_strategy(source_type, sample_data)
       strategy = {
-        type: 'full_sync',
-        frequency: 'daily',
+        type: "full_sync",
+        frequency: "daily",
         incremental_field: nil,
         batch_size: 1000,
-        priority: 'medium'
+        priority: "medium"
       }
-      
+
       # Adjust based on source type
       case source_type
-      when 'api'
-        strategy[:type] = 'incremental'
-        strategy[:frequency] = 'hourly'
+      when "api"
+        strategy[:type] = "incremental"
+        strategy[:frequency] = "hourly"
         strategy[:batch_size] = 500
-      when 'database'
-        strategy[:type] = 'incremental'
-        strategy[:frequency] = '6_hourly'
+      when "database"
+        strategy[:type] = "incremental"
+        strategy[:frequency] = "6_hourly"
         strategy[:batch_size] = 2000
-      when 'file'
-        strategy[:type] = 'full_sync'
-        strategy[:frequency] = 'daily'
+      when "file"
+        strategy[:type] = "full_sync"
+        strategy[:frequency] = "daily"
       end
-      
+
       # Detect incremental sync fields
       if sample_data&.any?
         timestamp_fields = extract_fields_from_sample(sample_data)
           .select { |f| f.match?(/updated|modified|changed|timestamp/i) }
-        
+
         if timestamp_fields.any?
-          strategy[:type] = 'incremental'
+          strategy[:type] = "incremental"
           strategy[:incremental_field] = timestamp_fields.first
-          strategy[:frequency] = 'hourly'
+          strategy[:frequency] = "hourly"
         end
       end
-      
+
       strategy
     end
-    
+
     # Helper methods for field mapping and analysis
-    
+
     def extract_fields_from_sample(sample_data)
       fields = Set.new
       sample_data.first(5).each do |record|
@@ -468,14 +468,14 @@ module Ai
       end
       fields.to_a
     end
-    
+
     def extract_fields_recursively(data, fields, prefix = "")
       return unless data.is_a?(Hash)
-      
+
       data.each do |key, value|
         field_name = prefix.present? ? "#{prefix}.#{key}" : key
         fields << field_name
-        
+
         if value.is_a?(Hash)
           extract_fields_recursively(value, fields, field_name)
         elsif value.is_a?(Array) && value.first.is_a?(Hash)
@@ -483,7 +483,7 @@ module Ai
         end
       end
     end
-    
+
     def generate_ai_field_mapping(detected_fields, sample_data)
       # Use AI to suggest field mappings
       mapping_prompt = build_field_mapping_prompt(detected_fields, sample_data)
@@ -491,21 +491,21 @@ module Ai
         { fields: detected_fields, sample_data: sample_data.first(3) },
         mapping_prompt
       )
-      
+
       begin
         JSON.parse(ai_response)
       rescue JSON::ParserError
         {}
       end
     end
-    
+
     def generate_pattern_based_mapping(detected_fields)
       mapping = {}
-      
+
       detected_fields.each do |field_name|
         COMMON_FIELD_PATTERNS.each do |record_type, patterns|
           patterns.each do |pattern|
-            if field_name.downcase.include?(pattern.downcase) || 
+            if field_name.downcase.include?(pattern.downcase) ||
                pattern.downcase.include?(field_name.downcase)
               mapping[field_name] ||= []
               mapping[field_name] << {
@@ -517,42 +517,42 @@ module Ai
           end
         end
       end
-      
+
       mapping
     end
-    
+
     def combine_mapping_suggestions(field_name, ai_mapping, pattern_mapping)
       suggestions = []
-      
+
       # Add AI suggestions
       if ai_mapping[field_name]
         suggestions.concat(ai_mapping[field_name])
       end
-      
+
       # Add pattern-based suggestions
       if pattern_mapping[field_name]
         suggestions.concat(pattern_mapping[field_name])
       end
-      
+
       # Remove duplicates and sort by confidence
       suggestions.uniq { |s| s[:target_field] }
                 .sort_by { |s| -(s[:confidence] || 0) }
                 .first(3)
     end
-    
+
     def calculate_field_confidence(field_name, ai_mapping, pattern_mapping)
       ai_confidence = ai_mapping[field_name]&.first&.dig(:confidence) || 0
       pattern_confidence = pattern_mapping[field_name]&.first&.dig(:confidence) || 0
-      
+
       # Weighted average favoring AI analysis
       (ai_confidence * 0.7 + pattern_confidence * 0.3).round(2)
     end
-    
+
     def calculate_pattern_confidence(field_name, pattern)
       # Calculate confidence based on string similarity
-      field_clean = field_name.downcase.gsub(/[^a-z]/, '')
-      pattern_clean = pattern.downcase.gsub(/[^a-z]/, '')
-      
+      field_clean = field_name.downcase.gsub(/[^a-z]/, "")
+      pattern_clean = pattern.downcase.gsub(/[^a-z]/, "")
+
       if field_clean == pattern_clean
         0.95
       elsif field_clean.include?(pattern_clean) || pattern_clean.include?(field_clean)
@@ -563,9 +563,9 @@ module Ai
         0.5
       end
     end
-    
+
     # Placeholder methods for complex operations
-    
+
     def store_integration_analysis(analysis); Rails.logger.info "Storing integration analysis"; end
     def analyze_current_configuration(data_source); {}; end
     def gather_performance_metrics(data_source); {}; end
@@ -606,10 +606,10 @@ module Ai
     def generate_quality_improvements(metrics); []; end
     def suggest_quality_monitoring(data_source); []; end
     def identify_automated_fixes(metrics); []; end
-    def validate_api_connection(params); { status: 'success', message: 'API connection valid' }; end
-    def validate_database_connection(params); { status: 'success', message: 'Database connection valid' }; end
-    def validate_file_access(params); { status: 'success', message: 'File access valid' }; end
-    def validate_oauth_connection(type, params); { status: 'success', message: "#{type.humanize} OAuth valid" }; end
+    def validate_api_connection(params); { status: "success", message: "API connection valid" }; end
+    def validate_database_connection(params); { status: "success", message: "Database connection valid" }; end
+    def validate_file_access(params); { status: "success", message: "File access valid" }; end
+    def validate_oauth_connection(type, params); { status: "success", message: "#{type.humanize} OAuth valid" }; end
     def fetch_api_sample(params); []; end
     def fetch_database_sample(params); []; end
     def fetch_file_sample(params); []; end
@@ -624,7 +624,7 @@ module Ai
     def calculate_duplicate_percentage(data); 2.0; end
     def detect_consistency_issues(data); []; end
     def quality_grade(score); score > 90 ? "Excellent" : score > 80 ? "Good" : score > 70 ? "Fair" : "Poor"; end
-    def generate_quality_recommendations(issues); ["Implement data validation", "Add data cleaning pipeline"]; end
+    def generate_quality_recommendations(issues); [ "Implement data validation", "Add data cleaning pipeline" ]; end
     def detect_field_data_type(field, data); "string"; end
     def extract_sample_values(field, data); []; end
     def suggest_validation_rules(field, data); []; end

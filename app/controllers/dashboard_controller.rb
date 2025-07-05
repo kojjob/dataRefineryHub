@@ -435,33 +435,33 @@ class DashboardController < ApplicationController
 
   def calculate_recent_activity
     activities = []
-    
+
     # Get recent extraction jobs
     recent_jobs = @recent_jobs.limit(5)
     recent_jobs.each do |job|
       case job.status
-      when 'completed'
+      when "completed"
         activities << {
-          type: 'success',
-          icon_color: 'green',
+          type: "success",
+          icon_color: "green",
           title: "#{job.data_source.source_type.humanize} sync completed",
           description: "#{job.records_processed || 0} records processed",
           time: time_ago_helper(job.completed_at),
           timestamp: job.completed_at
         }
-      when 'failed'
+      when "failed"
         activities << {
-          type: 'error',
-          icon_color: 'red',
+          type: "error",
+          icon_color: "red",
           title: "#{job.data_source.source_type.humanize} sync failed",
           description: job.error_message&.truncate(50) || "Processing error",
           time: time_ago_helper(job.completed_at || job.created_at),
           timestamp: job.completed_at || job.created_at
         }
-      when 'running'
+      when "running"
         activities << {
-          type: 'info',
-          icon_color: 'blue',
+          type: "info",
+          icon_color: "blue",
           title: "#{job.data_source.source_type.humanize} sync in progress",
           description: "#{job.progress_percentage || 0}% complete",
           time: time_ago_helper(job.started_at || job.created_at),
@@ -469,59 +469,59 @@ class DashboardController < ApplicationController
         }
       end
     end
-    
+
     # Get recent data source connections
-    recent_sources = @data_sources.where('created_at >= ?', 24.hours.ago).limit(3)
+    recent_sources = @data_sources.where("created_at >= ?", 24.hours.ago).limit(3)
     recent_sources.each do |source|
       activities << {
-        type: 'info',
-        icon_color: 'blue',
+        type: "info",
+        icon_color: "blue",
         title: "New #{source.source_type.humanize} connected",
         description: source.name,
         time: time_ago_helper(source.created_at),
         timestamp: source.created_at
       }
     end
-    
+
     # Get recent quality checks
     if @data_quality_metrics[:overall][:last_quality_check]
       activities << {
-        type: 'success',
-        icon_color: 'green',
+        type: "success",
+        icon_color: "green",
         title: "Data quality check completed",
         description: "Overall score: #{@data_quality_metrics[:overall][:overall_quality_score].round(1)}%",
         time: time_ago_helper(@data_quality_metrics[:overall][:last_quality_check]),
         timestamp: @data_quality_metrics[:overall][:last_quality_check]
       }
     end
-    
+
     # Sort by timestamp and take most recent 5
     activities.sort_by { |a| a[:timestamp] }.reverse.first(5)
   end
 
   def calculate_system_status
     # Calculate actual system metrics
-    total_jobs = policy_scope(ExtractionJob).where('created_at >= ?', 24.hours.ago)
+    total_jobs = policy_scope(ExtractionJob).where("created_at >= ?", 24.hours.ago)
     running_jobs = total_jobs.running.count
-    failed_jobs_rate = total_jobs.failed.count.to_f / [total_jobs.count, 1].max
-    
+    failed_jobs_rate = total_jobs.failed.count.to_f / [ total_jobs.count, 1 ].max
+
     # Calculate uptime based on success rate
     uptime = ((1 - failed_jobs_rate) * 100).round(1)
-    
+
     # Calculate storage used (sum of all raw data records)
     total_records = policy_scope(RawDataRecord).count
     estimated_storage_gb = (total_records * 0.5).round(1) # Rough estimate: 0.5KB per record
-    
+
     # Determine overall health
     health_status = case
-                   when uptime >= 99 && running_jobs < 10
-                     { status: 'healthy', color: 'green', text: 'Healthy' }
-                   when uptime >= 95 && running_jobs < 20
-                     { status: 'warning', color: 'yellow', text: 'Warning' }
-                   else
-                     { status: 'critical', color: 'red', text: 'Critical' }
-                   end
-    
+    when uptime >= 99 && running_jobs < 10
+                     { status: "healthy", color: "green", text: "Healthy" }
+    when uptime >= 95 && running_jobs < 20
+                     { status: "warning", color: "yellow", text: "Warning" }
+    else
+                     { status: "critical", color: "red", text: "Critical" }
+    end
+
     {
       health: health_status,
       uptime: "#{uptime}%",
@@ -530,12 +530,12 @@ class DashboardController < ApplicationController
       last_updated: Time.current
     }
   end
-  
+
   def time_ago_helper(time)
     return "unknown" unless time
-    
+
     diff_seconds = Time.current - time
-    
+
     case diff_seconds
     when 0..59
       "#{diff_seconds.to_i} seconds"

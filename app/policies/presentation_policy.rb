@@ -52,13 +52,13 @@ class PresentationPolicy < ApplicationPolicy
   def can_generate_presentations?
     # Check if user's organization plan allows presentation generation
     case user.organization.plan
-    when 'free_trial'
-      user.organization.presentations.where('created_at >= ?', 1.month.ago).count < 2
-    when 'starter'
-      user.organization.presentations.where('created_at >= ?', 1.month.ago).count < 10
-    when 'growth'
-      user.organization.presentations.where('created_at >= ?', 1.month.ago).count < 50
-    when 'scale', 'enterprise'
+    when "free_trial"
+      user.organization.presentations.where("created_at >= ?", 1.month.ago).count < 2
+    when "starter"
+      user.organization.presentations.where("created_at >= ?", 1.month.ago).count < 10
+    when "growth"
+      user.organization.presentations.where("created_at >= ?", 1.month.ago).count < 50
+    when "scale", "enterprise"
       true
     else
       false

@@ -14,6 +14,6 @@ class CreateLandingPageContents < ActiveRecord::Migration[8.0]
     add_index :landing_page_contents, :section
     add_index :landing_page_contents, :active
     add_index :landing_page_contents, :display_order
-    add_index :landing_page_contents, [:section, :active, :display_order], name: 'index_landing_contents_on_section_active_order'
+    add_index :landing_page_contents, [ :section, :active, :display_order ], name: 'index_landing_contents_on_section_active_order'
   end
 end

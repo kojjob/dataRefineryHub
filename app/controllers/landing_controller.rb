@@ -34,7 +34,7 @@ class LandingController < ApplicationController
     stats = {}
 
     stats_content.each do |stat|
-      key = stat.title.downcase.gsub(/[^a-z0-9]/, '_').to_sym
+      key = stat.title.downcase.gsub(/[^a-z0-9]/, "_").to_sym
       stats[key] = stat.content
     end
 
@@ -297,21 +297,21 @@ class LandingController < ApplicationController
         description: "AI agent that monitors your business 24/7, generates proactive insights, and alerts you to opportunities and risks before they impact your bottom line.",
         icon: "ai-brain",
         demo_available: true,
-        benefits: ["Proactive Insights", "24/7 Monitoring", "Predictive Analytics", "Risk Assessment"]
+        benefits: [ "Proactive Insights", "24/7 Monitoring", "Predictive Analytics", "Risk Assessment" ]
       },
       {
         title: "Real-Time Anomaly Detection",
         description: "Advanced ML algorithms detect unusual patterns in your data instantly, preventing issues before they become problems.",
         icon: "anomaly-detection",
         demo_available: true,
-        benefits: ["Instant Alerts", "Smart Thresholds", "Pattern Learning", "False Positive Reduction"]
+        benefits: [ "Instant Alerts", "Smart Thresholds", "Pattern Learning", "False Positive Reduction" ]
       },
       {
         title: "Enhanced Data Intelligence",
         description: "AI automatically understands your business context, identifies data patterns, and suggests optimizations for maximum ROI.",
         icon: "data-intelligence",
         demo_available: true,
-        benefits: ["Context Recognition", "Quality Scoring", "ROI Estimation", "Auto-Optimization"]
+        benefits: [ "Context Recognition", "Quality Scoring", "ROI Estimation", "Auto-Optimization" ]
       }
     ]
   end
@@ -320,7 +320,7 @@ class LandingController < ApplicationController
     # Simple visitor context detection
     user_agent = request.user_agent.to_s.downcase
     referrer = request.referrer.to_s.downcase
-    
+
     {
       likely_business_type: detect_business_type(referrer, user_agent),
       primary_cta: determine_primary_cta(referrer),

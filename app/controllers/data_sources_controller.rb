@@ -11,19 +11,19 @@ class DataSourcesController < ApplicationController
 
   def quality
     @data_sources = policy_scope(DataSource).includes(:raw_data_records, :extraction_jobs, :data_quality_reports)
-    
+
     # Get latest quality reports for each data source
     @latest_reports = DataQualityReport.latest_for_each_source
                                       .joins(:data_source)
                                       .where(data_sources: { organization: current_organization })
                                       .includes(:data_source)
-    
+
     # Calculate aggregated quality metrics
     @quality_metrics = calculate_aggregated_quality_metrics(@latest_reports)
-    
+
     # Get recent quality issues from actual reports
     @recent_issues = get_actual_quality_issues(@latest_reports)
-    
+
     # Get recommendations from actual reports
     @recommendations = get_actual_quality_recommendations(@latest_reports)
   end
@@ -31,22 +31,22 @@ class DataSourcesController < ApplicationController
   # Add API endpoint for running quality validation
   def run_quality_check
     @data_source = policy_scope(DataSource).find(params[:id]) if params[:id].present?
-    
+
     if @data_source
       # Run validation for specific data source
       @data_source.run_quality_validation!
-      render json: { 
+      render json: {
         message: "Quality validation started for #{@data_source.name}",
-        status: 'running'
+        status: "running"
       }
     else
       # Run validation for all data sources
       policy_scope(DataSource).find_each do |data_source|
         data_source.run_quality_validation!
       end
-      render json: { 
+      render json: {
         message: "Quality validation started for all data sources",
-        status: 'running'
+        status: "running"
       }
     end
   end
@@ -56,7 +56,7 @@ class DataSourcesController < ApplicationController
     @recent_jobs = @data_source.extraction_jobs.recent.limit(10)
     @recent_records = policy_scope(RawDataRecord).where(data_source: @data_source).recent.limit(10)
     @stats = calculate_data_source_stats(@data_source)
-    
+
     # Load processed data for visualization builder if it's a file upload source
     if @data_source.file_upload_source? && @data_source.raw_data_records.any?
       @processed_data = load_processed_data_for_visualization
@@ -67,7 +67,7 @@ class DataSourcesController < ApplicationController
   def new
     @data_source = current_organization.data_sources.build
     authorize @data_source
-    
+
     # Initialize wizard data for the view
     @wizard_data = DataSourceWizardService.new.prepare_wizard_data
   end
@@ -77,7 +77,7 @@ class DataSourcesController < ApplicationController
     authorize @data_source
 
     # Track performance for data source creation
-    result = PerformanceMonitorService.instance.track('data_source_creation') do
+    result = PerformanceMonitorService.instance.track("data_source_creation") do
       if @data_source.save
         # If it's a file upload source and files were uploaded, use enhanced service
         if @data_source.file_upload_source? && params[:data_source][:uploaded_files].present?
@@ -128,7 +128,7 @@ class DataSourcesController < ApplicationController
 
     source_type = params[:source_type]
     connection_params = params.except(:authenticity_token, :controller, :action).permit(
-      :source_type, :api_key, :shop_domain, :consumer_key, :consumer_secret, 
+      :source_type, :api_key, :shop_domain, :consumer_key, :consumer_secret,
       :access_token, :access_token_secret, :seller_id, :marketplace_id, :refresh_token
     )
 
@@ -157,16 +157,16 @@ class DataSourcesController < ApplicationController
     # Auto-save wizard data to session or temporary storage
     session[:data_source_wizard_draft] = params.except(:authenticity_token, :controller, :action)
     session[:data_source_wizard_draft][:updated_at] = Time.current
-    
-    render json: { 
-      success: true, 
+
+    render json: {
+      success: true,
       message: "Draft saved successfully",
       saved_at: Time.current.strftime("%I:%M %p")
     }
   rescue => e
-    render json: { 
-      success: false, 
-      message: "Failed to save draft: #{e.message}" 
+    render json: {
+      success: false,
+      message: "Failed to save draft: #{e.message}"
     }, status: :unprocessable_entity
   end
 
@@ -181,31 +181,31 @@ class DataSourcesController < ApplicationController
     # Initiate manual sync based on data source type
     begin
       case @data_source.source_type
-      when 'api'
+      when "api"
         # Queue API extraction job
         job = ExtractionJob.create!(
           data_source: @data_source,
           organization: current_organization,
-          job_type: 'manual_sync',
-          status: 'pending'
+          job_type: "manual_sync",
+          status: "pending"
         )
-        
+
         # Process the job asynchronously
         TransformationJobProcessor.perform_async(job.id)
-        
+
         redirect_to @data_source, notice: "Manual sync initiated successfully. Job ##{job.id} is processing."
-      when 'database'
+      when "database"
         # Queue database extraction job
         job = ExtractionJob.create!(
           data_source: @data_source,
           organization: current_organization,
-          job_type: 'manual_sync',
-          status: 'pending'
+          job_type: "manual_sync",
+          status: "pending"
         )
-        
+
         TransformationJobProcessor.perform_async(job.id)
         redirect_to @data_source, notice: "Database sync initiated successfully. Job ##{job.id} is processing."
-      when 'cloud_storage'
+      when "cloud_storage"
         # Sync cloud storage files
         CloudStorageService.new(@data_source).sync_files
         redirect_to @data_source, notice: "Cloud storage sync completed successfully."
@@ -227,7 +227,7 @@ class DataSourcesController < ApplicationController
     end
 
     # Use enhanced file upload service with performance tracking
-    result = PerformanceMonitorService.instance.track('file_processing') do
+    result = PerformanceMonitorService.instance.track("file_processing") do
       if params[:uploaded_files].present?
         EnhancedFileUploadService.new(
           data_source: @data_source,
@@ -236,7 +236,7 @@ class DataSourcesController < ApplicationController
           organization: current_organization
         ).process
       else
-        Result.failure(errors: ["No files provided for processing"])
+        Result.failure(errors: [ "No files provided for processing" ])
       end
     end
 
@@ -287,15 +287,15 @@ class DataSourcesController < ApplicationController
     )
 
     @enhanced_preview_data = preview_service.generate_enhanced_preview
-    
+
     respond_to do |format|
-      format.json { 
+      format.json {
         render json: {
           success: true,
           preview_data: @enhanced_preview_data,
           component_html: render_to_string(
-            partial: 'enhanced_data_preview_component',
-            locals: { 
+            partial: "enhanced_data_preview_component",
+            locals: {
               preview_data: @enhanced_preview_data,
               data_source: @data_source,
               user: current_user
@@ -314,21 +314,21 @@ class DataSourcesController < ApplicationController
   rescue => e
     Rails.logger.error "Enhanced preview error: #{e.message}"
     Rails.logger.error e.backtrace.join("\n")
-    
+
     respond_to do |format|
-      format.json { 
-        render json: { 
+      format.json {
+        render json: {
           success: false,
           error: e.message,
           suggestions: [
             "Check file format and structure",
-            "Ensure file is not corrupted", 
+            "Ensure file is not corrupted",
             "Try a smaller sample file first"
           ]
-        }, status: :unprocessable_entity 
+        }, status: :unprocessable_entity
       }
-      format.html { 
-        redirect_to @data_source, alert: "Error generating enhanced preview: #{e.message}" 
+      format.html {
+        redirect_to @data_source, alert: "Error generating enhanced preview: #{e.message}"
       }
     end
   end
@@ -362,28 +362,28 @@ class DataSourcesController < ApplicationController
   # Download sample files for users to understand expected format
   def download_sample_csv
     send_file(
-      Rails.root.join('public', 'sample_files', 'sample_data.csv'),
-      filename: 'sample_data.csv',
-      type: 'text/csv',
-      disposition: 'attachment'
+      Rails.root.join("public", "sample_files", "sample_data.csv"),
+      filename: "sample_data.csv",
+      type: "text/csv",
+      disposition: "attachment"
     )
   end
 
   def download_sample_excel
     send_file(
-      Rails.root.join('public', 'sample_files', 'sample_products.csv'),
-      filename: 'sample_products.csv',
-      type: 'text/csv',
-      disposition: 'attachment'
+      Rails.root.join("public", "sample_files", "sample_products.csv"),
+      filename: "sample_products.csv",
+      type: "text/csv",
+      disposition: "attachment"
     )
   end
 
   def download_sample_json
     send_file(
-      Rails.root.join('public', 'sample_files', 'sample_orders.json'),
-      filename: 'sample_orders.json',
-      type: 'application/json',
-      disposition: 'attachment'
+      Rails.root.join("public", "sample_files", "sample_orders.json"),
+      filename: "sample_orders.json",
+      type: "application/json",
+      disposition: "attachment"
     )
   end
 
@@ -544,21 +544,21 @@ class DataSourcesController < ApplicationController
   def load_processed_data_for_visualization
     # Load raw data records and convert to JSON format for visualization
     records = @data_source.raw_data_records.limit(1000).order(:created_at)
-    
+
     return [] if records.empty?
-    
+
     # Convert records to a consistent format for visualization
     records.map do |record|
       data = record.data.is_a?(String) ? JSON.parse(record.data) : record.data
-      
+
       # Flatten nested data and add metadata
       flattened_data = flatten_hash(data)
       flattened_data.merge({
-        'record_id' => record.id,
-        'record_type' => record.record_type,
-        'external_id' => record.external_id,
-        'created_at' => record.created_at,
-        'processing_status' => record.processing_status
+        "record_id" => record.id,
+        "record_type" => record.record_type,
+        "external_id" => record.external_id,
+        "created_at" => record.created_at,
+        "processing_status" => record.processing_status
       })
     end
   rescue => e
@@ -568,34 +568,34 @@ class DataSourcesController < ApplicationController
 
   def extract_columns_from_data(data)
     return [] if data.empty?
-    
+
     # Get all unique keys from the dataset
     all_keys = data.flat_map(&:keys).uniq
-    
+
     # Filter out system columns and sort
     user_columns = all_keys.reject { |key| key.to_s.match?(/\A(record_id|record_type|external_id|created_at|processing_status)\z/) }
     system_columns = all_keys.select { |key| key.to_s.match?(/\A(record_id|record_type|external_id|created_at|processing_status)\z/) }
-    
+
     # Return user columns first, then system columns
     user_columns.sort + system_columns.sort
   end
 
-  def flatten_hash(hash, parent_key = '', separator = '_')
+  def flatten_hash(hash, parent_key = "", separator = "_")
     hash.each_with_object({}) do |(key, value), result|
       new_key = parent_key.empty? ? key.to_s : "#{parent_key}#{separator}#{key}"
-      
+
       if value.is_a?(Hash)
         result.merge!(flatten_hash(value, new_key, separator))
       elsif value.is_a?(Array)
         # Convert arrays to comma-separated strings or handle as needed
-        result[new_key] = value.join(', ') if value.all? { |v| v.is_a?(String) || v.is_a?(Numeric) }
+        result[new_key] = value.join(", ") if value.all? { |v| v.is_a?(String) || v.is_a?(Numeric) }
       else
         result[new_key] = value
       end
     end
   end
 
-  # Real Data Quality Helper Methods  
+  # Real Data Quality Helper Methods
   def calculate_aggregated_quality_metrics(reports)
     if reports.empty?
       return {
@@ -615,7 +615,7 @@ class DataSourcesController < ApplicationController
 
     # Calculate weighted average scores
     total_records = reports.sum(&:total_records)
-    
+
     if total_records == 0
       overall_score = 0
       dimension_scores = {
@@ -647,69 +647,69 @@ class DataSourcesController < ApplicationController
 
   def get_actual_quality_issues(reports)
     issues = []
-    
+
     reports.each do |report|
       next if report.issues.empty?
-      
+
       report.issues.each do |issue|
         issues << {
           source: report.data_source.name,
-          issue: issue['message'] || issue[:message],
-          severity: issue['severity'] || issue[:severity],
-          count: issue['count'] || issue[:count] || 1,
+          issue: issue["message"] || issue[:message],
+          severity: issue["severity"] || issue[:severity],
+          count: issue["count"] || issue[:count] || 1,
           timestamp: report.run_at,
-          type: issue['type'] || issue[:type]
+          type: issue["type"] || issue[:type]
         }
       end
     end
-    
+
     # Sort by severity and timestamp
-    severity_order = { 'critical' => 0, 'high' => 1, 'medium' => 2, 'low' => 3 }
-    issues.sort_by { |issue| [severity_order[issue[:severity]] || 4, -issue[:timestamp].to_i] }.first(10)
+    severity_order = { "critical" => 0, "high" => 1, "medium" => 2, "low" => 3 }
+    issues.sort_by { |issue| [ severity_order[issue[:severity]] || 4, -issue[:timestamp].to_i ] }.first(10)
   end
 
   def get_actual_quality_recommendations(reports)
     recommendations = []
-    
+
     reports.each do |report|
       next if report.recommendations.empty?
-      
+
       report.recommendations.each do |rec|
         recommendations << {
-          title: rec['title'] || rec[:title],
-          description: rec['description'] || rec[:description],
-          priority: rec['priority'] || rec[:priority],
-          impact: rec['impact'] || rec[:impact],
+          title: rec["title"] || rec[:title],
+          description: rec["description"] || rec[:description],
+          priority: rec["priority"] || rec[:priority],
+          impact: rec["impact"] || rec[:impact],
           data_source_id: report.data_source.id,
           data_source_name: report.data_source.name,
-          action: rec['action'] || rec[:action]
+          action: rec["action"] || rec[:action]
         }
       end
     end
-    
+
     # Sort by priority
-    priority_order = { 'critical' => 0, 'high' => 1, 'medium' => 2, 'low' => 3 }
+    priority_order = { "critical" => 0, "high" => 1, "medium" => 2, "low" => 3 }
     recommendations.sort_by { |rec| priority_order[rec[:priority]] || 4 }.first(6)
   end
 
   def calculate_source_quality_score(data_source)
     latest_report = data_source.latest_quality_report
     return latest_report.overall_score if latest_report
-    
+
     # Fallback calculation if no report exists
     base_score = 100
-    base_score -= 10 if data_source.status == 'error'
-    base_score -= 5 if data_source.status == 'disconnected'
-    
+    base_score -= 10 if data_source.status == "error"
+    base_score -= 5 if data_source.status == "disconnected"
+
     if data_source.last_sync_at && data_source.last_sync_at < 7.days.ago
       base_score -= 15
     elsif data_source.last_sync_at && data_source.last_sync_at < 3.days.ago
       base_score -= 8
     end
-    
+
     recent_failures = data_source.extraction_jobs.failed.where("created_at >= ?", 7.days.ago).count
     base_score -= (recent_failures * 3)
-    
-    [base_score, 60].max
+
+    [ base_score, 60 ].max
   end
 end

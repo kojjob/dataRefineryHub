@@ -83,7 +83,7 @@ class LandingPageContent < ApplicationRecord
         metadata: {
           icon: "ai-brain",
           demo_available: true,
-          benefits: ["Proactive Insights", "24/7 Monitoring", "Predictive Analytics", "Risk Assessment"]
+          benefits: [ "Proactive Insights", "24/7 Monitoring", "Predictive Analytics", "Risk Assessment" ]
         },
         active: true,
         display_order: 1
@@ -95,7 +95,7 @@ class LandingPageContent < ApplicationRecord
         metadata: {
           icon: "anomaly-detection",
           demo_available: true,
-          benefits: ["Instant Alerts", "Smart Thresholds", "Pattern Learning", "False Positive Reduction"]
+          benefits: [ "Instant Alerts", "Smart Thresholds", "Pattern Learning", "False Positive Reduction" ]
         },
         active: true,
         display_order: 2
@@ -107,7 +107,7 @@ class LandingPageContent < ApplicationRecord
         metadata: {
           icon: "data-intelligence",
           demo_available: true,
-          benefits: ["Context Recognition", "Quality Scoring", "ROI Estimation", "Auto-Optimization"]
+          benefits: [ "Context Recognition", "Quality Scoring", "ROI Estimation", "Auto-Optimization" ]
         },
         active: true,
         display_order: 3

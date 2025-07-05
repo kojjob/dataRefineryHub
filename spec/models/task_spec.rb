@@ -18,11 +18,11 @@ RSpec.describe Task, type: :model do
     it { should validate_presence_of(:task_type) }
     it { should validate_presence_of(:execution_mode) }
     it { should validate_presence_of(:status) }
-    
+
     it { should validate_inclusion_of(:task_type).in_array(Task::TASK_TYPES) }
     it { should validate_inclusion_of(:execution_mode).in_array(Task::EXECUTION_MODES) }
     it { should validate_inclusion_of(:status).in_array(Task::STATUSES) }
-    
+
     it { should validate_numericality_of(:priority).is_greater_than_or_equal_to(0) }
     it { should validate_numericality_of(:timeout_seconds).is_greater_than(0) }
     it { should validate_numericality_of(:max_retries).is_greater_than_or_equal_to(0) }
@@ -48,8 +48,8 @@ RSpec.describe Task, type: :model do
     it 'orders by priority' do
       high_priority = create(:task, priority: 10, position: 1, pipeline_execution: pipeline_execution)
       low_priority = create(:task, priority: 1, position: 2, pipeline_execution: pipeline_execution)
-      
-      ordered_tasks = Task.where(id: [high_priority.id, low_priority.id]).by_priority
+
+      ordered_tasks = Task.where(id: [ high_priority.id, low_priority.id ]).by_priority
       expect(ordered_tasks.first).to eq(high_priority)
       expect(ordered_tasks.last).to eq(low_priority)
     end
@@ -101,9 +101,9 @@ RSpec.describe Task, type: :model do
 
     it 'updates task status and queues job' do
       expect(TaskExecutorJob).to receive(:perform_later).with(task)
-      
+
       result = task.execute!
-      
+
       expect(result).to be true
       expect(task.status).to eq('in_progress')
       expect(task.started_at).to be_present
@@ -112,17 +112,17 @@ RSpec.describe Task, type: :model do
 
     it 'sets assignee when provided' do
       task.update!(execution_mode: 'manual', assignee: user)
-      
+
       task.execute!(user)
-      
+
       expect(task.assignee).to eq(user)
     end
 
     it 'returns false when cannot execute' do
       task.update!(status: 'pending')
-      
+
       result = task.execute!
-      
+
       expect(result).to be false
       expect(task.status).to eq('pending')
     end
@@ -133,9 +133,9 @@ RSpec.describe Task, type: :model do
 
     it 'marks task as completed' do
       result = { processed: 100, errors: 0 }
-      
+
       task.complete!(result)
-      
+
       expect(task.status).to eq('completed')
       expect(task.completed_at).to be_present
       expect(task.metadata['result']).to eq(result.stringify_keys)
@@ -147,7 +147,7 @@ RSpec.describe Task, type: :model do
 
     it 'retries when under retry limit' do
       task.fail!('Temporary error')
-      
+
       expect(task.status).to eq('ready')
       expect(task.retry_count).to eq(1)
       expect(task.error_message).to eq('Temporary error')
@@ -155,9 +155,9 @@ RSpec.describe Task, type: :model do
 
     it 'marks as failed when at retry limit' do
       task.update!(retry_count: 2)
-      
+
       task.fail!('Final error')
-      
+
       expect(task.status).to eq('failed')
       expect(task.retry_count).to eq(3)
       expect(task.completed_at).to be_present
@@ -165,7 +165,7 @@ RSpec.describe Task, type: :model do
 
     it 'marks as failed when retry disabled' do
       task.fail!('Error', false)
-      
+
       expect(task.status).to eq('failed')
       expect(task.retry_count).to eq(1)
     end
@@ -174,7 +174,7 @@ RSpec.describe Task, type: :model do
   describe '#dependencies_satisfied?' do
     let(:task1) { create(:task, name: 'task1', status: 'completed', pipeline_execution: pipeline_execution) }
     let(:task2) { create(:task, name: 'task2', status: 'completed', pipeline_execution: pipeline_execution) }
-    let(:task3) { create(:task, name: 'task3', depends_on: ['task1', 'task2'], pipeline_execution: pipeline_execution) }
+    let(:task3) { create(:task, name: 'task3', depends_on: [ 'task1', 'task2' ], pipeline_execution: pipeline_execution) }
 
     it 'returns true when all dependencies completed' do
       expect(task3.dependencies_satisfied?).to be true
@@ -196,7 +196,7 @@ RSpec.describe Task, type: :model do
 
     it 'approves task and sets assignee' do
       task.approve!(user)
-      
+
       expect(task.status).to eq('ready')
       expect(task.assignee).to eq(user)
       expect(task.metadata['approved_by']).to eq(user.id)
@@ -205,9 +205,9 @@ RSpec.describe Task, type: :model do
 
     it 'returns false when not waiting approval' do
       task.update!(status: 'ready')
-      
+
       result = task.approve!(user)
-      
+
       expect(result).to be false
     end
   end
@@ -217,7 +217,7 @@ RSpec.describe Task, type: :model do
 
     it 'rejects task with reason' do
       task.reject!(user, 'Not appropriate')
-      
+
       expect(task.status).to eq('cancelled')
       expect(task.completed_at).to be_present
       expect(task.metadata['rejected_by']).to eq(user.id)
@@ -233,7 +233,7 @@ RSpec.describe Task, type: :model do
         execution_mode: 'automated',
         pipeline_execution: pipeline_execution
       )
-      
+
       expect(task.execution_id).to be_present
       expect(task.status).to eq('pending')
       expect(task.priority).to eq(0)
@@ -245,18 +245,18 @@ RSpec.describe Task, type: :model do
 
     it 'broadcasts status change' do
       task = create(:task, status: 'pending', pipeline_execution: pipeline_execution)
-      
+
       expect(ActionCable.server).to receive(:broadcast).with(
         "pipeline_#{task.pipeline_execution_id}",
         hash_including(type: 'task_status_update')
       )
-      
+
       task.update!(status: 'ready')
     end
 
     it 'broadcasts manual task to queue' do
       task = create(:task, execution_mode: 'manual', status: 'pending', pipeline_execution: pipeline_execution)
-      
+
       expect(ActionCable.server).to receive(:broadcast).with(
         "pipeline_#{task.pipeline_execution_id}",
         anything
@@ -265,7 +265,7 @@ RSpec.describe Task, type: :model do
         "manual_task_queue",
         hash_including(type: 'new_manual_task')
       )
-      
+
       task.update!(status: 'ready')
     end
   end

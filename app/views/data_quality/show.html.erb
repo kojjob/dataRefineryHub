@@ -418,7 +418,7 @@
   });
   
   function initializeVolumeChart() {
-    const volumeData = <%= @quality_metrics[:data_volume_trend][:daily_counts].to_json.html_safe %>;
+    const volumeData = <%= @quality_metrics[:data_volume_trend][:daily_counts].to_json %>;
     const labels = [];
     
     // Generate labels for the last 7 days

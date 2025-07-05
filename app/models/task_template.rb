@@ -4,10 +4,10 @@
 class TaskTemplate < ApplicationRecord
   belongs_to :organization
   has_many :tasks
-  
+
   # Constants
   CATEGORIES = %w[extraction transformation validation notification approval data_quality custom].freeze
-  
+
   # Validations
   validates :name, presence: true, uniqueness: { scope: :organization_id }
   validates :task_type, presence: true, inclusion: { in: Task::TASK_TYPES }
@@ -16,17 +16,17 @@ class TaskTemplate < ApplicationRecord
   validates :default_timeout, numericality: { greater_than: 0 }, allow_nil: true
   validates :default_priority, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :default_weight, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-  
+
   # Scopes
   scope :active, -> { where(active: true) }
   scope :by_category, ->(category) { where(category: category) }
   scope :by_execution_mode, ->(mode) { where(execution_mode: mode) }
   scope :for_pipeline_type, ->(type) { where("tags LIKE ?", "%#{type}%") }
   scope :search, ->(query) { where("name ILIKE ? OR description ILIKE ?", "%#{query}%", "%#{query}%") }
-  
+
   # Callbacks
   before_create :set_defaults
-  
+
   # Instance methods
   def create_task_from_template(pipeline_execution, overrides = {})
     task_attributes = {
@@ -45,10 +45,10 @@ class TaskTemplate < ApplicationRecord
         created_from_template: true
       }
     }
-    
+
     Task.create!(task_attributes)
   end
-  
+
   def duplicate_template(new_name = nil)
     new_template = dup
     new_template.name = new_name || "#{name} (Copy)"
@@ -56,28 +56,28 @@ class TaskTemplate < ApplicationRecord
     new_template.save!
     new_template
   end
-  
+
   def applicable_for?(pipeline_type)
     return true if tags.blank?
     tag_list.include?(pipeline_type.to_s.downcase)
   end
-  
+
   def tag_list
-    tags.to_s.split(',').map(&:strip).map(&:downcase)
+    tags.to_s.split(",").map(&:strip).map(&:downcase)
   end
-  
+
   def add_tag(tag)
     current_tags = tag_list
     current_tags << tag.downcase unless current_tags.include?(tag.downcase)
-    self.tags = current_tags.join(', ')
+    self.tags = current_tags.join(", ")
   end
-  
+
   def remove_tag(tag)
     current_tags = tag_list
     current_tags.delete(tag.downcase)
-    self.tags = current_tags.join(', ')
+    self.tags = current_tags.join(", ")
   end
-  
+
   # Template library methods
   def self.common_templates
     {
@@ -114,7 +114,7 @@ class TaskTemplate < ApplicationRecord
           execution_mode: "manual",
           category: "extraction",
           template_config: {
-            accepted_formats: ["csv", "xlsx", "xls"],
+            accepted_formats: [ "csv", "xlsx", "xls" ],
             max_file_size: 104857600, # 100MB
             encoding: "UTF-8"
           }
@@ -128,7 +128,7 @@ class TaskTemplate < ApplicationRecord
           execution_mode: "automated",
           category: "transformation",
           template_config: {
-            operations: ["trim_whitespace", "lowercase_keys", "parse_dates"],
+            operations: [ "trim_whitespace", "lowercase_keys", "parse_dates" ],
             date_format: "ISO8601"
           }
         },
@@ -165,7 +165,7 @@ class TaskTemplate < ApplicationRecord
           execution_mode: "automated",
           category: "data_quality",
           template_config: {
-            checks: ["completeness", "accuracy", "consistency", "validity"],
+            checks: [ "completeness", "accuracy", "consistency", "validity" ],
             threshold: 95,
             fail_on_error: false
           }
@@ -203,7 +203,7 @@ class TaskTemplate < ApplicationRecord
           execution_mode: "automated",
           category: "notification",
           template_config: {
-            channels: ["email"],
+            channels: [ "email" ],
             include_summary: true,
             include_metrics: true
           }
@@ -215,7 +215,7 @@ class TaskTemplate < ApplicationRecord
           execution_mode: "automated",
           category: "notification",
           template_config: {
-            channels: ["email", "slack"],
+            channels: [ "email", "slack" ],
             severity: "high",
             include_stack_trace: false
           }
@@ -241,14 +241,14 @@ class TaskTemplate < ApplicationRecord
           execution_mode: "manual",
           category: "approval",
           template_config: {
-            review_items: ["data_quality", "business_rules", "completeness"],
+            review_items: [ "data_quality", "business_rules", "completeness" ],
             require_notes: true
           }
         }
       ]
     }
   end
-  
+
   def self.create_default_templates_for(organization)
     common_templates.each do |category, templates|
       templates.each do |template_attrs|
@@ -263,9 +263,9 @@ class TaskTemplate < ApplicationRecord
       end
     end
   end
-  
+
   private
-  
+
   def set_defaults
     self.active = true if active.nil?
     self.template_config ||= {}
@@ -273,7 +273,7 @@ class TaskTemplate < ApplicationRecord
     self.default_priority ||= 0
     self.default_weight ||= 1
   end
-  
+
   def merge_configurations(base_config, override_config)
     return base_config if override_config.blank?
     base_config.deep_merge(override_config)

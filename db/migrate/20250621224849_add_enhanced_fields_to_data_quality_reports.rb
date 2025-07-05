@@ -11,10 +11,10 @@ class AddEnhancedFieldsToDataQualityReports < ActiveRecord::Migration[7.0]
     add_column :data_quality_reports, :records_analyzed, :integer, default: 0
     add_column :data_quality_reports, :uniqueness_score, :decimal, precision: 5, scale: 2, default: 0.0
     add_column :data_quality_reports, :freshness_score, :decimal, precision: 5, scale: 2, default: 0.0
-    
+
     add_index :data_quality_reports, :status unless index_exists?(:data_quality_reports, :status)
     add_index :data_quality_reports, :validation_type unless index_exists?(:data_quality_reports, :validation_type)
-    add_index :data_quality_reports, [:data_source_id, :status] unless index_exists?(:data_quality_reports, [:data_source_id, :status])
-    add_index :data_quality_reports, [:overall_score] unless index_exists?(:data_quality_reports, [:overall_score])
+    add_index :data_quality_reports, [ :data_source_id, :status ] unless index_exists?(:data_quality_reports, [ :data_source_id, :status ])
+    add_index :data_quality_reports, [ :overall_score ] unless index_exists?(:data_quality_reports, [ :overall_score ])
   end
 end

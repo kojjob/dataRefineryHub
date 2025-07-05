@@ -96,54 +96,54 @@ module ApplicationHelper
 
   def get_ui_styling(category)
     case category.to_s
-    when 'ecommerce'
+    when "ecommerce"
       {
-        border_color: 'border-green-200',
-        bg_color: 'bg-green-50',
-        text_color: 'text-green-700',
-        icon_color: 'text-green-600'
+        border_color: "border-green-200",
+        bg_color: "bg-green-50",
+        text_color: "text-green-700",
+        icon_color: "text-green-600"
       }
-    when 'payments'
+    when "payments"
       {
-        border_color: 'border-indigo-200',
-        bg_color: 'bg-indigo-50',
-        text_color: 'text-indigo-700',
-        icon_color: 'text-indigo-600'
+        border_color: "border-indigo-200",
+        bg_color: "bg-indigo-50",
+        text_color: "text-indigo-700",
+        icon_color: "text-indigo-600"
       }
-    when 'accounting'
+    when "accounting"
       {
-        border_color: 'border-blue-200',
-        bg_color: 'bg-blue-50',
-        text_color: 'text-blue-700',
-        icon_color: 'text-blue-600'
+        border_color: "border-blue-200",
+        bg_color: "bg-blue-50",
+        text_color: "text-blue-700",
+        icon_color: "text-blue-600"
       }
-    when 'analytics'
+    when "analytics"
       {
-        border_color: 'border-orange-200',
-        bg_color: 'bg-orange-50',
-        text_color: 'text-orange-700',
-        icon_color: 'text-orange-500'
+        border_color: "border-orange-200",
+        bg_color: "bg-orange-50",
+        text_color: "text-orange-700",
+        icon_color: "text-orange-500"
       }
-    when 'manual'
+    when "manual"
       {
-        border_color: 'border-gray-200',
-        bg_color: 'bg-gray-50',
-        text_color: 'text-gray-700',
-        icon_color: 'text-gray-600'
+        border_color: "border-gray-200",
+        bg_color: "bg-gray-50",
+        text_color: "text-gray-700",
+        icon_color: "text-gray-600"
       }
-    when 'marketplace'
+    when "marketplace"
       {
-        border_color: 'border-orange-200',
-        bg_color: 'bg-orange-50',
-        text_color: 'text-orange-700',
-        icon_color: 'text-orange-600'
+        border_color: "border-orange-200",
+        bg_color: "bg-orange-50",
+        text_color: "text-orange-700",
+        icon_color: "text-orange-600"
       }
     else
       {
-        border_color: 'border-gray-200',
-        bg_color: 'bg-gray-50',
-        text_color: 'text-gray-700',
-        icon_color: 'text-gray-600'
+        border_color: "border-gray-200",
+        bg_color: "bg-gray-50",
+        text_color: "text-gray-700",
+        icon_color: "text-gray-600"
       }
     end
   end

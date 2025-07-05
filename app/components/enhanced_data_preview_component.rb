@@ -56,29 +56,29 @@ class EnhancedDataPreviewComponent < ViewComponent::Base
 
   def quality_grade_color(grade)
     case grade
-    when 'A' then "text-green-700 bg-green-200"
-    when 'B' then "text-blue-700 bg-blue-200"
-    when 'C' then "text-yellow-700 bg-yellow-200"
-    when 'D' then "text-orange-700 bg-orange-200"
+    when "A" then "text-green-700 bg-green-200"
+    when "B" then "text-blue-700 bg-blue-200"
+    when "C" then "text-yellow-700 bg-yellow-200"
+    when "D" then "text-orange-700 bg-orange-200"
     else "text-red-700 bg-red-200"
     end
   end
 
   def impact_level_color(level)
     case level&.downcase
-    when 'high' then "text-green-700 bg-green-200"
-    when 'medium' then "text-blue-700 bg-blue-200"
-    when 'moderate' then "text-yellow-700 bg-yellow-200"
+    when "high" then "text-green-700 bg-green-200"
+    when "medium" then "text-blue-700 bg-blue-200"
+    when "moderate" then "text-yellow-700 bg-yellow-200"
     else "text-gray-700 bg-gray-200"
     end
   end
 
   def complexity_color(complexity)
     case complexity&.downcase
-    when 'simple' then "text-green-700 bg-green-200"
-    when 'moderate' then "text-blue-700 bg-blue-200"
-    when 'complex' then "text-orange-700 bg-orange-200"
-    when 'advanced' then "text-red-700 bg-red-200"
+    when "simple" then "text-green-700 bg-green-200"
+    when "moderate" then "text-blue-700 bg-blue-200"
+    when "complex" then "text-orange-700 bg-orange-200"
+    when "advanced" then "text-red-700 bg-red-200"
     else "text-gray-700 bg-gray-200"
     end
   end
@@ -93,7 +93,7 @@ class EnhancedDataPreviewComponent < ViewComponent::Base
       temporal: "text-indigo-700 bg-indigo-100 border-indigo-200",
       location: "text-cyan-700 bg-cyan-100 border-cyan-200"
     }
-    
+
     colors[category&.to_sym] || "text-gray-700 bg-gray-100 border-gray-200"
   end
 
@@ -108,9 +108,9 @@ class EnhancedDataPreviewComponent < ViewComponent::Base
 
   def priority_color(priority)
     case priority&.downcase
-    when 'immediate' then "text-red-700 bg-red-100 border-red-200"
-    when 'short_term' then "text-orange-700 bg-orange-100 border-orange-200"
-    when 'long_term' then "text-blue-700 bg-blue-100 border-blue-200"
+    when "immediate" then "text-red-700 bg-red-100 border-red-200"
+    when "short_term" then "text-orange-700 bg-orange-100 border-orange-200"
+    when "long_term" then "text-blue-700 bg-blue-100 border-blue-200"
     else "text-gray-700 bg-gray-100 border-gray-200"
     end
   end
@@ -124,7 +124,7 @@ class EnhancedDataPreviewComponent < ViewComponent::Base
     when Numeric
       value.round(1)
     when String
-      value.include?('%') ? value : "#{value.to_f.round(1)}%"
+      value.include?("%") ? value : "#{value.to_f.round(1)}%"
     else
       value.to_s
     end
@@ -137,7 +137,7 @@ class EnhancedDataPreviewComponent < ViewComponent::Base
 
   def detected_entities_list
     return [] unless business_insights[:detected_entities]
-    
+
     business_insights[:detected_entities].map do |entity|
       {
         name: entity.to_s.humanize,
@@ -157,25 +157,25 @@ class EnhancedDataPreviewComponent < ViewComponent::Base
       temporal: "⏰",
       location: "🌍"
     }
-    
+
     icons[entity&.to_sym] || "📋"
   end
 
   def sample_rows
     return [] unless sample_data[:samples]
-    
+
     sample_data[:samples].first(5) # Limit to first 5 rows for display
   end
 
   def sample_headers
     return [] if sample_rows.empty?
-    
+
     sample_rows.first[:data]&.keys || []
   end
 
   def get_business_annotation(row_data, field)
     return nil unless row_data[:business_annotations]
-    
+
     row_data[:business_annotations][field]
   end
 
@@ -185,17 +185,17 @@ class EnhancedDataPreviewComponent < ViewComponent::Base
 
   def quality_issues_summary
     return {} unless data_quality[:issues]
-    
+
     {
       count: data_quality[:issues].length,
-      critical: data_quality[:issues].count { |issue| issue.include?('critical') || issue.include?('failed') },
-      warnings: data_quality[:issues].count { |issue| issue.include?('low') || issue.include?('limited') }
+      critical: data_quality[:issues].count { |issue| issue.include?("critical") || issue.include?("failed") },
+      warnings: data_quality[:issues].count { |issue| issue.include?("low") || issue.include?("limited") }
     }
   end
 
   def transformation_summary
     return {} unless transformation_suggestions[:recommended] || transformation_suggestions[:optional]
-    
+
     {
       recommended_count: transformation_suggestions[:recommended]&.length || 0,
       optional_count: transformation_suggestions[:optional]&.length || 0,
@@ -217,19 +217,19 @@ class EnhancedDataPreviewComponent < ViewComponent::Base
 
   def automation_opportunities_preview
     return [] unless business_insights[:automation_suggestions]
-    
+
     business_insights[:automation_suggestions].first(3)
   end
 
   def analysis_opportunities_preview
     return [] unless business_insights[:analysis_opportunities]
-    
+
     business_insights[:analysis_opportunities].first(3)
   end
 
   def business_outcomes_preview
     return [] unless business_impact[:business_outcomes]
-    
+
     business_impact[:business_outcomes].first(4)
   end
 
@@ -243,7 +243,7 @@ class EnhancedDataPreviewComponent < ViewComponent::Base
 
   def processing_recommendations
     return [] unless data_quality[:recommendations]
-    
+
     data_quality[:recommendations].first(3)
   end
 
@@ -257,13 +257,13 @@ class EnhancedDataPreviewComponent < ViewComponent::Base
 
   def data_richness_percentage
     return 0 unless business_impact[:factors]
-    
+
     ((business_impact[:factors][:data_richness] || 0) * 100).round
   end
 
   def analytical_potential_percentage
     return 0 unless business_impact[:factors]
-    
+
     ((business_impact[:factors][:analytical_potential] || 0) * 100).round
   end
 

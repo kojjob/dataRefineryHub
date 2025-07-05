@@ -10,38 +10,38 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
 
     describe '#detect_field_business_context' do
       it 'detects customer fields correctly' do
-        customer_fields = ['customer_name', 'email', 'customer_id', 'phone', 'contact', 'user_name', 'client_email']
-        
+        customer_fields = [ 'customer_name', 'email', 'customer_id', 'phone', 'contact', 'user_name', 'client_email' ]
+
         customer_fields.each do |field|
           context = subject.send(:detect_field_business_context, field)
           expect(context[:category]).to eq(:customer), "Expected #{field} to be detected as customer field, got #{context[:category]}"
           expect(context[:confidence]).to be > 0.3
         end
       end
-      
+
       it 'detects financial fields correctly' do
-        financial_fields = ['price', 'total', 'cost', 'revenue', 'amount', 'payment', 'value', 'billing']
-        
+        financial_fields = [ 'price', 'total', 'cost', 'revenue', 'amount', 'payment', 'value', 'billing' ]
+
         financial_fields.each do |field|
           context = subject.send(:detect_field_business_context, field)
           expect(context[:category]).to eq(:financial)
           expect(context[:confidence]).to be > 0.3
         end
       end
-      
+
       it 'detects temporal fields correctly' do
-        temporal_fields = ['order_date', 'created_at', 'timestamp', 'when_created', 'time_stamp', 'updated_at']
-        
+        temporal_fields = [ 'order_date', 'created_at', 'timestamp', 'when_created', 'time_stamp', 'updated_at' ]
+
         temporal_fields.each do |field|
           context = subject.send(:detect_field_business_context, field)
           expect(context[:category]).to eq(:temporal), "Expected #{field} to be detected as temporal field, got #{context[:category]}"
           expect(context[:confidence]).to be > 0.3
         end
       end
-      
+
       it 'detects location fields correctly' do
-        location_fields = ['customer_address', 'city', 'state', 'country', 'zip_code', 'location', 'region']
-        
+        location_fields = [ 'customer_address', 'city', 'state', 'country', 'zip_code', 'location', 'region' ]
+
         location_fields.each do |field|
           context = subject.send(:detect_field_business_context, field)
           expect(context[:category]).to eq(:location), "Expected #{field} to be detected as location field, got #{context[:category]}"
@@ -50,8 +50,8 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
       end
 
       it 'detects product fields correctly' do
-        product_fields = ['product', 'item', 'sku', 'inventory', 'stock', 'category']
-        
+        product_fields = [ 'product', 'item', 'sku', 'inventory', 'stock', 'category' ]
+
         product_fields.each do |field|
           context = subject.send(:detect_field_business_context, field)
           expect(context[:category]).to eq(:product)
@@ -60,8 +60,8 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
       end
 
       it 'detects order fields correctly' do
-        order_fields = ['order', 'transaction', 'purchase', 'sale', 'checkout', 'cart']
-        
+        order_fields = [ 'order', 'transaction', 'purchase', 'sale', 'checkout', 'cart' ]
+
         order_fields.each do |field|
           context = subject.send(:detect_field_business_context, field)
           expect(context[:category]).to eq(:order)
@@ -70,8 +70,8 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
       end
 
       it 'detects marketing fields correctly' do
-        marketing_fields = ['campaign', 'source', 'medium', 'utm', 'referrer', 'channel']
-        
+        marketing_fields = [ 'campaign', 'source', 'medium', 'utm', 'referrer', 'channel' ]
+
         marketing_fields.each do |field|
           context = subject.send(:detect_field_business_context, field)
           expect(context[:category]).to eq(:marketing)
@@ -80,8 +80,8 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
       end
 
       it 'returns nil category for unrecognized fields' do
-        unrecognized_fields = ['xyz', 'random_field', 'unknown']
-        
+        unrecognized_fields = [ 'xyz', 'random_field', 'unknown' ]
+
         unrecognized_fields.each do |field|
           context = subject.send(:detect_field_business_context, field)
           expect(context[:category]).to be_nil
@@ -92,13 +92,13 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
 
     describe '#detect_business_fields' do
       it 'returns array of detected business fields' do
-        headers = ['customer_name', 'email', 'order_total', 'order_date', 'product_name', 'city']
-        
+        headers = [ 'customer_name', 'email', 'order_total', 'order_date', 'product_name', 'city' ]
+
         detected_fields = subject.send(:detect_business_fields, headers)
-        
+
         expect(detected_fields).to be_an(Array)
         expect(detected_fields.length).to eq(6)
-        
+
         categories = detected_fields.map { |f| f[:category] }
         expect(categories).to include(:customer, :financial, :temporal, :product, :location)
       end
@@ -125,11 +125,11 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
         { 'name' => '', 'email' => 'invalid-email', 'amount' => 'not-a-number' }
       ]
     end
-    
+
     describe '#calculate_completeness' do
       it 'calculates completeness correctly' do
         completeness = subject.send(:calculate_completeness, sample_data)
-        
+
         # 8 out of 9 fields are filled (one empty name)
         expect(completeness).to be_within(5).of(89)
       end
@@ -139,21 +139,21 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
         expect(completeness).to eq(0)
       end
     end
-    
+
     describe '#calculate_validity' do
       it 'calculates validity correctly' do
         validity = subject.send(:calculate_validity, sample_data)
-        
+
         # Should detect invalid email and invalid amount
         expect(validity).to be < 100
         expect(validity).to be > 0
       end
     end
-    
+
     describe '#calculate_uniqueness' do
       it 'calculates uniqueness correctly' do
         uniqueness = subject.send(:calculate_uniqueness, sample_data)
-        
+
         # All names and emails are unique, amounts are unique
         expect(uniqueness).to be > 60
       end
@@ -201,11 +201,11 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
         { category: :location, confidence: 0.6 }
       ]
     end
-    
+
     describe '#determine_primary_business_area' do
       it 'determines primary business area correctly' do
         primary_area = subject.send(:determine_primary_business_area, detected_fields)
-        
+
         expect(primary_area).to be_a(String)
         expect(primary_area).not_to eq('General Data')
       end
@@ -215,11 +215,11 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
         expect(primary_area).to eq('General Data')
       end
     end
-    
+
     describe '#calculate_data_richness' do
       it 'calculates data richness accurately' do
         richness = subject.send(:calculate_data_richness, detected_fields)
-        
+
         expect(richness).to be_between(0, 1)
         expect(richness).to be > 0.5  # 4 out of 7 possible categories
       end
@@ -229,11 +229,11 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
         expect(richness).to eq(0.1)
       end
     end
-    
+
     describe '#assess_analytical_potential' do
       it 'assesses analytical potential correctly' do
         potential = subject.send(:assess_analytical_potential, detected_fields)
-        
+
         expect(potential).to be_between(0, 1)
         expect(potential).to be > 0.5  # Has customer, financial, temporal data
       end
@@ -242,7 +242,7 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
     describe '#calculate_detection_confidence' do
       it 'calculates average confidence correctly' do
         confidence = subject.send(:calculate_detection_confidence, detected_fields)
-        
+
         expected_avg = (0.9 + 0.8 + 0.7 + 0.6) / 4 * 100
         expect(confidence).to eq(expected_avg.round)
       end
@@ -314,14 +314,14 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
     describe '#suggest_customer_transformations' do
       it 'suggests email transformations for email fields' do
         transformations = subject.send(:suggest_customer_transformations, 'customer_email', {})
-        
+
         expect(transformations).to be_an(Array)
         expect(transformations.any? { |t| t[:type] == 'extract_domain' }).to be true
       end
 
       it 'suggests name transformations for name fields' do
         transformations = subject.send(:suggest_customer_transformations, 'customer_name', {})
-        
+
         expect(transformations).to be_an(Array)
         expect(transformations.any? { |t| t[:type] == 'split_name' }).to be true
       end
@@ -330,7 +330,7 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
     describe '#suggest_financial_transformations' do
       it 'suggests currency normalization for financial fields' do
         transformations = subject.send(:suggest_financial_transformations, 'order_total', {})
-        
+
         expect(transformations).to be_an(Array)
         expect(transformations.any? { |t| t[:type] == 'normalize_currency' }).to be true
       end
@@ -339,7 +339,7 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
     describe '#suggest_temporal_transformations' do
       it 'suggests date parsing for temporal fields' do
         transformations = subject.send(:suggest_temporal_transformations, 'created_at', {})
-        
+
         expect(transformations).to be_an(Array)
         expect(transformations.any? { |t| t[:type] == 'parse_datetime' }).to be true
       end
@@ -348,7 +348,7 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
     describe '#suggest_location_transformations' do
       it 'suggests geocoding for location fields' do
         transformations = subject.send(:suggest_location_transformations, 'customer_address', {})
-        
+
         expect(transformations).to be_an(Array)
         expect(transformations.any? { |t| t[:type] == 'geocode_location' }).to be true
       end
@@ -361,7 +361,7 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
     describe '#base_error_response' do
       it 'returns properly formatted error response' do
         response = subject.send(:base_error_response, 'Test error message')
-        
+
         expect(response[:success]).to be false
         expect(response[:error]).to eq('Test error message')
         expect(response[:suggestions]).to be_an(Array)
@@ -375,7 +375,7 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
 
     it 'has comprehensive business field patterns defined' do
       patterns = described_class::BUSINESS_FIELD_PATTERNS
-      
+
       expect(patterns).to have_key(:customer)
       expect(patterns).to have_key(:financial)
       expect(patterns).to have_key(:product)
@@ -396,7 +396,7 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
 
     it 'has proper data quality thresholds defined' do
       thresholds = described_class::DATA_QUALITY_THRESHOLDS
-      
+
       expect(thresholds).to have_key(:excellent)
       expect(thresholds).to have_key(:good)
       expect(thresholds).to have_key(:fair)
@@ -419,9 +419,9 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
 
       describe '#identify_cross_reference_opportunities' do
         it 'identifies opportunities when other sources exist' do
-          detected_fields = [{ category: :customer, confidence: 0.9 }]
+          detected_fields = [ { category: :customer, confidence: 0.9 } ]
           opportunities = subject.send(:identify_cross_reference_opportunities, detected_fields)
-          
+
           expect(opportunities).to be_an(Array)
           expect(opportunities).not_to be_empty
         end
@@ -431,9 +431,9 @@ RSpec.describe EnhancedDataPreviewService, type: :service do
     context 'with no existing data sources' do
       describe '#identify_cross_reference_opportunities' do
         it 'returns empty array when no other sources exist' do
-          detected_fields = [{ category: :customer, confidence: 0.9 }]
+          detected_fields = [ { category: :customer, confidence: 0.9 } ]
           opportunities = subject.send(:identify_cross_reference_opportunities, detected_fields)
-          
+
           expect(opportunities).to eq([])
         end
       end

@@ -1,5 +1,5 @@
 class Api::V1::VisualizationsController < Api::V1::BaseController
-  before_action :set_data_source, only: [:create]
+  before_action :set_data_source, only: [ :create ]
 
   def create
     @visualization = current_organization.visualizations.build(visualization_params)
@@ -7,16 +7,16 @@ class Api::V1::VisualizationsController < Api::V1::BaseController
     @visualization.user = current_user
 
     if @visualization.save
-      render json: { 
-        success: true, 
-        message: 'Visualization saved successfully',
-        visualization: @visualization.as_json(only: [:id, :title, :chart_type, :created_at])
+      render json: {
+        success: true,
+        message: "Visualization saved successfully",
+        visualization: @visualization.as_json(only: [ :id, :title, :chart_type, :created_at ])
       }, status: :created
     else
-      render json: { 
-        success: false, 
-        message: 'Failed to save visualization',
-        errors: @visualization.errors.full_messages 
+      render json: {
+        success: false,
+        message: "Failed to save visualization",
+        errors: @visualization.errors.full_messages
       }, status: :unprocessable_entity
     end
   end
@@ -25,7 +25,7 @@ class Api::V1::VisualizationsController < Api::V1::BaseController
     @visualizations = current_organization.visualizations
                                         .includes(:data_source, :user)
                                         .order(created_at: :desc)
-    
+
     render json: {
       visualizations: @visualizations.map do |viz|
         {
@@ -42,12 +42,12 @@ class Api::V1::VisualizationsController < Api::V1::BaseController
 
   def show
     @visualization = current_organization.visualizations.find(params[:id])
-    
+
     render json: {
       visualization: @visualization.as_json(
         include: {
-          data_source: { only: [:id, :name] },
-          user: { only: [:id, :name] }
+          data_source: { only: [ :id, :name ] },
+          user: { only: [ :id, :name ] }
         }
       )
     }
@@ -55,12 +55,12 @@ class Api::V1::VisualizationsController < Api::V1::BaseController
 
   def destroy
     @visualization = current_organization.visualizations.find(params[:id])
-    
+
     if @visualization.user == current_user || current_user.admin?
       @visualization.destroy
-      render json: { success: true, message: 'Visualization deleted successfully' }
+      render json: { success: true, message: "Visualization deleted successfully" }
     else
-      render json: { success: false, message: 'Unauthorized' }, status: :forbidden
+      render json: { success: false, message: "Unauthorized" }, status: :forbidden
     end
   end
 
@@ -74,7 +74,7 @@ class Api::V1::VisualizationsController < Api::V1::BaseController
 
   def visualization_params
     params.require(:visualization).permit(
-      :title, :chart_type, :x_column, :y_column, :aggregation, 
+      :title, :chart_type, :x_column, :y_column, :aggregation,
       :filter_column, :filter_value, :data_source_id,
       config: {}
     )

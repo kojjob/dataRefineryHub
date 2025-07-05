@@ -10,9 +10,9 @@ class DataSourceRegistry
   private
 
   def load_configurations
-    config_file = Rails.root.join('config', 'data_sources.yml')
+    config_file = Rails.root.join("config", "data_sources.yml")
     raw_config = YAML.load_file(config_file, aliases: true)[Rails.env] || {}
-    
+
     # Convert string keys to symbols and process settings
     raw_config.deep_transform_keys(&:to_sym).tap do |config|
       config.each do |key, source_config|
@@ -32,11 +32,11 @@ class DataSourceRegistry
   end
 
   def self.available
-    all.select { |_, config| config[:status] == 'available' && config[:implemented] }
+    all.select { |_, config| config[:status] == "available" && config[:implemented] }
   end
 
   def self.coming_soon
-    all.select { |_, config| config[:status] == 'coming_soon' || !config[:implemented] }
+    all.select { |_, config| config[:status] == "coming_soon" || !config[:implemented] }
   end
 
   def self.by_category(category)
@@ -65,9 +65,9 @@ class DataSourceRegistry
 
   def self.sync_frequency_options
     {
-      'real-time' => 'Real-time sync',
-      'scheduled' => 'Scheduled sync (daily)',
-      'manual' => 'Manual upload'
+      "real-time" => "Real-time sync",
+      "scheduled" => "Scheduled sync (daily)",
+      "manual" => "Manual upload"
     }
   end
 

@@ -27,7 +27,7 @@ class Notification < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
   scope :by_type, ->(type) { where(notification_type: type) }
   scope :by_priority, ->(priority) { where(priority: PRIORITIES[priority.to_sym]) }
-  scope :high_priority, -> { where(priority: [PRIORITIES[:high], PRIORITIES[:urgent]]) }
+  scope :high_priority, -> { where(priority: [ PRIORITIES[:high], PRIORITIES[:urgent] ]) }
 
   def read?
     read_at.present?
@@ -55,44 +55,44 @@ class Notification < ApplicationRecord
 
   def icon
     case notification_type
-    when 'data_sync_success', 'data_source_connected', 'extraction_job_completed'
-      '✅'
-    when 'data_sync_failure', 'data_source_disconnected', 'extraction_job_failed', 'file_processing_failed'
-      '❌'
-    when 'file_processing_complete'
-      '📁'
-    when 'user_invited', 'user_role_changed'
-      '👤'
-    when 'organization_updated'
-      '🏢'
-    when 'billing_issue'
-      '💳'
-    when 'payment_success'
-      '💰'
-    when 'system_maintenance'
-      '🔧'
+    when "data_sync_success", "data_source_connected", "extraction_job_completed"
+      "✅"
+    when "data_sync_failure", "data_source_disconnected", "extraction_job_failed", "file_processing_failed"
+      "❌"
+    when "file_processing_complete"
+      "📁"
+    when "user_invited", "user_role_changed"
+      "👤"
+    when "organization_updated"
+      "🏢"
+    when "billing_issue"
+      "💳"
+    when "payment_success"
+      "💰"
+    when "system_maintenance"
+      "🔧"
     else
-      '📢'
+      "📢"
     end
   end
 
   def color_class
     case priority
     when PRIORITIES[:urgent]
-      'bg-red-50 border-red-200 text-red-800'
+      "bg-red-50 border-red-200 text-red-800"
     when PRIORITIES[:high]
-      'bg-orange-50 border-orange-200 text-orange-800'
+      "bg-orange-50 border-orange-200 text-orange-800"
     when PRIORITIES[:normal]
-      'bg-blue-50 border-blue-200 text-blue-800'
+      "bg-blue-50 border-blue-200 text-blue-800"
     else
-      'bg-gray-50 border-gray-200 text-gray-800'
+      "bg-gray-50 border-gray-200 text-gray-800"
     end
   end
 
   def self.create_for_data_sync(data_source, success, details = {})
-    type = success ? 'data_sync_success' : 'data_sync_failure'
+    type = success ? "data_sync_success" : "data_sync_failure"
     priority = success ? PRIORITIES[:normal] : PRIORITIES[:high]
-    
+
     title = if success
       "Data sync completed for #{data_source.name}"
     else
@@ -108,7 +108,7 @@ class Notification < ApplicationRecord
     # Create notification for all organization users who can view data sources
     data_source.organization.users.each do |user|
       next unless user.can_view_analytics?
-      
+
       create!(
         user: user,
         organization: data_source.organization,
@@ -123,9 +123,9 @@ class Notification < ApplicationRecord
   end
 
   def self.create_for_file_processing(data_source, file_name, success, details = {})
-    type = success ? 'file_processing_complete' : 'file_processing_failed'
+    type = success ? "file_processing_complete" : "file_processing_failed"
     priority = success ? PRIORITIES[:normal] : PRIORITIES[:high]
-    
+
     title = if success
       "File processing completed"
     else

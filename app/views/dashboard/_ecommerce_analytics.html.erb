@@ -370,10 +370,10 @@ document.addEventListener('DOMContentLoaded', function() {
       new Chart(revenueCtx, {
         type: 'line',
         data: {
-          labels: <%= @charts_data[:revenue_chart].map { |d| d[:x] }.to_json.html_safe %>,
+          labels: <%= @charts_data[:revenue_chart].map { |d| d[:x] }.to_json %>,
           datasets: [{
             label: 'Revenue ($)',
-            data: <%= @charts_data[:revenue_chart].map { |d| d[:y] }.to_json.html_safe %>,
+            data: <%= @charts_data[:revenue_chart].map { |d| d[:y] }.to_json %>,
             borderColor: 'rgb(16, 185, 129)',
             backgroundColor: 'rgba(16, 185, 129, 0.1)',
             tension: 0.4,
@@ -410,10 +410,10 @@ document.addEventListener('DOMContentLoaded', function() {
       new Chart(ordersCtx, {
         type: 'bar',
         data: {
-          labels: <%= @charts_data[:orders_chart].map { |d| d[:x] }.to_json.html_safe %>,
+          labels: <%= @charts_data[:orders_chart].map { |d| d[:x] }.to_json %>,
           datasets: [{
             label: 'Orders',
-            data: <%= @charts_data[:orders_chart].map { |d| d[:y] }.to_json.html_safe %>,
+            data: <%= @charts_data[:orders_chart].map { |d| d[:y] }.to_json %>,
             backgroundColor: 'rgba(59, 130, 246, 0.8)',
             borderColor: 'rgb(59, 130, 246)',
             borderWidth: 1

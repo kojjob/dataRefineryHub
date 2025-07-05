@@ -1,15 +1,4 @@
-<% content_for :title, "Connect Data Source" %>
-<% content_for :page_header do %>
-  <%= render 'shared/page_header', 
-        title: 'Connect Data Source',
-        subtitle: 'Seamlessly integrate your business data for powerful insights',
-        icon: 'data-source',
-        breadcrumbs: [
-          { text: 'Dashboard', path: dashboard_path },
-          { text: 'Data Sources', path: data_sources_path },
-          { text: 'Connect New', current: true }
-        ] %>
-<% end %>
+<% content_for :page_title, "Connect Data Source" %>
 
 <%
   # Initialize data for the wizard
@@ -19,183 +8,238 @@
   file_config = @wizard_data[:file_config]
 %>
 
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8" 
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50 to-cyan-50">
+  <!-- Premium Header with Glassmorphism -->
+  <div class="relative bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-xl">
+    <div class="absolute inset-0 bg-gradient-to-r from-teal-600/10 to-cyan-600/10"></div>
+    <div class="relative px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div class="space-y-2">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl shadow-lg">
+              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7h-4l-2-3H6a2 2 0 00-2 2v3M4 7v10a2 2 0 002 2h12a2 2 0 002-2V9a2 2 0 00-2-2h-1" />
+              </svg>
+            </div>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-900 via-teal-900 to-cyan-900 bg-clip-text text-transparent">
+              Connect Data Source
+            </h1>
+          </div>
+          <p class="text-slate-600 font-medium">Seamlessly integrate your business data for powerful insights</p>
+        </div>
+        <div class="mt-4 sm:mt-0">
+          <%= link_to data_sources_path, class: "group inline-flex items-center px-5 py-2.5 border border-slate-300/50 rounded-xl shadow-md text-sm font-semibold text-slate-700 bg-white/70 backdrop-blur-sm hover:bg-white/90 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5" do %>
+            <svg class="h-4 w-4 mr-2 text-slate-500 group-hover:text-slate-700 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+            </svg>
+            Back to Sources
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" 
        data-controller="data-source-wizard auto-save" 
        data-auto-save-url-value="<%= auto_save_data_sources_path %>">
     
     <!-- Main Card Container -->
-    <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700">
+    <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-cyan-500/5"></div>
       
-      <!-- Enhanced Progress Indicator -->
-      <%= render 'wizard_progress' %>
-      
-      <!-- Auto-save Status -->
-      <div class="px-8 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-        <div class="flex items-center justify-between">
-          <div class="text-sm text-gray-600 dark:text-gray-300" data-auto-save-target="status">
-            <span class="inline-flex items-center">
-              <svg class="w-4 h-4 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              All changes saved
-            </span>
-          </div>
-          <div class="text-xs text-gray-500 dark:text-gray-400" data-auto-save-target="timestamp">
-            Last saved: <span data-auto-save-target="time">--</span>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Progress Indicator -->
-      <div class="bg-gradient-to-r from-indigo-500 to-blue-600 px-8 py-6">
-        <div data-controller="data-source-wizard" 
-             data-data-source-wizard-total-steps-value="4"
-             class="space-y-4">
-          
-          <!-- Step Info -->
-          <div class="flex items-center justify-between text-white">
-            <div>
-              <h2 class="text-xl font-semibold" data-data-source-wizard-target="stepTitle">Choose Your Platform</h2>
-              <p class="text-indigo-100 text-sm" data-data-source-wizard-target="stepDescription">Select the platform you want to connect</p>
+      <div class="relative">
+        <!-- Auto-save Status -->
+        <div class="px-8 py-3 bg-gradient-to-r from-emerald-50/50 to-teal-50/50 backdrop-blur-sm border-b border-white/20">
+          <div class="flex items-center justify-between">
+            <div class="text-sm font-medium text-slate-700" data-auto-save-target="status">
+              <span class="inline-flex items-center">
+                <div class="w-2 h-2 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full animate-pulse mr-2"></div>
+                All changes saved automatically
+              </span>
             </div>
-            <div class="text-right">
-              <div class="text-sm font-medium">
-                Step <span data-data-source-wizard-target="currentStep">1</span> of 4
-              </div>
-              <div class="text-xs text-indigo-100" data-data-source-wizard-target="progressPercent">25% Complete</div>
-            </div>
-          </div>
-          
-          <!-- Progress Bar -->
-          <div class="w-full bg-indigo-400 bg-opacity-30 rounded-full h-2">
-            <div class="bg-white h-2 rounded-full transition-all duration-500 ease-out" 
-                 data-data-source-wizard-target="progressBar" 
-                 style="width: 25%"></div>
-          </div>
-          
-          <!-- Step Indicators -->
-          <div class="flex justify-between items-center text-xs">
-            <div class="flex items-center text-white">
-              <div class="w-6 h-6 bg-white bg-opacity-30 rounded-full flex items-center justify-center mr-2">
-                <span class="font-semibold text-indigo-600">1</span>
-              </div>
-              Platform
-            </div>
-            <div class="flex items-center text-indigo-200">
-              <div class="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-2">
-                <span class="font-semibold">2</span>
-              </div>
-              Configure
-            </div>
-            <div class="flex items-center text-indigo-200">
-              <div class="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-2">
-                <span class="font-semibold">3</span>
-              </div>
-              Preview
-            </div>
-            <div class="flex items-center text-indigo-200">
-              <div class="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-2">
-                <span class="font-semibold">4</span>
-              </div>
-              Launch
+            <div class="text-xs font-medium text-slate-600" data-auto-save-target="timestamp">
+              Last saved: <span data-auto-save-target="time" class="font-semibold">--</span>
             </div>
           </div>
         </div>
-      </div>
+      
+        <!-- Premium Progress Indicator -->
+        <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-8 py-6 shadow-inner">
+          <div data-controller="data-source-wizard" 
+               data-data-source-wizard-total-steps-value="4"
+               class="space-y-5">
+            
+            <!-- Step Info -->
+            <div class="flex items-center justify-between text-white">
+              <div>
+                <h2 class="text-2xl font-bold" data-data-source-wizard-target="stepTitle">Choose Your Platform</h2>
+                <p class="text-teal-100 text-sm font-medium mt-1" data-data-source-wizard-target="stepDescription">Select the platform you want to connect</p>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold">
+                  Step <span data-data-source-wizard-target="currentStep" class="text-2xl">1</span> of 4
+                </div>
+                <div class="text-sm text-teal-100 font-medium" data-data-source-wizard-target="progressPercent">25% Complete</div>
+              </div>
+            </div>
+            
+            <!-- Premium Progress Bar -->
+            <div class="relative">
+              <div class="w-full bg-white/20 backdrop-blur-sm rounded-full h-3 overflow-hidden shadow-inner">
+                <div class="h-full bg-gradient-to-r from-white/90 to-white rounded-full transition-all duration-700 ease-out shadow-lg" 
+                     data-data-source-wizard-target="progressBar" 
+                     style="width: 25%"></div>
+              </div>
+            </div>
+            
+            <!-- Premium Step Indicators -->
+            <div class="flex justify-between items-center">
+              <div class="flex items-center group">
+                <div class="relative">
+                  <div class="absolute inset-0 bg-white rounded-full blur-md opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div class="relative w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg mr-3 transform group-hover:scale-110 transition-all duration-300">
+                    <span class="font-bold text-teal-600">1</span>
+                  </div>
+                </div>
+                <span class="text-white font-semibold text-sm">Platform</span>
+              </div>
+              <div class="flex items-center group">
+                <div class="relative">
+                  <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg mr-3 transform group-hover:scale-105 transition-all duration-300">
+                    <span class="font-bold text-white/70">2</span>
+                  </div>
+                </div>
+                <span class="text-teal-100 font-medium text-sm">Configure</span>
+              </div>
+              <div class="flex items-center group">
+                <div class="relative">
+                  <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg mr-3 transform group-hover:scale-105 transition-all duration-300">
+                    <span class="font-bold text-white/70">3</span>
+                  </div>
+                </div>
+                <span class="text-teal-100 font-medium text-sm">Preview</span>
+              </div>
+              <div class="flex items-center group">
+                <div class="relative">
+                  <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg mr-3 transform group-hover:scale-105 transition-all duration-300">
+                    <span class="font-bold text-white/70">4</span>
+                  </div>
+                </div>
+                <span class="text-teal-100 font-medium text-sm">Launch</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <!-- Enhanced Form Container -->
-      <%= form_with model: @data_source, local: true, 
-                    data: { 
-                      data_source_wizard_target: "form",
-                      auto_save_target: "form",
-                      turbo: false 
-                    }, 
-                    class: "h-full",
-                    html: { 
-                      'aria-label': 'Data Source Configuration Wizard',
-                      role: 'form' 
-                    } do |form| %>
+        <!-- Enhanced Form Container -->
+        <%= form_with model: @data_source, local: true, 
+                      data: { 
+                        data_source_wizard_target: "form",
+                        auto_save_target: "form",
+                        turbo: false 
+                      }, 
+                      class: "h-full relative",
+                      html: { 
+                        'aria-label': 'Data Source Configuration Wizard',
+                        role: 'form' 
+                      } do |form| %>
         
-        <!-- Step 1: Platform Selection -->
-        <div class="wizard-step" data-data-source-wizard-target="step1" data-step="1" role="tabpanel" aria-labelledby="step1-tab">
-          <%= render 'platform_selection', 
-                data_source_configs: data_source_configs.reject { |k, v| v[:status] == 'coming_soon' },
-                form: form %>
-          
-          <!-- Coming Soon Platforms -->
-          <%= render 'coming_soon_platforms', 
-                data_source_configs: data_source_configs.select { |k, v| v[:status] == 'coming_soon' } %>
-        </div>
+          <!-- Step 1: Platform Selection -->
+          <div class="wizard-step p-8" data-data-source-wizard-target="step1" data-step="1" role="tabpanel" aria-labelledby="step1-tab">
+            <%= render 'platform_selection', 
+                  data_source_configs: data_source_configs.reject { |k, v| v[:status] == 'coming_soon' },
+                  form: form %>
+            
+            <!-- Coming Soon Platforms -->
+            <%= render 'coming_soon_platforms', 
+                  data_source_configs: data_source_configs.select { |k, v| v[:status] == 'coming_soon' } %>
+          </div>
 
-        <!-- Step 2: Configuration -->
-        <div class="wizard-step hidden" data-data-source-wizard-target="step2" data-step="2" role="tabpanel" aria-labelledby="step2-tab">
-          <%= render 'configuration_step', 
-                form: form,
-                sync_frequencies: sync_frequencies %>
-        </div>
+          <!-- Step 2: Configuration -->
+          <div class="wizard-step hidden p-8" data-data-source-wizard-target="step2" data-step="2" role="tabpanel" aria-labelledby="step2-tab">
+            <%= render 'configuration_step', 
+                  form: form,
+                  sync_frequencies: sync_frequencies %>
+          </div>
 
-        <!-- Step 3: Data Preview -->
-        <div class="wizard-step hidden" data-data-source-wizard-target="step3" data-step="3" role="tabpanel" aria-labelledby="step3-tab">
-          <%= render 'data_preview_step', 
-                file_config: file_config %>
-        </div>
+          <!-- Step 3: Data Preview -->
+          <div class="wizard-step hidden p-8" data-data-source-wizard-target="step3" data-step="3" role="tabpanel" aria-labelledby="step3-tab">
+            <%= render 'data_preview_step', 
+                  file_config: file_config %>
+          </div>
 
-        <!-- Step 4: Final Setup -->
-        <div class="wizard-step hidden" data-data-source-wizard-target="step4" data-step="4" role="tabpanel" aria-labelledby="step4-tab">
-          <%= render 'final_setup_step', 
-                form: form %>
-        </div>
+          <!-- Step 4: Final Setup -->
+          <div class="wizard-step hidden p-8" data-data-source-wizard-target="step4" data-step="4" role="tabpanel" aria-labelledby="step4-tab">
+            <%= render 'final_setup_step', 
+                  form: form %>
+          </div>
 
-        <!-- Enhanced Navigation Footer -->
-        <%= render 'wizard_navigation' %>
+          <!-- Enhanced Navigation Footer -->
+          <%= render 'wizard_navigation' %>
 
-      <% end %>
+        <% end %>
+      </div>
     </div>
 
     <!-- Additional Help Section -->
     <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Setup Guide -->
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-          <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-          </svg>
-          Integration Guides
-        </h3>
-        <div class="space-y-3">
-          <% ['Shopify', 'QuickBooks', 'Stripe'].each do |platform| %>
-            <a href="#" class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-              <span class="text-sm font-medium text-gray-900 dark:text-white">How to connect <%= platform %></span>
-              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <h3 class="text-lg font-bold bg-gradient-to-r from-gray-900 to-blue-900 bg-clip-text text-transparent mb-4 flex items-center">
+            <div class="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-lg mr-3">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
               </svg>
-            </a>
-          <% end %>
+            </div>
+            Integration Guides
+          </h3>
+          <div class="space-y-3">
+            <% ['Shopify', 'QuickBooks', 'Stripe'].each do |platform| %>
+              <a href="#" class="group/item relative flex items-center justify-between p-4 bg-gradient-to-r from-white to-gray-50 rounded-xl border border-gray-200/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                <span class="text-sm font-semibold text-gray-900 group-hover/item:text-blue-600 transition-colors duration-300">How to connect <%= platform %></span>
+                <svg class="w-4 h-4 text-gray-400 group-hover/item:text-blue-500 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+              </a>
+            <% end %>
+          </div>
         </div>
       </div>
 
       <!-- Support -->
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-          <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          Need Help?
-        </h3>
-        <div class="space-y-4">
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            Our support team is here to help you get connected quickly and securely.
-          </p>
-          <div class="flex space-x-3">
-            <a href="mailto:support@datarefinery.com" 
-               class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
-              Email Support
-            </a>
-            <a href="#" 
-               class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-              Live Chat
-            </a>
+      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+        <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <h3 class="text-lg font-bold bg-gradient-to-r from-gray-900 to-green-900 bg-clip-text text-transparent mb-4 flex items-center">
+            <div class="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg shadow-lg mr-3">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            Need Help?
+          </h3>
+          <div class="space-y-4">
+            <p class="text-sm text-slate-600 font-medium">
+              Our support team is here to help you get connected quickly and securely.
+            </p>
+            <div class="flex space-x-3">
+              <a href="mailto:support@datarefinery.com" 
+                 class="group inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
+                <svg class="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Email Support
+              </a>
+              <a href="#" 
+                 class="group inline-flex items-center px-4 py-2 border border-slate-300/50 rounded-xl shadow-md text-sm font-semibold text-slate-700 bg-white/70 backdrop-blur-sm hover:bg-white/90 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+                <svg class="h-4 w-4 mr-2 text-slate-500 group-hover:text-slate-700 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Live Chat
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -203,14 +247,17 @@
 
     <!-- Error Display -->
     <% if @data_source.errors.any? %>
-      <div class="mt-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6">
-        <div class="flex items-start">
-          <svg class="w-6 h-6 text-red-400 mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
-          </svg>
+      <div class="mt-8 relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6">
+        <div class="absolute inset-0 bg-gradient-to-br from-red-500/10 to-rose-500/10 rounded-2xl"></div>
+        <div class="relative flex items-start">
+          <div class="p-2 bg-gradient-to-br from-red-500 to-rose-600 rounded-lg shadow-lg mr-4">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
           <div>
-            <h3 class="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">Please fix the following errors:</h3>
-            <ul class="list-disc list-inside space-y-1 text-red-700 dark:text-red-300">
+            <h3 class="text-lg font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent mb-2">Please fix the following errors:</h3>
+            <ul class="list-disc list-inside space-y-1 text-red-700 font-medium">
               <% @data_source.errors.full_messages.each do |message| %>
                 <li><%= message %></li>
               <% end %>
@@ -220,4 +267,58 @@
       </div>
     <% end %>
   </div>
+  
+  <!-- Live Update Indicator -->
+  <div class="fixed bottom-6 right-6 z-50">
+    <div class="group relative">
+      <div class="absolute inset-0 bg-gradient-to-r from-teal-600 to-cyan-600 rounded-full blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+      <div class="relative bg-white/90 backdrop-blur-xl rounded-full px-4 py-2 shadow-xl border border-white/20 flex items-center space-x-2">
+        <div class="w-2 h-2 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-full animate-pulse"></div>
+        <span class="text-sm font-semibold text-slate-700">Wizard Active</span>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script>
+document.addEventListener('turbo:load', () => {
+  // Smooth scroll animations
+  const animateOnScroll = () => {
+    const elements = document.querySelectorAll('.relative.bg-white\\/80, .group.relative.bg-white\\/80');
+    
+    elements.forEach((element, index) => {
+      const rect = element.getBoundingClientRect();
+      const isVisible = rect.top <= window.innerHeight && rect.bottom >= 0;
+      
+      if (isVisible && !element.classList.contains('animate-in')) {
+        setTimeout(() => {
+          element.classList.add('animate-in');
+          element.style.opacity = '0';
+          element.style.transform = 'translateY(20px)';
+          
+          requestAnimationFrame(() => {
+            element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+          });
+        }, index * 50);
+      }
+    });
+  };
+  
+  // Initialize animations
+  animateOnScroll();
+  window.addEventListener('scroll', animateOnScroll);
+  
+  // Progress bar animation
+  const progressBar = document.querySelector('[data-data-source-wizard-target="progressBar"]');
+  if (progressBar) {
+    const width = progressBar.style.width;
+    progressBar.style.width = '0%';
+    setTimeout(() => {
+      progressBar.style.transition = 'width 1.5s ease-out';
+      progressBar.style.width = width;
+    }, 100);
+  }
+});
+</script>

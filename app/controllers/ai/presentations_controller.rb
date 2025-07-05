@@ -3,28 +3,28 @@
 module Ai
   class PresentationsController < ApplicationController
     before_action :ensure_organization_member
-    before_action :set_presentation, only: [:show, :download]
-    
+    before_action :set_presentation, only: [ :show, :download ]
+
     def index
       @presentations = policy_scope(Presentation).recent.includes(:organization)
       @templates = Ai::PresentationGeneratorService::TEMPLATE_TYPES
       @formats = Ai::PresentationGeneratorService::SUPPORTED_FORMATS
     end
-    
+
     def new
       @presentation = Presentation.new
       @templates = Ai::PresentationGeneratorService::TEMPLATE_TYPES
       @formats = Ai::PresentationGeneratorService::SUPPORTED_FORMATS
     end
-    
+
     def create
       @presentation = current_organization.presentations.build(presentation_params)
-      @presentation.status = 'generating'
-      
+      @presentation.status = "generating"
+
       if @presentation.save
         # Generate presentation asynchronously
         GeneratePresentationJob.perform_later(@presentation.id)
-        
+
         render json: {
           success: true,
           presentation_id: @presentation.id,
@@ -38,21 +38,21 @@ module Ai
         }, status: :unprocessable_entity
       end
     end
-    
+
     def show
       @presentation_data = JSON.parse(@presentation.content) if @presentation.content.present?
-      @slides = @presentation_data&.dig('slides') || []
+      @slides = @presentation_data&.dig("slides") || []
     end
-    
+
     def generate
-      template_type = params[:template_type] || 'executive_summary'
-      output_format = params[:output_format] || 'pdf'
-      
+      template_type = params[:template_type] || "executive_summary"
+      output_format = params[:output_format] || "pdf"
+
       begin
         # Generate insights data first
         insights_service = Ai::InsightsEngineService.new(organization: current_organization)
         insights_data = insights_service.generate_insights
-        
+
         # Generate presentation
         presentation_service = Ai::PresentationGeneratorService.new(
           organization: current_organization,
@@ -60,21 +60,21 @@ module Ai
           template_type: template_type,
           output_format: output_format
         )
-        
+
         result = presentation_service.generate_presentation
-        
+
         # Save presentation record
         presentation = current_organization.presentations.create!(
           title: result[:metadata][:title],
           template_type: template_type,
           output_format: output_format,
-          status: 'completed',
+          status: "completed",
           file_path: result[:file_path],
           download_url: result[:download_url] || result[:view_url],
           content: result[:slides_data].to_json,
           generated_at: Time.current
         )
-        
+
         render json: {
           success: true,
           presentation: {
@@ -91,14 +91,14 @@ module Ai
         }
       rescue => e
         Rails.logger.error "Presentation generation failed: #{e.message}"
-        
+
         render json: {
           success: false,
           error: "Failed to generate presentation: #{e.message}"
         }, status: :internal_server_error
       end
     end
-    
+
     def download
       if @presentation.file_path.present? && File.exist?(@presentation.file_path)
         send_file(@presentation.file_path,
@@ -108,35 +108,35 @@ module Ai
         redirect_to ai_presentations_path, alert: "Presentation file not found."
       end
     end
-    
+
     def status
       presentation = current_organization.presentations.find(params[:id])
-      
+
       render json: {
         id: presentation.id,
         status: presentation.status,
         progress: presentation.progress_percentage || 0,
         message: status_message(presentation.status),
-        download_url: presentation.status == 'completed' ? presentation.download_url : nil
+        download_url: presentation.status == "completed" ? presentation.download_url : nil
       }
     end
-    
+
     def preview
-      template_type = params[:template_type] || 'executive_summary'
-      
+      template_type = params[:template_type] || "executive_summary"
+
       # Generate preview data without creating actual files
       insights_service = Ai::InsightsEngineService.new(organization: current_organization)
       insights_data = insights_service.generate_insights
-      
+
       presentation_service = Ai::PresentationGeneratorService.new(
         organization: current_organization,
         insights_data: insights_data,
         template_type: template_type,
-        output_format: 'html'
+        output_format: "html"
       )
-      
+
       slides_data = presentation_service.generate_slides_data
-      
+
       render json: {
         success: true,
         preview: {
@@ -148,37 +148,37 @@ module Ai
         }
       }
     end
-    
+
     private
-    
+
     def set_presentation
       @presentation = policy_scope(Presentation).find(params[:id])
     end
-    
+
     def presentation_params
       params.require(:presentation).permit(:title, :template_type, :output_format, :description)
     end
-    
+
     def content_type_for_format(format)
       case format
-      when 'pdf'
-        'application/pdf'
-      when 'powerpoint'
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-      when 'html'
-        'text/html'
+      when "pdf"
+        "application/pdf"
+      when "powerpoint"
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      when "html"
+        "text/html"
       else
-        'application/octet-stream'
+        "application/octet-stream"
       end
     end
-    
+
     def status_message(status)
       case status
-      when 'generating'
+      when "generating"
         "Generating your presentation..."
-      when 'completed'
+      when "completed"
         "Presentation ready for download"
-      when 'failed'
+      when "failed"
         "Generation failed. Please try again."
       else
         "Unknown status"

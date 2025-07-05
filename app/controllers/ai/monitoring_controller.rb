@@ -3,8 +3,8 @@
 module Ai
   class MonitoringController < ApplicationController
     before_action :ensure_organization_member
-    before_action :require_admin_access, except: [:dashboard, :performance_stats]
-    
+    before_action :require_admin_access, except: [ :dashboard, :performance_stats ]
+
     def dashboard
       @monitoring_stats = get_monitoring_overview
       @performance_metrics = get_performance_metrics
@@ -12,11 +12,11 @@ module Ai
       @system_health = get_system_health_status
       @cost_analysis = get_cost_analysis
     end
-    
+
     def performance_stats
       begin
-        time_range = params[:time_range] || '24h'
-        
+        time_range = params[:time_range] || "24h"
+
         stats = {
           ai_requests: get_ai_request_statistics(time_range),
           cache_performance: get_cache_performance(time_range),
@@ -25,7 +25,7 @@ module Ai
           response_times: get_response_time_statistics(time_range),
           cost_metrics: get_cost_metrics(time_range)
         }
-        
+
         render json: {
           success: true,
           stats: stats,
@@ -34,19 +34,19 @@ module Ai
         }
       rescue => e
         Rails.logger.error "Failed to get performance stats: #{e.message}"
-        
+
         render json: {
           success: false,
           error: "Failed to get performance stats: #{e.message}"
         }, status: :internal_server_error
       end
     end
-    
+
     def cache_statistics
       begin
         cache_service = Ai::CacheService.new(organization: current_organization)
         stats = cache_service.get_cache_statistics
-        
+
         render json: {
           success: true,
           cache_stats: stats,
@@ -55,28 +55,28 @@ module Ai
         }
       rescue => e
         Rails.logger.error "Failed to get cache statistics: #{e.message}"
-        
+
         render json: {
           success: false,
           error: "Failed to get cache statistics: #{e.message}"
         }, status: :internal_server_error
       end
     end
-    
+
     def rate_limit_status
       begin
         rate_limiter = Ai::RateLimitService.new(
           organization: current_organization,
           operation_type: params[:operation_type] || :llm_request
         )
-        
+
         status = {
           usage_statistics: rate_limiter.usage_statistics,
           organization_summary: rate_limiter.organization_usage_summary,
           approaching_limits: rate_limiter.approaching_limits?,
           exceeded_monthly_limit: rate_limiter.exceeded_monthly_limit?
         }
-        
+
         render json: {
           success: true,
           rate_limit_status: status,
@@ -84,14 +84,14 @@ module Ai
         }
       rescue => e
         Rails.logger.error "Failed to get rate limit status: #{e.message}"
-        
+
         render json: {
           success: false,
           error: "Failed to get rate limit status: #{e.message}"
         }, status: :internal_server_error
       end
     end
-    
+
     def job_monitoring
       begin
         job_stats = {
@@ -101,7 +101,7 @@ module Ai
           queue_health: get_queue_health_status,
           performance_trends: get_job_performance_trends
         }
-        
+
         render json: {
           success: true,
           job_monitoring: job_stats,
@@ -109,14 +109,14 @@ module Ai
         }
       rescue => e
         Rails.logger.error "Failed to get job monitoring data: #{e.message}"
-        
+
         render json: {
           success: false,
           error: "Failed to get job monitoring data: #{e.message}"
         }, status: :internal_server_error
       end
     end
-    
+
     def system_health
       begin
         health_status = {
@@ -127,7 +127,7 @@ module Ai
           external_apis: check_external_api_health,
           queue_health: check_queue_health
         }
-        
+
         render json: {
           success: true,
           system_health: health_status,
@@ -136,18 +136,18 @@ module Ai
         }
       rescue => e
         Rails.logger.error "Failed to get system health: #{e.message}"
-        
+
         render json: {
           success: false,
           error: "Failed to get system health: #{e.message}"
         }, status: :internal_server_error
       end
     end
-    
+
     def cost_analysis
       begin
-        time_period = params[:period] || 'month'
-        
+        time_period = params[:period] || "month"
+
         analysis = {
           current_costs: get_current_period_costs(time_period),
           cost_breakdown: get_cost_breakdown_by_service(time_period),
@@ -156,7 +156,7 @@ module Ai
           optimization_opportunities: identify_cost_optimizations,
           budget_status: get_budget_status
         }
-        
+
         render json: {
           success: true,
           cost_analysis: analysis,
@@ -165,14 +165,14 @@ module Ai
         }
       rescue => e
         Rails.logger.error "Failed to get cost analysis: #{e.message}"
-        
+
         render json: {
           success: false,
           error: "Failed to get cost analysis: #{e.message}"
         }, status: :internal_server_error
       end
     end
-    
+
     def optimization_recommendations
       begin
         recommendations = {
@@ -182,10 +182,10 @@ module Ai
           rate_limiting: get_rate_limiting_recommendations,
           security: get_security_recommendations
         }
-        
+
         # Prioritize recommendations by impact
         prioritized = prioritize_recommendations(recommendations)
-        
+
         render json: {
           success: true,
           recommendations: prioritized,
@@ -194,26 +194,26 @@ module Ai
         }
       rescue => e
         Rails.logger.error "Failed to get optimization recommendations: #{e.message}"
-        
+
         render json: {
           success: false,
           error: "Failed to get optimization recommendations: #{e.message}"
         }, status: :internal_server_error
       end
     end
-    
+
     def warm_up_caches
       begin
         return render_unauthorized unless current_user.admin?
-        
+
         # Warm up AI service caches
         cache_service = Ai::CacheService.new(organization: current_organization)
         cache_service.warm_up_cache
-        
+
         # Warm up LLM service cache
         llm_service = Ai::LlmService.new(organization: current_organization)
         llm_service.warm_up_service
-        
+
         render json: {
           success: true,
           message: "Cache warm-up initiated successfully",
@@ -221,23 +221,23 @@ module Ai
         }
       rescue => e
         Rails.logger.error "Failed to warm up caches: #{e.message}"
-        
+
         render json: {
           success: false,
           error: "Failed to warm up caches: #{e.message}"
         }, status: :internal_server_error
       end
     end
-    
+
     def clear_caches
       begin
         return render_unauthorized unless current_user.admin?
-        
+
         cache_pattern = params[:pattern] || :organization_data
-        
+
         cache_service = Ai::CacheService.new(organization: current_organization)
         cache_service.invalidate_cache(cache_pattern.to_sym)
-        
+
         render json: {
           success: true,
           message: "Cache cleared successfully",
@@ -245,33 +245,33 @@ module Ai
         }
       rescue => e
         Rails.logger.error "Failed to clear caches: #{e.message}"
-        
+
         render json: {
           success: false,
           error: "Failed to clear caches: #{e.message}"
         }, status: :internal_server_error
       end
     end
-    
+
     def export_monitoring_data
       begin
         return render_unauthorized unless current_user.admin?
-        
-        format = params[:format] || 'json'
-        time_range = params[:time_range] || '7d'
-        
+
+        format = params[:format] || "json"
+        time_range = params[:time_range] || "7d"
+
         monitoring_data = compile_monitoring_export_data(time_range)
-        
+
         case format.downcase
-        when 'json'
+        when "json"
           send_data monitoring_data.to_json,
                     filename: "ai_monitoring_#{current_organization.slug}_#{Date.current}.json",
-                    type: 'application/json'
-        when 'csv'
+                    type: "application/json"
+        when "csv"
           csv_data = convert_monitoring_data_to_csv(monitoring_data)
           send_data csv_data,
                     filename: "ai_monitoring_#{current_organization.slug}_#{Date.current}.csv",
-                    type: 'text/csv'
+                    type: "text/csv"
         else
           render json: {
             success: false,
@@ -280,16 +280,16 @@ module Ai
         end
       rescue => e
         Rails.logger.error "Failed to export monitoring data: #{e.message}"
-        
+
         render json: {
           success: false,
           error: "Failed to export monitoring data: #{e.message}"
         }, status: :internal_server_error
       end
     end
-    
+
     private
-    
+
     def require_admin_access
       unless current_user.admin? || current_user.organization_owner?(current_organization)
         render json: {
@@ -298,14 +298,14 @@ module Ai
         }, status: :forbidden
       end
     end
-    
+
     def render_unauthorized
       render json: {
         success: false,
         error: "Unauthorized access"
       }, status: :unauthorized
     end
-    
+
     def get_monitoring_overview
       {
         total_ai_requests_today: get_daily_request_count,
@@ -317,7 +317,7 @@ module Ai
         system_health_score: calculate_system_health_score
       }
     end
-    
+
     def get_performance_metrics
       {
         request_volume_trend: get_request_volume_trend,
@@ -327,26 +327,26 @@ module Ai
         cost_trend: get_cost_trend
       }
     end
-    
+
     def get_recent_ai_activities
       activities = []
-      
+
       # Get recent AI requests
       recent_requests = get_recent_ai_requests(limit: 10)
       activities.concat(recent_requests)
-      
+
       # Get recent job completions
       recent_jobs = get_recent_job_activities(limit: 10)
       activities.concat(recent_jobs)
-      
+
       # Get recent cache events
       recent_cache_events = get_recent_cache_activities(limit: 5)
       activities.concat(recent_cache_events)
-      
+
       # Sort by timestamp and return most recent
       activities.sort_by { |a| Time.parse(a[:timestamp]) }.reverse.first(20)
     end
-    
+
     def get_system_health_status
       {
         ai_services: :healthy,
@@ -356,7 +356,7 @@ module Ai
         external_apis: check_external_api_status
       }
     end
-    
+
     def get_cost_analysis
       {
         monthly_spend: get_monthly_ai_spend,
@@ -366,61 +366,61 @@ module Ai
         budget_utilization: calculate_budget_utilization
       }
     end
-    
+
     # Helper methods for statistics
     def get_daily_request_count
       # Count AI requests from today across all services
       Rails.cache.read("ai_daily_requests:#{current_organization.id}:#{Date.current}") || 0
     end
-    
+
     def get_daily_cost
       # Get today's AI costs
       Rails.cache.read("ai_daily_cost:#{current_organization.id}:#{Date.current}") || 0.0
     end
-    
+
     def get_overall_cache_hit_rate
       cache_service = Ai::CacheService.new(organization: current_organization)
       stats = cache_service.get_cache_statistics
       stats.dig(:overall, :overall_hit_rate) || 0.0
     end
-    
+
     def get_average_response_time
       # Calculate average response time for AI requests
       # This would be tracked in production metrics
       rand(200..800) # Placeholder
     end
-    
+
     def get_error_rate_percentage
       # Calculate error rate as percentage
       # This would be tracked in production metrics
       rand(0.1..2.5).round(2) # Placeholder
     end
-    
+
     def get_active_job_count
       # Count active AI jobs in the queue
       # This would query Solid Queue in production
       rand(0..5) # Placeholder
     end
-    
+
     def calculate_system_health_score
       # Calculate overall system health score (0-100)
       base_score = 95.0
-      
+
       # Deduct for high error rates
       error_rate = get_error_rate_percentage
       base_score -= (error_rate * 10) if error_rate > 1.0
-      
+
       # Deduct for poor cache performance
       cache_hit_rate = get_overall_cache_hit_rate
       base_score -= (100 - cache_hit_rate) * 0.2 if cache_hit_rate < 80
-      
+
       # Deduct for slow response times
       avg_response_time = get_average_response_time
       base_score -= (avg_response_time - 500) * 0.01 if avg_response_time > 500
-      
-      [base_score, 100.0].min.round(1)
+
+      [ base_score, 100.0 ].min.round(1)
     end
-    
+
     # Placeholder methods - these would be implemented with real metrics in production
     def get_ai_request_statistics(time_range); {}; end
     def get_cache_performance(time_range); {}; end

@@ -112,7 +112,7 @@ RSpec.describe Notification, type: :model do
         }.to change { Notification.count }.by(2)
 
         notifications = Notification.where(notifiable: data_source)
-        expect(notifications.pluck(:user_id)).to match_array([user1.id, user2.id])
+        expect(notifications.pluck(:user_id)).to match_array([ user1.id, user2.id ])
         expect(notifications.first.notification_type).to eq('data_sync_success')
         expect(notifications.first.title).to include(data_source.name)
       end

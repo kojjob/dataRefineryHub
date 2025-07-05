@@ -3,7 +3,7 @@
 class DataQualityController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_organization_member
-  before_action :set_data_source, only: [:show, :validate, :report]
+  before_action :set_data_source, only: [ :show, :validate, :report ]
 
   def index
     @organization = current_organization
@@ -24,24 +24,24 @@ class DataQualityController < ApplicationController
 
   def validate
     authorize @data_source, :update?
-    
+
     validation_job = DataQualityValidationJob.perform_later(
       data_source: @data_source,
       user: current_user,
-      validation_type: params[:validation_type] || 'full'
+      validation_type: params[:validation_type] || "full"
     )
 
     respond_to do |format|
       format.json do
         render json: {
-          status: 'success',
-          message: 'Data quality validation started',
+          status: "success",
+          message: "Data quality validation started",
           job_id: validation_job.job_id
         }
       end
       format.html do
-        redirect_to data_quality_path(@data_source), 
-                   notice: 'Data quality validation started. Results will be available shortly.'
+        redirect_to data_quality_path(@data_source),
+                   notice: "Data quality validation started. Results will be available shortly."
       end
     end
   end
@@ -49,23 +49,23 @@ class DataQualityController < ApplicationController
   def report
     authorize @data_source, :show?
     @report = @data_source.data_quality_reports.find(params[:report_id])
-    
+
     respond_to do |format|
       format.html
-      format.json { render json: @report.as_json(include: [:quality_issues, :recommendations]) }
+      format.json { render json: @report.as_json(include: [ :quality_issues, :recommendations ]) }
       format.pdf do
         pdf = generate_quality_report_pdf(@report)
-        send_data pdf.render, 
+        send_data pdf.render,
                  filename: "data_quality_report_#{@data_source.name}_#{@report.created_at.strftime('%Y%m%d')}.pdf",
-                 type: 'application/pdf',
-                 disposition: 'attachment'
+                 type: "application/pdf",
+                 disposition: "attachment"
       end
     end
   end
 
   def metrics_api
     metrics = calculate_real_time_metrics
-    
+
     respond_to do |format|
       format.json { render json: metrics }
     end
@@ -86,11 +86,11 @@ class DataQualityController < ApplicationController
     return default_comprehensive_metrics if recent_records.empty?
 
     quality_service = DataQualityValidationService.new
-    
+
     # Group by data source and time periods for trend analysis
     metrics_by_source = {}
     daily_trends = {}
-    
+
     @data_sources.each do |data_source|
       source_records = recent_records.where(data_source: data_source)
       next if source_records.empty?
@@ -115,11 +115,11 @@ class DataQualityController < ApplicationController
       (0..6).each do |days_ago|
         date = days_ago.days.ago.to_date
         day_records = source_records.where(created_at: date.beginning_of_day..date.end_of_day)
-        
+
         if day_records.any?
           day_data = day_records.map { |r| parse_record_data(r.raw_data) }
           day_validation = quality_service.validate_data(day_data, context: data_source.source_type)
-          
+
           daily_trends[date] ||= []
           daily_trends[date] << {
             data_source_id: data_source.id,
@@ -133,7 +133,7 @@ class DataQualityController < ApplicationController
 
     # Calculate overall metrics
     overall_metrics = calculate_overall_metrics(metrics_by_source.values)
-    
+
     {
       overall: overall_metrics,
       by_source: metrics_by_source,
@@ -181,17 +181,17 @@ class DataQualityController < ApplicationController
   def calculate_quality_trends_detailed
     # Calculate quality trends over the past 30 days
     trends = []
-    
+
     (0..29).each do |days_ago|
       date = days_ago.days.ago.to_date
       day_records = policy_scope(RawDataRecord)
         .where(created_at: date.beginning_of_day..date.end_of_day)
-      
+
       if day_records.any?
         quality_service = DataQualityValidationService.new
         day_data = day_records.map { |r| parse_record_data(r.raw_data) }
         validation_result = quality_service.validate_data(day_data)
-        
+
         trends << {
           date: date,
           completeness: calculate_completeness_score(day_data),
@@ -209,53 +209,53 @@ class DataQualityController < ApplicationController
         }
       end
     end
-    
+
     trends.reverse
   end
 
   def calculate_quality_alerts
     alerts = []
-    
+
     @data_sources.each do |data_source|
       # Check for data freshness issues
       last_record = data_source.raw_data_records.order(:created_at).last
       if last_record && last_record.created_at < 24.hours.ago
         alerts << {
-          type: 'warning',
-          severity: 'medium',
+          type: "warning",
+          severity: "medium",
           data_source: data_source,
           message: "No new data received in the last 24 hours",
           created_at: Time.current
         }
       end
-      
+
       # Check for recent quality issues
       recent_report = data_source.data_quality_reports.recent.first
       if recent_report && recent_report.overall_score < 70
         alerts << {
-          type: 'error',
-          severity: 'high',
+          type: "error",
+          severity: "high",
           data_source: data_source,
           message: "Data quality score below threshold (#{recent_report.overall_score}%)",
           created_at: recent_report.created_at
         }
       end
     end
-    
-    alerts.sort_by { |a| [a[:severity] == 'high' ? 0 : 1, a[:created_at]] }.reverse
+
+    alerts.sort_by { |a| [ a[:severity] == "high" ? 0 : 1, a[:created_at] ] }.reverse
   end
 
   def get_quality_issues(data_source)
     recent_records = data_source.raw_data_records
       .where(created_at: 7.days.ago..Time.current)
       .limit(500)
-    
+
     return [] if recent_records.empty?
-    
+
     quality_service = DataQualityValidationService.new
     source_data = recent_records.map { |r| parse_record_data(r.raw_data) }
     validation_result = quality_service.validate_data(source_data, context: data_source.source_type)
-    
+
     validation_result.errors.map do |error|
       {
         type: error.type,
@@ -271,48 +271,48 @@ class DataQualityController < ApplicationController
   def generate_quality_recommendations(data_source)
     issues = get_quality_issues(data_source)
     recommendations = []
-    
+
     # Analyze issues and generate recommendations
-    if issues.any? { |i| i[:type] == 'missing_required_field' }
+    if issues.any? { |i| i[:type] == "missing_required_field" }
       recommendations << {
-        priority: 'high',
-        category: 'completeness',
-        title: 'Address Missing Required Fields',
-        description: 'Some records are missing required fields. Review data extraction logic.',
-        action: 'Review and update data extraction mappings'
+        priority: "high",
+        category: "completeness",
+        title: "Address Missing Required Fields",
+        description: "Some records are missing required fields. Review data extraction logic.",
+        action: "Review and update data extraction mappings"
       }
     end
-    
-    if issues.any? { |i| i[:type] == 'invalid_format' }
+
+    if issues.any? { |i| i[:type] == "invalid_format" }
       recommendations << {
-        priority: 'medium',
-        category: 'validity',
-        title: 'Fix Data Format Issues',
-        description: 'Data format validation failures detected. Standardize data formats.',
-        action: 'Implement data transformation rules'
+        priority: "medium",
+        category: "validity",
+        title: "Fix Data Format Issues",
+        description: "Data format validation failures detected. Standardize data formats.",
+        action: "Implement data transformation rules"
       }
     end
-    
+
     # Add general recommendations based on data source type
     case data_source.source_type
-    when 'shopify'
+    when "shopify"
       recommendations << {
-        priority: 'low',
-        category: 'optimization',
-        title: 'Optimize Shopify Webhook Configuration',
-        description: 'Consider using webhooks for real-time data updates.',
-        action: 'Configure Shopify webhooks'
+        priority: "low",
+        category: "optimization",
+        title: "Optimize Shopify Webhook Configuration",
+        description: "Consider using webhooks for real-time data updates.",
+        action: "Configure Shopify webhooks"
       }
-    when 'file_upload'
+    when "file_upload"
       recommendations << {
-        priority: 'medium',
-        category: 'automation',
-        title: 'Automate File Processing',
-        description: 'Set up automated file processing schedules.',
-        action: 'Configure scheduled uploads'
+        priority: "medium",
+        category: "automation",
+        title: "Automate File Processing",
+        description: "Set up automated file processing schedules.",
+        action: "Configure scheduled uploads"
       }
     end
-    
+
     recommendations
   end
 
@@ -351,7 +351,7 @@ class DataQualityController < ApplicationController
 
     data.each do |record|
       next unless record.is_a?(Hash)
-      
+
       record.each do |key, value|
         total_fields += 1
         filled_fields += 1 if value.present?
@@ -364,10 +364,10 @@ class DataQualityController < ApplicationController
 
   def calculate_freshness_score(records)
     return 0 if records.empty?
-    
+
     latest_record = records.maximum(:created_at)
     hours_since_latest = ((Time.current - latest_record) / 1.hour).round(1)
-    
+
     case hours_since_latest
     when 0..1 then 100
     when 1..6 then 90
@@ -379,34 +379,34 @@ class DataQualityController < ApplicationController
 
   def calculate_validity_score(data, source_type)
     return 0 if data.empty?
-    
+
     valid_records = 0
     total_records = data.count
-    
+
     data.each do |record|
       next unless record.is_a?(Hash)
-      
+
       # Basic validation based on source type
       case source_type
-      when 'shopify', 'woocommerce'
-        valid_records += 1 if record['id'].present? && record['created_at'].present?
-      when 'amazon_seller_central'
-        valid_records += 1 if record['order_id'].present? || record['asin'].present?
+      when "shopify", "woocommerce"
+        valid_records += 1 if record["id"].present? && record["created_at"].present?
+      when "amazon_seller_central"
+        valid_records += 1 if record["order_id"].present? || record["asin"].present?
       else
         valid_records += 1 if record.keys.any?
       end
     end
-    
+
     ((valid_records.to_f / total_records) * 100).round(1)
   end
 
   def calculate_uniqueness_score(data)
     return 0 if data.empty?
-    
+
     # Simple uniqueness check based on record content
     unique_records = data.uniq.count
     total_records = data.count
-    
+
     ((unique_records.to_f / total_records) * 100).round(1)
   end
 
@@ -418,7 +418,7 @@ class DataQualityController < ApplicationController
         .where(created_at: date.beginning_of_day..date.end_of_day)
         .count
     end.reverse
-    
+
     {
       daily_counts: daily_counts,
       trend: calculate_trend_direction(daily_counts),
@@ -428,45 +428,45 @@ class DataQualityController < ApplicationController
 
   def calculate_schema_stability(data)
     return { stability: 100, variations: 0 } if data.empty?
-    
+
     # Analyze schema variations across records
     schemas = data.map { |record| record.keys.sort if record.is_a?(Hash) }.compact.uniq
-    
+
     {
-      stability: schemas.count == 1 ? 100 : [100 - (schemas.count * 10), 0].max,
+      stability: schemas.count == 1 ? 100 : [ 100 - (schemas.count * 10), 0 ].max,
       variations: schemas.count,
       common_schema: schemas.first || []
     }
   end
 
   def calculate_trend_direction(values)
-    return 'stable' if values.count < 2
-    
+    return "stable" if values.count < 2
+
     recent_avg = values.last(3).sum / 3.0
     earlier_avg = values.first(3).sum / 3.0
-    
+
     if recent_avg > earlier_avg * 1.1
-      'increasing'
+      "increasing"
     elsif recent_avg < earlier_avg * 0.9
-      'decreasing'
+      "decreasing"
     else
-      'stable'
+      "stable"
     end
   end
 
   def calculate_overall_metrics(source_metrics)
     return default_overall_metrics if source_metrics.empty?
-    
+
     total_records = source_metrics.sum { |m| m[:total_records] }
     total_issues = source_metrics.sum { |m| m[:issues_count] }
-    
+
     avg_completeness = source_metrics.sum { |m| m[:completeness] } / source_metrics.count
     avg_accuracy = source_metrics.sum { |m| m[:accuracy] } / source_metrics.count
     avg_freshness = source_metrics.sum { |m| m[:freshness] } / source_metrics.count
     avg_consistency = source_metrics.sum { |m| m[:consistency] } / source_metrics.count
-    
+
     overall_score = (avg_completeness + avg_accuracy + avg_freshness + avg_consistency) / 4.0
-    
+
     {
       completeness_score: avg_completeness.round(1),
       accuracy_score: avg_accuracy.round(1),
@@ -493,17 +493,17 @@ class DataQualityController < ApplicationController
   def calculate_system_health
     connected_sources = @data_sources.connected.count
     total_sources = @data_sources.count
-    
-    return 'critical' if total_sources == 0
-    
+
+    return "critical" if total_sources == 0
+
     health_percentage = (connected_sources.to_f / total_sources) * 100
-    
+
     case health_percentage
-    when 90..100 then 'excellent'
-    when 75..89 then 'good'
-    when 50..74 then 'fair'
-    when 25..49 then 'poor'
-    else 'critical'
+    when 90..100 then "excellent"
+    when 75..89 then "good"
+    when 50..74 then "fair"
+    when 25..49 then "poor"
+    else "critical"
     end
   end
 
@@ -546,7 +546,7 @@ class DataQualityController < ApplicationController
       total_records: 0,
       issues: [],
       last_validation: Time.current,
-      data_volume_trend: { daily_counts: [], trend: 'stable', average: 0 },
+      data_volume_trend: { daily_counts: [], trend: "stable", average: 0 },
       schema_stability: { stability: 100, variations: 0 }
     }
   end
@@ -554,8 +554,8 @@ class DataQualityController < ApplicationController
   def generate_quality_report_pdf(report)
     # This would integrate with a PDF generation library like Prawn
     # For now, return a placeholder
-    require 'prawn'
-    
+    require "prawn"
+
     Prawn::Document.new do |pdf|
       pdf.text "Data Quality Report", size: 24, style: :bold
       pdf.move_down 20

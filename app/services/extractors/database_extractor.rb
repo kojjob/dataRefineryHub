@@ -2,16 +2,16 @@
 # Generic database extractor supporting PostgreSQL, MySQL, SQL Server, etc.
 class DatabaseExtractor < BaseExtractor
   SUPPORTED_DATABASES = %w[postgresql mysql sqlserver sqlite oracle].freeze
-  
+
   def initialize(data_source)
     super
     @connection_pool = ConnectionPool.new(size: 5, timeout: 5) do
       establish_database_connection
     end
   end
-  
+
   protected
-  
+
   def validate_connection
     @connection_pool.with do |connection|
       connection.active?
@@ -19,10 +19,10 @@ class DatabaseExtractor < BaseExtractor
   rescue => e
     raise ConnectionError, "Database connection failed: #{e.message}"
   end
-  
+
   def fetch_data(options = {})
     query = build_query(options)
-    
+
     @connection_pool.with do |connection|
       if options[:streaming]
         stream_query_results(connection, query, options)
@@ -31,50 +31,50 @@ class DatabaseExtractor < BaseExtractor
       end
     end
   end
-  
+
   def get_schema_info
     @connection_pool.with do |connection|
       case database_type
-      when 'postgresql'
+      when "postgresql"
         get_postgresql_schema(connection)
-      when 'mysql'
+      when "mysql"
         get_mysql_schema(connection)
-      when 'sqlserver'
+      when "sqlserver"
         get_sqlserver_schema(connection)
       else
         get_generic_schema(connection)
       end
     end
   end
-  
+
   private
-  
+
   def establish_database_connection
     config = data_source.credentials.symbolize_keys
-    
+
     case database_type
-    when 'postgresql'
-      require 'pg'
+    when "postgresql"
+      require "pg"
       PG.connect(
         host: config[:host],
         port: config[:port] || 5432,
         dbname: config[:database],
         user: config[:username],
         password: config[:password],
-        sslmode: config[:ssl_mode] || 'prefer'
+        sslmode: config[:ssl_mode] || "prefer"
       )
-    when 'mysql'
-      require 'mysql2'
+    when "mysql"
+      require "mysql2"
       Mysql2::Client.new(
         host: config[:host],
         port: config[:port] || 3306,
         database: config[:database],
         username: config[:username],
         password: config[:password],
-        ssl_mode: config[:ssl_mode] || 'preferred'
+        ssl_mode: config[:ssl_mode] || "preferred"
       )
-    when 'sqlserver'
-      require 'tiny_tds'
+    when "sqlserver"
+      require "tiny_tds"
       TinyTDS::Client.new(
         host: config[:host],
         port: config[:port] || 1433,
@@ -87,14 +87,14 @@ class DatabaseExtractor < BaseExtractor
       raise NotImplementedError, "Database type #{database_type} not yet supported"
     end
   end
-  
+
   def database_type
-    data_source.connection_details['database_type'] || 'postgresql'
+    data_source.connection_details["database_type"] || "postgresql"
   end
-  
+
   def build_query(options)
-    table = options[:table] || data_source.connection_details['default_table']
-    
+    table = options[:table] || data_source.connection_details["default_table"]
+
     if options[:custom_query]
       sanitize_query(options[:custom_query])
     elsif options[:incremental] && options[:last_sync_at]
@@ -103,86 +103,107 @@ class DatabaseExtractor < BaseExtractor
       build_full_query(table, options)
     end
   end
-  
+
   def build_full_query(table, options)
-    columns = options[:columns] || '*'
+    columns = options[:columns] || "*"
     limit = options[:limit]
-    
+
     query = "SELECT #{columns} FROM #{quote_identifier(table)}"
     query += " WHERE #{options[:where]}" if options[:where]
     query += " ORDER BY #{options[:order_by]}" if options[:order_by]
     query += " LIMIT #{limit}" if limit
-    
+
     query
   end
-  
-  def build_incremental_query(table, last_sync_at, timestamp_column = 'updated_at')
-    columns = '*'
-    
-    <<-SQL
-      SELECT #{columns} 
+
+  def build_incremental_query(table, last_sync_at, timestamp_column = "updated_at")
+    columns = "*"
+
+    # Return query and params separately for parameterized execution
+    query = <<-SQL
+      SELECT #{columns}#{' '}
       FROM #{quote_identifier(table)}
-      WHERE #{quote_identifier(timestamp_column)} > '#{last_sync_at.iso8601}'
+      WHERE #{quote_identifier(timestamp_column)} > $1
       ORDER BY #{quote_identifier(timestamp_column)} ASC
     SQL
+
+    { query: query, params: [ last_sync_at.iso8601 ] }
   end
-  
+
   def quote_identifier(identifier)
     case database_type
-    when 'mysql'
+    when "mysql"
       "`#{identifier}`"
-    when 'sqlserver'
+    when "sqlserver"
       "[#{identifier}]"
     else
       %("#{identifier}")
     end
   end
-  
+
   def sanitize_query(query)
     # Basic SQL injection prevention
     # In production, use proper parameterized queries
-    query.gsub(/;.*$/, '')
+    query.gsub(/;.*$/, "")
   end
-  
+
   def execute_query(connection, query, options)
     results = []
-    
+    params = options[:params] || []
+
     case database_type
-    when 'postgresql'
-      result = connection.exec(query)
+    when "postgresql"
+      if params.any?
+        result = connection.exec_params(query, params)
+      else
+        result = connection.exec(query)
+      end
       result.each { |row| results << row }
-    when 'mysql'
-      connection.query(query).each { |row| results << row }
-    when 'sqlserver'
+    when "mysql"
+      if params.any?
+        statement = connection.prepare(query)
+        result = statement.execute(*params)
+        result.each { |row| results << row }
+        statement.close if statement
+      else
+        connection.query(query).each { |row| results << row }
+      end
+    when "sqlserver"
+      if params.any?
+        # TinyTDS doesn't support parameterized queries directly
+        # Use proper escaping for now
+        escaped_params = params.map { |p| connection.escape(p.to_s) }
+        query = query.gsub(/\$(\d+)/) { escaped_params[$1.to_i - 1] }
+      end
       result = connection.execute(query)
       result.each { |row| results << row }
     end
-    
+
     results
   end
-  
+
   def stream_query_results(connection, query, options)
     batch_size = options[:batch_size] || 1000
-    
+
     case database_type
-    when 'postgresql'
+    when "postgresql"
       connection.send_query(query)
       connection.set_single_row_mode
-      
+
       batch = []
       while connection.get_result
         while row = connection.get_result
           batch << row
-          
+
           if batch.size >= batch_size
             yield batch
             batch = []
           end
         end
       end
-      
+
       yield batch if batch.any?
-    when 'mysql'
+    when "mysql"
       connection.query(query, stream: true).each_slice(batch_size) do |batch|
         yield batch
       end
@@ -193,10 +214,10 @@ class DatabaseExtractor < BaseExtractor
       end
     end
   end
-  
+
   def get_postgresql_schema(connection)
     query = <<-SQL
-      SELECT 
+      SELECT#{' '}
         table_name,
         column_name,
         data_type,
@@ -206,55 +227,58 @@ class DatabaseExtractor < BaseExtractor
       WHERE table_schema = 'public'
       ORDER BY table_name, ordinal_position
     SQL
-    
+
     schema = {}
     connection.exec(query).each do |row|
-      table = row['table_name']
+      table = row["table_name"]
       schema[table] ||= []
       schema[table] << {
-        name: row['column_name'],
-        type: row['data_type'],
-        nullable: row['is_nullable'] == 'YES',
-        default: row['column_default']
+        name: row["column_name"],
+        type: row["data_type"],
+        nullable: row["is_nullable"] == "YES",
+        default: row["column_default"]
       }
     end
-    
+
     schema
   end
-  
+
   def get_mysql_schema(connection)
-    database = data_source.credentials['database']
-    
+    database = data_source.credentials["database"]
+
     query = <<-SQL
-      SELECT 
+      SELECT#{' '}
         TABLE_NAME as table_name,
         COLUMN_NAME as column_name,
         DATA_TYPE as data_type,
         IS_NULLABLE as is_nullable,
         COLUMN_DEFAULT as column_default
       FROM INFORMATION_SCHEMA.COLUMNS
-      WHERE TABLE_SCHEMA = '#{database}'
+      WHERE TABLE_SCHEMA = ?
       ORDER BY TABLE_NAME, ORDINAL_POSITION
     SQL
-    
+
     schema = {}
-    connection.query(query).each do |row|
-      table = row['table_name']
+    statement = connection.prepare(query)
+    result = statement.execute(database)
+    result.each do |row|
+      table = row["table_name"]
       schema[table] ||= []
       schema[table] << {
-        name: row['column_name'],
-        type: row['data_type'],
-        nullable: row['is_nullable'] == 'YES',
-        default: row['column_default']
+        name: row["column_name"],
+        type: row["data_type"],
+        nullable: row["is_nullable"] == "YES",
+        default: row["column_default"]
       }
     end
-    
+    statement.close if statement
+
     schema
   end
-  
+
   def get_sqlserver_schema(connection)
     query = <<-SQL
-      SELECT 
+      SELECT#{' '}
         t.name AS table_name,
         c.name AS column_name,
         ty.name AS data_type,
@@ -266,29 +290,29 @@ class DatabaseExtractor < BaseExtractor
       LEFT JOIN sys.default_constraints dc ON c.default_object_id = dc.object_id
       ORDER BY t.name, c.column_id
     SQL
-    
+
     schema = {}
     result = connection.execute(query)
     result.each do |row|
-      table = row['table_name']
+      table = row["table_name"]
       schema[table] ||= []
       schema[table] << {
-        name: row['column_name'],
-        type: row['data_type'],
-        nullable: row['is_nullable'] == 1,
-        default: row['column_default']
+        name: row["column_name"],
+        type: row["data_type"],
+        nullable: row["is_nullable"] == 1,
+        default: row["column_default"]
       }
     end
-    
+
     result.cancel
     schema
   end
-  
+
   def get_generic_schema(connection)
     # Fallback schema detection
     {}
   end
-  
+
   def cleanup
     @connection_pool.shutdown(&:close) if @connection_pool
     super

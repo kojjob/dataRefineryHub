@@ -23,6 +23,7 @@ gem "view_component"
 gem "devise"
 gem "pundit"
 gem "bcrypt", "~> 3.1.7"
+gem "jwt"
 
 # API and HTTP clients
 gem "httparty"

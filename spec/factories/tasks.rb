@@ -64,7 +64,7 @@ FactoryBot.define do
     end
 
     trait :with_dependencies do
-      depends_on { ['task1', 'task2'] }
+      depends_on { [ 'task1', 'task2' ] }
     end
 
     trait :extraction do
