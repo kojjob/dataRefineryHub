@@ -78,7 +78,7 @@
           <div class="mb-8">
             <div class="flex items-center gap-6">
               <div class="relative group">
-                <% if @user.has_avatar? %>
+                <% if @user.has_avatar? && @user.avatar_url(:medium).present? %>
                   <%= image_tag @user.avatar_url(:medium), class: "h-24 w-24 rounded-2xl object-cover ring-4 ring-indigo-100 shadow-xl group-hover:ring-indigo-200 transition-all duration-300" %>
                 <% else %>
                   <div class="h-24 w-24 rounded-2xl bg-gradient-to-br from-indigo-500 via-blue-600 to-purple-600 flex items-center justify-center ring-4 ring-indigo-100 shadow-xl group-hover:ring-indigo-200 transition-all duration-300">

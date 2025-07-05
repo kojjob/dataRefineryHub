@@ -1,83 +1,116 @@
-<% content_for :title, "Data Integration Dashboard" %>
+<% content_for :page_title, "Data Integration Dashboard" %>
 
-<div class="min-h-screen bg-gray-50 py-8">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Data Integration Dashboard</h1>
-      <p class="mt-2 text-gray-600">Monitor and manage your data sources and integrations</p>
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-teal-50">
+  <!-- Premium Header with Glassmorphism -->
+  <div class="relative bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-xl">
+    <div class="absolute inset-0 bg-gradient-to-r from-emerald-600/10 to-teal-600/10"></div>
+    <div class="relative px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div class="space-y-2">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg">
+              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+            </div>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-900 via-emerald-900 to-teal-900 bg-clip-text text-transparent">
+              Data Integration Dashboard
+            </h1>
+          </div>
+          <p class="text-slate-600 font-medium">AI-powered monitoring and management of your data ecosystem</p>
+        </div>
+        <div class="mt-4 sm:mt-0 flex items-center space-x-2">
+          <div class="flex items-center space-x-2 px-4 py-2 bg-green-100/80 backdrop-blur-sm rounded-full border border-green-200/50">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span class="text-green-700 text-sm font-semibold">System Healthy</span>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Integration Stats Cards -->
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Premium Statistics Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Total Sources -->
+      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 1.79 4 4 4h8c2.21 0 4-1.79 4-4V7c0-2.21-1.79-4-4-4H8c-2.21 0-4 1.79-4 4z"></path>
               </svg>
             </div>
           </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Total Sources</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @integration_stats[:total_sources] %></dd>
-            </dl>
-          </div>
+          <p class="text-sm font-semibold text-slate-600">Total Sources</p>
+          <p class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mt-1">
+            <%= @integration_stats[:total_sources] %>
+          </p>
+          <p class="text-xs text-slate-500 mt-2">Configured connections</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Active Sources -->
+      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+        <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg group-hover:shadow-green-500/25 transition-all duration-300">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
+            <div class="flex items-center space-x-2 text-xs text-green-600">
+              <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span>Live</span>
+            </div>
           </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Active Sources</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @integration_stats[:active_sources] %></dd>
-            </dl>
-          </div>
+          <p class="text-sm font-semibold text-slate-600">Active Sources</p>
+          <p class="text-3xl font-bold text-slate-900 mt-1"><%= @integration_stats[:active_sources] %></p>
+          <p class="text-xs text-slate-500 mt-2">Currently syncing</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Total Records -->
+      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
               </svg>
             </div>
           </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Total Records</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= number_with_delimiter(@integration_stats[:total_records]) %></dd>
-            </dl>
-          </div>
+          <p class="text-sm font-semibold text-slate-600">Total Records</p>
+          <p class="text-3xl font-bold text-slate-900 mt-1"><%= number_with_delimiter(@integration_stats[:total_records]) %></p>
+          <p class="text-xs text-slate-500 mt-2">Processed data points</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Data Quality Score -->
+      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+        <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-amber-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl shadow-lg group-hover:shadow-yellow-500/25 transition-all duration-300">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
               </svg>
             </div>
           </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Data Quality Score</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @integration_stats[:data_quality_score] %>%</dd>
-            </dl>
+          <p class="text-sm font-semibold text-slate-600">Data Quality Score</p>
+          <div class="flex items-baseline space-x-2 mt-1">
+            <p class="text-3xl font-bold <%= @integration_stats[:data_quality_score] >= 90 ? 'text-green-600' : @integration_stats[:data_quality_score] >= 70 ? 'text-yellow-600' : 'text-red-600' %>">
+              <%= @integration_stats[:data_quality_score] %>%
+            </p>
+            <svg class="h-5 w-5 <%= @integration_stats[:data_quality_score] >= 90 ? 'text-green-500' : @integration_stats[:data_quality_score] >= 70 ? 'text-yellow-500' : 'text-red-500' %>" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L10 4.414l-5.293 5.293a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden">
+            <div class="h-full bg-gradient-to-r <%= @integration_stats[:data_quality_score] >= 90 ? 'from-green-400 to-emerald-500' : @integration_stats[:data_quality_score] >= 70 ? 'from-yellow-400 to-amber-500' : 'from-red-400 to-rose-500' %> rounded-full transition-all duration-500" style="width: <%= @integration_stats[:data_quality_score] %>%"></div>
           </div>
         </div>
       </div>
@@ -85,111 +118,209 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Recent Integrations -->
-      <div class="bg-white rounded-lg shadow">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-medium text-gray-900">Recent Integrations</h3>
-        </div>
-        <div class="px-6 py-4">
-          <% if @recent_integrations.any? %>
-            <div class="space-y-4">
-              <% @recent_integrations.each do |integration| %>
-                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div class="flex items-center space-x-3">
-                    <div class="flex-shrink-0">
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        <%= integration[:source_type].humanize %>
-                      </span>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                      <p class="text-sm font-medium text-gray-900 truncate"><%= integration[:name] %></p>
-                      <p class="text-sm text-gray-500"><%= pluralize(integration[:records_count], 'record') %></p>
+      <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <div class="px-6 py-4 border-b border-slate-200/50">
+            <div class="flex items-center space-x-2">
+              <div class="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-lg">
+                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-blue-900 bg-clip-text text-transparent">
+                Recent Integrations
+              </h3>
+            </div>
+          </div>
+          <div class="p-6">
+            <% if @recent_integrations.any? %>
+              <div class="space-y-4">
+                <% @recent_integrations.each do |integration| %>
+                  <div class="group relative bg-gradient-to-br from-white to-gray-50 rounded-xl p-4 border border-gray-200/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center space-x-4">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-400 to-indigo-500 text-white shadow-lg">
+                          <%= integration[:source_type].humanize %>
+                        </span>
+                        <div>
+                          <p class="text-sm font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors duration-300">
+                            <%= integration[:name] %>
+                          </p>
+                          <p class="text-xs text-gray-500"><%= pluralize(integration[:records_count], 'record') %></p>
+                        </div>
+                      </div>
+                      <div class="flex items-center space-x-3">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold shadow-lg <%= integration[:status] == 'connected' ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 'bg-gradient-to-r from-red-400 to-rose-500' %> text-white">
+                          <%= integration[:status].humanize %>
+                        </span>
+                        <% if integration[:last_sync] %>
+                          <span class="text-xs text-gray-500 whitespace-nowrap">
+                            <%= time_ago_in_words(Time.parse(integration[:last_sync])) %> ago
+                          </span>
+                        <% end %>
+                      </div>
                     </div>
                   </div>
-                  <div class="flex items-center space-x-2">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= integration[:status] == 'connected' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-                      <%= integration[:status].humanize %>
-                    </span>
-                    <% if integration[:last_sync] %>
-                      <span class="text-xs text-gray-500">Last sync: <%= time_ago_in_words(Time.parse(integration[:last_sync])) %> ago</span>
-                    <% end %>
-                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="text-center py-12">
+                <div class="w-16 h-16 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="h-8 w-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8V4a1 1 0 00-1-1H7a1 1 0 00-1 1v1m8 0V4.5a.5.5 0 00-.5-.5h-3a.5.5 0 00-.5.5V5"></path>
+                  </svg>
                 </div>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="text-center py-8">
-              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8V4a1 1 0 00-1-1H7a1 1 0 00-1 1v1m8 0V4.5a.5.5 0 00-.5-.5h-3a.5.5 0 00-.5.5V5"></path>
-              </svg>
-              <h3 class="mt-2 text-sm font-medium text-gray-900">No integrations yet</h3>
-              <p class="mt-1 text-sm text-gray-500">Get started by adding your first data source.</p>
-            </div>
-          <% end %>
+                <h3 class="text-sm font-semibold text-gray-900 mb-1">No integrations yet</h3>
+                <p class="text-sm text-gray-500">Get started by adding your first data source.</p>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
 
       <!-- Optimization Opportunities -->
-      <div class="bg-white rounded-lg shadow">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-medium text-gray-900">Optimization Opportunities</h3>
-        </div>
-        <div class="px-6 py-4">
-          <% if @optimization_opportunities.any? %>
-            <div class="space-y-4">
-              <% @optimization_opportunities.each do |opportunity| %>
-                <div class="p-4 border border-gray-200 rounded-lg">
-                  <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= opportunity[:priority] == 'high' ? 'bg-red-100 text-red-800' : opportunity[:priority] == 'medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800' %>">
+      <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20">
+        <div class="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-amber-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <div class="px-6 py-4 border-b border-slate-200/50">
+            <div class="flex items-center space-x-2">
+              <div class="p-2 bg-gradient-to-br from-orange-500 to-amber-600 rounded-lg shadow-lg">
+                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-orange-900 bg-clip-text text-transparent">
+                Optimization Opportunities
+              </h3>
+            </div>
+          </div>
+          <div class="p-6">
+            <% if @optimization_opportunities.any? %>
+              <div class="space-y-4">
+                <% @optimization_opportunities.each do |opportunity| %>
+                  <div class="group relative bg-gradient-to-br from-white to-gray-50 rounded-xl p-4 border border-gray-200/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                    <div class="flex items-start space-x-3">
+                      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold shadow-lg <%= 
+                        opportunity[:priority] == 'high' ? 'bg-gradient-to-r from-red-400 to-rose-500' : 
+                        opportunity[:priority] == 'medium' ? 'bg-gradient-to-r from-yellow-400 to-amber-500' : 
+                        'bg-gradient-to-r from-blue-400 to-indigo-500' 
+                      %> text-white">
                         <%= opportunity[:priority].humanize %>
                       </span>
-                    </div>
-                    <div class="ml-3 flex-1">
-                      <h4 class="text-sm font-medium text-gray-900"><%= opportunity[:source] %></h4>
-                      <p class="text-sm text-gray-600 mt-1"><%= opportunity[:description] %></p>
-                      <p class="text-xs text-gray-500 mt-1">Type: <%= opportunity[:type].humanize %></p>
+                      <div class="flex-1">
+                        <h4 class="text-sm font-semibold text-gray-900 group-hover:text-emerald-600 transition-colors duration-300">
+                          <%= opportunity[:source] %>
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1"><%= opportunity[:description] %></p>
+                        <p class="text-xs text-gray-500 mt-2">Type: <%= opportunity[:type].humanize %></p>
+                      </div>
                     </div>
                   </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="text-center py-12">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl">
+                  <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
                 </div>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="text-center py-8">
-              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              <h3 class="mt-2 text-sm font-medium text-gray-900">All optimized!</h3>
-              <p class="mt-1 text-sm text-gray-500">Your data integrations are running smoothly.</p>
-            </div>
-          <% end %>
+                <h3 class="text-sm font-semibold text-gray-900 mb-1">All optimized!</h3>
+                <p class="text-sm text-gray-500">Your data integrations are running smoothly.</p>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Integration Health Overview -->
-    <div class="mt-8 bg-white rounded-lg shadow">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <h3 class="text-lg font-medium text-gray-900">Integration Health</h3>
-      </div>
-      <div class="px-6 py-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="text-center">
-            <div class="text-2xl font-bold text-gray-900"><%= @integration_stats[:integration_health] %>%</div>
-            <div class="text-sm text-gray-500">Overall Health</div>
-          </div>
-          <div class="text-center">
-            <div class="text-2xl font-bold text-gray-900">
-              <% if @integration_stats[:last_sync] %>
-                <%= time_ago_in_words(Time.parse(@integration_stats[:last_sync])) %>
-              <% else %>
-                Never
-              <% end %>
+    <div class="mt-8 relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20">
+      <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 rounded-2xl"></div>
+      <div class="relative">
+        <div class="px-6 py-4 border-b border-slate-200/50">
+          <div class="flex items-center space-x-2">
+            <div class="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg shadow-lg">
+              <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
             </div>
-            <div class="text-sm text-gray-500">Last Sync</div>
+            <h3 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-emerald-900 bg-clip-text text-transparent">
+              Integration Health
+            </h3>
           </div>
-          <div class="text-center">
-            <div class="text-2xl font-bold text-gray-900"><%= @integration_stats[:sources_trend] %>%</div>
-            <div class="text-sm text-gray-500">Sources Trend</div>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+              <div class="relative inline-flex items-center justify-center">
+                <div class="w-32 h-32">
+                  <svg class="w-32 h-32 transform -rotate-90">
+                    <circle cx="64" cy="64" r="56" stroke="currentColor" stroke-width="8" fill="none" class="text-gray-200"></circle>
+                    <circle cx="64" cy="64" r="56" stroke="currentColor" stroke-width="8" fill="none" 
+                      class="<%= @integration_stats[:integration_health] >= 90 ? 'text-green-500' : @integration_stats[:integration_health] >= 70 ? 'text-yellow-500' : 'text-red-500' %>" 
+                      stroke-dasharray="<%= 351.86 * @integration_stats[:integration_health] / 100 %> 351.86"
+                      stroke-linecap="round"></circle>
+                  </svg>
+                </div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div>
+                    <p class="text-3xl font-bold bg-gradient-to-r <%= @integration_stats[:integration_health] >= 90 ? 'from-green-600 to-emerald-600' : @integration_stats[:integration_health] >= 70 ? 'from-yellow-600 to-amber-600' : 'from-red-600 to-rose-600' %> bg-clip-text text-transparent">
+                      <%= @integration_stats[:integration_health] %>%
+                    </p>
+                    <p class="text-xs text-gray-500 font-semibold">Health Score</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="text-center flex items-center justify-center">
+              <div>
+                <div class="text-2xl font-bold text-gray-900">
+                  <% if @integration_stats[:last_sync] %>
+                    <%= time_ago_in_words(Time.parse(@integration_stats[:last_sync])) %>
+                  <% else %>
+                    Never
+                  <% end %>
+                </div>
+                <div class="text-sm text-gray-500 font-semibold">Last Sync</div>
+              </div>
+            </div>
+            <div class="text-center flex items-center justify-center">
+              <div>
+                <%
+                  sources_trend = @integration_stats&.dig(:sources_trend) || 0
+                  trend_positive = sources_trend > 0
+                  trend_negative = sources_trend < 0
+                  trend_neutral = sources_trend == 0
+                %>
+                <div class="flex items-center justify-center space-x-2">
+                  <p class="text-2xl font-bold bg-gradient-to-r <%= trend_positive ? 'from-green-600 to-emerald-600' : trend_negative ? 'from-red-600 to-rose-600' : 'from-gray-600 to-slate-600' %> bg-clip-text text-transparent">
+                    <%= trend_positive ? '+' : '' %><%= sources_trend %>
+                    <% unless trend_neutral %>%<% end %>
+                  </p>
+                  <% unless trend_neutral %>
+                    <svg class="h-6 w-6 <%= trend_positive ? 'text-green-500' : 'text-red-500' %>" fill="currentColor" viewBox="0 0 20 20">
+                      <% if trend_positive %>
+                        <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L10 4.414l-5.293 5.293a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                      <% else %>
+                        <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L10 15.586l5.293-5.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                      <% end %>
+                    </svg>
+                  <% else %>
+                    <svg class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                    </svg>
+                  <% end %>
+                </div>
+                <div class="text-sm text-gray-500 font-semibold">
+                  Sources Trend
+                  <% if trend_neutral %>
+                    <span class="text-xs text-gray-400">(No change)</span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -197,13 +328,83 @@
 
     <!-- Action Buttons -->
     <div class="mt-8 flex justify-center space-x-4">
-      <%= link_to "Add New Data Source", new_data_source_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-      <%= link_to "View All Sources", data_sources_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+      <%= link_to new_data_source_path, class: "group inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300" do %>
+        <svg class="h-5 w-5 mr-2 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Add New Data Source
+      <% end %>
+      <%= link_to data_sources_path, class: "group inline-flex items-center px-6 py-3 border border-slate-300/50 rounded-xl shadow-md text-sm font-semibold text-slate-700 bg-white/70 backdrop-blur-sm hover:bg-white/90 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5" do %>
+        <svg class="h-5 w-5 mr-2 text-slate-500 group-hover:text-slate-700 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        View All Sources
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Live Update Indicator -->
+  <div class="fixed bottom-6 right-6 z-50">
+    <div class="group relative">
+      <div class="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-full blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+      <div class="relative bg-white/90 backdrop-blur-xl rounded-full px-4 py-2 shadow-xl border border-white/20 flex items-center space-x-2">
+        <div class="w-2 h-2 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full animate-pulse"></div>
+        <span class="text-sm font-semibold text-slate-700">Live Integration Monitor</span>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
+document.addEventListener('turbo:load', () => {
+  // Smooth scroll animations
+  const animateOnScroll = () => {
+    const elements = document.querySelectorAll('.relative.bg-white\\/80, .group.relative.bg-white\\/80');
+    
+    elements.forEach((element, index) => {
+      const rect = element.getBoundingClientRect();
+      const isVisible = rect.top <= window.innerHeight && rect.bottom >= 0;
+      
+      if (isVisible && !element.classList.contains('animate-in')) {
+        setTimeout(() => {
+          element.classList.add('animate-in');
+          element.style.opacity = '0';
+          element.style.transform = 'translateY(20px)';
+          
+          requestAnimationFrame(() => {
+            element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+          });
+        }, index * 50);
+      }
+    });
+  };
+  
+  // Initialize animations
+  animateOnScroll();
+  window.addEventListener('scroll', animateOnScroll);
+
+  // Animate progress bars
+  document.querySelectorAll('[style*="width:"]').forEach(bar => {
+    const width = bar.style.width;
+    bar.style.width = '0%';
+    setTimeout(() => {
+      bar.style.transition = 'width 1.5s ease-out';
+      bar.style.width = width;
+    }, 100);
+  });
+
+  // Animate circle progress
+  document.querySelectorAll('circle[stroke-dasharray]').forEach(circle => {
+    const strokeDasharray = circle.getAttribute('stroke-dasharray');
+    circle.setAttribute('stroke-dasharray', '0 351.86');
+    setTimeout(() => {
+      circle.style.transition = 'stroke-dasharray 2s ease-out';
+      circle.setAttribute('stroke-dasharray', strokeDasharray);
+    }, 100);
+  });
+
   // Auto-refresh dashboard stats every 30 seconds
   setInterval(function() {
     fetch('<%= dashboard_stats_ai_data_integration_index_path %>', {
@@ -215,10 +416,18 @@
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        // Update stats without full page reload
         console.log('Dashboard stats updated:', data.timestamp);
+        // Add subtle pulse to live indicator
+        const liveIndicator = document.querySelector('.fixed.bottom-6.right-6');
+        if (liveIndicator) {
+          liveIndicator.classList.add('scale-110');
+          setTimeout(() => {
+            liveIndicator.classList.remove('scale-110');
+          }, 300);
+        }
       }
     })
     .catch(error => console.error('Error updating dashboard stats:', error));
   }, 30000);
+});
 </script>
