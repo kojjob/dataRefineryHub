@@ -11,6 +11,7 @@
  * It is generally better to create a new file per style scope.
  *
  *= require premium_navigation
+ *= require premium_authentication
  *= require_tree .
  *= require_self
  */
