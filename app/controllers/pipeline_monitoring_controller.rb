@@ -62,10 +62,12 @@ class PipelineMonitoringController < ApplicationController
   def alerts
     @alerts = current_organization.alerts
                                .where(alert_type: "pipeline")
-                               .includes(:user)
+                               .includes(:user, :data_source, :pipeline_execution)
                                .order(created_at: :desc)
                                .page(params[:page])
   end
+
+
 
   private
 

@@ -50,6 +50,17 @@ Rails.application.routes.draw do
     end
   end
 
+  # Alert Management routes (nested under pipeline monitoring)
+  namespace :pipeline_monitoring do
+    resources :alerts, only: [] do
+      member do
+        patch :acknowledge
+        patch :resolve
+        patch :dismiss
+      end
+    end
+  end
+
   # Analytics - Legacy route for backward compatibility
   get "analytics", to: "analytics/dashboard#index"
   
