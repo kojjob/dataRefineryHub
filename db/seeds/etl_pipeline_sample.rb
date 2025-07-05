@@ -37,7 +37,7 @@ if org && user
     pipeline.description = "Extract customer data from Shopify, transform, and load to data warehouse"
     pipeline.pipeline_type = 'etl'
     pipeline.status = 'active'
-    
+
     pipeline.source_config = {
       type: 'api',
       data_source_id: sample_data_source.id,
@@ -48,7 +48,7 @@ if org && user
         updated_at_min: ':last_sync'
       }
     }
-    
+
     pipeline.transformation_rules = [
       {
         type: 'field_mapping',
@@ -84,22 +84,22 @@ if org && user
         }
       }
     ]
-    
+
     pipeline.destination_config = {
       type: 'warehouse',
       warehouse_type: 'snowflake',
       schema: 'analytics',
       table_name: 'dim_customers',
       write_mode: 'merge',
-      merge_keys: ['id']
+      merge_keys: [ 'id' ]
     }
-    
+
     pipeline.schedule_config = {
       type: 'cron',
       cron_expression: '0 */6 * * *',
       timezone: 'UTC'
     }
-    
+
     pipeline.error_handling_strategy = 'circuit_breaker'
     pipeline.retry_policy = {
       max_retries: 3,
@@ -118,7 +118,7 @@ if org && user
     pipeline.description = "Extract orders from Shopify API, load to database, transform in place"
     pipeline.pipeline_type = 'elt'
     pipeline.status = 'active'
-    
+
     pipeline.source_config = {
       type: 'api',
       endpoint: 'https://api.shopify.com/orders',
@@ -129,7 +129,7 @@ if org && user
         'X-Shopify-Access-Token' => 'encrypted_token'
       }
     }
-    
+
     pipeline.destination_config = {
       type: 'database',
       database_type: 'postgresql',
@@ -138,14 +138,14 @@ if org && user
       schema: 'shopify',
       table_name: 'orders_raw'
     }
-    
+
     pipeline.transformation_rules = [
       {
         type: 'post_load_sql',
         name: 'Create orders fact table',
         sql: <<-SQL
           CREATE TABLE IF NOT EXISTS analytics.fact_orders AS
-          SELECT 
+          SELECT#{' '}
             id as order_id,
             customer->>'id' as customer_id,
             created_at::timestamp as order_date,
@@ -157,7 +157,7 @@ if org && user
         SQL
       }
     ]
-    
+
     pipeline.schedule_config = {
       type: 'interval',
       interval_minutes: 30
@@ -173,7 +173,7 @@ if org && user
     pipeline.description = "Stream user events from Kafka to data warehouse"
     pipeline.pipeline_type = 'streaming'
     pipeline.status = 'draft'
-    
+
     pipeline.source_config = {
       type: 'streaming',
       platform: 'kafka',
@@ -181,7 +181,7 @@ if org && user
       consumer_group: 'analytics-consumer',
       bootstrap_servers: 'kafka.internal:9092'
     }
-    
+
     pipeline.transformation_rules = [
       {
         type: 'filter',
@@ -195,7 +195,7 @@ if org && user
       {
         type: 'aggregate',
         name: 'Aggregate by user and event type',
-        group_by: ['user_id', 'event_type'],
+        group_by: [ 'user_id', 'event_type' ],
         window: '5 minutes',
         aggregations: [
           {
@@ -206,7 +206,7 @@ if org && user
         ]
       }
     ]
-    
+
     pipeline.destination_config = {
       type: 'warehouse',
       warehouse_type: 'bigquery',
@@ -222,12 +222,12 @@ if org && user
       organization: org,
       pipeline_name: sample_pipeline.name,
       execution_id: SecureRandom.uuid,
-      status: ['completed', 'failed', 'running'].sample,
+      status: [ 'completed', 'failed', 'running' ].sample,
       execution_mode: 'automatic',
       started_at: (i + 1).hours.ago,
       completed_at: i.hours.ago,
-      progress: [100, 85, 50].sample,
-      current_stage: ['extraction', 'transformation', 'loading'].sample,
+      progress: [ 100, 85, 50 ].sample,
+      current_stage: [ 'extraction', 'transformation', 'loading' ].sample,
       user: user,
       parameters: {
         last_sync: (i + 2).hours.ago.iso8601

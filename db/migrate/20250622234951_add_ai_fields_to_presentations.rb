@@ -9,10 +9,10 @@ class AddAiFieldsToPresentations < ActiveRecord::Migration[8.0]
     add_column :presentations, :live_data_enabled, :boolean, default: false
     add_column :presentations, :shared, :boolean, default: false
     add_column :presentations, :published_at, :datetime
-    
+
     add_index :presentations, :presentation_type
     add_index :presentations, :engagement_score
     add_index :presentations, :published_at
-    add_index :presentations, [:shared, :published_at]
+    add_index :presentations, [ :shared, :published_at ]
   end
 end

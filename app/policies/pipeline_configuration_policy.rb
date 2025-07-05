@@ -16,7 +16,7 @@ class PipelineConfigurationPolicy < ApplicationPolicy
   end
 
   def update?
-    user.present? && 
+    user.present? &&
     record.organization == user.organization &&
     (user.owner? || user.admin?)
   end
@@ -26,13 +26,13 @@ class PipelineConfigurationPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.present? && 
+    user.present? &&
     record.organization == user.organization &&
     (user.owner? || user.admin?)
   end
 
   def execute?
-    user.present? && 
+    user.present? &&
     record.organization == user.organization &&
     (user.owner? || user.admin? || user.member?)
   end

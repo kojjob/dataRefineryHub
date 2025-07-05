@@ -1,0 +1,45 @@
+<div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+  <div class="px-6 py-4 border-b border-slate-200/50">
+    <div class="skeleton-line h-6 w-1/4 bg-gradient-to-r from-gray-200 to-gray-300 rounded animate-pulse"></div>
+  </div>
+  <div class="overflow-hidden">
+    <table class="min-w-full">
+      <thead>
+        <tr class="bg-gradient-to-r from-slate-50 to-gray-50">
+          <% (columns || 4).times do %>
+            <th class="px-6 py-4">
+              <div class="skeleton-line h-4 w-20 bg-gradient-to-r from-gray-200 to-gray-300 rounded animate-pulse"></div>
+            </th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200/50">
+        <% (rows || 5).times do %>
+          <tr>
+            <% (columns || 4).times do %>
+              <td class="px-6 py-4">
+                <div class="skeleton-line h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded animate-pulse"></div>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  .skeleton-line {
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+</style>

@@ -1,0 +1,295 @@
+/* Premium Effects Stylesheet */
+
+/* Ripple Effect Animation */
+@keyframes ripple-animation {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Skeleton Loader Animations */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-line {
+  height: 1rem;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-circle {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 50%;
+}
+
+/* Command Palette Styles */
+.command-palette {
+  @apply fixed inset-0 z-50 flex items-start justify-center pt-20 px-4;
+}
+
+.command-palette-backdrop {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.command-palette-modal {
+  @apply relative w-full max-w-2xl bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden;
+  transform: translateY(-20px) scale(0.95);
+  opacity: 0;
+  transition: all 0.2s ease-out;
+}
+
+.command-palette-open .command-palette-modal {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.command-palette-header {
+  @apply p-4 border-b border-gray-200/50;
+}
+
+.command-palette-input {
+  @apply w-full px-4 py-3 text-lg bg-transparent border-0 outline-none placeholder-gray-400;
+}
+
+.command-palette-results {
+  @apply max-h-96 overflow-y-auto p-2;
+}
+
+.command-result {
+  @apply flex items-center space-x-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200;
+}
+
+.command-result:hover {
+  @apply bg-gradient-to-r from-indigo-50 to-purple-50;
+}
+
+.command-result.selected {
+  @apply bg-gradient-to-r from-indigo-100 to-purple-100;
+}
+
+.command-icon {
+  @apply text-2xl;
+}
+
+.command-name {
+  @apply flex-1 font-medium text-gray-900;
+}
+
+.command-keywords {
+  @apply text-xs text-gray-500;
+}
+
+/* Page Transition Effects */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.page-transition-out {
+  animation: fadeIn 0.3s ease-out reverse;
+}
+
+.page-transition-in {
+  animation: slideUp 0.5s ease-out;
+}
+
+/* Advanced Glassmorphism */
+.glass-morphism {
+  @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-xl;
+}
+
+.glass-morphism-dark {
+  @apply bg-gray-900/80 backdrop-blur-xl border border-gray-700/20 shadow-xl;
+}
+
+.glass-morphism-colored {
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+/* Glow Effects */
+.glow-blue {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+}
+
+/* Hover Lift Effect */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Smooth Scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #4f46e5 0%, #7c3aed 100%);
+  background-clip: content-box;
+}
+
+/* Focus Styles */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+}
+
+/* Premium Loading Spinner */
+.premium-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(139, 92, 246, 0.2);
+  border-top-color: #8b5cf6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Gradient Text */
+.gradient-text {
+  @apply bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent;
+}
+
+/* Premium Badge */
+.premium-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.4);
+}
+
+/* Floating Labels */
+.floating-label {
+  @apply absolute left-3 top-3 text-gray-500 transition-all duration-200 pointer-events-none;
+}
+
+.floating-label-input:focus ~ .floating-label,
+.floating-label-input:not(:placeholder-shown) ~ .floating-label {
+  @apply text-xs -top-2 left-2 bg-white px-1;
+}
+
+/* Neumorphism */
+.neumorphism {
+  background: #e0e5ec;
+  box-shadow: 9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff;
+  border-radius: 1rem;
+}
+
+.neumorphism-inset {
+  background: #e0e5ec;
+  box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+  border-radius: 1rem;
+}
+
+/* Tooltip */
+.tooltip {
+  @apply absolute z-50 px-2 py-1 text-xs text-white bg-gray-900 rounded-lg opacity-0 pointer-events-none transition-opacity duration-200;
+}
+
+.tooltip-trigger:hover .tooltip {
+  @apply opacity-100;
+}
+
+/* Premium Checkbox */
+.premium-checkbox {
+  @apply w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 cursor-pointer;
+  transition: all 0.2s ease;
+}
+
+.premium-checkbox:checked {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  animation: checkmark 0.3s ease;
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

@@ -145,21 +145,21 @@ module DataQualityHelper
   # Format quality metric with icon
   def quality_metric_with_icon(metric_name, score)
     icon_class = case metric_name.to_s.downcase
-                when "completeness"
+    when "completeness"
                   "text-blue-500"
-                when "accuracy"
+    when "accuracy"
                   "text-green-500"
-                when "freshness"
+    when "freshness"
                   "text-yellow-500"
-                when "consistency"
+    when "consistency"
                   "text-purple-500"
-                when "validity"
+    when "validity"
                   "text-indigo-500"
-                when "uniqueness"
+    when "uniqueness"
                   "text-pink-500"
-                else
+    else
                   "text-gray-500"
-                end
+    end
 
     content_tag :div, class: "flex items-center space-x-2" do
       concat content_tag(:div, class: "w-3 h-3 rounded-full #{quality_progress_color(score)}")
@@ -186,7 +186,7 @@ module DataQualityHelper
     return content_tag(:span, "—", class: "text-gray-400") if previous_score.nil?
 
     difference = current_score - previous_score
-    
+
     if difference > 2
       content_tag :span, class: "inline-flex items-center text-green-600" do
         concat "↗ +#{difference.round(1)}%"
@@ -212,7 +212,7 @@ module DataQualityHelper
       "validity" => "Verifies that data conforms to defined formats, ranges, and business constraints.",
       "uniqueness" => "Identifies and measures the presence of duplicate records in the dataset."
     }
-    
+
     explanations[dimension.to_s.downcase] || "Quality metric for #{dimension.humanize.downcase}."
   end
 
@@ -240,13 +240,13 @@ module DataQualityHelper
         high: "Implement automated data normalization processes."
       }
     }
-    
+
     level = case score.to_f
-           when 0..60 then :low
-           when 61..80 then :medium
-           else :high
-           end
-    
+    when 0..60 then :low
+    when 61..80 then :medium
+    else :high
+    end
+
     suggestions.dig(dimension.to_s.downcase, level) || "Continue monitoring this quality dimension."
   end
 
@@ -254,7 +254,7 @@ module DataQualityHelper
   def quality_report_summary(metrics)
     total_score = metrics[:overall_quality_score] || 0
     status = determine_quality_status(total_score)
-    
+
     content_tag :div, class: "quality-summary" do
       concat content_tag(:div, "#{total_score}%", class: "text-3xl font-bold #{quality_score_color(total_score)}")
       concat content_tag(:div, status.humanize, class: "text-sm #{quality_status_badge_class(status)}")
@@ -262,7 +262,7 @@ module DataQualityHelper
   end
 
   # Data quality chart configuration
-  def quality_chart_config(data, chart_type = 'line')
+  def quality_chart_config(data, chart_type = "line")
     {
       type: chart_type,
       data: data,
@@ -271,10 +271,10 @@ module DataQualityHelper
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            position: 'bottom'
+            position: "bottom"
           },
           tooltip: {
-            mode: 'index',
+            mode: "index",
             intersect: false
           }
         },
@@ -288,8 +288,8 @@ module DataQualityHelper
           }
         },
         interaction: {
-          mode: 'nearest',
-          axis: 'x',
+          mode: "nearest",
+          axis: "x",
           intersect: false
         }
       }
@@ -299,35 +299,35 @@ module DataQualityHelper
   # Quality metrics comparison
   def compare_quality_metrics(current, previous)
     return {} if previous.nil?
-    
+
     comparison = {}
-    
+
     %w[completeness accuracy freshness consistency].each do |metric|
       current_value = current[metric.to_sym] || 0
       previous_value = previous[metric.to_sym] || 0
       difference = current_value - previous_value
-      
+
       comparison[metric] = {
         current: current_value,
         previous: previous_value,
         difference: difference,
-        trend: difference > 1 ? 'up' : (difference < -1 ? 'down' : 'stable')
+        trend: difference > 1 ? "up" : (difference < -1 ? "down" : "stable")
       }
     end
-    
+
     comparison
   end
 
   # Quality alert priority
   def quality_alert_priority(score, threshold = 70)
     if score < threshold * 0.5
-      'critical'
+      "critical"
     elsif score < threshold * 0.7
-      'high'
+      "high"
     elsif score < threshold
-      'medium'
+      "medium"
     else
-      'low'
+      "low"
     end
   end
 
@@ -353,9 +353,9 @@ module DataQualityHelper
       "validity" => "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
       "uniqueness" => "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
     }
-    
+
     path = icons[dimension.to_s.downcase] || icons["completeness"]
-    
+
     content_tag :svg, class: "h-5 w-5", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" do
       content_tag :path, "", "stroke-linecap": "round", "stroke-linejoin": "round", "stroke-width": "2", d: path
     end

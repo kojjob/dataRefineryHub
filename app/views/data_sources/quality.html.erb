@@ -1,238 +1,267 @@
-<% content_for :title, "Data Quality Dashboard" %>
-<% content_for :page_title, "Data Quality" %>
+<% content_for :page_title, "Data Quality Dashboard" %>
 
-<!-- Upcube-inspired Data Quality Dashboard -->
-<div class="min-h-screen bg-gray-50">
-  
-  <!-- Page Header -->
-  <div class="mb-8">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-      <div class="flex items-center gap-4">
-        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-          <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
-          </svg>
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-green-50">
+  <!-- Premium Header with Glassmorphism -->
+  <div class="relative bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-xl">
+    <div class="absolute inset-0 bg-gradient-to-r from-emerald-600/10 to-green-600/10"></div>
+    <div class="relative px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div class="space-y-2">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-lg">
+              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+              </svg>
+            </div>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-900 via-emerald-900 to-green-900 bg-clip-text text-transparent">
+              Data Quality Dashboard
+            </h1>
+          </div>
+          <p class="text-slate-600 font-medium">Monitor and improve your data integrity across all sources</p>
         </div>
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900">Data Quality Dashboard</h1>
-          <p class="mt-2 text-gray-600">Monitor and improve your data integrity across all sources</p>
+        <div class="mt-4 sm:mt-0 flex items-center space-x-3">
+          <%= link_to data_sources_path, class: "group inline-flex items-center px-5 py-2.5 border border-slate-300/50 rounded-xl shadow-md text-sm font-semibold text-slate-700 bg-white/70 backdrop-blur-sm hover:bg-white/90 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5" do %>
+            <svg class="h-4 w-4 mr-2 text-slate-500 group-hover:text-slate-700 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+            </svg>
+            Back to Sources
+          <% end %>
+          <button class="group inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
+                  data-action="click->data-quality#runValidation"
+                  data-data-quality-target="runButton">
+            <svg class="h-4 w-4 mr-2 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Run Quality Check
+          </button>
         </div>
-      </div>
-      
-      <div class="mt-4 sm:mt-0 sm:ml-4 flex items-center gap-3">
-        <%= link_to data_sources_path, class: "inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors duration-200" do %>
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-          </svg>
-          Back to Data Sources
-        <% end %>
-        
-        <button class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200"
-                data-action="click->data-quality#runValidation"
-                data-data-quality-target="runButton">
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Run Quality Check
-        </button>
       </div>
     </div>
   </div>
 
-  <!-- Overall Quality Score -->
-  <div class="mb-8" data-controller="data-quality">
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-              <svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+  <div class="px-4 sm:px-6 lg:px-8 py-8" data-controller="data-quality">
+    <!-- Overall Quality Score -->
+    <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 mb-8">
+      <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-green-500/5 rounded-2xl"></div>
+      <div class="relative">
+        <div class="px-6 py-4 border-b border-slate-200/50">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 bg-gradient-to-br from-emerald-500 to-green-600 rounded-lg shadow-lg">
+                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-emerald-900 bg-clip-text text-transparent">
+                  Overall Data Quality Score
+                </h3>
+                <p class="text-sm text-slate-600">Aggregated quality metrics across all data sources</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm font-medium text-gray-700">Last updated</div>
+              <div class="text-xs text-gray-500">
+                <%= @quality_metrics[:last_quality_check] ? 
+                    @quality_metrics[:last_quality_check].strftime("%B %d, %Y at %I:%M %p") : 
+                    "Never" %>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Quality Score Circle -->
+            <div class="flex items-center justify-center">
+              <div class="relative">
+                <div class="w-48 h-48">
+                  <svg class="w-48 h-48 transform -rotate-90">
+                    <circle cx="96" cy="96" r="80" stroke="currentColor" stroke-width="12" fill="none" class="text-gray-200"></circle>
+                    <circle cx="96" cy="96" r="80" stroke="currentColor" stroke-width="12" fill="none" 
+                      class="text-gradient-to-r from-emerald-500 to-green-600" 
+                      stroke-dasharray="<%= 502.65 * @quality_metrics[:overall_score] / 100 %> 502.65"
+                      stroke-linecap="round"></circle>
+                  </svg>
+                </div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="text-center">
+                    <div class="text-5xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent" data-data-quality-target="overallScore">
+                      <%= @quality_metrics[:overall_score] %>%
+                    </div>
+                    <div class="text-sm font-semibold text-gray-700">Quality Score</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quality Dimensions -->
+            <div class="space-y-4">
+              <h4 class="text-lg font-bold bg-gradient-to-r from-gray-900 to-emerald-900 bg-clip-text text-transparent">Quality Dimensions</h4>
+              
+              <% quality_dimensions = [
+                   { name: 'Completeness', score: @quality_metrics[:dimension_scores][:completeness], color: 'emerald', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' },
+                   { name: 'Accuracy', score: @quality_metrics[:dimension_scores][:accuracy], color: 'blue', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
+                   { name: 'Consistency', score: @quality_metrics[:dimension_scores][:consistency], color: 'purple', icon: 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z' },
+                   { name: 'Validity', score: @quality_metrics[:dimension_scores][:validity], color: 'indigo', icon: 'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z' },
+                   { name: 'Timeliness', score: @quality_metrics[:dimension_scores][:timeliness], color: 'amber', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' }
+                 ] %>
+              
+              <% quality_dimensions.each do |dimension| %>
+                <div class="group relative bg-gradient-to-br from-white to-gray-50 rounded-xl p-4 border border-gray-200/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center space-x-3">
+                      <div class="p-2 bg-gradient-to-br from-<%= dimension[:color] %>-400 to-<%= dimension[:color] %>-500 rounded-lg shadow-md">
+                        <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= dimension[:icon] %>" />
+                        </svg>
+                      </div>
+                      <span class="font-semibold text-gray-900"><%= dimension[:name] %></span>
+                    </div>
+                    <span class="text-lg font-bold bg-gradient-to-r from-<%= dimension[:color] %>-600 to-<%= dimension[:color] %>-700 bg-clip-text text-transparent">
+                      <%= dimension[:score].round(1) %>%
+                    </span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-<%= dimension[:color] %>-400 to-<%= dimension[:color] %>-500 rounded-full transition-all duration-1000 ease-out" 
+                         style="width: <%= dimension[:score] %>%"></div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center space-x-4">
+            <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
               </svg>
             </div>
             <div>
-              <h3 class="text-lg font-semibold text-gray-900">Overall Data Quality Score</h3>
-              <p class="text-sm text-gray-600">Aggregated quality metrics across all data sources</p>
-            </div>
-          </div>
-          <div class="text-right">
-            <div class="text-sm font-medium text-gray-900">Last updated</div>
-            <div class="text-xs text-gray-500">
-              <%= @quality_metrics[:last_quality_check] ? 
-                  @quality_metrics[:last_quality_check].strftime("%B %d, %Y at %I:%M %p") : 
-                  "Never" %>
+              <div class="text-3xl font-bold text-gray-900"><%= number_with_delimiter(@quality_metrics[:total_records]) %></div>
+              <div class="text-sm font-semibold text-slate-600">Total Records</div>
             </div>
           </div>
         </div>
       </div>
-      
-      <div class="p-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- Quality Score Circle -->
-          <div class="flex items-center justify-center">
-            <div class="relative">
-              <div class="w-40 h-40 rounded-full bg-green-100 flex items-center justify-center border-4 border-green-200">
-                <div class="text-center">
-                  <div class="text-4xl font-bold text-green-600" data-data-quality-target="overallScore">
-                    <%= @quality_metrics[:overall_score] %>%
-                  </div>
-                  <div class="text-sm font-medium text-green-700">Quality Score</div>
-                </div>
-              </div>
-              <div class="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                <svg class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                </svg>
-              </div>
+
+      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+        <div class="absolute inset-0 bg-gradient-to-br from-red-500/5 to-rose-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center space-x-4">
+            <div class="p-3 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl shadow-lg group-hover:shadow-red-500/25 transition-all duration-300">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div>
+              <div class="text-3xl font-bold text-gray-900"><%= @quality_metrics[:sources_with_issues] %></div>
+              <div class="text-sm font-semibold text-slate-600">Sources with Issues</div>
             </div>
           </div>
-          
-          <!-- Quality Breakdown -->
-          <div class="space-y-4">
-            <h4 class="text-lg font-semibold text-gray-900">Quality Dimensions</h4>
-            
-            <% quality_dimensions = [
-                 { name: 'Completeness', score: @quality_metrics[:dimension_scores][:completeness], color: 'green', description: 'Missing data fields' },
-                 { name: 'Accuracy', score: @quality_metrics[:dimension_scores][:accuracy], color: 'blue', description: 'Data correctness' },
-                 { name: 'Consistency', score: @quality_metrics[:dimension_scores][:consistency], color: 'purple', description: 'Format uniformity' },
-                 { name: 'Validity', score: @quality_metrics[:dimension_scores][:validity], color: 'indigo', description: 'Schema compliance' },
-                 { name: 'Timeliness', score: @quality_metrics[:dimension_scores][:timeliness], color: 'yellow', description: 'Data freshness' }
-               ] %>
-            
-            <% quality_dimensions.each do |dimension| %>
-              <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                <div class="flex items-center justify-between mb-2">
-                  <div class="font-medium text-gray-900"><%= dimension[:name] %></div>
-                  <div class="text-sm font-semibold text-<%= dimension[:color] %>-600"><%= dimension[:score].round(1) %>%</div>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
-                  <div class="bg-<%= dimension[:color] %>-500 h-2 rounded-full transition-all duration-1000 ease-out" 
-                       style="width: <%= dimension[:score] %>%"></div>
-                </div>
-                <div class="text-xs text-gray-500"><%= dimension[:description] %></div>
-              </div>
-            <% end %>
+        </div>
+      </div>
+
+      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+        <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center space-x-4">
+            <div class="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg group-hover:shadow-green-500/25 transition-all duration-300">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div>
+              <div class="text-3xl font-bold text-gray-900"><%= @data_sources.count %></div>
+              <div class="text-sm font-semibold text-slate-600">Data Sources</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Quick Stats Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <div class="bg-white rounded-lg border border-gray-200 p-6">
-      <div class="flex items-center gap-4">
-        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-          <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-          </svg>
-        </div>
-        <div>
-          <div class="text-2xl font-bold text-gray-900"><%= number_with_delimiter(@quality_metrics[:total_records]) %></div>
-          <div class="text-sm text-gray-600 font-medium">Total Records</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg border border-gray-200 p-6">
-      <div class="flex items-center gap-4">
-        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
-          <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-          </svg>
-        </div>
-        <div>
-          <div class="text-2xl font-bold text-gray-900"><%= @quality_metrics[:sources_with_issues] %></div>
-          <div class="text-sm text-gray-600 font-medium">Sources with Issues</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg border border-gray-200 p-6">
-      <div class="flex items-center gap-4">
-        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-          <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        </div>
-        <div>
-          <div class="text-2xl font-bold text-gray-900"><%= @data_sources.count %></div>
-          <div class="text-sm text-gray-600 font-medium">Data Sources</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Data Source Quality Grid -->
-  <div class="mb-8">
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <div class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-            <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-            </svg>
-          </div>
-          <div>
-            <h3 class="text-lg font-semibold text-gray-900">Data Source Quality</h3>
-            <p class="text-sm text-gray-600">Quality metrics by individual data source</p>
+    <!-- Data Source Quality Grid -->
+    <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 mb-8">
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-2xl"></div>
+      <div class="relative">
+        <div class="px-6 py-4 border-b border-slate-200/50">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-lg">
+              <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-blue-900 bg-clip-text text-transparent">
+              Data Source Quality
+            </h3>
+            <p class="text-sm text-slate-600">Quality metrics by individual data source</p>
           </div>
         </div>
-      </div>
         
-        <div class="p-8">
+        <div class="p-6">
           <% if @data_sources.any? %>
             <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               <% @data_sources.each do |data_source| %>
                 <% quality_score = calculate_source_quality_score(data_source) %>
-                <% score_color = quality_score >= 90 ? 'green' : quality_score >= 80 ? 'yellow' : 'red' %>
+                <% score_color = quality_score >= 90 ? 'green' : quality_score >= 80 ? 'amber' : 'red' %>
                 
-                <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white to-gray-50/50 shadow-xl border border-gray-100/50 hover:shadow-2xl transition-all duration-300">
-                  <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-<%= score_color %>-400/10 to-<%= score_color %>-600/10 rounded-full blur-2xl transform translate-x-8 -translate-y-8"></div>
+                <div class="group relative bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-xl border border-gray-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 overflow-hidden">
+                  <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-<%= score_color %>-400/20 to-<%= score_color %>-600/20 rounded-full blur-3xl transform translate-x-8 -translate-y-8"></div>
                   
                   <div class="relative p-6">
                     <!-- Header -->
                     <div class="flex items-center justify-between mb-4">
-                      <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                          <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                      <div class="flex items-center space-x-3">
+                        <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+                          <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
                           </svg>
                         </div>
                         <div>
                           <h4 class="font-bold text-gray-900"><%= data_source.name %></h4>
-                          <div class="text-xs text-gray-500 uppercase"><%= data_source.source_type.humanize %></div>
+                          <div class="text-xs font-medium text-gray-500 uppercase"><%= data_source.source_type.humanize %></div>
                         </div>
                       </div>
                       
                       <div class="text-center">
-                        <div class="text-2xl font-black text-<%= score_color %>-600"><%= quality_score %>%</div>
-                        <div class="text-xs text-gray-500 font-medium">Quality</div>
+                        <div class="text-3xl font-bold bg-gradient-to-r from-<%= score_color %>-600 to-<%= score_color %>-700 bg-clip-text text-transparent">
+                          <%= quality_score %>%
+                        </div>
+                        <div class="text-xs font-semibold text-gray-500">Quality</div>
                       </div>
                     </div>
                     
                     <!-- Quality Metrics -->
                     <div class="space-y-3">
-                      <div class="bg-gray-50 rounded-xl p-3">
+                      <div class="bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl p-3">
                         <div class="flex items-center justify-between text-sm">
                           <span class="text-gray-600 font-medium">Records</span>
                           <span class="font-bold text-gray-900"><%= number_with_delimiter(data_source.raw_data_records.count) %></span>
                         </div>
                       </div>
                       
-                      <div class="bg-gray-50 rounded-xl p-3">
+                      <div class="bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl p-3">
                         <div class="flex items-center justify-between text-sm">
                           <span class="text-gray-600 font-medium">Status</span>
-                          <span class="font-bold capitalize 
-                            <%= data_source.status == 'connected' ? 'text-green-600' : 
-                                data_source.status == 'syncing' ? 'text-blue-600' : 
-                                data_source.status == 'error' ? 'text-red-600' : 'text-gray-600' %>">
-                            <%= data_source.status %>
+                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shadow-md <%= 
+                            data_source.status == 'connected' ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white' : 
+                            data_source.status == 'syncing' ? 'bg-gradient-to-r from-blue-400 to-indigo-500 text-white' : 
+                            data_source.status == 'error' ? 'bg-gradient-to-r from-red-400 to-rose-500 text-white' : 
+                            'bg-gradient-to-r from-gray-400 to-slate-500 text-white' %>">
+                            <%= data_source.status.capitalize %>
                           </span>
                         </div>
                       </div>
                       
-                      <div class="bg-gray-50 rounded-xl p-3">
+                      <div class="bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl p-3">
                         <div class="flex items-center justify-between text-sm">
                           <span class="text-gray-600 font-medium">Last Sync</span>
                           <span class="font-bold text-gray-900">
@@ -245,8 +274,8 @@
                     <!-- Action Button -->
                     <div class="mt-4">
                       <%= link_to data_source_path(data_source), 
-                          class: "w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200" do %>
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          class: "group/btn w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transform hover:-translate-y-0.5 transition-all duration-300" do %>
+                        <svg class="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                         View Details
@@ -259,16 +288,16 @@
           <% else %>
             <!-- Empty State -->
             <div class="text-center py-20">
-              <div class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+              <div class="w-24 h-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+                <svg class="h-12 w-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
                 </svg>
               </div>
               <h3 class="text-xl font-bold text-gray-900 mb-2">No Data Sources Found</h3>
               <p class="text-gray-600 mb-6">Connect your first data source to start monitoring data quality.</p>
-              <%= link_to new_data_source_path, class: "inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200" do %>
-                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+              <%= link_to new_data_source_path, class: "group inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300" do %>
+                <svg class="h-5 w-5 mr-2 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
                 Add Data Source
               <% end %>
@@ -280,192 +309,278 @@
 
     <!-- Quality Issues & Recommendations -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      
       <!-- Recent Quality Issues -->
-      <div class="bg-gradient-to-br from-white to-gray-50/50 rounded-3xl shadow-2xl border border-gray-100/50 overflow-hidden">
-        <div class="bg-gradient-to-r from-red-50 to-rose-50 px-8 py-6 border-b border-red-200/50">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-rose-600 rounded-2xl flex items-center justify-center">
-              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-xl font-black text-gray-900">Recent Quality Issues</h3>
-              <p class="text-sm text-gray-600 font-medium">Data quality problems requiring attention</p>
+      <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-red-500/5 to-rose-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <div class="px-6 py-4 border-b border-slate-200/50 bg-gradient-to-r from-red-50/50 to-rose-50/50">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 bg-gradient-to-br from-red-500 to-rose-600 rounded-lg shadow-lg">
+                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-red-900 bg-clip-text text-transparent">
+                  Recent Quality Issues
+                </h3>
+                <p class="text-sm text-gray-600">Data quality problems requiring attention</p>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div class="p-8">
-          <div class="space-y-4">
-            <% @recent_issues.each do |issue| %>
-              <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-200/50">
-                <div class="flex-shrink-0">
-                  <div class="w-3 h-3 rounded-full bg-<%= issue[:severity] == 'high' ? 'red' : issue[:severity] == 'medium' ? 'yellow' : 'blue' %>-500"></div>
+          
+          <div class="p-6">
+            <div class="space-y-4">
+              <% @recent_issues.each do |issue| %>
+                <div class="group relative bg-gradient-to-br from-white to-gray-50 rounded-xl p-4 border border-gray-200/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                  <div class="flex items-center space-x-4">
+                    <div class="relative">
+                      <div class="w-3 h-3 rounded-full bg-gradient-to-r <%= 
+                        issue[:severity] == 'high' ? 'from-red-400 to-rose-500' : 
+                        issue[:severity] == 'medium' ? 'from-yellow-400 to-amber-500' : 
+                        'from-blue-400 to-indigo-500' %>"></div>
+                      <% if issue[:severity] == 'high' %>
+                        <div class="absolute inset-0 w-3 h-3 rounded-full bg-gradient-to-r from-red-400 to-rose-500 animate-ping"></div>
+                      <% end %>
+                    </div>
+                    <div class="flex-1">
+                      <div class="font-semibold text-gray-900"><%= issue[:issue] %></div>
+                      <div class="text-sm text-gray-600"><%= issue[:source] %> • <%= issue[:count] %> records affected</div>
+                    </div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold shadow-md <%= 
+                      issue[:severity] == 'high' ? 'bg-gradient-to-r from-red-400 to-rose-500' : 
+                      issue[:severity] == 'medium' ? 'bg-gradient-to-r from-yellow-400 to-amber-500' : 
+                      'bg-gradient-to-r from-blue-400 to-indigo-500' 
+                    %> text-white uppercase">
+                      <%= issue[:severity] %>
+                    </span>
+                  </div>
                 </div>
-                <div class="flex-1">
-                  <div class="font-bold text-gray-900"><%= issue[:issue] %></div>
-                  <div class="text-sm text-gray-600"><%= issue[:source] %> • <%= issue[:count] %> records affected</div>
-                </div>
-                <div class="flex-shrink-0">
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-<%= issue[:severity] == 'high' ? 'red' : issue[:severity] == 'medium' ? 'yellow' : 'blue' %>-100 text-<%= issue[:severity] == 'high' ? 'red' : issue[:severity] == 'medium' ? 'yellow' : 'blue' %>-800">
-                    <%= issue[:severity] %>
-                  </span>
-                </div>
-              </div>
-            <% end %>
+              <% end %>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Quality Recommendations -->
-      <div class="bg-gradient-to-br from-white to-gray-50/50 rounded-3xl shadow-2xl border border-gray-100/50 overflow-hidden">
-        <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-8 py-6 border-b border-green-200/50">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center">
-              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-xl font-black text-gray-900">Quality Recommendations</h3>
-              <p class="text-sm text-gray-600 font-medium">AI-powered suggestions to improve data quality</p>
+      <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-2xl"></div>
+        <div class="relative">
+          <div class="px-6 py-4 border-b border-slate-200/50 bg-gradient-to-r from-green-50/50 to-emerald-50/50">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg shadow-lg">
+                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-green-900 bg-clip-text text-transparent">
+                  Quality Recommendations
+                </h3>
+                <p class="text-sm text-gray-600">AI-powered suggestions to improve data quality</p>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div class="p-8">
-          <div class="space-y-4">
-            <% @recommendations.each do |rec| %>
-              <div class="p-4 bg-gray-50 rounded-2xl border border-gray-200/50">
-                <div class="flex items-start justify-between mb-2">
-                  <div class="font-bold text-gray-900"><%= rec[:title] %></div>
-                  <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-<%= rec[:priority] == 'high' ? 'red' : rec[:priority] == 'medium' ? 'yellow' : 'blue' %>-100 text-<%= rec[:priority] == 'high' ? 'red' : rec[:priority] == 'medium' ? 'yellow' : 'blue' %>-800">
-                      <%= rec[:priority] %>
-                    </span>
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-green-100 text-green-800">
-                      <%= rec[:impact] %> impact
-                    </span>
+          
+          <div class="p-6">
+            <div class="space-y-4">
+              <% @recommendations.each do |rec| %>
+                <div class="group relative bg-gradient-to-br from-white to-gray-50 rounded-xl p-4 border border-gray-200/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="font-semibold text-gray-900"><%= rec[:title] %></div>
+                    <div class="flex items-center space-x-2">
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shadow-md <%= 
+                        rec[:priority] == 'high' ? 'bg-gradient-to-r from-red-400 to-rose-500' : 
+                        rec[:priority] == 'medium' ? 'bg-gradient-to-r from-yellow-400 to-amber-500' : 
+                        'bg-gradient-to-r from-blue-400 to-indigo-500' 
+                      %> text-white uppercase">
+                        <%= rec[:priority] %>
+                      </span>
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shadow-md bg-gradient-to-r from-green-400 to-emerald-500 text-white uppercase">
+                        <%= rec[:impact] %> impact
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div class="text-sm text-gray-600"><%= rec[:description] %></div>
-                <div class="mt-3">
-                  <button class="inline-flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-lg text-xs hover:from-green-700 hover:to-emerald-700 transition-all duration-200">
-                    <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                  <div class="text-sm text-gray-600 mb-3"><%= rec[:description] %></div>
+                  <button class="group/btn inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-lg text-sm shadow-lg hover:shadow-xl hover:from-green-700 hover:to-emerald-700 transform hover:-translate-y-0.5 transition-all duration-300">
+                    <svg class="h-4 w-4 mr-1.5 group-hover/btn:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
                     Apply Fix
                   </button>
                 </div>
-              </div>
-            <% end %>
+              <% end %>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Live Update Indicator -->
+  <div class="fixed bottom-6 right-6 z-50">
+    <div class="group relative">
+      <div class="absolute inset-0 bg-gradient-to-r from-emerald-600 to-green-600 rounded-full blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+      <div class="relative bg-white/90 backdrop-blur-xl rounded-full px-4 py-2 shadow-xl border border-white/20 flex items-center space-x-2">
+        <div class="w-2 h-2 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full animate-pulse"></div>
+        <span class="text-sm font-semibold text-slate-700">Quality Monitor Active</span>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- Data Quality Stimulus Controller -->
 <script>
+document.addEventListener('turbo:load', () => {
   // Register the data-quality controller
-  Stimulus.register("data-quality", class extends Controller {
-    static targets = ["overallScore"]
-    
-    connect() {
-      this.refreshInterval = setInterval(() => {
-        this.updateMetrics()
-      }, 30000) // Update every 30 seconds
-    }
-    
-    disconnect() {
-      if (this.refreshInterval) {
-        clearInterval(this.refreshInterval)
+  if (!window.Stimulus.controllers['data-quality']) {
+    window.Stimulus.register("data-quality", class extends Controller {
+      static targets = ["overallScore", "runButton"]
+      
+      connect() {
+        this.animateOnScroll();
+        window.addEventListener('scroll', this.animateOnScroll.bind(this));
+        
+        // Animate circle progress
+        this.animateCircleProgress();
+        
+        // Update metrics periodically
+        this.refreshInterval = setInterval(() => {
+          this.updateMetrics()
+        }, 30000);
       }
-    }
-    
-    async runValidation(event) {
-      event.preventDefault()
       
-      // Show loading state
-      const button = event.currentTarget
-      const originalText = button.innerHTML
-      button.innerHTML = `
-        <svg class="h-6 w-6 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        Running Quality Check...
-      `
-      button.disabled = true
-      
-      try {
-        // Make actual API call to run quality validation
-        const response = await fetch('/data_sources/run_quality_check', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-          }
-        })
-
-        if (response.ok) {
-          const data = await response.json()
-          this.showSuccessMessage(data.message || 'Quality validation started successfully!')
-          
-          // Refresh the page after a short delay to show updated results
-          setTimeout(() => {
-            window.location.reload()
-          }, 2000)
-        } else {
-          this.showErrorMessage('Failed to start quality validation')
+      disconnect() {
+        if (this.refreshInterval) {
+          clearInterval(this.refreshInterval)
         }
-      } catch (error) {
-        console.error('Error running quality validation:', error)
-        this.showErrorMessage('Error starting quality validation')
-      } finally {
-        // Restore button state
+        window.removeEventListener('scroll', this.animateOnScroll);
+      }
+      
+      animateOnScroll() {
+        const elements = document.querySelectorAll('.relative.bg-white\\/80, .group.relative.bg-white\\/80');
+        
+        elements.forEach((element, index) => {
+          const rect = element.getBoundingClientRect();
+          const isVisible = rect.top <= window.innerHeight && rect.bottom >= 0;
+          
+          if (isVisible && !element.classList.contains('animate-in')) {
+            setTimeout(() => {
+              element.classList.add('animate-in');
+              element.style.opacity = '0';
+              element.style.transform = 'translateY(20px)';
+              
+              requestAnimationFrame(() => {
+                element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+              });
+            }, index * 50);
+          }
+        });
+      }
+      
+      animateCircleProgress() {
+        const circle = document.querySelector('circle[stroke-dasharray]');
+        if (circle) {
+          const strokeDasharray = circle.getAttribute('stroke-dasharray');
+          circle.setAttribute('stroke-dasharray', '0 502.65');
+          setTimeout(() => {
+            circle.style.transition = 'stroke-dasharray 2s ease-out';
+            circle.setAttribute('stroke-dasharray', strokeDasharray);
+          }, 100);
+        }
+        
+        // Animate progress bars
+        document.querySelectorAll('[style*="width:"]').forEach(bar => {
+          const width = bar.style.width;
+          bar.style.width = '0%';
+          setTimeout(() => {
+            bar.style.transition = 'width 1.5s ease-out';
+            bar.style.width = width;
+          }, 100);
+        });
+      }
+      
+      async runValidation(event) {
+        event.preventDefault()
+        
+        const button = event.currentTarget
+        const originalContent = button.innerHTML
+        button.disabled = true
+        button.innerHTML = `
+          <svg class="h-4 w-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Running Quality Check...
+        `
+        
+        try {
+          const response = await fetch('/data_sources/run_quality_check', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+          })
+          
+          if (response.ok) {
+            const data = await response.json()
+            this.showNotification('Quality validation started successfully!', 'success')
+            
+            setTimeout(() => {
+              window.location.reload()
+            }, 2000)
+          } else {
+            this.showNotification('Failed to start quality validation', 'error')
+          }
+        } catch (error) {
+          console.error('Error running quality validation:', error)
+          this.showNotification('Error starting quality validation', 'error')
+        } finally {
+          setTimeout(() => {
+            button.innerHTML = originalContent
+            button.disabled = false
+          }, 1000)
+        }
+      }
+      
+      updateMetrics() {
+        if (this.hasOverallScoreTarget) {
+          const score = this.overallScoreTarget
+          const currentScore = parseInt(score.textContent)
+          const newScore = Math.max(85, Math.min(95, currentScore + Math.floor(Math.random() * 3) - 1))
+          score.textContent = newScore + '%'
+        }
+      }
+      
+      showNotification(message, type = 'success') {
+        const notification = document.createElement('div')
+        const bgColor = type === 'success' ? 'from-green-500 to-emerald-600' : 'from-red-500 to-rose-600'
+        notification.className = `fixed top-4 right-4 bg-gradient-to-r ${bgColor} text-white px-6 py-3 rounded-xl shadow-2xl z-50 transform translate-x-full transition-transform duration-300`
+        notification.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              ${type === 'success' ? 
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />' :
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />'
+              }
+            </svg>
+            <span class="font-semibold">${message}</span>
+          </div>
+        `
+        document.body.appendChild(notification)
+        
+        requestAnimationFrame(() => {
+          notification.style.transform = 'translateX(0)'
+        })
+        
         setTimeout(() => {
-          button.innerHTML = originalText
-          button.disabled = false
-        }, 1000)
+          notification.style.transform = 'translateX(200%)'
+          setTimeout(() => notification.remove(), 300)
+        }, 3000)
       }
-    }
-    
-    updateMetrics() {
-      // Simulate real-time updates
-      if (this.hasOverallScoreTarget) {
-        const score = this.overallScoreTarget
-        const currentScore = parseInt(score.textContent)
-        const newScore = Math.max(85, Math.min(95, currentScore + Math.floor(Math.random() * 3) - 1))
-        score.textContent = newScore
-      }
-    }
-    
-    showSuccessMessage(message = 'Quality check completed successfully!') {
-      // Show success notification
-      const notification = document.createElement('div')
-      notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50'
-      notification.textContent = message
-      document.body.appendChild(notification)
-      
-      setTimeout(() => {
-        notification.remove()
-      }, 3000)
-    }
-
-    showErrorMessage(message = 'An error occurred') {
-      // Show error notification
-      const notification = document.createElement('div')
-      notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50'
-      notification.textContent = message
-      document.body.appendChild(notification)
-      
-      setTimeout(() => {
-        notification.remove()
-      }, 5000)
-    }
-  })
+    })
+  }
+});
 </script>

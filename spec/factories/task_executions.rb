@@ -31,7 +31,7 @@ FactoryBot.define do
       completed_at { 1.minute.ago }
       duration_seconds { 240 }
       error_message { 'Execution failed' }
-      error_details { { error_class: 'RuntimeError', backtrace: ['line1', 'line2'] } }
+      error_details { { error_class: 'RuntimeError', backtrace: [ 'line1', 'line2' ] } }
     end
 
     trait :with_user do

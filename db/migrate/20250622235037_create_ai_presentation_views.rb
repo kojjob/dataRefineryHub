@@ -23,10 +23,10 @@ class CreateAiPresentationViews < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
-    add_index :ai_presentation_views, [:presentation_id, :created_at]
-    add_index :ai_presentation_views, [:organization_id, :created_at]
-    add_index :ai_presentation_views, [:user_id, :created_at]
+
+    add_index :ai_presentation_views, [ :presentation_id, :created_at ]
+    add_index :ai_presentation_views, [ :organization_id, :created_at ]
+    add_index :ai_presentation_views, [ :user_id, :created_at ]
     add_index :ai_presentation_views, :session_id
     add_index :ai_presentation_views, :completed
   end

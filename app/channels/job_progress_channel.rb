@@ -3,13 +3,13 @@
 class JobProgressChannel < ApplicationCable::Channel
   def subscribed
     job_id = params[:job_id]
-    
+
     # Verify user has access to this job
     extraction_job = current_user.organization.extraction_jobs.find_by(id: job_id)
-    
+
     if extraction_job
       stream_from "job_#{job_id}"
-      
+
       # Send current job status
       transmit({
         type: "job_status",
@@ -21,7 +21,7 @@ class JobProgressChannel < ApplicationCable::Channel
         estimated_completion: extraction_job.extraction_metadata&.dig("estimated_completion"),
         timestamp: Time.current.iso8601
       })
-      
+
       Rails.logger.info "JobProgressChannel: User #{current_user.id} subscribed to job #{job_id}"
     else
       reject
@@ -36,7 +36,7 @@ class JobProgressChannel < ApplicationCable::Channel
   def request_status_update(data)
     job_id = data["job_id"]
     extraction_job = current_user.organization.extraction_jobs.find_by(id: job_id)
-    
+
     if extraction_job
       transmit({
         type: "status_update",
@@ -55,7 +55,7 @@ class JobProgressChannel < ApplicationCable::Channel
   def cancel_job(data)
     job_id = data["job_id"]
     extraction_job = current_user.organization.extraction_jobs.find_by(id: job_id)
-    
+
     if extraction_job&.running?
       # Mark job as cancelled
       extraction_job.update!(
@@ -63,7 +63,7 @@ class JobProgressChannel < ApplicationCable::Channel
         completed_at: Time.current,
         error_message: "Cancelled by user"
       )
-      
+
       # Broadcast cancellation
       ActionCable.server.broadcast("job_#{job_id}", {
         type: "job_status",
@@ -72,7 +72,7 @@ class JobProgressChannel < ApplicationCable::Channel
         message: "Job cancelled by user",
         timestamp: Time.current.iso8601
       })
-      
+
       Rails.logger.info "Job #{job_id} cancelled by user #{current_user.id}"
     end
   end

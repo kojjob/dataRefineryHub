@@ -19,7 +19,7 @@ class Result
   end
 
   def error_messages
-    errors.join(', ')
+    errors.join(", ")
   end
 
   def to_h

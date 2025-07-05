@@ -1,0 +1,22 @@
+{
+  "name": "rails-app-analyzer",
+  "version": "1.0.0",
+  "description": "Puppeteer-based analyzer for Rails application",
+  "main": "analyzer.js",
+  "scripts": {
+    "analyze": "node analyzer.js",
+    "analyze:dashboard": "node analyzer.js --page dashboard",
+    "analyze:etl": "node analyzer.js --page etl",
+    "analyze:all": "node analyzer.js --all"
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0",
+    "chalk": "^5.3.0",
+    "yargs": "^17.7.2",
+    "lighthouse": "^11.0.0",
+    "axe-core": "^4.8.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "type": "module"
+}

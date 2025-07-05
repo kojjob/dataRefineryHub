@@ -1,214 +1,136 @@
+# API Authentication Controller
 class Api::V1::AuthenticationController < Api::V1::BaseController
-  skip_before_action :authenticate_api_user!, only: [ :login ]
-  skip_before_action :set_current_organization, only: [ :login ]
-  skip_before_action :check_rate_limits, only: [ :login ]
+  skip_before_action :authenticate_api_user!, only: [ :login, :refresh ]
 
   # POST /api/v1/auth/login
   def login
-    email = params[:email]
-    password = params[:password]
+    user = User.find_by(email: login_params[:email])
 
-    unless email.present? && password.present?
-      return render_error("Email and password are required", :bad_request)
-    end
-
-    user = User.find_by(email: email.downcase.strip)
-
-    if user&.valid_password?(password)
-      if user.confirmed?
-        # Generate API token (implement JWT or similar)
-        token = generate_api_token(user)
-
-        render_success({
-          user: serialize_user(user),
-          token: token,
-          expires_at: 24.hours.from_now.iso8601,
-          organization: serialize_organization(user.organization)
-        }, "Login successful")
-      else
-        render_error("Please confirm your email address before signing in", :unauthorized)
+    if user&.valid_password?(login_params[:password])
+      # Check if user account is active
+      unless user.active_for_authentication?
+        render_error("Account is locked or inactive", :unauthorized)
+        return
       end
+
+      # Generate tokens
+      access_token = JwtService.generate_access_token(user, user.organization)
+      refresh_token = JwtService.generate_refresh_token(user)
+
+      # Update last sign in
+      user.update_tracked_fields!(request)
+
+      render json: {
+        access_token: access_token,
+        refresh_token: refresh_token,
+        expires_in: JwtService::ACCESS_TOKEN_EXPIRY.to_i,
+        token_type: "Bearer",
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.full_name,
+          role: user.role
+        },
+        organization: user.organization ? {
+          id: user.organization.id,
+          name: user.organization.name,
+          plan: user.organization.plan
+        } : nil
+      }
     else
       render_error("Invalid email or password", :unauthorized)
     end
   end
 
-  # DELETE /api/v1/auth/logout
+  # POST /api/v1/auth/logout
   def logout
-    # Invalidate the current token (implement token blacklist)
-    invalidate_current_token
+    # Revoke the current token
+    token = extract_token_from_header
+    JwtService.revoke_token(token) if token
 
-    render_success({}, "Logout successful")
+    render json: { message: "Successfully logged out" }
   end
 
   # POST /api/v1/auth/refresh
   def refresh
-    # Refresh the current token
-    new_token = generate_api_token(current_user)
+    refresh_token = refresh_params[:refresh_token]
 
-    render_success({
-      token: new_token,
-      expires_at: 24.hours.from_now.iso8601,
-      user: serialize_user(current_user)
-    }, "Token refreshed successfully")
+    if refresh_token.blank?
+      render_error("Refresh token is required", :bad_request)
+      return
+    end
+
+    begin
+      # Generate new access token
+      access_token = JwtService.refresh_access_token(refresh_token)
+
+      render json: {
+        access_token: access_token,
+        expires_in: JwtService::ACCESS_TOKEN_EXPIRY.to_i,
+        token_type: "Bearer"
+      }
+    rescue JwtService::TokenError => e
+      render_error(e.message, :unauthorized)
+    end
   end
 
   # GET /api/v1/auth/me
   def me
-    render_success({
-      user: serialize_user(current_user, include_details: true),
-      organization: serialize_organization(@current_organization, include_details: true),
-      permissions: user_permissions,
-      api_usage: api_usage_stats
-    })
+    render json: {
+      user: {
+        id: current_user.id,
+        email: current_user.email,
+        name: current_user.full_name,
+        role: current_user.role,
+        created_at: current_user.created_at
+      },
+      organization: current_organization ? {
+        id: current_organization.id,
+        name: current_organization.name,
+        plan: current_organization.plan,
+        usage: {
+          data_sources: current_organization.data_sources.count,
+          pipelines: current_organization.pipeline_configurations.count,
+          api_requests_today: current_user.api_requests_today
+        }
+      } : nil,
+      permissions: @current_permissions
+    }
+  end
+
+  # POST /api/v1/auth/revoke
+  def revoke
+    # Revoke specific token or all user tokens
+    if revoke_params[:token]
+      JwtService.revoke_token(revoke_params[:token])
+      render json: { message: "Token revoked successfully" }
+    elsif revoke_params[:revoke_all]
+      # In a real implementation, you'd revoke all tokens for the user
+      # This would require tracking issued tokens
+      render json: { message: "All tokens revoked successfully" }
+    else
+      render_error("Token or revoke_all parameter required", :bad_request)
+    end
   end
 
   private
 
-  def generate_api_token(user)
-    # Simple token generation - in production, use JWT with proper signing
-    payload = {
-      user_id: user.id,
-      organization_id: user.organization_id,
-      issued_at: Time.current.to_i,
-      expires_at: 24.hours.from_now.to_i
-    }
-
-    # For now, return a simple base64 encoded payload
-    # In production, use JWT.encode(payload, Rails.application.secret_key_base, 'HS256')
-    Base64.strict_encode64(payload.to_json)
+  def login_params
+    params.require(:auth).permit(:email, :password)
   end
 
-  def invalidate_current_token
-    # Implement token blacklist/invalidation
-    # For now, this is a no-op
-    true
+  def refresh_params
+    params.permit(:refresh_token)
   end
 
-  def serialize_user(user, include_details: false)
-    base_data = {
-      id: user.id,
-      email: user.email,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      full_name: user.full_name,
-      role: user.role,
-      confirmed: user.confirmed?,
-      created_at: user.created_at.iso8601
-    }
-
-    if include_details
-      base_data.merge!({
-        last_sign_in_at: user.last_sign_in_at&.iso8601,
-        sign_in_count: user.sign_in_count || 0,
-        current_sign_in_ip: user.current_sign_in_ip,
-        time_zone: user.time_zone || "UTC",
-        locale: user.locale || "en"
-      })
-    end
-
-    base_data
+  def revoke_params
+    params.permit(:token, :revoke_all)
   end
 
-  def serialize_organization(organization, include_details: false)
-    return nil unless organization
+  def extract_token_from_header
+    auth_header = request.headers["Authorization"]
+    return nil unless auth_header&.start_with?("Bearer ")
 
-    base_data = {
-      id: organization.id,
-      name: organization.name,
-      plan: organization.plan,
-      status: organization.status,
-      created_at: organization.created_at.iso8601
-    }
-
-    if include_details
-      base_data.merge!({
-        max_users: organization.max_users,
-        max_data_sources: organization.max_data_sources,
-        max_monthly_records: organization.max_monthly_records,
-        settings: organization.settings || {},
-        usage_stats: {
-          current_users: organization.users.count,
-          current_data_sources: organization.data_sources.count,
-          monthly_records: organization.raw_data_records
-                                     .where("created_at >= ?", 1.month.ago)
-                                     .count
-        }
-      })
-    end
-
-    base_data
-  end
-
-  def user_permissions
-    # Calculate user permissions based on role and organization plan
-    base_permissions = {
-      can_read_data: true,
-      can_export_data: true,
-      can_manage_data_sources: false,
-      can_manage_users: false,
-      can_manage_organization: false,
-      can_access_api: true,
-      can_view_analytics: true
-    }
-
-    case current_user.role
-    when "owner"
-      base_permissions.merge({
-        can_manage_data_sources: true,
-        can_manage_users: true,
-        can_manage_organization: true,
-        can_manage_billing: true
-      })
-    when "admin"
-      base_permissions.merge({
-        can_manage_data_sources: true,
-        can_manage_users: true
-      })
-    when "member"
-      base_permissions.merge({
-        can_manage_data_sources: true
-      })
-    else # viewer
-      base_permissions.merge({
-        can_export_data: false
-      })
-    end
-  end
-
-  def api_usage_stats
-    # Calculate API usage statistics for the current user/organization
-    today = Date.current
-
-    {
-      requests_today: Rails.cache.read("api_usage:#{current_user.id}:#{today.strftime('%Y%m%d')}") || 0,
-      requests_this_month: calculate_monthly_api_usage,
-      rate_limit: {
-        requests_per_minute: 1000,
-        requests_per_day: 50000,
-        requests_per_month: 1000000
-      },
-      plan_limits: organization_api_limits
-    }
-  end
-
-  def calculate_monthly_api_usage
-    # Placeholder - implement actual usage tracking
-    0
-  end
-
-  def organization_api_limits
-    case @current_organization.plan
-    when "free_trial"
-      { requests_per_day: 1000, requests_per_month: 10000 }
-    when "starter"
-      { requests_per_day: 10000, requests_per_month: 100000 }
-    when "growth"
-      { requests_per_day: 50000, requests_per_month: 1000000 }
-    when "scale"
-      { requests_per_day: 200000, requests_per_month: 5000000 }
-    else
-      { requests_per_day: Float::INFINITY, requests_per_month: Float::INFINITY }
-    end
+    auth_header.split(" ").last
   end
 end

@@ -16,6 +16,6 @@ class CreateTestimonials < ActiveRecord::Migration[8.0]
 
     add_index :testimonials, :active
     add_index :testimonials, :display_order
-    add_index :testimonials, [:active, :display_order]
+    add_index :testimonials, [ :active, :display_order ]
   end
 end

@@ -19,10 +19,10 @@ class CreateAiPresentationInteractions < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
-    add_index :ai_presentation_interactions, [:presentation_id, :created_at]
-    add_index :ai_presentation_interactions, [:organization_id, :created_at]
-    add_index :ai_presentation_interactions, [:user_id, :created_at]
+
+    add_index :ai_presentation_interactions, [ :presentation_id, :created_at ]
+    add_index :ai_presentation_interactions, [ :organization_id, :created_at ]
+    add_index :ai_presentation_interactions, [ :user_id, :created_at ]
     add_index :ai_presentation_interactions, :interaction_type
     add_index :ai_presentation_interactions, :session_id
     add_index :ai_presentation_interactions, :timestamp

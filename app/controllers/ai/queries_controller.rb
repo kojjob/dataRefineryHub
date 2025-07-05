@@ -3,7 +3,7 @@
 module Ai
   class QueriesController < ApplicationController
     before_action :ensure_organization_member
-    
+
     def index
       # Safely handle ai_insights in case the table doesn't exist yet
       @recent_insights = begin
@@ -12,33 +12,33 @@ module Ai
         Rails.logger.warn "ai_insights table not found: #{e.message}"
         []
       end
-      
+
       @popular_queries = get_popular_query_examples
       @data_summary = fetch_organization_data_summary
     end
-    
+
     def process_query
       query_text = params[:query]&.strip
-      
+
       if query_text.blank?
         return render json: {
           success: false,
           error: "Please enter a query"
         }, status: :bad_request
       end
-      
+
       begin
         # Process the natural language query
         query_service = Ai::NaturalLanguageQueryService.new(
           organization: current_organization,
           user_query: query_text
         )
-        
+
         result = query_service.process_query
-        
+
         # Store the query for future reference (if model exists)
         store_query_history(query_text, result) if defined?(AiQuery)
-        
+
         render json: {
           success: true,
           query: query_text,
@@ -46,11 +46,11 @@ module Ai
           suggestions: query_service.get_query_suggestions,
           processed_at: Time.current.iso8601
         }
-        
+
       rescue => e
         Rails.logger.error "Natural language query processing failed: #{e.message}"
         Rails.logger.error e.backtrace.join("\n")
-        
+
         render json: {
           success: false,
           error: "Failed to process your query. Please try rephrasing it.",
@@ -59,40 +59,40 @@ module Ai
         }, status: :internal_server_error
       end
     end
-    
+
     def suggestions
       partial_query = params[:q]&.strip || ""
-      
+
       query_service = Ai::NaturalLanguageQueryService.new(
         organization: current_organization,
         user_query: ""
       )
-      
+
       suggestions = query_service.get_query_suggestions(partial_query)
-      
+
       render json: {
         suggestions: suggestions,
         generated_at: Time.current.iso8601
       }
     end
-    
+
     def validate
       query_text = params[:query]&.strip
-      
+
       if query_text.blank?
         return render json: {
           valid: false,
           message: "Please enter a query"
         }
       end
-      
+
       query_service = Ai::NaturalLanguageQueryService.new(
         organization: current_organization,
         user_query: query_text
       )
-      
+
       validation = query_service.validate_query(query_text)
-      
+
       render json: {
         valid: validation[:can_process],
         confidence: validation[:confidence],
@@ -101,18 +101,18 @@ module Ai
         message: build_validation_message(validation)
       }
     end
-    
+
     def examples
       render json: {
         examples: get_query_examples_by_category,
         data_available: fetch_organization_data_summary
       }
     end
-    
+
     def export
       query_id = params[:id]
-      format = params[:format] || 'csv'
-      
+      format = params[:format] || "csv"
+
       # This would export query results
       # For now, return a placeholder
       render json: {
@@ -121,9 +121,9 @@ module Ai
         requested_format: format
       }
     end
-    
+
     private
-    
+
     def store_query_history(query_text, result)
       # Store query for analytics and improvement
       # This assumes an AiQuery model exists
@@ -141,7 +141,7 @@ module Ai
         Rails.logger.warn "Failed to store query history: #{e.message}"
       end
     end
-    
+
     def get_popular_query_examples
       [
         {
@@ -202,7 +202,7 @@ module Ai
         last_updated: current_organization.raw_data_records.maximum(:created_at)
       }
     end
-    
+
     def get_fallback_suggestions
       [
         "Try asking about customers, orders, products, or revenue",
@@ -211,22 +211,22 @@ module Ai
         "Be specific about what you want to see"
       ]
     end
-    
+
     def build_validation_message(validation)
       if validation[:can_process]
         confidence_text = case validation[:confidence]
-                         when 0.8..1.0 then "I'm confident I can answer this"
-                         when 0.6..0.8 then "I should be able to help with this"
-                         when 0.4..0.6 then "I'll try my best to answer this"
-                         else "This query might need refinement"
-                         end
-        
+        when 0.8..1.0 then "I'm confident I can answer this"
+        when 0.6..0.8 then "I should be able to help with this"
+        when 0.4..0.6 then "I'll try my best to answer this"
+        else "This query might need refinement"
+        end
+
         confidence_text
       else
         "I need more information to answer this query"
       end
     end
-    
+
     def get_query_examples_by_category
       {
         beginner: [
@@ -246,10 +246,10 @@ module Ai
         ]
       }
     end
-    
+
     def extract_results_count(result)
       return 0 unless result[:results]
-      
+
       if result[:results][:count]
         result[:results][:count]
       elsif result[:results][:customers]

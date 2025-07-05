@@ -11,7 +11,7 @@ RSpec.describe ProcessingMetricsService, type: :service do
   describe '#generate_metrics_report' do
     context 'with recent extraction jobs' do
       let!(:completed_job) do
-        create(:extraction_job, 
+        create(:extraction_job,
           data_source: data_source,
           status: 'completed',
           records_processed: 1000,
@@ -19,10 +19,10 @@ RSpec.describe ProcessingMetricsService, type: :service do
           completed_at: 30.minutes.ago
         )
       end
-      
+
       let!(:failed_job) do
         create(:extraction_job,
-          data_source: data_source, 
+          data_source: data_source,
           status: 'failed',
           error_message: 'Connection timeout',
           error_metadata: { error_category: 'timeout_error' }
@@ -67,16 +67,16 @@ RSpec.describe ProcessingMetricsService, type: :service do
   describe '#log_processing_event' do
     it 'logs structured event data' do
       expect(Rails.logger).to receive(:info).with(/PROCESSING_METRICS/)
-      
+
       service.log_processing_event('job_started', { job_id: 123 })
     end
 
     it 'caches events for real-time monitoring' do
       service.log_processing_event('job_completed', { job_id: 456 })
-      
+
       cache_key = "processing_events:#{organization.id}:#{Date.current.strftime('%Y%m%d')}"
       cached_events = Rails.cache.read(cache_key)
-      
+
       expect(cached_events).to be_present
       expect(cached_events.last[:event_type]).to eq('job_completed')
       expect(cached_events.last[:data][:job_id]).to eq(456)
@@ -105,7 +105,7 @@ RSpec.describe ProcessingMetricsService, type: :service do
         completed_at: Time.current
       )
     end
-    
+
     let(:result) { { total_records: 500, processing_summary: { success_rate: 95.5 } } }
 
     it 'logs job completion with metrics' do
@@ -149,7 +149,7 @@ RSpec.describe ProcessingMetricsService, type: :service do
         ),
         create(:extraction_job,
           data_source: data_source,
-          status: 'completed', 
+          status: 'completed',
           records_processed: 2000,
           started_at: 1.hour.ago,
           completed_at: 30.minutes.ago
@@ -159,13 +159,13 @@ RSpec.describe ProcessingMetricsService, type: :service do
 
     it 'calculates average processing time correctly' do
       performance = service.generate_metrics_report[:performance_metrics]
-      
+
       expect(performance[:processing_times][:average]).to eq(2700.0) # 45 minutes average
     end
 
     it 'calculates throughput metrics' do
       performance = service.generate_metrics_report[:performance_metrics]
-      
+
       expect(performance[:throughput][:records_per_minute][:average]).to be > 0
     end
   end

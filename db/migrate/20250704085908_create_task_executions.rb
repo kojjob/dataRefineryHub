@@ -19,7 +19,7 @@ class CreateTaskExecutions < ActiveRecord::Migration[8.0]
       t.index :execution_id, unique: true
       t.index :status
       t.index :started_at
-      t.index [:task_id, :created_at]
+      t.index [ :task_id, :created_at ]
     end
   end
 end

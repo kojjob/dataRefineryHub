@@ -11,7 +11,7 @@ class EnhancedFileUploadService
 
   def process(uploaded_file, options = {})
     PerformanceMonitorService.track_with_result(
-      'file_upload_processing',
+      "file_upload_processing",
       extract_performance_metadata(uploaded_file)
     ) do
       process_file_upload(uploaded_file, options)
@@ -63,7 +63,7 @@ class EnhancedFileUploadService
     )
   rescue => e
     Rails.logger.error({
-      event: 'file_upload_error',
+      event: "file_upload_error",
       error: e.class.name,
       message: e.message,
       user_id: user.id,
@@ -79,7 +79,7 @@ class EnhancedFileUploadService
     errors = []
 
     # Check file presence
-    errors << InvalidFileFormat.new('No file provided') if uploaded_file.blank?
+    errors << InvalidFileFormat.new("No file provided") if uploaded_file.blank?
 
     return Result.failure(errors) if errors.any?
 
@@ -93,9 +93,9 @@ class EnhancedFileUploadService
     end
 
     # Check file format
-    file_extension = File.extname(uploaded_file.original_filename).downcase.delete('.')
+    file_extension = File.extname(uploaded_file.original_filename).downcase.delete(".")
     accepted_types = config[:accepted_types] || %w[csv xlsx xls json txt]
-    
+
     unless accepted_types.include?(file_extension)
       errors << InvalidFileFormat.new(file_extension)
     end
@@ -121,15 +121,15 @@ class EnhancedFileUploadService
 
         # Check for executable signatures
         if contains_executable_signature?(header)
-          errors << ValidationFailed.new('file_content', 'File contains suspicious executable content')
+          errors << ValidationFailed.new("file_content", "File contains suspicious executable content")
         end
 
         # Check for script injections in text files
         if text_file?(uploaded_file) && contains_script_injection?(header)
-          errors << ValidationFailed.new('file_content', 'File contains potentially malicious scripts')
+          errors << ValidationFailed.new("file_content", "File contains potentially malicious scripts")
         end
       rescue => e
-        errors << ValidationFailed.new('file_reading', e.message)
+        errors << ValidationFailed.new("file_reading", e.message)
       end
     end
 
@@ -141,7 +141,7 @@ class EnhancedFileUploadService
       original_filename: uploaded_file.original_filename,
       content_type: uploaded_file.content_type,
       file_size: uploaded_file.size,
-      file_extension: File.extname(uploaded_file.original_filename).downcase.delete('.'),
+      file_extension: File.extname(uploaded_file.original_filename).downcase.delete("."),
       upload_timestamp: Time.current.iso8601,
       user_id: user.id,
       organization_id: organization.id,
@@ -155,10 +155,10 @@ class EnhancedFileUploadService
     DataSource.create!(
       user: user,
       organization: organization,
-      source_type: 'file_upload',
+      source_type: "file_upload",
       name: options[:name] || generate_data_source_name(uploaded_file),
       description: options[:description] || "File upload: #{uploaded_file.original_filename}",
-      status: 'pending',
+      status: "pending",
       configuration: {
         original_filename: metadata[:original_filename],
         file_size: metadata[:file_size],
@@ -174,16 +174,16 @@ class EnhancedFileUploadService
     begin
       # Create secure storage path
       storage_path = generate_secure_storage_path(data_source)
-      
+
       # Ensure directory exists
       FileUtils.mkdir_p(File.dirname(storage_path))
-      
+
       # Copy file to secure location
-      File.open(storage_path, 'wb') do |file|
+      File.open(storage_path, "wb") do |file|
         uploaded_file.rewind
         file.write(uploaded_file.read)
       end
-      
+
       # Update data source with storage path
       data_source.update!(
         configuration: data_source.configuration.merge(
@@ -191,7 +191,7 @@ class EnhancedFileUploadService
           stored_at: Time.current.iso8601
         )
       )
-      
+
       Result.success(storage_path: storage_path)
     rescue => e
       Result.failure("File storage failed: #{e.message}")
@@ -202,8 +202,8 @@ class EnhancedFileUploadService
     ExtractionJob.create!(
       data_source: data_source,
       user: user,
-      job_type: 'file_upload',
-      status: 'pending',
+      job_type: "file_upload",
+      status: "pending",
       configuration: {
         file_metadata: metadata,
         processing_options: {
@@ -226,13 +226,13 @@ class EnhancedFileUploadService
 
   def valid_mime_type?(uploaded_file, extension)
     expected_types = {
-      'csv' => ['text/csv', 'application/csv', 'text/plain'],
-      'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-      'xls' => ['application/vnd.ms-excel'],
-      'json' => ['application/json', 'text/json'],
-      'txt' => ['text/plain']
+      "csv" => [ "text/csv", "application/csv", "text/plain" ],
+      "xlsx" => [ "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ],
+      "xls" => [ "application/vnd.ms-excel" ],
+      "json" => [ "application/json", "text/json" ],
+      "txt" => [ "text/plain" ]
     }
-    
+
     expected_types[extension]&.include?(uploaded_file.content_type)
   end
 
@@ -241,9 +241,9 @@ class EnhancedFileUploadService
       "\x4D\x5A", # PE executable
       "\x7F\x45\x4C\x46", # ELF executable
       "\xCA\xFE\xBA\xBE", # Java class file
-      "\xFE\xED\xFA", # Mach-O executable
+      "\xFE\xED\xFA" # Mach-O executable
     ]
-    
+
     executable_signatures.any? { |sig| header.start_with?(sig) }
   end
 
@@ -256,12 +256,12 @@ class EnhancedFileUploadService
       /eval\s*\(/i,
       /exec\s*\(/i
     ]
-    
+
     dangerous_patterns.any? { |pattern| content.match?(pattern) }
   end
 
   def text_file?(uploaded_file)
-    %w[csv txt json].include?(File.extname(uploaded_file.original_filename).downcase.delete('.'))
+    %w[csv txt json].include?(File.extname(uploaded_file.original_filename).downcase.delete("."))
   end
 
   def calculate_checksum(uploaded_file)
@@ -273,52 +273,52 @@ class EnhancedFileUploadService
 
   def estimate_row_count(uploaded_file)
     return nil unless text_file?(uploaded_file)
-    
+
     uploaded_file.rewind
     sample = uploaded_file.read(10.kilobytes)
     uploaded_file.rewind
-    
+
     return nil if sample.blank?
-    
+
     lines_in_sample = sample.count("\n")
     return nil if lines_in_sample == 0
-    
+
     total_size = uploaded_file.size
     estimated_total_lines = (total_size.to_f / sample.size * lines_in_sample).round
-    
+
     # Subtract 1 for header if CSV
-    estimated_total_lines -= 1 if uploaded_file.original_filename.downcase.end_with?('.csv')
-    
-    [estimated_total_lines, 0].max
+    estimated_total_lines -= 1 if uploaded_file.original_filename.downcase.end_with?(".csv")
+
+    [ estimated_total_lines, 0 ].max
   end
 
   def detect_encoding(uploaded_file)
-    return 'binary' unless text_file?(uploaded_file)
-    
+    return "binary" unless text_file?(uploaded_file)
+
     uploaded_file.rewind
     sample = uploaded_file.read(1.kilobyte)
     uploaded_file.rewind
-    
-    return 'utf-8' if sample.valid_encoding? && sample.encoding.name == 'UTF-8'
-    
+
+    return "utf-8" if sample.valid_encoding? && sample.encoding.name == "UTF-8"
+
     # Try to detect encoding
     begin
       detected = CharlockHolmes::EncodingDetector.detect(sample)
       detected[:encoding] if detected && detected[:confidence] > 0.7
     rescue
-      'unknown'
+      "unknown"
     end
   end
 
   def generate_data_source_name(uploaded_file)
-    base_name = File.basename(uploaded_file.original_filename, '.*')
+    base_name = File.basename(uploaded_file.original_filename, ".*")
     "#{base_name}_#{Time.current.strftime('%Y%m%d_%H%M%S')}"
   end
 
   def generate_secure_storage_path(data_source)
     Rails.root.join(
-      'storage',
-      'uploads',
+      "storage",
+      "uploads",
       organization.id.to_s,
       data_source.id.to_s,
       "#{SecureRandom.hex(16)}_#{data_source.configuration['original_filename']}"
@@ -343,22 +343,22 @@ class EnhancedFileUploadService
   end
 
   def calculate_job_priority(extraction_job)
-    file_size = extraction_job.configuration.dig('file_metadata', 'file_size') || 0
-    
+    file_size = extraction_job.configuration.dig("file_metadata", "file_size") || 0
+
     case file_size
     when 0..1.megabyte
-      'high'
+      "high"
     when 1.megabyte..10.megabytes
-      'normal'
+      "normal"
     else
-      'low'
+      "low"
     end
   end
 
   def estimate_processing_time(uploaded_file)
     base_time = 30 # seconds
     size_factor = uploaded_file.size.to_f / 1.megabyte
-    
+
     (base_time + (size_factor * 10)).round
   end
 

@@ -452,25 +452,39 @@
 
       <!-- Enhanced System Status -->
       <div class="bg-white rounded-xl p-3 border border-gray-200 shadow-sm">
+        <%
+          # Provide fallback values when @system_status is not available (e.g., in Devise controllers)
+          system_status = @system_status || {
+            health: { color: 'gray', text: 'Unknown' },
+            uptime: '--',
+            processing_jobs: 0,
+            storage_used: '-- GB'
+          }
+          health_color = system_status.dig(:health, :color) || 'gray'
+          health_text = system_status.dig(:health, :text) || 'Unknown'
+          uptime = system_status[:uptime] || '--'
+          processing_jobs = system_status[:processing_jobs] || 0
+          storage_used = system_status[:storage_used] || '-- GB'
+        %>
         <div class="flex items-center justify-between mb-2">
           <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-wide">System Status</h4>
           <div class="flex items-center gap-1">
-            <div class="h-2 w-2 bg-<%= @system_status[:health][:color] %>-500 rounded-full animate-pulse" data-realtime-dashboard-target="statusIndicator"></div>
-            <span class="text-xs text-<%= @system_status[:health][:color] %>-600 font-medium" data-realtime-dashboard-target="statusText"><%= @system_status[:health][:text] %></span>
+            <div class="h-2 w-2 bg-<%= health_color %>-500 rounded-full animate-pulse" data-realtime-dashboard-target="statusIndicator"></div>
+            <span class="text-xs text-<%= health_color %>-600 font-medium" data-realtime-dashboard-target="statusText"><%= health_text %></span>
           </div>
         </div>
         <div class="space-y-2">
           <div class="flex items-center justify-between text-xs">
             <span class="text-gray-600">API Uptime</span>
-            <span class="text-green-600 font-medium" data-realtime-dashboard-target="uptime"><%= @system_status[:uptime] %></span>
+            <span class="text-green-600 font-medium" data-realtime-dashboard-target="uptime"><%= uptime %></span>
           </div>
           <div class="flex items-center justify-between text-xs">
             <span class="text-gray-600">Data Processing</span>
-            <span class="text-blue-600 font-medium" data-realtime-dashboard-target="processingJobs"><%= pluralize(@system_status[:processing_jobs], 'job') %></span>
+            <span class="text-blue-600 font-medium" data-realtime-dashboard-target="processingJobs"><%= pluralize(processing_jobs, 'job') %></span>
           </div>
           <div class="flex items-center justify-between text-xs">
             <span class="text-gray-600">Storage Used</span>
-            <span class="text-purple-600 font-medium" data-realtime-dashboard-target="storageUsed"><%= @system_status[:storage_used] %></span>
+            <span class="text-purple-600 font-medium" data-realtime-dashboard-target="storageUsed"><%= storage_used %></span>
           </div>
         </div>
         <button class="text-xs text-indigo-600 hover:text-indigo-800 font-medium mt-2 w-full text-left"

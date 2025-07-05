@@ -1,176 +1,396 @@
-<%= render 'shared/page_header', 
-  title: 'Manual Task Queue',
-  description: 'Tasks requiring manual intervention or approval',
-  actions: [
-    { text: 'Auto-assign Tasks', path: auto_assign_manual_tasks_path, method: :post, 
-      class: 'btn-secondary', data: { turbo_confirm: 'Auto-assign unassigned tasks to available users?' } },
-    current_user.admin? ? { text: 'Clear Stale', path: clear_stale_manual_tasks_path, method: :post, 
-      class: 'btn-ghost', data: { turbo_confirm: 'Clear stale task assignments?' } } : nil
-  ].compact
-%>
+<% content_for :page_title, "Manual Task Queue" %>
 
-<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-  <!-- Sidebar with statistics and filters -->
-  <div class="lg:col-span-1 space-y-6">
-    <!-- Queue Statistics -->
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold mb-4">Queue Statistics</h3>
-      <dl class="space-y-3">
-        <div>
-          <dt class="text-sm text-gray-500">Total Pending</dt>
-          <dd class="text-2xl font-bold text-gray-900"><%= @statistics[:statistics][:total_pending] %></dd>
-        </div>
-        <div>
-          <dt class="text-sm text-gray-500">Unassigned</dt>
-          <dd class="text-xl font-semibold text-amber-600"><%= @statistics[:statistics][:unassigned] %></dd>
-        </div>
-        <div>
-          <dt class="text-sm text-gray-500">Average Wait Time</dt>
-          <dd class="text-lg text-gray-700"><%= distance_of_time_in_words(@statistics[:statistics][:average_wait_time]) %></dd>
-        </div>
-      </dl>
-    </div>
-
-    <!-- Priority Breakdown -->
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold mb-4">By Priority</h3>
-      <div class="space-y-2">
-        <div class="flex items-center justify-between">
-          <span class="text-sm font-medium text-red-600">High Priority</span>
-          <span class="text-sm font-bold"><%= @statistics[:statistics][:by_priority][:high] %></span>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-sm font-medium text-yellow-600">Medium Priority</span>
-          <span class="text-sm font-bold"><%= @statistics[:statistics][:by_priority][:medium] %></span>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-sm font-medium text-green-600">Low Priority</span>
-          <span class="text-sm font-bold"><%= @statistics[:statistics][:by_priority][:low] %></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Filters -->
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold mb-4">Filters</h3>
-      <%= form_with url: manual_tasks_path, method: :get, data: { turbo_frame: "manual_tasks" } do |f| %>
-        <div class="space-y-4">
-          <div>
-            <%= f.check_box :assigned_to_me, class: "mr-2", onchange: "this.form.requestSubmit()" %>
-            <%= f.label :assigned_to_me, "My Tasks Only" %>
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50">
+  <!-- Premium Header with Glassmorphism -->
+  <div class="relative bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-xl">
+    <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-indigo-600/10"></div>
+    <div class="relative px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div class="space-y-2">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-lg">
+              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+            </div>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-900 via-purple-900 to-indigo-900 bg-clip-text text-transparent">
+              Manual Task Queue
+            </h1>
           </div>
-          <div>
-            <%= f.label :pipeline_name, "Pipeline", class: "block text-sm font-medium text-gray-700" %>
-            <%= f.select :pipeline_name, 
-              options_for_select(
-                @statistics[:statistics][:by_pipeline].map { |name, count| ["#{name} (#{count})", name] },
-                params[:pipeline_name]
-              ),
-              { include_blank: "All Pipelines" },
-              class: "mt-1 block w-full rounded-md border-gray-300",
-              onchange: "this.form.requestSubmit()"
-            %>
-          </div>
+          <p class="text-slate-600 font-medium">Tasks requiring manual intervention or approval</p>
         </div>
-      <% end %>
-    </div>
-  </div>
-
-  <!-- Main task list -->
-  <div class="lg:col-span-3">
-    <%= turbo_frame_tag "manual_tasks" do %>
-      <% if @tasks.any? %>
-        <div class="space-y-4">
-          <% @tasks.each do |task| %>
-            <%= turbo_frame_tag task do %>
-              <div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
-                <div class="p-6">
-                  <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                      <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-lg font-semibold">
-                          <%= link_to task.name, manual_task_path(task), 
-                            class: "text-gray-900 hover:text-blue-600",
-                            data: { turbo_frame: "_top" } %>
-                        </h3>
-                        <span class="<%= task.execution_mode_badge_class %> px-2 py-1 text-xs rounded-full">
-                          <%= task.execution_mode.humanize %>
-                        </span>
-                        <span class="<%= task.status_badge_class %> px-2 py-1 text-xs rounded-full">
-                          <%= task.status.humanize %>
-                        </span>
-                      </div>
-                      
-                      <p class="text-gray-600 mb-3"><%= truncate(task.description, length: 150) %></p>
-                      
-                      <div class="flex items-center gap-4 text-sm text-gray-500">
-                        <span class="flex items-center gap-1">
-                          <%= render 'shared/icons/clock' %>
-                          <%= time_ago_in_words(task.created_at) %> ago
-                        </span>
-                        <span>Pipeline: <%= task.pipeline_execution.pipeline_name %></span>
-                        <% if task.assignee %>
-                          <span class="flex items-center gap-1">
-                            Assigned to: <strong><%= task.assignee.name %></strong>
-                          </span>
-                        <% else %>
-                          <span class="text-amber-600 font-medium">Unassigned</span>
-                        <% end %>
-                      </div>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 ml-4">
-                      <span class="text-2xl font-bold text-gray-400">
-                        <%= task.priority %>
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div class="mt-4 flex items-center gap-2">
-                    <% if task.can_execute? && (task.assignee == current_user || current_user.admin?) %>
-                      <% if task.status == 'waiting_approval' %>
-                        <%= link_to "Approve", approve_manual_task_path(task), 
-                          class: "btn btn-primary btn-sm",
-                          data: { turbo_frame: "_top" } %>
-                        <%= link_to "Reject", reject_manual_task_path(task), 
-                          class: "btn btn-danger btn-sm",
-                          data: { turbo_frame: "_top" } %>
-                      <% else %>
-                        <%= link_to "Execute", execute_manual_task_path(task), 
-                          class: "btn btn-primary btn-sm",
-                          data: { turbo_frame: "_top" } %>
-                      <% end %>
-                    <% elsif task.assignee.nil? && task.execution_mode == 'manual' %>
-                      <%= button_to "Assign to Me", 
-                        assign_manual_task_path(task), 
-                        method: :post,
-                        class: "btn btn-secondary btn-sm",
-                        data: { turbo_method: :post } %>
-                    <% end %>
-                    
-                    <%= link_to "View Details", manual_task_path(task), 
-                      class: "btn btn-ghost btn-sm",
-                      data: { turbo_frame: "_top" } %>
-                  </div>
-                </div>
-              </div>
+        <div class="mt-4 sm:mt-0 flex items-center space-x-3">
+          <%= button_to auto_assign_manual_tasks_path, 
+            method: :post,
+            data: { turbo_confirm: 'Auto-assign unassigned tasks to available users?' },
+            class: "group inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300" do %>
+            <svg class="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Auto-assign Tasks
+          <% end %>
+          <% if current_user.admin? %>
+            <%= button_to clear_stale_manual_tasks_path,
+              method: :post,
+              data: { turbo_confirm: 'Clear stale task assignments?' },
+              class: "group inline-flex items-center px-5 py-2.5 border border-slate-300/50 rounded-xl shadow-md text-sm font-semibold text-slate-700 bg-white/70 backdrop-blur-sm hover:bg-white/90 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5" do %>
+              <svg class="h-4 w-4 mr-2 text-slate-500 group-hover:text-slate-700 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Clear Stale
             <% end %>
           <% end %>
         </div>
-        
-        <div class="mt-6">
-          <%= paginate @tasks %>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <!-- Sidebar with statistics and filters -->
+      <div class="lg:col-span-1 space-y-6">
+        <!-- Queue Statistics -->
+        <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transition-all duration-500">
+          <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-indigo-500/5 rounded-2xl"></div>
+          <div class="relative">
+            <div class="flex items-center space-x-2 mb-4">
+              <div class="p-2 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg shadow-lg">
+                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold bg-gradient-to-r from-gray-900 to-purple-900 bg-clip-text text-transparent">Queue Statistics</h3>
+            </div>
+            <dl class="space-y-4">
+              <div class="group hover:bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-3 -mx-3 transition-all duration-300">
+                <dt class="text-sm font-medium text-slate-600 mb-1">Total Pending</dt>
+                <dd class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent"><%= @statistics[:statistics][:total_pending] %></dd>
+              </div>
+              <div class="group hover:bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-3 -mx-3 transition-all duration-300">
+                <dt class="text-sm font-medium text-slate-600 mb-1">Unassigned</dt>
+                <dd class="text-2xl font-bold text-amber-600"><%= @statistics[:statistics][:unassigned] %></dd>
+              </div>
+              <div class="group hover:bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-3 -mx-3 transition-all duration-300">
+                <dt class="text-sm font-medium text-slate-600 mb-1">Average Wait Time</dt>
+                <dd class="text-lg font-semibold text-blue-700"><%= distance_of_time_in_words(@statistics[:statistics][:average_wait_time]) %></dd>
+              </div>
+            </dl>
+          </div>
         </div>
-      <% else %>
-        <div class="bg-white rounded-lg shadow p-12 text-center">
-          <%= render 'shared/icons/check-circle', class: "w-16 h-16 text-green-500 mx-auto mb-4" %>
-          <h3 class="text-xl font-semibold text-gray-900 mb-2">No Manual Tasks</h3>
-          <p class="text-gray-600">All tasks are either completed or running automatically.</p>
+
+        <!-- Priority Breakdown -->
+        <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transition-all duration-500">
+          <div class="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-orange-500/5 rounded-2xl"></div>
+          <div class="relative">
+            <div class="flex items-center space-x-2 mb-4">
+              <div class="p-2 bg-gradient-to-br from-rose-500 to-orange-600 rounded-lg shadow-lg">
+                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold bg-gradient-to-r from-gray-900 to-rose-900 bg-clip-text text-transparent">By Priority</h3>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-3 rounded-xl hover:bg-gradient-to-r from-red-50 to-rose-50 transition-all duration-300">
+                <div class="flex items-center space-x-2">
+                  <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                  <span class="text-sm font-semibold text-red-700">High Priority</span>
+                </div>
+                <span class="text-lg font-bold text-red-600 px-3 py-1 bg-red-100 rounded-lg"><%= @statistics[:statistics][:by_priority][:high] %></span>
+              </div>
+              <div class="flex items-center justify-between p-3 rounded-xl hover:bg-gradient-to-r from-yellow-50 to-amber-50 transition-all duration-300">
+                <div class="flex items-center space-x-2">
+                  <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                  <span class="text-sm font-semibold text-yellow-700">Medium Priority</span>
+                </div>
+                <span class="text-lg font-bold text-yellow-600 px-3 py-1 bg-yellow-100 rounded-lg"><%= @statistics[:statistics][:by_priority][:medium] %></span>
+              </div>
+              <div class="flex items-center justify-between p-3 rounded-xl hover:bg-gradient-to-r from-green-50 to-emerald-50 transition-all duration-300">
+                <div class="flex items-center space-x-2">
+                  <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span class="text-sm font-semibold text-green-700">Low Priority</span>
+                </div>
+                <span class="text-lg font-bold text-green-600 px-3 py-1 bg-green-100 rounded-lg"><%= @statistics[:statistics][:by_priority][:low] %></span>
+              </div>
+            </div>
+          </div>
         </div>
-      <% end %>
-    <% end %>
+
+        <!-- Filters -->
+        <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transition-all duration-500">
+          <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 rounded-2xl"></div>
+          <div class="relative">
+            <div class="flex items-center space-x-2 mb-4">
+              <div class="p-2 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg shadow-lg">
+                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold bg-gradient-to-r from-gray-900 to-blue-900 bg-clip-text text-transparent">Filters</h3>
+            </div>
+            <%= form_with url: manual_tasks_path, method: :get, data: { turbo_frame: "manual_tasks" } do |f| %>
+              <div class="space-y-4">
+                <div class="flex items-center p-3 rounded-lg hover:bg-gradient-to-r from-blue-50 to-indigo-50 transition-all duration-300">
+                  <%= f.check_box :assigned_to_me, 
+                    class: "h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500", 
+                    onchange: "this.form.requestSubmit()" %>
+                  <%= f.label :assigned_to_me, "My Tasks Only", class: "ml-2 text-sm font-medium text-gray-700 cursor-pointer" %>
+                </div>
+                <div>
+                  <%= f.label :pipeline_name, "Pipeline", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+                  <%= f.select :pipeline_name, 
+                    options_for_select(
+                      @statistics[:statistics][:by_pipeline].map { |name, count| ["#{name} (#{count})", name] },
+                      params[:pipeline_name]
+                    ),
+                    { include_blank: "All Pipelines" },
+                    class: "block w-full px-4 py-2.5 bg-white/70 backdrop-blur-sm border border-gray-300 rounded-xl shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all duration-300",
+                    onchange: "this.form.requestSubmit()"
+                  %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main task list -->
+      <div class="lg:col-span-3">
+        <%= turbo_frame_tag "manual_tasks" do %>
+          <% if @tasks.any? %>
+            <div class="space-y-4">
+              <% @tasks.each do |task| %>
+                <%= turbo_frame_tag task do %>
+                  <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/[0.02] to-indigo-500/[0.02] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="relative p-6">
+                      <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                          <div class="flex items-center gap-3 mb-3">
+                            <h3 class="text-lg font-semibold">
+                              <%= link_to task.name, manual_task_path(task), 
+                                class: "bg-gradient-to-r from-gray-900 to-purple-900 bg-clip-text text-transparent hover:from-purple-600 hover:to-indigo-600 transition-all duration-300",
+                                data: { turbo_frame: "_top" } %>
+                            </h3>
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gradient-to-r <%= task.execution_mode == 'manual' ? 'from-purple-500 to-indigo-600' : 'from-blue-500 to-cyan-600' %> text-white shadow-lg">
+                              <%= task.execution_mode.humanize %>
+                            </span>
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full <%= 
+                              case task.status
+                              when 'pending' then 'bg-gradient-to-r from-amber-400 to-orange-500'
+                              when 'in_progress' then 'bg-gradient-to-r from-blue-400 to-cyan-500'
+                              when 'completed' then 'bg-gradient-to-r from-green-400 to-emerald-500'
+                              when 'failed' then 'bg-gradient-to-r from-red-400 to-rose-500'
+                              when 'waiting_approval' then 'bg-gradient-to-r from-purple-400 to-pink-500'
+                              else 'bg-gradient-to-r from-gray-400 to-slate-500'
+                              end
+                            %> text-white shadow-lg">
+                              <%= task.status.humanize %>
+                            </span>
+                          </div>
+                          
+                          <p class="text-slate-600 mb-4 line-clamp-2"><%= truncate(task.description, length: 150) %></p>
+                          
+                          <div class="flex items-center gap-4 text-sm">
+                            <span class="flex items-center gap-1.5 text-slate-500">
+                              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              <%= time_ago_in_words(task.created_at) %> ago
+                            </span>
+                            <span class="flex items-center gap-1.5 text-slate-600 font-medium">
+                              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                              </svg>
+                              <%= task.pipeline_execution.pipeline_name %>
+                            </span>
+                            <% if task.assignee %>
+                              <span class="flex items-center gap-1.5">
+                                <div class="w-6 h-6 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                                  <%= task.assignee.name.first.upcase %>
+                                </div>
+                                <span class="text-slate-700 font-semibold"><%= task.assignee.name %></span>
+                              </span>
+                            <% else %>
+                              <span class="flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 rounded-full font-semibold">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                Unassigned
+                              </span>
+                            <% end %>
+                          </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2 ml-4">
+                          <div class="relative">
+                            <div class="absolute inset-0 <%= 
+                              case task.priority
+                              when 1 then 'bg-gradient-to-br from-red-500 to-rose-600'
+                              when 2 then 'bg-gradient-to-br from-yellow-500 to-amber-600'
+                              when 3 then 'bg-gradient-to-br from-green-500 to-emerald-600'
+                              else 'bg-gradient-to-br from-gray-500 to-slate-600'
+                              end
+                            %> rounded-xl blur-xl opacity-50"></div>
+                            <div class="relative w-12 h-12 <%= 
+                              case task.priority
+                              when 1 then 'bg-gradient-to-br from-red-500 to-rose-600'
+                              when 2 then 'bg-gradient-to-br from-yellow-500 to-amber-600'
+                              when 3 then 'bg-gradient-to-br from-green-500 to-emerald-600'
+                              else 'bg-gradient-to-br from-gray-500 to-slate-600'
+                              end
+                            %> rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                              <%= task.priority %>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="mt-6 pt-4 border-t border-slate-200/50 flex items-center gap-2">
+                        <% if task.can_execute? && (task.assignee == current_user || current_user.admin?) %>
+                          <% if task.status == 'waiting_approval' %>
+                            <%= link_to approve_manual_task_path(task), 
+                              class: "group inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300",
+                              data: { turbo_frame: "_top" } do %>
+                              <svg class="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              Approve
+                            <% end %>
+                            <%= link_to reject_manual_task_path(task), 
+                              class: "group inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300",
+                              data: { turbo_frame: "_top" } do %>
+                              <svg class="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              Reject
+                            <% end %>
+                          <% else %>
+                            <%= link_to execute_manual_task_path(task), 
+                              class: "group inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300",
+                              data: { turbo_frame: "_top" } do %>
+                              <svg class="h-4 w-4 mr-1.5 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              Execute
+                            <% end %>
+                          <% end %>
+                        <% elsif task.assignee.nil? && task.execution_mode == 'manual' %>
+                          <%= button_to assign_manual_task_path(task), 
+                            method: :post,
+                            class: "group inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300",
+                            data: { turbo_method: :post } do %>
+                            <svg class="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                            </svg>
+                            Assign to Me
+                          <% end %>
+                        <% end %>
+                        
+                        <%= link_to manual_task_path(task), 
+                          class: "group inline-flex items-center px-4 py-2 border border-slate-300/50 rounded-xl shadow-md text-sm font-semibold text-slate-700 bg-white/70 backdrop-blur-sm hover:bg-white/90 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5",
+                          data: { turbo_frame: "_top" } do %>
+                          <svg class="h-4 w-4 mr-1.5 text-slate-500 group-hover:text-slate-700 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          View Details
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+            
+            <div class="mt-8">
+              <%= paginate @tasks %>
+            </div>
+          <% else %>
+            <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-12 text-center">
+              <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-2xl"></div>
+              <div class="relative">
+                <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+                  <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-green-900 bg-clip-text text-transparent mb-3">No Manual Tasks</h3>
+                <p class="text-slate-600 max-w-md mx-auto">All tasks are either completed or running automatically. Great job keeping the queue clear!</p>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-time updates channel -->
+  <%= turbo_stream_from "manual_task_queue" %>
+
+  <!-- Live Update Indicator -->
+  <div class="fixed bottom-6 right-6 z-50">
+    <div class="group relative">
+      <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+      <div class="relative bg-white/90 backdrop-blur-xl rounded-full px-4 py-2 shadow-xl border border-white/20 flex items-center space-x-2">
+        <div class="w-2 h-2 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full animate-pulse"></div>
+        <span class="text-sm font-semibold text-slate-700">Live Updates</span>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Real-time updates channel -->
-<%= turbo_stream_from "manual_task_queue" %>
+<script>
+document.addEventListener('turbo:load', () => {
+  // Smooth scroll animations
+  const animateOnScroll = () => {
+    const elements = document.querySelectorAll('.relative.bg-white\\/80');
+    
+    elements.forEach((element, index) => {
+      const rect = element.getBoundingClientRect();
+      const isVisible = rect.top <= window.innerHeight && rect.bottom >= 0;
+      
+      if (isVisible && !element.classList.contains('animate-in')) {
+        setTimeout(() => {
+          element.classList.add('animate-in');
+          element.style.opacity = '0';
+          element.style.transform = 'translateY(20px)';
+          
+          requestAnimationFrame(() => {
+            element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+          });
+        }, index * 50);
+      }
+    });
+  };
+  
+  // Initialize animations
+  animateOnScroll();
+  window.addEventListener('scroll', animateOnScroll);
+  
+  // Add hover effects to priority badges
+  document.querySelectorAll('.relative.w-12.h-12').forEach(badge => {
+    badge.addEventListener('mouseenter', () => {
+      badge.style.transform = 'scale(1.1) rotate(5deg)';
+    });
+    
+    badge.addEventListener('mouseleave', () => {
+      badge.style.transform = 'scale(1) rotate(0deg)';
+    });
+  });
+  
+  // Live updates animation
+  const liveIndicator = document.querySelector('.fixed.bottom-6.right-6');
+  if (liveIndicator) {
+    setInterval(() => {
+      liveIndicator.querySelector('.animate-pulse')?.classList.add('scale-125');
+      setTimeout(() => {
+        liveIndicator.querySelector('.animate-pulse')?.classList.remove('scale-125');
+      }, 1000);
+    }, 3000);
+  }
+});
+</script>

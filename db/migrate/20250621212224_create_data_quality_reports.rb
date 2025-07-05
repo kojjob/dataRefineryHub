@@ -17,7 +17,7 @@ class CreateDataQualityReports < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :data_quality_reports, [:data_source_id, :run_at]
+    add_index :data_quality_reports, [ :data_source_id, :run_at ]
     add_index :data_quality_reports, :run_at
   end
 end

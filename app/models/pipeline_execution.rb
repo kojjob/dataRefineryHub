@@ -7,7 +7,7 @@ class PipelineExecution < ApplicationRecord
   belongs_to :organization
   belongs_to :data_source, optional: true
   belongs_to :user, optional: true
-  belongs_to :approved_by, class_name: 'User', optional: true
+  belongs_to :approved_by, class_name: "User", optional: true
   has_many :tasks, dependent: :destroy
 
   validates :execution_id, presence: true, uniqueness: true
@@ -91,6 +91,22 @@ class PipelineExecution < ApplicationRecord
   def progress_percentage
     return 0 unless progress
     [ progress, 100 ].min
+  end
+
+  def records_processed
+    return 0 unless data_source_id
+    
+    # Calculate records processed from related extraction jobs during this execution timeframe
+    if completed_at
+      ExtractionJob.where(data_source_id: data_source_id)
+                   .where("created_at >= ? AND created_at <= ?", started_at, completed_at)
+                   .sum(:records_processed)
+    else
+      # For running executions, get records processed since start
+      ExtractionJob.where(data_source_id: data_source_id)
+                   .where("created_at >= ?", started_at)
+                   .sum(:records_processed)
+    end
   end
 
   def estimated_completion_time
@@ -293,22 +309,22 @@ class PipelineExecution < ApplicationRecord
       manual_intervention_requested_at: Time.current
     )
     save!
-    
+
     # Broadcast notification
     broadcast_manual_intervention_required
   end
-  
+
   def clear_manual_intervention!
     self.manual_intervention_required = false
     save!
   end
-  
+
   def request_approval!(approver = nil)
     self.approval_status = "pending"
     self.approved_by = approver if approver
     save!
   end
-  
+
   def approve!(user)
     self.approval_status = "approved"
     self.approved_by = user
@@ -318,7 +334,7 @@ class PipelineExecution < ApplicationRecord
     )
     save!
   end
-  
+
   def reject!(user, reason = nil)
     self.approval_status = "rejected"
     self.approved_by = user
@@ -331,17 +347,17 @@ class PipelineExecution < ApplicationRecord
     )
     save!
   end
-  
+
   # Task management
   def create_tasks_from_definition(pipeline_definition)
     tasks_config = pipeline_definition[:tasks] || []
-    
+
     tasks_config.each_with_index do |task_config, index|
       tasks.create!(
         name: task_config[:name],
         description: task_config[:description],
         task_type: task_config[:type],
-        execution_mode: task_config[:execution_mode] || 'automated',
+        execution_mode: task_config[:execution_mode] || "automated",
         priority: task_config[:priority] || 0,
         position: index + 1,
         configuration: task_config[:configuration] || {},
@@ -351,40 +367,40 @@ class PipelineExecution < ApplicationRecord
       )
     end
   end
-  
+
   def pending_manual_tasks
     tasks.manual.ready
   end
-  
+
   def tasks_requiring_approval
     tasks.requiring_approval
   end
-  
+
   def update_task_progress!
     total_tasks = tasks.count
     return if total_tasks.zero?
-    
-    completed_tasks = tasks.where(status: ['completed', 'skipped', 'cancelled']).count
-    failed_tasks = tasks.where(status: 'failed').count
-    
+
+    completed_tasks = tasks.where(status: [ "completed", "skipped", "cancelled" ]).count
+    failed_tasks = tasks.where(status: "failed").count
+
     new_progress = (completed_tasks.to_f / total_tasks * 100).round(2)
-    
+
     # Update progress and potentially status
     updates = { progress: new_progress }
-    
+
     if failed_tasks > 0 && completed_tasks + failed_tasks == total_tasks
-      updates[:status] = 'failed'
+      updates[:status] = "failed"
       updates[:completed_at] = Time.current
     elsif completed_tasks == total_tasks
-      updates[:status] = 'completed'
+      updates[:status] = "completed"
       updates[:completed_at] = Time.current
     end
-    
+
     update!(updates)
   end
-  
+
   private
-  
+
   def set_defaults
     self.execution_id ||= SecureRandom.uuid
     self.status ||= "pending"
@@ -394,12 +410,12 @@ class PipelineExecution < ApplicationRecord
     self.execution_mode ||= "automatic"
     self.manual_intervention_required ||= false
   end
-  
+
   def broadcast_manual_intervention_required
     ActionCable.server.broadcast(
       "pipeline_#{id}",
       {
-        type: 'manual_intervention_required',
+        type: "manual_intervention_required",
         pipeline_execution_id: id,
         pipeline_name: pipeline_name,
         timestamp: Time.current

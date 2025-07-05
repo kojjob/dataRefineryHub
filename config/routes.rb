@@ -1,28 +1,28 @@
 Rails.application.routes.draw do
-  resources :pipeline_dashboard, only: [:index, :show]
+  resources :pipeline_dashboard, only: [ :index, :show ]
   devise_for :users, controllers: {
-    registrations: 'users/registrations',
-    sessions: 'users/sessions'
+    registrations: "users/registrations",
+    sessions: "users/sessions"
   }
 
-  root 'landing#index'
-  
+  root "landing#index"
+
   # Debug routes (remove in production)
-  get 'debug/session_info', to: 'debug#session_info' unless Rails.env.production?
+  get "debug/session_info", to: "debug#session_info" unless Rails.env.production?
 
   # Dashboard routes
-  get 'dashboard', to: 'dashboard#index'
-  get 'dashboard/analytics', to: 'dashboard#analytics'
-  get 'dashboard/reports', to: 'dashboard#reports'
-  
+  get "dashboard", to: "dashboard#index"
+  get "dashboard/analytics", to: "dashboard#analytics"
+  get "dashboard/reports", to: "dashboard#reports"
+
   # Include data quality monitoring routes
-  load Rails.root.join('config', 'routes', 'data_quality_routes.rb')
-  
+  load Rails.root.join("config", "routes", "data_quality_routes.rb")
+
   # Include manual tasks routes
-  load Rails.root.join('config', 'routes', 'manual_tasks_routes.rb')
-  
+  load Rails.root.join("config", "routes", "manual_tasks_routes.rb")
+
   # Include API pipeline routes
-  load Rails.root.join('config', 'routes', 'api_v1_pipeline_routes.rb')
+  load Rails.root.join("config", "routes", "api_v1_pipeline_routes.rb")
 
   # ETL Pipeline Builder routes
   resources :etl_pipeline_builders do
@@ -38,9 +38,9 @@ Rails.application.routes.draw do
       post :import_pipeline
     end
   end
-  
+
   # Pipeline Monitoring routes
-  resources :pipeline_monitoring, only: [:index, :show] do
+  resources :pipeline_monitoring, only: [ :index, :show ] do
     member do
       get :live_updates
     end
@@ -50,9 +50,48 @@ Rails.application.routes.draw do
     end
   end
 
-  # Analytics
-  get "analytics", to: "analytics#index"
+  # Analytics - Legacy route for backward compatibility
+  get "analytics", to: "analytics/dashboard#index"
   
+  # New modular analytics routes
+  namespace :analytics do
+    root to: "dashboard#index"
+    
+    resource :dashboard, only: [:show], controller: "dashboard" do
+      get :index, on: :collection, action: :index
+    end
+    
+    resources :revenue, only: [:index] do
+      collection do
+        get :trends
+        get :breakdown
+      end
+    end
+    
+    resources :customers, only: [:index] do
+      collection do
+        get :acquisition
+        get :segments
+        get :lifetime_value
+      end
+    end
+    
+    resources :products, only: [:index] do
+      collection do
+        get :performance
+        get :inventory
+        get :recommendations
+      end
+    end
+    
+    resources :risks, only: [:index] do
+      collection do
+        get :indicators
+        get :opportunities
+      end
+    end
+  end
+
   # AI-powered features
   namespace :ai do
     resources :presentations do
@@ -65,8 +104,8 @@ Rails.application.routes.draw do
         get :preview
       end
     end
-    
-    resources :queries, only: [:index] do
+
+    resources :queries, only: [ :index ] do
       collection do
         post :process_query
         get :suggestions
@@ -75,7 +114,7 @@ Rails.application.routes.draw do
         post :export
       end
     end
-    
+
     resources :real_time_analytics, only: [] do
       collection do
         get :dashboard
@@ -94,7 +133,7 @@ Rails.application.routes.draw do
         get :health_check
       end
     end
-    
+
     resources :bi_agent, only: [] do
       collection do
         get :dashboard
@@ -112,7 +151,7 @@ Rails.application.routes.draw do
         get :export_insights
       end
     end
-    
+
     resources :data_integration, only: [] do
       collection do
         get :dashboard
@@ -129,7 +168,7 @@ Rails.application.routes.draw do
         post :validate_quality
       end
     end
-    
+
     resources :interactive_presentations, only: [] do
       collection do
         get :dashboard
@@ -149,7 +188,7 @@ Rails.application.routes.draw do
         post :duplicate_presentation
         delete :delete_presentation
       end
-      
+
       member do
         get :show
         get :edit
@@ -199,9 +238,9 @@ Rails.application.routes.draw do
       get "analyze_file/:file_id", action: :analyze_file, as: :analyze_file
       get "enhanced_preview/:file_id", action: :enhanced_preview, as: :enhanced_preview
       # Data quality routes
-      get :quality, to: 'data_quality#show'
-      post :validate_quality, to: 'data_quality#validate'
-      get 'quality/reports/:report_id', to: 'data_quality#report', as: :quality_report
+      get :quality, to: "data_quality#show"
+      post :validate_quality, to: "data_quality#validate"
+      get "quality/reports/:report_id", to: "data_quality#report", as: :quality_report
     end
 
     # Scheduled uploads
@@ -296,12 +335,12 @@ Rails.application.routes.draw do
       # Notifications API
       resources :notifications do
         collection do
-          get 'unread_count'
-          patch 'mark_all_as_read'
+          get "unread_count"
+          patch "mark_all_as_read"
         end
         member do
-          patch 'mark_as_read'
-          patch 'mark_as_unread'
+          patch "mark_as_read"
+          patch "mark_as_unread"
         end
       end
 

@@ -1,6 +1,6 @@
 class Api::V1::NotificationsController < Api::V1::BaseController
   before_action :authenticate_user!
-  before_action :set_notification, only: [:show, :update, :destroy]
+  before_action :set_notification, only: [ :show, :update, :destroy ]
 
   def index
     @notifications = current_user.notifications
@@ -11,10 +11,10 @@ class Api::V1::NotificationsController < Api::V1::BaseController
 
     # Filter by type if provided
     @notifications = @notifications.by_type(params[:type]) if params[:type].present?
-    
+
     # Filter by read status if provided
-    @notifications = @notifications.unread if params[:unread] == 'true'
-    @notifications = @notifications.read if params[:read] == 'true'
+    @notifications = @notifications.unread if params[:unread] == "true"
+    @notifications = @notifications.read if params[:read] == "true"
 
     render json: {
       notifications: @notifications.map do |notification|
@@ -85,7 +85,7 @@ class Api::V1::NotificationsController < Api::V1::BaseController
   def mark_as_read
     @notification = current_user.notifications.find(params[:id])
     @notification.mark_as_read!
-    
+
     render json: {
       notification: {
         id: @notification.id,
@@ -98,7 +98,7 @@ class Api::V1::NotificationsController < Api::V1::BaseController
   def mark_as_unread
     @notification = current_user.notifications.find(params[:id])
     @notification.mark_as_unread!
-    
+
     render json: {
       notification: {
         id: @notification.id,
@@ -110,16 +110,16 @@ class Api::V1::NotificationsController < Api::V1::BaseController
 
   def mark_all_as_read
     current_user.notifications.unread.update_all(read_at: Time.current)
-    
+
     render json: {
-      message: 'All notifications marked as read',
+      message: "All notifications marked as read",
       unread_count: 0
     }
   end
 
   def destroy
     @notification.destroy
-    render json: { message: 'Notification deleted' }
+    render json: { message: "Notification deleted" }
   end
 
   def unread_count

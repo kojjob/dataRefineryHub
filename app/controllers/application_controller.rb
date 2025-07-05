@@ -31,10 +31,10 @@ class ApplicationController < ActionController::Base
   def ensure_organization_member
     redirect_to new_user_session_path unless current_user&.organization
   end
-  
+
   def log_session_debug
     return if devise_controller? # Skip for Devise controllers to avoid noise
-    
+
     Rails.logger.debug "=== SESSION DEBUG ==="
     Rails.logger.debug "Controller: #{controller_name}##{action_name}"
     Rails.logger.debug "User signed in: #{user_signed_in?}"
@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
     Rails.logger.debug "Remember token cookie present: #{cookies[:remember_user_token].present?}"
     Rails.logger.debug "====================="
   end
-  
+
   def safe_current_user_email
     user = current_user
     case user
@@ -62,33 +62,33 @@ class ApplicationController < ActionController::Base
     Rails.logger.error "Error getting current user email: #{e.message}"
     "[ERROR: #{e.message}]"
   end
-  
+
   def set_system_status
     return unless current_user&.organization
-    
+
     # Simplified system status for navigation
     begin
-      total_jobs = current_user.organization.extraction_jobs.where('created_at >= ?', 24.hours.ago)
+      total_jobs = current_user.organization.extraction_jobs.where("created_at >= ?", 24.hours.ago)
       running_jobs = total_jobs.running.count
-      failed_jobs_rate = total_jobs.failed.count.to_f / [total_jobs.count, 1].max
-      
+      failed_jobs_rate = total_jobs.failed.count.to_f / [ total_jobs.count, 1 ].max
+
       # Calculate uptime based on success rate
       uptime = ((1 - failed_jobs_rate) * 100).round(1)
-      
+
       # Calculate storage used (simplified)
       total_records = current_user.organization.raw_data_records.count
       estimated_storage_gb = (total_records * 0.0005).round(1) # More conservative estimate
-      
+
       # Determine overall health
       health_status = case
-                     when uptime >= 99 && running_jobs < 10
-                       { status: 'healthy', color: 'green', text: 'Healthy' }
-                     when uptime >= 95 && running_jobs < 20
-                       { status: 'warning', color: 'yellow', text: 'Warning' }
-                     else
-                       { status: 'critical', color: 'red', text: 'Critical' }
-                     end
-      
+      when uptime >= 99 && running_jobs < 10
+                       { status: "healthy", color: "green", text: "Healthy" }
+      when uptime >= 95 && running_jobs < 20
+                       { status: "warning", color: "yellow", text: "Warning" }
+      else
+                       { status: "critical", color: "red", text: "Critical" }
+      end
+
       @system_status = {
         health: health_status,
         uptime: "#{uptime}%",
@@ -100,7 +100,7 @@ class ApplicationController < ActionController::Base
       Rails.logger.error "Error calculating system status: #{e.message}"
       # Fallback system status
       @system_status = {
-        health: { status: 'unknown', color: 'gray', text: 'Unknown' },
+        health: { status: "unknown", color: "gray", text: "Unknown" },
         uptime: "--",
         processing_jobs: 0,
         storage_used: "-- GB",
@@ -108,26 +108,26 @@ class ApplicationController < ActionController::Base
       }
     end
   end
-  
+
   def set_manual_tasks_count
     return unless current_user&.organization
-    
+
     begin
       # Count pending manual tasks that are either unassigned or assigned to current user
       @manual_tasks_count = Task.joins(:pipeline_execution)
                                 .where(pipeline_executions: { organization_id: current_organization.id })
-                                .where(execution_mode: 'manual', status: ['ready', 'waiting_approval'])
-                                .where('assignee_id IS NULL OR assignee_id = ?', current_user.id)
+                                .where(execution_mode: "manual", status: [ "ready", "waiting_approval" ])
+                                .where("assignee_id IS NULL OR assignee_id = ?", current_user.id)
                                 .count
     rescue => e
       Rails.logger.error "Error counting manual tasks: #{e.message}"
       @manual_tasks_count = 0
     end
   end
-  
+
   def set_running_pipelines_count
     return unless current_user&.organization
-    
+
     begin
       @running_pipelines_count = current_organization.pipeline_executions.running.count
     rescue => e

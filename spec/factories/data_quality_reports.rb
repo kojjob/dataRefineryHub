@@ -11,7 +11,7 @@ FactoryBot.define do
     total_records { 1000 }
     valid_records { 950 }
     run_at { 1.hour.ago }
-    report_data { 
+    report_data {
       {
         issues: [
           {

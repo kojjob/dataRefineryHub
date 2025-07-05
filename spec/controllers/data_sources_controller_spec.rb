@@ -19,7 +19,7 @@ RSpec.describe DataSourcesController, type: :request do
     it 'assigns data sources by status' do
       connected_source = create(:data_source, organization: organization, status: 'connected')
       syncing_source = create(:data_source, organization: organization, status: 'syncing')
-      
+
       get '/data_sources'
       expect(response).to be_successful
     end
@@ -64,7 +64,7 @@ RSpec.describe DataSourcesController, type: :request do
       let(:file_upload_attributes) do
         valid_attributes.merge(
           source_type: 'file_upload',
-          uploaded_files: [fixture_file_upload('test_data.csv', 'text/csv')]
+          uploaded_files: [ fixture_file_upload('test_data.csv', 'text/csv') ]
         )
       end
 
@@ -107,14 +107,14 @@ RSpec.describe DataSourcesController, type: :request do
       end
 
       it 'processes files successfully' do
-        post "/data_sources/#{data_source.id}/process_files", params: { files: [uploaded_file] }
+        post "/data_sources/#{data_source.id}/process_files", params: { files: [ uploaded_file ] }
         expect(response).to redirect_to(data_source_path(data_source))
         expect(flash[:notice]).to eq('Files processed successfully')
       end
 
       it 'tracks performance for file processing' do
         expect(PerformanceMonitorService.instance).to receive(:track).with('file_processing')
-        post "/data_sources/#{data_source.id}/process_files", params: { files: [uploaded_file] }
+        post "/data_sources/#{data_source.id}/process_files", params: { files: [ uploaded_file ] }
       end
     end
 
@@ -126,7 +126,7 @@ RSpec.describe DataSourcesController, type: :request do
       end
 
       it 'handles processing failure' do
-        post "/data_sources/#{data_source.id}/process_files", params: { files: [uploaded_file] }
+        post "/data_sources/#{data_source.id}/process_files", params: { files: [ uploaded_file ] }
         expect(response).to redirect_to(data_source_path(data_source))
         expect(flash[:alert]).to eq('Processing failed')
       end
@@ -153,7 +153,7 @@ RSpec.describe DataSourcesController, type: :request do
 
       it 'returns successful response for valid shopify connection' do
         post '/data_sources/test_connection', params: valid_params
-        
+
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be true
@@ -162,7 +162,7 @@ RSpec.describe DataSourcesController, type: :request do
 
       it 'filters out authenticity_token from parameters' do
         params_with_token = valid_params.merge(authenticity_token: 'fake_token')
-        
+
         post '/data_sources/test_connection', params: params_with_token
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
@@ -181,7 +181,7 @@ RSpec.describe DataSourcesController, type: :request do
 
       it 'returns successful response for valid woocommerce connection' do
         post '/data_sources/test_connection', params: valid_params
-        
+
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be true
@@ -194,7 +194,7 @@ RSpec.describe DataSourcesController, type: :request do
 
       it 'returns success for file upload source type' do
         post '/data_sources/test_connection', params: valid_params
-        
+
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be true
@@ -207,7 +207,7 @@ RSpec.describe DataSourcesController, type: :request do
 
       it 'returns error for unsupported source type' do
         post '/data_sources/test_connection', params: invalid_params
-        
+
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be false
@@ -226,7 +226,7 @@ RSpec.describe DataSourcesController, type: :request do
 
       it 'returns error response for invalid parameters' do
         post '/data_sources/test_connection', params: invalid_params
-        
+
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be false
@@ -249,7 +249,7 @@ RSpec.describe DataSourcesController, type: :request do
 
       it 'filters out Rails internal parameters and unpermitted parameters' do
         post '/data_sources/test_connection', params: params_with_extra_fields
-        
+
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be true

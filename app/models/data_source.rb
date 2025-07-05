@@ -15,10 +15,10 @@ class DataSource < ApplicationRecord
   has_many :scheduled_uploads, dependent: :destroy
   has_many :visualizations, dependent: :destroy
   has_many :data_quality_reports, dependent: :destroy
-  
+
   # AI-related associations
-  has_many :ai_presentations, class_name: 'Ai::Presentation', dependent: :nullify
-  has_many :ai_insights, class_name: 'Ai::Insight', dependent: :destroy
+  has_many :ai_presentations, class_name: "Ai::Presentation", dependent: :nullify
+  has_many :ai_insights, class_name: "Ai::Insight", dependent: :destroy
   has_many_attached :uploaded_files do |attachable|
     attachable.variant :preview, resize_to_limit: [ 300, 300 ]
   end

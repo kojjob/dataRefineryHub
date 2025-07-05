@@ -17,9 +17,9 @@ class CreatePresentations < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
-    add_index :presentations, [:organization_id, :created_at]
-    add_index :presentations, [:status, :created_at]
+
+    add_index :presentations, [ :organization_id, :created_at ]
+    add_index :presentations, [ :status, :created_at ]
     add_index :presentations, :template_type
   end
 end
