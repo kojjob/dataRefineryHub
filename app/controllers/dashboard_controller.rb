@@ -1,6 +1,5 @@
-class DashboardController < ApplicationController
+class DashboardController < DataflowProController
   before_action :ensure_organization_member
-  layout 'dataflow_pro'
 
   def index
     @organization = current_organization

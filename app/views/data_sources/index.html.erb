@@ -1,283 +1,156 @@
-<% content_for :page_title, "Data Sources" %>
+<% content_for :page_title, "Integration Marketplace" %>
+<% content_for :page_subtitle, "Connect with 200+ business tools and data sources" %>
 
-<div class="min-h-screen bg-gray-50">
-  <!-- Professional Header -->
-  <div class="bg-white border-b border-gray-200 shadow-sm">
-    <div class="px-4 sm:px-6 lg:px-8 py-6">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div class="flex items-center space-x-3">
-            <div class="p-2 bg-indigo-600 rounded-lg shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-              </svg>
-            </div>
-            <h1 class="text-2xl font-semibold text-gray-900">
-              Data Sources
-            </h1>
-          </div>
-          <p class="mt-1 text-sm text-gray-600">Connect, manage, and monitor your business data integrations</p>
-        </div>
-        <div class="mt-4 sm:mt-0 flex items-center space-x-3">
-          <div class="flex items-center space-x-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-200">
-            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span class="text-green-700 text-sm font-medium">Live</span>
-          </div>
-          <%= link_to new_data_source_path, 
-              class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-indigo-700 transition-colors duration-200" do %>
-            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Add Data Source
-          <% end %>
-        </div>
-      </div>
+<div class="px-df-32 py-df-24">
+  <!-- Search Bar -->
+  <div class="mb-df-32">
+    <div class="flex gap-df-8 max-w-2xl">
+      <input type="text" 
+             class="form-control flex-1" 
+             placeholder="Search integrations..."
+             data-controller="search"
+             data-action="input->search#filter">
+      <%= link_to new_data_source_path, class: "btn btn--primary" do %>
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Add Integration
+      <% end %>
     </div>
   </div>
 
-  <!-- Professional Stats Overview Cards -->
-  <div class="px-4 sm:px-6 lg:px-8 py-8">
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-      <!-- Connected Sources Card -->
-      <div class="relative overflow-hidden rounded-lg bg-white px-6 py-5 shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600 shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Connected</dt>
-              <dd class="text-lg font-semibold text-gray-900" data-data-sources-realtime-target="connectedCount"><%= @connected_sources.count %></dd>
-            </dl>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="flex items-center text-sm">
-            <span class="text-green-600 font-medium">Sources actively syncing</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Syncing Sources Card -->
-      <div class="relative overflow-hidden rounded-lg bg-white px-6 py-5 shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Syncing</dt>
-              <dd class="text-lg font-semibold text-gray-900" data-data-sources-realtime-target="syncingCount"><%= @syncing_sources.count %></dd>
-            </dl>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="flex items-center text-sm">
-            <span class="text-blue-600 font-medium">Currently processing data</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Error Sources Card -->
-      <div class="relative overflow-hidden rounded-lg bg-white px-6 py-5 shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-600 shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Errors</dt>
-              <dd class="text-lg font-semibold text-gray-900" data-data-sources-realtime-target="errorCount"><%= @error_sources.count %></dd>
-            </dl>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="flex items-center text-sm">
-            <span class="text-red-600 font-medium">Sources requiring attention</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Total Sources Card -->
-      <div class="relative overflow-hidden rounded-lg bg-white px-6 py-5 shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Total Sources</dt>
-              <dd class="text-lg font-semibold text-gray-900" data-data-sources-realtime-target="totalCount"><%= @data_sources.count %></dd>
-            </dl>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="flex items-center text-sm">
-            <span class="text-gray-600 font-medium">All configured integrations</span>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Integration Status Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-df-20 mb-df-32">
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "✅",
+      title: "Connected",
+      value: @connected_sources.count,
+      change: "Active integrations"
+    ) %>
+    
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "🔄",
+      title: "Syncing",
+      value: @syncing_sources.count,
+      change: "Currently processing"
+    ) %>
+    
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "⚠️",
+      title: "Errors",
+      value: @error_sources.count,
+      change: "Need attention",
+      change_type: :negative
+    ) %>
+    
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "🔌",
+      title: "Disconnected",
+      value: @disconnected_sources.count,
+      change: "Inactive"
+    ) %>
   </div>
 
-  <!-- Professional Filter and Search Section -->
-  <div class="px-4 sm:px-6 lg:px-8 pb-8">
-    <div class="bg-white shadow-sm rounded-lg border border-gray-200">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <h3 class="text-lg font-medium text-gray-900">Filter & Search</h3>
-      </div>
-      <div class="p-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- Search Input -->
-          <div class="lg:col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Search Sources</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803a7.5 7.5 0 0010.607 0z" />
-                </svg>
-              </div>
-              <input type="text" placeholder="Search by name, platform, or status..." 
-                     class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                     data-data-sources-realtime-target="searchInput">
-            </div>
-          </div>
-          
-          <!-- Status Filter -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Status</label>
-            <select class="block w-full py-2 px-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    data-data-sources-realtime-target="statusFilter">
-              <option value="">All Statuses</option>
-              <option value="connected">Connected</option>
-              <option value="syncing">Syncing</option>
-              <option value="error">Error</option>
-              <option value="disconnected">Disconnected</option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Professional Data Sources Grid -->
-  <div class="px-4 sm:px-6 lg:px-8 pb-8" data-controller="data-sources-realtime skeleton-loader">
-    <div data-data-sources-realtime-target="sourcesContainer" data-skeleton-loader-target="content">
-      <% if @data_sources.any? %>
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-          <% @data_sources.each do |data_source| %>
-            <div class="bg-white shadow-sm rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-200"
-                 data-source-id="<%= data_source.id %>"
-                 data-source-name="<%= data_source.name.downcase %>"
-                 data-source-platform="<%= data_source.source_type %>"
-                 data-source-status="<%= data_source.status %>">
-              
-              <div class="p-6">
-                <!-- Source Header -->
-                <div class="flex items-start justify-between mb-4">
-                  <div class="flex items-center gap-3">
-                    <div class="h-10 w-10 rounded-lg <%= case data_source.source_type
-                      when 'shopify' then 'bg-green-100 text-green-600'
-                      when 'stripe' then 'bg-purple-100 text-purple-600'
-                      when 'google_analytics' then 'bg-orange-100 text-orange-600'
-                      when 'quickbooks' then 'bg-blue-100 text-blue-600'
-                      when 'mailchimp' then 'bg-yellow-100 text-yellow-600'
-                      else 'bg-gray-100 text-gray-600'
-                      end %> flex items-center justify-center font-semibold text-sm">
-                      <%= data_source.source_type.first(2).upcase %>
-                    </div>
-                    <div>
-                      <h3 class="text-lg font-semibold text-gray-900">
-                        <%= link_to data_source.name, data_source_path(data_source), class: "hover:text-indigo-600" %>
-                      </h3>
-                      <p class="text-sm text-gray-500 capitalize"><%= data_source.source_type.humanize %></p>
-                    </div>
-                  </div>
-                  
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= case data_source.status
-                    when 'connected' then 'bg-green-100 text-green-800'
-                    when 'syncing' then 'bg-blue-100 text-blue-800'
-                    when 'error' then 'bg-red-100 text-red-800'
-                    else 'bg-gray-100 text-gray-800'
-                    end %>">
-                    <%= data_source.status.humanize %>
-                  </span>
+  <!-- Connected Integrations -->
+  <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border mb-df-32">
+    <h2 class="text-df-2xl font-semibold mb-df-20">Your Integrations</h2>
+    
+    <% if @data_sources.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-df-20">
+        <% @data_sources.each do |data_source| %>
+          <div class="bg-df-background rounded-df-lg p-df-20 border border-df-border hover:shadow-df-md transition-shadow">
+            <div class="flex items-start justify-between mb-df-16">
+              <div class="flex items-center gap-df-12">
+                <div class="w-12 h-12 rounded-df-md bg-df-primary text-white flex items-center justify-center text-xl font-semibold">
+                  <%= data_source.source_type.first(2).upcase %>
                 </div>
-
-                <!-- Metrics -->
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                  <div class="text-center p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <div class="text-sm font-medium text-gray-600">Records</div>
-                    <div class="text-lg font-semibold text-gray-900 mt-1"><%= number_with_delimiter(data_source.raw_data_records.count) %></div>
-                  </div>
-                  <div class="text-center p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <div class="text-sm font-medium text-gray-600">Last Sync</div>
-                    <div class="text-sm font-semibold text-gray-900 mt-1">
-                      <%= data_source.extraction_jobs.completed.last&.completed_at ? 
-                          time_ago_in_words(data_source.extraction_jobs.completed.last.completed_at) + " ago" : 
-                          "Never" %>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex flex-wrap gap-2">
-                  <% if data_source.status == 'connected' %>
-                    <%= link_to sync_now_data_source_path(data_source), method: :post,
-                        class: "inline-flex items-center gap-1 px-3 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg shadow-sm hover:bg-indigo-700 transition-colors duration-200",
-                        data: { confirm: "Trigger manual sync for #{data_source.name}?" } do %>
-                      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                      </svg>
-                      Sync Now
-                    <% end %>
-                  <% end %>
-                  
-                  <%= link_to edit_data_source_path(data_source),
-                      class: "inline-flex items-center gap-1 px-3 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 shadow-sm hover:bg-gray-50 transition-colors duration-200" do %>
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                    </svg>
-                    Edit
-                  <% end %>
+                <div>
+                  <h3 class="text-df-lg font-semibold"><%= data_source.name %></h3>
+                  <p class="text-df-sm text-df-text-secondary"><%= data_source.source_type.humanize %></p>
                 </div>
               </div>
+              <span class="px-df-12 py-df-4 rounded-df-sm text-df-xs font-medium <%= case data_source.status
+                when 'connected' then 'bg-green-100 text-green-800'
+                when 'syncing' then 'bg-blue-100 text-blue-800'
+                when 'error' then 'bg-red-100 text-red-800'
+                else 'bg-gray-100 text-gray-800'
+              end %>">
+                <%= data_source.status.humanize %>
+              </span>
             </div>
-          <% end %>
-        </div>
-      <% else %>
-        <!-- Professional Empty State -->
-        <div class="text-center py-16">
-          <div class="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-            <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-            </svg>
+            
+            <div class="space-y-df-8 mb-df-16">
+              <div class="flex justify-between text-df-sm">
+                <span class="text-df-text-secondary">Last Sync</span>
+                <span class="font-medium">
+                  <%= data_source.extraction_jobs.successful.last&.completed_at ? 
+                      time_ago_in_words(data_source.extraction_jobs.successful.last.completed_at) + " ago" : 
+                      "Never" %>
+                </span>
+              </div>
+              <div class="flex justify-between text-df-sm">
+                <span class="text-df-text-secondary">Records</span>
+                <span class="font-medium"><%= number_with_delimiter(data_source.raw_data_records.count) %></span>
+              </div>
+            </div>
+            
+            <div class="flex gap-df-8">
+              <%= link_to "View Details", data_source_path(data_source), class: "btn btn--outline btn--sm flex-1" %>
+              <% if data_source.status == 'connected' %>
+                <%= button_to "Sync Now", sync_now_data_source_path(data_source), 
+                    method: :post, 
+                    class: "btn btn--primary btn--sm flex-1",
+                    data: { turbo_method: :post } %>
+              <% end %>
+            </div>
           </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">No data sources yet</h3>
-          <p class="text-gray-500 mb-6">Get started by connecting your first data source.</p>
-          <%= link_to new_data_source_path, 
-              class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-indigo-700 transition-colors duration-200" do %>
-            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Add Data Source
-          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-df-32">
+        <div class="mx-auto w-24 h-24 bg-df-secondary rounded-full flex items-center justify-center mb-df-16">
+          <svg class="w-12 h-12 text-df-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+          </svg>
+        </div>
+        <h3 class="text-df-xl font-semibold mb-df-8">No integrations yet</h3>
+        <p class="text-df-text-secondary mb-df-20">Connect your first data source to start syncing</p>
+        <%= link_to new_data_source_path, class: "btn btn--primary" do %>
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Add Your First Integration
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Available Integrations -->
+  <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border">
+    <h2 class="text-df-2xl font-semibold mb-df-20">Popular Integrations</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-df-20">
+      <% [
+        { title: "CRM & Sales", count: 45, connectors: ["Salesforce", "HubSpot", "Pipedrive", "Zoho CRM"], color: "blue" },
+        { title: "Marketing & Analytics", count: 38, connectors: ["Google Analytics", "Facebook Ads", "Mailchimp", "Klaviyo"], color: "purple" },
+        { title: "Accounting & Finance", count: 32, connectors: ["QuickBooks", "Xero", "Stripe", "PayPal"], color: "green" },
+        { title: "E-commerce", count: 28, connectors: ["Shopify", "WooCommerce", "Amazon", "eBay"], color: "orange" },
+        { title: "Support & Service", count: 22, connectors: ["Zendesk", "Intercom", "Freshdesk", "ServiceNow"], color: "red" },
+        { title: "Productivity", count: 18, connectors: ["Slack", "Teams", "Asana", "Trello"], color: "indigo" }
+      ].each do |category| %>
+        <div class="bg-df-background rounded-df-lg p-df-20 border border-df-border hover:shadow-df-md transition-shadow">
+          <div class="flex items-center justify-between mb-df-16">
+            <h3 class="text-df-xl font-semibold"><%= category[:title] %></h3>
+            <span class="text-df-sm text-df-text-secondary"><%= category[:count] %> connectors</span>
+          </div>
+          <div class="flex flex-wrap gap-df-8 mb-df-16">
+            <% category[:connectors].each do |connector| %>
+              <span class="px-df-12 py-df-6 bg-<%= category[:color] %>-100 text-<%= category[:color] %>-800 rounded-df-sm text-df-sm font-medium">
+                <%= connector %>
+              </span>
+            <% end %>
+          </div>
+          <button class="btn btn--outline btn--sm btn--full-width">View All →</button>
         </div>
       <% end %>
     </div>

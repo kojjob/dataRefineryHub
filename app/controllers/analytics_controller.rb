@@ -1,6 +1,6 @@
 # Legacy Analytics Controller - Redirects to new modular structure
 # This controller has been refactored into smaller, focused controllers under Analytics namespace
-class AnalyticsController < ApplicationController
+class AnalyticsController < DataflowProController
   before_action :authenticate_user!
   before_action :ensure_organization_member
 

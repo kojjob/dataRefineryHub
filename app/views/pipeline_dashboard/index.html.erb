@@ -1,426 +1,184 @@
-<% content_for :page_title, "Pipeline Dashboard" %>
+<% content_for :page_title, "ETL Pipeline Builder" %>
+<% content_for :page_subtitle, "Visual workflow designer with real-time monitoring" %>
 
-<div class="min-h-screen bg-gray-50">
-  <!-- Professional Header -->
-  <div class="bg-white border-b border-gray-200 shadow-sm">
-    <div class="px-4 sm:px-6 lg:px-8 py-6">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div class="flex items-center space-x-3">
-            <div class="p-2 bg-indigo-600 rounded-lg shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-            <h1 class="text-2xl font-semibold text-gray-900">
-              Pipeline Dashboard
-            </h1>
-          </div>
-          <p class="mt-1 text-sm text-gray-600">Monitor and manage your data processing pipelines</p>
+<div class="px-df-32 py-df-24">
+  <!-- Pipeline Statistics -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-df-20 mb-df-32">
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "📊",
+      title: "Total Pipelines",
+      value: @statistics[:total_pipelines],
+      change: "All time"
+    ) %>
+    
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "🏃",
+      title: "Running",
+      value: @statistics[:running_pipelines],
+      change: "Active now"
+    ) %>
+    
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "✅",
+      title: "Successful",
+      value: @statistics[:successful_pipelines],
+      change: "Last 24h",
+      change_type: :positive
+    ) %>
+    
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "❌",
+      title: "Failed",
+      value: @statistics[:failed_pipelines],
+      change: "Last 24h",
+      change_type: :negative
+    ) %>
+    
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "⏱️",
+      title: "Avg Duration",
+      value: @statistics[:average_duration],
+      change: "Per pipeline"
+    ) %>
+    
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "📈",
+      title: "Success Rate",
+      value: "#{@statistics[:success_rate]}%",
+      change: "Last 24h",
+      change_type: @statistics[:success_rate] >= 90 ? :positive : :negative
+    ) %>
+  </div>
+
+  <!-- Pipeline Builder Interface -->
+  <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border mb-df-32">
+    <div class="flex items-center justify-between mb-df-20">
+      <h2 class="text-df-2xl font-semibold">Pipeline Builder</h2>
+      <button class="btn btn--primary">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Create New Pipeline
+      </button>
+    </div>
+    
+    <div class="bg-df-background rounded-df-lg p-df-32 border-2 border-dashed border-df-border">
+      <div class="flex items-center justify-center space-x-df-32">
+        <div class="text-center">
+          <div class="w-24 h-24 bg-df-primary rounded-df-lg flex items-center justify-center text-white text-3xl mb-df-8">📥</div>
+          <p class="font-medium">Data Source</p>
+          <p class="text-df-sm text-df-text-secondary">Select input</p>
         </div>
-        <div class="mt-4 sm:mt-0 flex items-center space-x-3">
-          <div class="flex items-center space-x-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-200">
-            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span class="text-green-700 text-sm font-medium">Live</span>
-          </div>
-          <%= link_to "#", class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 shadow-sm transition-colors duration-200" do %>
-            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            New Pipeline
-          <% end %>
+        <svg class="w-12 h-12 text-df-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+        </svg>
+        <div class="text-center">
+          <div class="w-24 h-24 bg-df-warning rounded-df-lg flex items-center justify-center text-white text-3xl mb-df-8">⚙️</div>
+          <p class="font-medium">Transform</p>
+          <p class="text-df-sm text-df-text-secondary">Process data</p>
+        </div>
+        <svg class="w-12 h-12 text-df-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+        </svg>
+        <div class="text-center">
+          <div class="w-24 h-24 bg-df-success rounded-df-lg flex items-center justify-center text-white text-3xl mb-df-8">📤</div>
+          <p class="font-medium">Destination</p>
+          <p class="text-df-sm text-df-text-secondary">Output target</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Professional Statistics Grid -->
-  <div class="px-4 sm:px-6 lg:px-8 py-8">
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-5">
-      <!-- Total Pipelines -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-600 shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Total Pipelines</dt>
-              <dd class="text-lg font-semibold text-gray-900"><%= @statistics[:total_pipelines] %></dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-
-      <!-- Running Pipelines -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Running</dt>
-              <dd class="text-lg font-semibold text-gray-900"><%= @statistics[:running_pipelines] %></dd>
-            </dl>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="flex items-center text-sm">
-            <span class="text-blue-600 font-medium">Active now</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Successful (24h) -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600 shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Successful (24h)</dt>
-              <dd class="text-lg font-semibold text-gray-900"><%= @statistics[:successful_pipelines] %></dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-
-      <!-- Failed (24h) -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-600 shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Failed (24h)</dt>
-              <dd class="text-lg font-semibold text-gray-900"><%= @statistics[:failed_pipelines] %></dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-
-      <!-- Average Duration -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600 shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Avg Duration</dt>
-              <dd class="text-lg font-semibold text-gray-900"><%= @statistics[:average_duration] %></dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-
-      <!-- Success Rate -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Success Rate</dt>
-              <dd class="text-lg font-semibold text-gray-900"><%= @statistics[:success_rate] %>%</dd>
-            </dl>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="w-full bg-gray-200 rounded-full h-2">
-            <div class="bg-indigo-600 h-2 rounded-full transition-all duration-1000" style="width: <%= @statistics[:success_rate] %>%"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="px-4 sm:px-6 lg:px-8 pb-8">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Pipeline Performance by Type -->
-      <div class="lg:col-span-2 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-          <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex items-center space-x-3">
-              <div class="p-2 bg-gray-600 rounded-lg shadow-sm">
-                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                </svg>
-              </div>
-              <h3 class="text-lg font-medium text-gray-900">Pipeline Performance by Type</h3>
-            </div>
-          </div>
-          <div class="p-6">
-            <% if @performance_by_type.any? %>
-              <div class="space-y-4">
-                <% @performance_by_type.each do |pipeline_name, metrics| %>
-                  <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-sm transition-shadow duration-200">
-                    <div class="flex items-center justify-between mb-3">
-                      <h4 class="font-medium text-gray-900"><%= pipeline_name.humanize %></h4>
-                      <div class="flex items-center gap-4 text-sm">
-                        <span class="text-gray-600">Total: <span class="font-medium"><%= metrics[:total] %></span></span>
-                        <span class="text-gray-600">Avg: <span class="font-medium"><%= metrics[:average_duration] %></span></span>
-                      </div>
-                    </div>
-                    <div class="relative">
-                      <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-green-600 h-2 rounded-full transition-all duration-1000" style="width: <%= metrics[:success_rate] %>%"></div>
-                      </div>
-                      <div class="flex items-center justify-between mt-2">
-                        <span class="text-xs font-medium text-gray-600">Success Rate</span>
-                        <span class="text-xs font-semibold text-gray-900"><%= metrics[:success_rate] %>%</span>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-            <% else %>
-              <div class="text-center py-12">
-                <div class="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                  </svg>
+  <!-- Active Pipelines -->
+  <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border mb-df-32">
+    <h2 class="text-df-2xl font-semibold mb-df-20">Active Pipelines</h2>
+    
+    <% if @pipeline_executions.any? %>
+      <div class="space-y-df-16">
+        <% @pipeline_executions.each do |pipeline| %>
+          <div class="bg-df-background rounded-df-lg p-df-20 border border-df-border">
+            <div class="flex items-center justify-between mb-df-12">
+              <div class="flex items-center gap-df-12">
+                <div class="w-10 h-10 rounded-df-md flex items-center justify-center <%= case pipeline.status
+                  when 'running' then 'bg-blue-100 text-blue-600'
+                  when 'completed' then 'bg-green-100 text-green-600'
+                  when 'failed' then 'bg-red-100 text-red-600'
+                  else 'bg-gray-100 text-gray-600'
+                end %>">
+                  <%= case pipeline.status
+                    when 'running' then '🔄'
+                    when 'completed' then '✅'
+                    when 'failed' then '❌'
+                    else '⏸️'
+                  end %>
                 </div>
-                <p class="text-gray-500 font-medium">No pipeline data available yet.</p>
-              </div>
-            <% end %>
-          </div>
-      </div>
-
-      <!-- Active Manual Interventions -->
-      <div class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-          <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-3">
-                <div class="p-2 bg-yellow-600 rounded-lg shadow-sm">
-                  <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"></path>
-                  </svg>
-                </div>
-                <h3 class="text-lg font-medium text-gray-900">Manual Interventions</h3>
-              </div>
-              <% if @manual_interventions.any? %>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
-                  <%= @manual_interventions.count %> Pending
-                </span>
-              <% end %>
-            </div>
-          </div>
-          <div class="p-6">
-            <% if @manual_interventions.any? %>
-              <div class="space-y-3">
-                <% @manual_interventions.each do |task| %>
-                  <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-sm transition-shadow duration-200">
-                    <div class="flex items-start justify-between">
-                      <div class="min-w-0 flex-1">
-                        <h4 class="text-sm font-medium text-gray-900 truncate">
-                          <%= task.name %>
-                        </h4>
-                        <p class="text-xs text-gray-600 mt-1">
-                          <%= task.pipeline_execution.pipeline_name %>
-                        </p>
-                        <div class="flex items-center gap-3 mt-3">
-                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= task.execution_mode == 'approval' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-blue-100 text-blue-800 border border-blue-200' %>">
-                            <%= task.execution_mode.humanize %>
-                          </span>
-                          <% if task.assignee %>
-                            <span class="text-xs text-gray-600">Assigned to <span class="font-medium"><%= task.assignee.name %></span></span>
-                          <% else %>
-                            <span class="text-xs text-yellow-600 font-medium">Unassigned</span>
-                          <% end %>
-                        </div>
-                      </div>
-                      <div class="ml-4">
-                        <%= link_to manual_task_path(task), class: "p-2 text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors duration-200 inline-flex" do %>
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                          </svg>
-                        <% end %>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-              <div class="mt-4">
-                <%= link_to manual_tasks_path, class: "text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors flex items-center gap-1" do %>
-                  View All Tasks
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                  </svg>
-                <% end %>
-              </div>
-            <% else %>
-              <div class="text-center py-8">
-                <div class="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                  <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                </div>
-                <p class="text-gray-500 font-medium">No manual interventions required.</p>
-              </div>
-            <% end %>
-          </div>
-      </div>
-    </div>
-
-    <!-- Recent Pipeline Executions -->
-    <div class="mt-8 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <div class="flex items-center space-x-3">
-            <div class="p-2 bg-indigo-600 rounded-lg shadow-sm">
-              <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-              </svg>
-            </div>
-            <h3 class="text-lg font-medium text-gray-900">Recent Pipeline Executions</h3>
-          </div>
-        </div>
-        
-        <%= turbo_frame_tag "pipeline_executions" do %>
-          <% if @pipeline_executions.any? %>
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                  <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Pipeline
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Data Source
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Progress
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Started
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Duration
-                    </th>
-                    <th class="relative px-6 py-3">
-                      <span class="sr-only">Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                  <% @pipeline_executions.each do |execution| %>
-                    <%= turbo_frame_tag execution do %>
-                      <tr class="hover:bg-gray-50 transition-colors duration-200">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                          <div class="text-sm font-medium text-gray-900">
-                            <%= execution.pipeline_name %>
-                          </div>
-                          <div class="text-xs text-gray-500">
-                            <%= execution.execution_mode.humanize %>
-                          </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                          <% if execution.data_source %>
-                            <div class="text-sm text-gray-900">
-                              <%= execution.data_source.name %>
-                            </div>
-                            <div class="text-xs text-gray-500">
-                              <%= execution.data_source.source_type.humanize %>
-                            </div>
-                          <% else %>
-                            <span class="text-sm text-gray-500">—</span>
-                          <% end %>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= execution.status == 'completed' ? 'bg-green-100 text-green-800' : execution.status == 'failed' ? 'bg-red-100 text-red-800' : execution.status == 'running' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' %>">
-                            <%= execution.status.humanize %>
-                          </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                          <div class="flex items-center">
-                            <div class="flex-1 bg-gray-200 rounded-full h-2 mr-3">
-                              <div class="bg-indigo-600 h-2 rounded-full transition-all duration-1000" style="width: <%= execution.progress || 0 %>%"></div>
-                            </div>
-                            <span class="text-xs text-gray-600 font-medium"><%= execution.progress || 0 %>%</span>
-                          </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <%= execution.started_at.strftime("%b %d, %I:%M %p") %>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <%= execution.duration_formatted || "—" %>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <%= link_to pipeline_dashboard_path(execution), 
-                            class: "text-indigo-600 hover:text-indigo-800 font-medium transition-colors" do %>
-                            View Details
-                          <% end %>
-                        </td>
-                      </tr>
+                <div>
+                  <h3 class="text-df-lg font-semibold"><%= pipeline.pipeline_name %></h3>
+                  <p class="text-df-sm text-df-text-secondary">
+                    Started <%= time_ago_in_words(pipeline.started_at) %> ago
+                    <% if pipeline.data_source %>
+                      • <%= pipeline.data_source.name %>
                     <% end %>
-                  <% end %>
-                </tbody>
-              </table>
+                  </p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-df-16">
+                <% if pipeline.status == 'running' %>
+                  <div class="text-right">
+                    <p class="text-df-sm text-df-text-secondary">Progress</p>
+                    <p class="text-df-lg font-semibold"><%= pipeline.progress_percentage || 0 %>%</p>
+                  </div>
+                <% end %>
+                
+                <%= link_to "View Details", pipeline_dashboard_path(pipeline), class: "btn btn--outline btn--sm" %>
+              </div>
             </div>
             
-            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-              <%= paginate @pipeline_executions %>
-            </div>
-          <% else %>
-            <div class="p-12 text-center">
-              <div class="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                <svg class="h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                </svg>
+            <% if pipeline.status == 'running' %>
+              <div class="w-full bg-df-secondary rounded-full h-2">
+                <div class="bg-df-primary h-2 rounded-full transition-all duration-300" style="width: <%= pipeline.progress_percentage || 0 %>%"></div>
               </div>
-              <h3 class="text-lg font-medium text-gray-900 mb-2">No pipelines yet</h3>
-              <p class="text-gray-500 mb-6">Get started by creating a new data source.</p>
-              <%= link_to new_data_source_path, 
-                class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg shadow-sm hover:bg-indigo-700 transition-colors duration-200" do %>
-                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Create Data Source
-              <% end %>
-            </div>
-          <% end %>
+            <% end %>
+          </div>
         <% end %>
-    </div>
+      </div>
+      
+      <div class="mt-df-20">
+        <%= paginate @pipeline_executions %>
+      </div>
+    <% else %>
+      <div class="text-center py-df-32">
+        <div class="mx-auto w-24 h-24 bg-df-secondary rounded-full flex items-center justify-center mb-df-16">
+          <svg class="w-12 h-12 text-df-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+          </svg>
+        </div>
+        <h3 class="text-df-xl font-semibold mb-df-8">No active pipelines</h3>
+        <p class="text-df-text-secondary mb-df-20">Create your first pipeline to start processing data</p>
+        <button class="btn btn--primary">Create Pipeline</button>
+      </div>
+    <% end %>
   </div>
 
-  <!-- Live Update Indicator -->
-  <div class="fixed bottom-6 right-6 z-50">
-    <div class="flex items-center space-x-2 px-3 py-1.5 bg-white rounded-full shadow-lg border border-gray-200">
-      <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-      <span class="text-xs font-medium text-gray-700">Live Updates</span>
+  <!-- Manual Interventions -->
+  <% if @manual_interventions.any? %>
+    <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border">
+      <h2 class="text-df-2xl font-semibold mb-df-20 flex items-center">
+        <span class="mr-2">⚠️</span> Manual Interventions Required
+      </h2>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-df-16">
+        <% @manual_interventions.each do |task| %>
+          <%= render Dataflow::InsightCardComponent.new(
+            type: "Action Required",
+            confidence: 100,
+            message: "#{task.name} - #{task.description || 'Manual approval needed'}",
+            action_text: "Take Action",
+            severity: :high
+          ) %>
+        <% end %>
+      </div>
     </div>
-  </div>
+  <% end %>
 </div>
-
-<!-- Subscribe to real-time updates -->
-<%= turbo_stream_from "pipeline_dashboard" %>

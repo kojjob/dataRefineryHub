@@ -1,6 +1,6 @@
 # PipelineDashboardController
 # Provides comprehensive pipeline monitoring and management interface
-class PipelineDashboardController < ApplicationController
+class PipelineDashboardController < DataflowProController
   before_action :authenticate_user!
   before_action :set_pipeline_execution, only: [ :show ]
 

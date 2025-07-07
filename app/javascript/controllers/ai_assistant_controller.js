@@ -36,7 +36,7 @@ export default class extends Controller {
   
   addChatMessage(message, type) {
     const messageDiv = document.createElement('div')
-    messageDiv.className = `chat-message ${type} ${type === 'user' ? 'bg-df-primary text-white' : 'bg-df-secondary'} p-df-12 rounded-df-md mb-df-8`
+    messageDiv.className = `chat-message ${type}`
     messageDiv.innerHTML = `<p>${message}</p>`
     
     this.chatContainerTarget.appendChild(messageDiv)

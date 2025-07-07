@@ -1,4 +1,4 @@
-class OrganizationsController < ApplicationController
+class OrganizationsController < DataflowProController
   before_action :set_organization
 
   def show
