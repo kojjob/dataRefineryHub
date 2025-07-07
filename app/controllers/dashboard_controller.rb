@@ -1,5 +1,6 @@
 class DashboardController < ApplicationController
   before_action :ensure_organization_member
+  layout 'dataflow_pro'
 
   def index
     @organization = current_organization
@@ -11,9 +12,23 @@ class DashboardController < ApplicationController
     @data_quality_metrics = calculate_data_quality_metrics
     @recent_activity = calculate_recent_activity
     # @system_status is set in ApplicationController
+    
+    # Add stats for DataFlow Pro
+    @stats[:monthly_active_users] = calculate_monthly_active_users
+    @stats[:data_quality_score] = @data_quality_metrics[:overall][:overall_quality_score]
+    @stats[:active_pipelines] = @data_sources.connected.count
+    
+    # Render DataFlow Pro dashboard
+    render :dataflow_pro
   end
 
   private
+  
+  def calculate_monthly_active_users
+    # Calculate unique users who have accessed the system in the last 30 days
+    # For now, we'll use organization members as a proxy
+    current_organization.users.where("last_sign_in_at >= ?", 30.days.ago).count
+  end
 
   def calculate_dashboard_stats
     {

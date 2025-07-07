@@ -10,6 +10,12 @@ Rails.application.routes.draw do
   # Debug routes (remove in production)
   get "debug/session_info", to: "debug#session_info" unless Rails.env.production?
 
+  # Monitoring endpoints
+  get "health", to: "monitoring#health"
+  get "metrics", to: "monitoring#metrics"
+  get "ready", to: "monitoring#ready"
+  get "alive", to: "monitoring#alive"
+
   # Dashboard routes
   get "dashboard", to: "dashboard#index"
   get "dashboard/analytics", to: "dashboard#analytics"
@@ -63,39 +69,39 @@ Rails.application.routes.draw do
 
   # Analytics - Legacy route for backward compatibility
   get "analytics", to: "analytics/dashboard#index"
-  
+
   # New modular analytics routes
   namespace :analytics do
     root to: "dashboard#index"
-    
-    resource :dashboard, only: [:show], controller: "dashboard" do
+
+    resource :dashboard, only: [ :show ], controller: "dashboard" do
       get :index, on: :collection, action: :index
     end
-    
-    resources :revenue, only: [:index] do
+
+    resources :revenue, only: [ :index ] do
       collection do
         get :trends
         get :breakdown
       end
     end
-    
-    resources :customers, only: [:index] do
+
+    resources :customers, only: [ :index ] do
       collection do
         get :acquisition
         get :segments
         get :lifetime_value
       end
     end
-    
-    resources :products, only: [:index] do
+
+    resources :products, only: [ :index ] do
       collection do
         get :performance
         get :inventory
         get :recommendations
       end
     end
-    
-    resources :risks, only: [:index] do
+
+    resources :risks, only: [ :index ] do
       collection do
         get :indicators
         get :opportunities

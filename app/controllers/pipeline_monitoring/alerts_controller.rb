@@ -3,74 +3,74 @@
 module PipelineMonitoring
   class AlertsController < ApplicationController
     before_action :authenticate_user!
-    before_action :find_alert, only: [:acknowledge, :resolve, :dismiss]
+    before_action :find_alert, only: [ :acknowledge, :resolve, :dismiss ]
 
     # PATCH /pipeline_monitoring/alerts/:id/acknowledge
     def acknowledge
       if @alert.acknowledge!(current_user.full_name)
-        render json: { 
-          success: true, 
+        render json: {
+          success: true,
           message: "Alert acknowledged successfully",
           alert: alert_json(@alert)
         }
       else
-        render json: { 
-          success: false, 
+        render json: {
+          success: false,
           error: "Failed to acknowledge alert",
           errors: @alert.errors.full_messages
         }, status: :unprocessable_entity
       end
     rescue => e
       Rails.logger.error "Error acknowledging alert #{params[:id]}: #{e.message}"
-      render json: { 
-        success: false, 
-        error: "An unexpected error occurred while acknowledging the alert" 
+      render json: {
+        success: false,
+        error: "An unexpected error occurred while acknowledging the alert"
       }, status: :internal_server_error
     end
 
     # PATCH /pipeline_monitoring/alerts/:id/resolve
     def resolve
       if @alert.resolve!(current_user.full_name)
-        render json: { 
-          success: true, 
+        render json: {
+          success: true,
           message: "Alert resolved successfully",
           alert: alert_json(@alert)
         }
       else
-        render json: { 
-          success: false, 
+        render json: {
+          success: false,
           error: "Failed to resolve alert",
           errors: @alert.errors.full_messages
         }, status: :unprocessable_entity
       end
     rescue => e
       Rails.logger.error "Error resolving alert #{params[:id]}: #{e.message}"
-      render json: { 
-        success: false, 
-        error: "An unexpected error occurred while resolving the alert" 
+      render json: {
+        success: false,
+        error: "An unexpected error occurred while resolving the alert"
       }, status: :internal_server_error
     end
 
     # PATCH /pipeline_monitoring/alerts/:id/dismiss
     def dismiss
       if @alert.dismiss!(current_user.full_name)
-        render json: { 
-          success: true, 
+        render json: {
+          success: true,
           message: "Alert dismissed successfully",
           alert: alert_json(@alert)
         }
       else
-        render json: { 
-          success: false, 
+        render json: {
+          success: false,
           error: "Failed to dismiss alert",
           errors: @alert.errors.full_messages
         }, status: :unprocessable_entity
       end
     rescue => e
       Rails.logger.error "Error dismissing alert #{params[:id]}: #{e.message}"
-      render json: { 
-        success: false, 
-        error: "An unexpected error occurred while dismissing the alert" 
+      render json: {
+        success: false,
+        error: "An unexpected error occurred while dismissing the alert"
       }, status: :internal_server_error
     end
 
@@ -81,9 +81,9 @@ module PipelineMonitoring
                                   .where(alert_type: "pipeline")
                                   .find(params[:id])
     rescue ActiveRecord::RecordNotFound
-      render json: { 
-        success: false, 
-        error: "Alert not found or you don't have permission to access it" 
+      render json: {
+        success: false,
+        error: "Alert not found or you don't have permission to access it"
       }, status: :not_found
     end
 

@@ -57,7 +57,7 @@ class Analytics::DashboardController < Analytics::BaseController
 
     # Growth trends
     calculate_growth_trends
-    
+
     # Top performing data sources
     @top_data_sources = current_organization.data_sources
       .joins(:raw_data_records)
@@ -66,12 +66,12 @@ class Analytics::DashboardController < Analytics::BaseController
       .count("raw_data_records.id")
       .sort_by { |_k, v| -v }
       .first(5)
-    
+
     # Daily activity trend
     @daily_activity = raw_data_records_scope
       .group_by_day(:created_at, range: @start_date..@end_date)
       .count
-    
+
     # Recent errors
     @recent_errors = extraction_jobs
       .failed

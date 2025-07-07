@@ -95,7 +95,7 @@ class PipelineExecution < ApplicationRecord
 
   def records_processed
     return 0 unless data_source_id
-    
+
     # Calculate records processed from related extraction jobs during this execution timeframe
     if completed_at
       ExtractionJob.where(data_source_id: data_source_id)

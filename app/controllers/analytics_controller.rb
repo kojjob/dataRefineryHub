@@ -20,15 +20,15 @@ class AnalyticsController < ApplicationController
   def calculate_date_range(range)
     case range
     when "7_days"
-      [7.days.ago.beginning_of_day, Time.current.end_of_day]
+      [ 7.days.ago.beginning_of_day, Time.current.end_of_day ]
     when "30_days"
-      [30.days.ago.beginning_of_day, Time.current.end_of_day]
+      [ 30.days.ago.beginning_of_day, Time.current.end_of_day ]
     when "90_days"
-      [90.days.ago.beginning_of_day, Time.current.end_of_day]
+      [ 90.days.ago.beginning_of_day, Time.current.end_of_day ]
     when "1_year"
-      [1.year.ago.beginning_of_day, Time.current.end_of_day]
+      [ 1.year.ago.beginning_of_day, Time.current.end_of_day ]
     else
-      [30.days.ago.beginning_of_day, Time.current.end_of_day]
+      [ 30.days.ago.beginning_of_day, Time.current.end_of_day ]
     end
   end
 end

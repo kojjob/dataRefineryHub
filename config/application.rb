@@ -28,6 +28,7 @@ module DataRefineryPlatform
     config.autoload_paths += %W[
       #{config.root}/app/services
       #{config.root}/app/services/extractors
+      #{config.root}/app/middleware
     ]
 
     # Full-stack application with API capabilities
@@ -37,5 +38,9 @@ module DataRefineryPlatform
     # Asset pipeline configuration
     config.assets.enabled = true
     config.assets.version = "1.0"
+
+    # Add API rate limiting middleware
+    require_relative "../app/middleware/api_rate_limiter"
+    config.middleware.use ApiRateLimiter
   end
 end

@@ -1,31 +1,30 @@
 <% content_for :page_title, "Pipeline Dashboard" %>
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-  <!-- Premium Header with Glassmorphism -->
-  <div class="relative bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-xl">
-    <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10"></div>
-    <div class="relative px-4 sm:px-6 lg:px-8 py-8">
+<div class="min-h-screen bg-gray-50">
+  <!-- Professional Header -->
+  <div class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="px-4 sm:px-6 lg:px-8 py-6">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div class="space-y-2">
+        <div>
           <div class="flex items-center space-x-3">
-            <div class="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+            <div class="p-2 bg-indigo-600 rounded-lg shadow-sm">
               <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+            <h1 class="text-2xl font-semibold text-gray-900">
               Pipeline Dashboard
             </h1>
           </div>
-          <p class="text-slate-600 font-medium">Monitor and manage your data processing pipelines</p>
+          <p class="mt-1 text-sm text-gray-600">Monitor and manage your data processing pipelines</p>
         </div>
-        <div class="mt-4 sm:mt-0 flex items-center space-x-4">
-          <div class="flex items-center space-x-2 px-4 py-2 bg-green-100/80 backdrop-blur-sm rounded-full border border-green-200/50">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-green-700 text-sm font-semibold">Live</span>
+        <div class="mt-4 sm:mt-0 flex items-center space-x-3">
+          <div class="flex items-center space-x-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-200">
+            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span class="text-green-700 text-sm font-medium">Live</span>
           </div>
-          <%= link_to new_data_source_path, class: "group inline-flex items-center px-6 py-3 border border-slate-300/50 rounded-xl shadow-lg text-sm font-semibold text-slate-700 bg-white/70 backdrop-blur-sm hover:bg-white/90 hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5" do %>
-            <svg class="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <%= link_to new_data_source_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 shadow-sm transition-colors duration-200" do %>
+            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             New Pipeline
@@ -35,108 +34,129 @@
     </div>
   </div>
 
-  <!-- Premium Statistics Grid -->
+  <!-- Professional Statistics Grid -->
   <div class="px-4 sm:px-6 lg:px-8 py-8">
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-5">
       <!-- Total Pipelines -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-gray-500/5 to-slate-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-gray-500 to-slate-600 rounded-xl shadow-lg group-hover:shadow-gray-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+      <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-600 shadow-sm">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
               </svg>
             </div>
           </div>
-          <p class="text-sm font-semibold text-slate-600">Total Pipelines</p>
-          <p class="text-3xl font-bold text-slate-900 mt-1"><%= @statistics[:total_pipelines] %></p>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Total Pipelines</dt>
+              <dd class="text-lg font-semibold text-gray-900"><%= @statistics[:total_pipelines] %></dd>
+            </dl>
+          </div>
         </div>
       </div>
 
       <!-- Running Pipelines -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+      <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 shadow-sm">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"></path>
               </svg>
             </div>
           </div>
-          <p class="text-sm font-semibold text-slate-600">Running</p>
-          <p class="text-3xl font-bold text-blue-600 mt-1"><%= @statistics[:running_pipelines] %></p>
-          <div class="mt-2 flex items-center space-x-2 text-xs text-slate-500">
-            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <span>Active now</span>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Running</dt>
+              <dd class="text-lg font-semibold text-gray-900"><%= @statistics[:running_pipelines] %></dd>
+            </dl>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="flex items-center text-sm">
+            <span class="text-blue-600 font-medium">Active now</span>
           </div>
         </div>
       </div>
 
       <!-- Successful (24h) -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg group-hover:shadow-green-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600 shadow-sm">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
           </div>
-          <p class="text-sm font-semibold text-slate-600">Successful (24h)</p>
-          <p class="text-3xl font-bold text-green-600 mt-1"><%= @statistics[:successful_pipelines] %></p>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Successful (24h)</dt>
+              <dd class="text-lg font-semibold text-gray-900"><%= @statistics[:successful_pipelines] %></dd>
+            </dl>
+          </div>
         </div>
       </div>
 
       <!-- Failed (24h) -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-red-500/5 to-rose-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl shadow-lg group-hover:shadow-red-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-600 shadow-sm">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
           </div>
-          <p class="text-sm font-semibold text-slate-600">Failed (24h)</p>
-          <p class="text-3xl font-bold text-red-600 mt-1"><%= @statistics[:failed_pipelines] %></p>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Failed (24h)</dt>
+              <dd class="text-lg font-semibold text-gray-900"><%= @statistics[:failed_pipelines] %></dd>
+            </dl>
+          </div>
         </div>
       </div>
 
       <!-- Average Duration -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-indigo-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600 shadow-sm">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
           </div>
-          <p class="text-sm font-semibold text-slate-600">Avg Duration</p>
-          <p class="text-3xl font-bold text-purple-600 mt-1"><%= @statistics[:average_duration] %></p>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Avg Duration</dt>
+              <dd class="text-lg font-semibold text-gray-900"><%= @statistics[:average_duration] %></dd>
+            </dl>
+          </div>
         </div>
       </div>
 
       <!-- Success Rate -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg group-hover:shadow-indigo-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+      <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 shadow-sm">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
               </svg>
             </div>
           </div>
-          <p class="text-sm font-semibold text-slate-600">Success Rate</p>
-          <p class="text-3xl font-bold text-indigo-600 mt-1"><%= @statistics[:success_rate] %>%</p>
-          <div class="mt-2 w-full bg-slate-200 rounded-full h-2">
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full transition-all duration-1000" style="width: <%= @statistics[:success_rate] %>%"></div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Success Rate</dt>
+              <dd class="text-lg font-semibold text-gray-900"><%= @statistics[:success_rate] %>%</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-indigo-600 h-2 rounded-full transition-all duration-1000" style="width: <%= @statistics[:success_rate] %>%"></div>
           </div>
         </div>
       </div>
@@ -144,40 +164,38 @@
   </div>
 
   <div class="px-4 sm:px-6 lg:px-8 pb-8">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Pipeline Performance by Type -->
-      <div class="lg:col-span-2 relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden hover:shadow-2xl transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-slate-500/5 to-gray-500/5"></div>
-        <div class="relative">
-          <div class="px-6 py-5 border-b border-slate-200/50 bg-gradient-to-r from-slate-50/50 to-gray-50/50">
+      <div class="lg:col-span-2 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex items-center space-x-3">
-              <div class="p-2 bg-gradient-to-br from-slate-600 to-gray-700 rounded-lg shadow-lg">
-                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              <div class="p-2 bg-gray-600 rounded-lg shadow-sm">
+                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
               </div>
-              <h3 class="text-lg font-bold text-slate-900">Pipeline Performance by Type</h3>
+              <h3 class="text-lg font-medium text-gray-900">Pipeline Performance by Type</h3>
             </div>
           </div>
           <div class="p-6">
             <% if @performance_by_type.any? %>
               <div class="space-y-4">
                 <% @performance_by_type.each do |pipeline_name, metrics| %>
-                  <div class="group p-4 bg-gradient-to-r from-slate-50/50 to-white/50 rounded-xl border border-slate-200/50 hover:shadow-md transition-all duration-300">
+                  <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-sm transition-shadow duration-200">
                     <div class="flex items-center justify-between mb-3">
-                      <h4 class="font-semibold text-slate-900"><%= pipeline_name.humanize %></h4>
+                      <h4 class="font-medium text-gray-900"><%= pipeline_name.humanize %></h4>
                       <div class="flex items-center gap-4 text-sm">
-                        <span class="text-slate-600">Total: <span class="font-semibold"><%= metrics[:total] %></span></span>
-                        <span class="text-slate-600">Avg: <span class="font-semibold"><%= metrics[:average_duration] %></span></span>
+                        <span class="text-gray-600">Total: <span class="font-medium"><%= metrics[:total] %></span></span>
+                        <span class="text-gray-600">Avg: <span class="font-medium"><%= metrics[:average_duration] %></span></span>
                       </div>
                     </div>
                     <div class="relative">
-                      <div class="w-full bg-slate-200 rounded-full h-3 shadow-inner">
-                        <div class="bg-gradient-to-r from-green-500 to-emerald-600 h-3 rounded-full shadow-lg transition-all duration-1000" style="width: <%= metrics[:success_rate] %>%"></div>
+                      <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-green-600 h-2 rounded-full transition-all duration-1000" style="width: <%= metrics[:success_rate] %>%"></div>
                       </div>
                       <div class="flex items-center justify-between mt-2">
-                        <span class="text-xs font-semibold text-slate-600">Success Rate</span>
-                        <span class="text-xs font-bold text-slate-900"><%= metrics[:success_rate] %>%</span>
+                        <span class="text-xs font-medium text-gray-600">Success Rate</span>
+                        <span class="text-xs font-semibold text-gray-900"><%= metrics[:success_rate] %>%</span>
                       </div>
                     </div>
                   </div>
@@ -185,34 +203,31 @@
               </div>
             <% else %>
               <div class="text-center py-12">
-                <div class="mx-auto w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mb-4">
-                  <svg class="h-8 w-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                <div class="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                   </svg>
                 </div>
-                <p class="text-slate-500 font-medium">No pipeline data available yet.</p>
+                <p class="text-gray-500 font-medium">No pipeline data available yet.</p>
               </div>
             <% end %>
           </div>
-        </div>
       </div>
 
       <!-- Active Manual Interventions -->
-      <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden hover:shadow-2xl transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-amber-500/5"></div>
-        <div class="relative">
-          <div class="px-6 py-5 border-b border-slate-200/50 bg-gradient-to-r from-yellow-50/50 to-amber-50/50">
+      <div class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-3">
-                <div class="p-2 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-lg shadow-lg">
-                  <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3C13.732 4 12.27 4 11.732 4c-.77 0-1.482 0-2.232 0-.553 0-1.087.117-1.536.335L4.448 5.792A2 2 0 003 7.606V16.5A2.5 2.5 0 005.5 19h13z"></path>
+                <div class="p-2 bg-yellow-600 rounded-lg shadow-sm">
+                  <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"></path>
                   </svg>
                 </div>
-                <h3 class="text-lg font-bold text-slate-900">Manual Interventions</h3>
+                <h3 class="text-lg font-medium text-gray-900">Manual Interventions</h3>
               </div>
               <% if @manual_interventions.any? %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 border border-yellow-200/50 shadow-sm">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
                   <%= @manual_interventions.count %> Pending
                 </span>
               <% end %>
@@ -222,30 +237,30 @@
             <% if @manual_interventions.any? %>
               <div class="space-y-3">
                 <% @manual_interventions.each do |task| %>
-                  <div class="group p-4 bg-gradient-to-r from-slate-50/50 to-white/50 rounded-xl border border-slate-200/50 hover:shadow-md transition-all duration-300">
+                  <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-sm transition-shadow duration-200">
                     <div class="flex items-start justify-between">
                       <div class="min-w-0 flex-1">
-                        <h4 class="text-sm font-semibold text-slate-900 truncate">
+                        <h4 class="text-sm font-medium text-gray-900 truncate">
                           <%= task.name %>
                         </h4>
-                        <p class="text-xs text-slate-600 mt-1">
+                        <p class="text-xs text-gray-600 mt-1">
                           <%= task.pipeline_execution.pipeline_name %>
                         </p>
                         <div class="flex items-center gap-3 mt-3">
-                          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold <%= task.execution_mode == 'approval' ? 'bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800 border border-purple-200/50' : 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border border-blue-200/50' %> shadow-sm">
+                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= task.execution_mode == 'approval' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-blue-100 text-blue-800 border border-blue-200' %>">
                             <%= task.execution_mode.humanize %>
                           </span>
                           <% if task.assignee %>
-                            <span class="text-xs text-slate-600">Assigned to <span class="font-semibold"><%= task.assignee.name %></span></span>
+                            <span class="text-xs text-gray-600">Assigned to <span class="font-medium"><%= task.assignee.name %></span></span>
                           <% else %>
-                            <span class="text-xs text-amber-600 font-semibold">Unassigned</span>
+                            <span class="text-xs text-yellow-600 font-medium">Unassigned</span>
                           <% end %>
                         </div>
                       </div>
                       <div class="ml-4">
-                        <%= link_to manual_task_path(task), class: "group/link p-2 text-indigo-600 hover:text-indigo-800 bg-indigo-50/50 hover:bg-indigo-100/80 rounded-lg transition-all duration-300 hover:shadow-md inline-flex" do %>
-                          <svg class="h-4 w-4 group-hover/link:translate-x-0.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        <%= link_to manual_task_path(task), class: "p-2 text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors duration-200 inline-flex" do %>
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                           </svg>
                         <% end %>
                       </div>
@@ -254,65 +269,62 @@
                 <% end %>
               </div>
               <div class="mt-4">
-                <%= link_to manual_tasks_path, class: "text-sm text-indigo-600 hover:text-indigo-800 font-semibold transition-colors flex items-center gap-1 group" do %>
+                <%= link_to manual_tasks_path, class: "text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors flex items-center gap-1" do %>
                   View All Tasks
-                  <svg class="h-4 w-4 group-hover:translate-x-0.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                   </svg>
                 <% end %>
               </div>
             <% else %>
               <div class="text-center py-8">
-                <div class="mx-auto w-12 h-12 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mb-3">
-                  <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <div class="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                  <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
-                <p class="text-slate-500 font-medium">No manual interventions required.</p>
+                <p class="text-gray-500 font-medium">No manual interventions required.</p>
               </div>
             <% end %>
           </div>
-        </div>
       </div>
     </div>
 
     <!-- Recent Pipeline Executions -->
-    <div class="mt-8 relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden hover:shadow-2xl transition-all duration-500">
-      <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5"></div>
-      <div class="relative">
-        <div class="px-6 py-5 border-b border-slate-200/50 bg-gradient-to-r from-indigo-50/50 to-purple-50/50">
+    <div class="mt-8 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="px-6 py-4 border-b border-gray-200">
           <div class="flex items-center space-x-3">
-            <div class="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg shadow-lg">
-              <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            <div class="p-2 bg-indigo-600 rounded-lg shadow-sm">
+              <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
               </svg>
             </div>
-            <h3 class="text-lg font-bold text-slate-900">Recent Pipeline Executions</h3>
+            <h3 class="text-lg font-medium text-gray-900">Recent Pipeline Executions</h3>
           </div>
         </div>
         
         <%= turbo_frame_tag "pipeline_executions" do %>
           <% if @pipeline_executions.any? %>
             <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-slate-200/50">
-                <thead class="bg-gradient-to-r from-slate-50/50 to-gray-50/50">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
                   <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Pipeline
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Data Source
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Progress
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Started
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Duration
                     </th>
                     <th class="relative px-6 py-3">
@@ -320,58 +332,52 @@
                     </th>
                   </tr>
                 </thead>
-                <tbody class="bg-white/50 divide-y divide-slate-200/30">
+                <tbody class="bg-white divide-y divide-gray-200">
                   <% @pipeline_executions.each do |execution| %>
                     <%= turbo_frame_tag execution do %>
-                      <tr class="hover:bg-gradient-to-r hover:from-slate-50/30 hover:to-white/30 transition-all duration-300">
+                      <tr class="hover:bg-gray-50 transition-colors duration-200">
                         <td class="px-6 py-4 whitespace-nowrap">
-                          <div class="text-sm font-semibold text-slate-900">
+                          <div class="text-sm font-medium text-gray-900">
                             <%= execution.pipeline_name %>
                           </div>
-                          <div class="text-xs text-slate-500">
+                          <div class="text-xs text-gray-500">
                             <%= execution.execution_mode.humanize %>
                           </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                           <% if execution.data_source %>
-                            <div class="text-sm text-slate-900">
+                            <div class="text-sm text-gray-900">
                               <%= execution.data_source.name %>
                             </div>
-                            <div class="text-xs text-slate-500">
+                            <div class="text-xs text-gray-500">
                               <%= execution.data_source.source_type.humanize %>
                             </div>
                           <% else %>
-                            <span class="text-sm text-slate-500">—</span>
+                            <span class="text-sm text-gray-500">—</span>
                           <% end %>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <%= execution.status == 'completed' ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200/50' : execution.status == 'failed' ? 'bg-gradient-to-r from-red-100 to-rose-100 text-red-800 border border-red-200/50' : execution.status == 'running' ? 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border border-blue-200/50' : 'bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800 border border-gray-200/50' %> shadow-sm">
-                            <% if execution.status == 'running' %>
-                              <svg class="mr-1 h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
-                            <% end %>
+                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= execution.status == 'completed' ? 'bg-green-100 text-green-800' : execution.status == 'failed' ? 'bg-red-100 text-red-800' : execution.status == 'running' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' %>">
                             <%= execution.status.humanize %>
                           </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                           <div class="flex items-center">
-                            <div class="flex-1 bg-slate-200 rounded-full h-2.5 mr-3 shadow-inner">
-                              <div class="bg-gradient-to-r from-indigo-500 to-purple-600 h-2.5 rounded-full shadow-lg transition-all duration-1000" style="width: <%= execution.progress || 0 %>%"></div>
+                            <div class="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                              <div class="bg-indigo-600 h-2 rounded-full transition-all duration-1000" style="width: <%= execution.progress || 0 %>%"></div>
                             </div>
-                            <span class="text-xs text-slate-600 font-bold"><%= execution.progress || 0 %>%</span>
+                            <span class="text-xs text-gray-600 font-medium"><%= execution.progress || 0 %>%</span>
                           </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           <%= execution.started_at.strftime("%b %d, %I:%M %p") %>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           <%= execution.duration_formatted || "—" %>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <%= link_to pipeline_dashboard_path(execution), 
-                            class: "text-indigo-600 hover:text-indigo-800 font-semibold transition-colors" do %>
+                            class: "text-indigo-600 hover:text-indigo-800 font-medium transition-colors" do %>
                             View Details
                           <% end %>
                         </td>
@@ -382,69 +388,39 @@
               </table>
             </div>
             
-            <div class="px-6 py-4 border-t border-slate-200/50 bg-gradient-to-r from-slate-50/30 to-gray-50/30">
+            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
               <%= paginate @pipeline_executions %>
             </div>
           <% else %>
             <div class="p-12 text-center">
-              <div class="mx-auto w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mb-4 shadow-xl">
-                <svg class="h-10 w-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              <div class="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <svg class="h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                 </svg>
               </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2">No pipelines yet</h3>
-              <p class="text-slate-500 mb-6">Get started by creating a new data source.</p>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">No pipelines yet</h3>
+              <p class="text-gray-500 mb-6">Get started by creating a new data source.</p>
               <%= link_to new_data_source_path, 
-                class: "inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5" do %>
-                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg shadow-sm hover:bg-indigo-700 transition-colors duration-200" do %>
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                 </svg>
                 Create Data Source
               <% end %>
             </div>
           <% end %>
         <% end %>
-      </div>
     </div>
   </div>
 
   <!-- Live Update Indicator -->
   <div class="fixed bottom-6 right-6 z-50">
-    <div class="flex items-center space-x-2 px-4 py-2 bg-white/90 backdrop-blur-xl rounded-full shadow-xl border border-white/20">
-      <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-      <span class="text-xs font-semibold text-slate-700">Live Updates</span>
+    <div class="flex items-center space-x-2 px-3 py-1.5 bg-white rounded-full shadow-lg border border-gray-200">
+      <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+      <span class="text-xs font-medium text-gray-700">Live Updates</span>
     </div>
   </div>
 </div>
 
 <!-- Subscribe to real-time updates -->
 <%= turbo_stream_from "pipeline_dashboard" %>
-
-<!-- Enhanced JavaScript for Premium UX -->
-<script>
-  // Add smooth scroll behavior
-  document.documentElement.style.scrollBehavior = 'smooth';
-
-  // Add intersection observer for card animations
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  };
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }
-    });
-  }, observerOptions);
-
-  // Observe all cards for animation
-  document.querySelectorAll('.group').forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-    observer.observe(card);
-  });
-</script>

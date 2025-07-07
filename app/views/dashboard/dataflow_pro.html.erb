@@ -1,0 +1,420 @@
+<!-- Dashboard Section -->
+<section class="content-section active" id="dashboard">
+  <!-- Key Metrics -->
+  <div class="metrics-grid">
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "📈",
+      title: "Monthly Active Users",
+      value: number_with_delimiter(@stats[:monthly_active_users] || 1847),
+      change: "+12% vs last month",
+      change_type: :positive
+    ) %>
+    
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "🔗",
+      title: "Connected Sources",
+      value: @stats[:connected_sources] || 247,
+      change: "+5 new this week",
+      change_type: :positive
+    ) %>
+    
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "⚡",
+      title: "Records Processed",
+      value: number_to_human(@stats[:total_records] || 3200000, precision: 1, format: "%n%u"),
+      change: "+18% this month",
+      change_type: :positive
+    ) %>
+    
+    <%= render Dataflow::MetricCardComponent.new(
+      icon: "💎",
+      title: "Data Quality Score",
+      value: "#{@stats[:data_quality_score] || 96}%",
+      change: "+2% improvement",
+      change_type: :positive
+    ) %>
+  </div>
+
+  <!-- AI Insights Panel -->
+  <div class="ai-insights-panel mb-df-32">
+    <h2 class="text-df-2xl font-semibold mb-df-20 flex items-center">
+      <span class="mr-2">🤖</span> AI-Powered Insights
+    </h2>
+    <div class="insights-grid">
+      <%= render Dataflow::InsightCardComponent.new(
+        type: "Anomaly Detection",
+        confidence: 94,
+        message: "Unusual spike in customer churn detected in enterprise segment - requires immediate attention",
+        action_text: "Investigate",
+        severity: :critical
+      ) %>
+      
+      <%= render Dataflow::InsightCardComponent.new(
+        type: "Prediction",
+        confidence: 87,
+        message: "Sales forecast indicates 18% growth next quarter based on current trends and seasonal patterns",
+        action_text: "View Details",
+        severity: :high
+      ) %>
+      
+      <%= render Dataflow::InsightCardComponent.new(
+        type: "Optimization",
+        confidence: 91,
+        message: "Marketing spend optimization suggests reallocating 25% budget from Channel A to Channel C for better ROI",
+        action_text: "Apply Suggestion",
+        severity: :medium
+      ) %>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <%= render Dataflow::ChartContainerComponent.new(
+      title: "Revenue Growth & Prediction",
+      chart_id: "revenueChart",
+      controls: true
+    ) %>
+    
+    <%= render Dataflow::ChartContainerComponent.new(
+      title: "Customer Acquisition",
+      chart_id: "customerChart"
+    ) %>
+  </div>
+</section>
+
+<!-- Predictive Analytics Section -->
+<section class="content-section" id="predictive">
+  <div class="mb-df-32">
+    <h2 class="text-df-3xl font-semibold mb-df-8 flex items-center">
+      <span class="mr-3">🔮</span> Predictive Analytics Engine
+    </h2>
+    <p class="text-df-lg text-df-text-secondary">Advanced forecasting and trend analysis powered by machine learning</p>
+  </div>
+  
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-df-20">
+    <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border">
+      <h3 class="text-df-xl font-semibold mb-df-16">Demand Forecasting</h3>
+      <div class="mb-df-16">
+        <div class="h-2 bg-df-secondary rounded-full mb-df-8">
+          <div class="h-2 bg-df-success rounded-full" style="width: 75%"></div>
+        </div>
+        <p class="text-df-base">Product demand expected to increase by 23% in Q3</p>
+      </div>
+      <div class="flex justify-between text-df-sm text-df-text-secondary">
+        <span>Accuracy: 89%</span>
+        <span>Confidence: High</span>
+      </div>
+    </div>
+    
+    <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border">
+      <h3 class="text-df-xl font-semibold mb-df-16">Customer Behavior</h3>
+      <div class="mb-df-16">
+        <div class="h-2 bg-df-secondary rounded-full mb-df-8">
+          <div class="h-2 bg-df-primary rounded-full" style="width: 65%"></div>
+        </div>
+        <p class="text-df-base">Customer lifetime value trending upward with 15% increase</p>
+      </div>
+      <div class="flex justify-between text-df-sm text-df-text-secondary">
+        <span>Accuracy: 92%</span>
+        <span>Confidence: High</span>
+      </div>
+    </div>
+    
+    <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border">
+      <h3 class="text-df-xl font-semibold mb-df-16">Market Trends</h3>
+      <div class="mb-df-16">
+        <div class="h-2 bg-df-secondary rounded-full mb-df-8">
+          <div class="h-2 bg-df-warning rounded-full" style="width: 45%"></div>
+        </div>
+        <p class="text-df-base">Competitive pressure may impact margins by 8% next quarter</p>
+      </div>
+      <div class="flex justify-between text-df-sm text-df-text-secondary">
+        <span>Accuracy: 76%</span>
+        <span>Confidence: Medium</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Analytics Builder Section -->
+<section class="content-section" id="builder">
+  <div class="mb-df-32">
+    <h2 class="text-df-3xl font-semibold mb-df-8 flex items-center">
+      <span class="mr-3">🛠️</span> No-Code Analytics Builder
+    </h2>
+    <p class="text-df-lg text-df-text-secondary">Drag and drop to create custom dashboards without coding</p>
+  </div>
+  
+  <div class="grid grid-cols-12 gap-df-20">
+    <div class="col-span-3">
+      <div class="bg-df-surface rounded-df-lg p-df-20 border border-df-card-border">
+        <h3 class="text-df-lg font-semibold mb-df-16">Components</h3>
+        <div class="space-y-df-8">
+          <div class="p-df-12 bg-df-secondary rounded-df-md cursor-move hover:bg-df-secondary-hover transition-colors" draggable="true">📊 Bar Chart</div>
+          <div class="p-df-12 bg-df-secondary rounded-df-md cursor-move hover:bg-df-secondary-hover transition-colors" draggable="true">📈 Line Chart</div>
+          <div class="p-df-12 bg-df-secondary rounded-df-md cursor-move hover:bg-df-secondary-hover transition-colors" draggable="true">🍩 Donut Chart</div>
+          <div class="p-df-12 bg-df-secondary rounded-df-md cursor-move hover:bg-df-secondary-hover transition-colors" draggable="true">📋 Data Table</div>
+          <div class="p-df-12 bg-df-secondary rounded-df-md cursor-move hover:bg-df-secondary-hover transition-colors" draggable="true">🎯 KPI Card</div>
+          <div class="p-df-12 bg-df-secondary rounded-df-md cursor-move hover:bg-df-secondary-hover transition-colors" draggable="true">📊 Heat Map</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-span-6">
+      <div class="bg-df-surface rounded-df-lg p-df-20 border border-df-card-border h-full">
+        <h3 class="text-df-lg font-semibold mb-df-16">Dashboard Canvas</h3>
+        <div class="border-2 border-dashed border-df-border rounded-df-lg p-df-32 text-center min-h-[400px] flex items-center justify-center">
+          <p class="text-df-text-secondary">Drag components here to build your dashboard</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-span-3">
+      <div class="bg-df-surface rounded-df-lg p-df-20 border border-df-card-border">
+        <h3 class="text-df-lg font-semibold mb-df-16">Properties</h3>
+        <div class="space-y-df-16">
+          <div>
+            <label class="block text-df-sm font-medium text-df-text-secondary mb-df-4">Chart Type:</label>
+            <select class="form-control">
+              <option>Bar Chart</option>
+              <option>Line Chart</option>
+              <option>Pie Chart</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-df-sm font-medium text-df-text-secondary mb-df-4">Data Source:</label>
+            <select class="form-control">
+              <option>Sales Data</option>
+              <option>Customer Data</option>
+              <option>Marketing Data</option>
+            </select>
+          </div>
+          <button class="btn btn--primary btn--full-width">Apply Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ETL Pipeline Section -->
+<section class="content-section" id="etl">
+  <div class="mb-df-32">
+    <h2 class="text-df-3xl font-semibold mb-df-8 flex items-center">
+      <span class="mr-3">🔄</span> ETL Pipeline Builder
+    </h2>
+    <p class="text-df-lg text-df-text-secondary">Visual workflow designer with 200+ data connectors</p>
+  </div>
+  
+  <div class="grid grid-cols-3 gap-df-20 mb-df-32">
+    <div class="bg-df-surface rounded-df-lg p-df-20 border border-df-card-border text-center">
+      <span class="text-df-3xl font-bold text-df-primary"><%= @stats[:active_pipelines] || 18 %></span>
+      <p class="text-df-base text-df-text-secondary mt-df-4">Active Pipelines</p>
+    </div>
+    <div class="bg-df-surface rounded-df-lg p-df-20 border border-df-card-border text-center">
+      <span class="text-df-3xl font-bold text-df-primary"><%= number_to_human(@stats[:total_records] || 3200000, precision: 1, format: "%n%u") %></span>
+      <p class="text-df-base text-df-text-secondary mt-df-4">Records Processed</p>
+    </div>
+    <div class="bg-df-surface rounded-df-lg p-df-20 border border-df-card-border text-center">
+      <span class="text-df-3xl font-bold text-df-primary">99.8%</span>
+      <p class="text-df-base text-df-text-secondary mt-df-4">Success Rate</p>
+    </div>
+  </div>
+  
+  <div class="bg-df-surface rounded-df-lg p-df-32 border border-df-card-border">
+    <div class="flex items-center justify-center space-x-df-32">
+      <div class="text-center">
+        <div class="w-24 h-24 bg-df-primary rounded-df-lg flex items-center justify-center text-white text-3xl mb-df-8">📥</div>
+        <p class="font-medium">Data Source</p>
+        <p class="text-df-sm text-df-text-secondary">Salesforce CRM</p>
+      </div>
+      <svg class="w-12 h-12 text-df-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+      </svg>
+      <div class="text-center">
+        <div class="w-24 h-24 bg-df-warning rounded-df-lg flex items-center justify-center text-white text-3xl mb-df-8">⚙️</div>
+        <p class="font-medium">Transform</p>
+        <p class="text-df-sm text-df-text-secondary">Clean & Normalize</p>
+      </div>
+      <svg class="w-12 h-12 text-df-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+      </svg>
+      <div class="text-center">
+        <div class="w-24 h-24 bg-df-success rounded-df-lg flex items-center justify-center text-white text-3xl mb-df-8">📤</div>
+        <p class="font-medium">Destination</p>
+        <p class="text-df-sm text-df-text-secondary">Data Warehouse</p>
+      </div>
+    </div>
+    <div class="text-center mt-df-32">
+      <button class="btn btn--primary">Create New Pipeline</button>
+    </div>
+  </div>
+</section>
+
+<!-- Industry Templates Section -->
+<section class="content-section" id="templates">
+  <div class="mb-df-32">
+    <h2 class="text-df-3xl font-semibold mb-df-8 flex items-center">
+      <span class="mr-3">📋</span> Industry Templates Library
+    </h2>
+    <p class="text-df-lg text-df-text-secondary">Pre-built analytics templates for your industry</p>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-df-20">
+    <% [
+      { icon: "🛍️", title: "Retail & E-commerce Analytics", description: "Complete dashboard for online and offline retail operations", features: ["Sales tracking", "Inventory management", "Customer analytics"] },
+      { icon: "🏭", title: "Manufacturing Operations", description: "Production efficiency and supply chain optimization", features: ["Production monitoring", "Quality control", "Supply chain analytics"] },
+      { icon: "💼", title: "Professional Services", description: "Project profitability and resource utilization tracking", features: ["Project tracking", "Resource planning", "Client analytics"] },
+      { icon: "🏥", title: "Healthcare Analytics", description: "Patient outcomes and operational efficiency dashboard", features: ["Patient analytics", "Resource optimization", "Compliance tracking"] },
+    ].each do |template| %>
+      <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border hover:shadow-df-md transition-shadow">
+        <div class="text-4xl mb-df-16"><%= template[:icon] %></div>
+        <h3 class="text-df-xl font-semibold mb-df-8"><%= template[:title] %></h3>
+        <p class="text-df-base text-df-text-secondary mb-df-16"><%= template[:description] %></p>
+        <div class="flex flex-wrap gap-df-8 mb-df-20">
+          <% template[:features].each do |feature| %>
+            <span class="px-df-12 py-df-4 bg-df-secondary rounded-df-sm text-df-sm"><%= feature %></span>
+          <% end %>
+        </div>
+        <button class="btn btn--primary btn--full-width">Use Template</button>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<!-- Marketplace Section -->
+<section class="content-section" id="marketplace">
+  <div class="mb-df-32">
+    <h2 class="text-df-3xl font-semibold mb-df-8 flex items-center">
+      <span class="mr-3">🛍️</span> Integration Marketplace
+    </h2>
+    <p class="text-df-lg text-df-text-secondary">Connect with 200+ business tools and data sources</p>
+  </div>
+  
+  <div class="mb-df-24">
+    <div class="flex gap-df-8">
+      <input type="text" class="form-control flex-1" placeholder="Search integrations...">
+      <button class="btn btn--primary">Search</button>
+    </div>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-df-20">
+    <% [
+      { title: "CRM & Sales", count: 45, connectors: ["Salesforce", "HubSpot", "Pipedrive", "Zoho CRM"] },
+      { title: "Marketing & Analytics", count: 38, connectors: ["Google Analytics", "Facebook Ads", "Mailchimp", "Klaviyo"] },
+      { title: "Accounting & Finance", count: 32, connectors: ["QuickBooks", "Xero", "Stripe", "PayPal"] },
+    ].each do |category| %>
+      <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border">
+        <h3 class="text-df-xl font-semibold mb-df-4"><%= category[:title] %></h3>
+        <p class="text-df-sm text-df-text-secondary mb-df-16"><%= category[:count] %> connectors</p>
+        <div class="flex flex-wrap gap-df-8">
+          <% category[:connectors].each do |connector| %>
+            <span class="px-df-12 py-df-6 bg-df-primary text-white rounded-df-sm text-df-sm cursor-pointer hover:bg-df-primary-hover transition-colors"><%= connector %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<!-- Other sections would follow the same pattern... -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize charts when dashboard is active
+    if (document.getElementById('dashboard').classList.contains('active')) {
+      initializeCharts();
+    }
+  });
+  
+  function initializeCharts() {
+    // Revenue Chart
+    const revenueCtx = document.getElementById('revenueChart');
+    if (revenueCtx) {
+      new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [
+            {
+              label: 'Current Revenue',
+              data: [125000, 138000, 142000, 155000, 168000, 175000],
+              borderColor: 'rgba(33, 128, 141, 1)',
+              backgroundColor: 'rgba(33, 128, 141, 0.1)',
+              borderWidth: 3,
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: 'Predicted Revenue',
+              data: [180000, 195000, 208000, 225000, 240000, 255000],
+              borderColor: 'rgba(255, 193, 133, 1)',
+              backgroundColor: 'rgba(255, 193, 133, 0.1)',
+              borderWidth: 3,
+              borderDash: [5, 5],
+              tension: 0.4,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return '£' + (value / 1000) + 'K';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // Customer Chart
+    const customerCtx = document.getElementById('customerChart');
+    if (customerCtx) {
+      new Chart(customerCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+          datasets: [{
+            label: 'New Customers',
+            data: [245, 287, 312, 298],
+            backgroundColor: [
+              'rgba(31, 184, 205, 0.8)',
+              'rgba(255, 193, 133, 0.8)',
+              'rgba(180, 65, 60, 0.8)',
+              'rgba(236, 235, 213, 0.8)'
+            ],
+            borderWidth: 0,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  }
+</script>

@@ -321,7 +321,7 @@ class PipelineMonitoringController < ApplicationController
 
   def solid_queue_available?
     # Check if SolidQueue tables exist in the database
-    ActiveRecord::Base.connection.table_exists?('solid_queue_jobs')
+    ActiveRecord::Base.connection.table_exists?("solid_queue_jobs")
   rescue ActiveRecord::ConnectionNotEstablished, PG::Error
     false
   end

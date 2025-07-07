@@ -224,7 +224,7 @@ class EcommerceAdapter
   def build_headers
     {
       "Content-Type" => "application/json",
-      "User-Agent" => "DataRefinery/#{Rails.application.config.version || '1.0'} (#{platform_name} Adapter)"
+      "User-Agent" => "DataRefinery/1.0 (#{platform_name} Adapter)"
     }
   end
 

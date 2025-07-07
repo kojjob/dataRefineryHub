@@ -1,0 +1,15 @@
+<div class="chart-container">
+  <div class="chart-header">
+    <h3><%= title %></h3>
+    <% if controls %>
+      <div class="chart-controls flex gap-df-8">
+        <button class="btn btn--sm btn--outline">6M</button>
+        <button class="btn btn--sm btn--primary">1Y</button>
+        <button class="btn btn--sm btn--outline">All</button>
+      </div>
+    <% end %>
+  </div>
+  <div class="chart-wrapper">
+    <canvas id="<%= chart_id %>"></canvas>
+  </div>
+</div>
