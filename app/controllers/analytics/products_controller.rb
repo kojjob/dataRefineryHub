@@ -42,8 +42,15 @@ class Analytics::ProductsController < Analytics::BaseController
 
     # Basic product metrics
     total_products = product_records.count
-    published_products = product_records.where("raw_data->>'status' = ?", "active").count
-    draft_products = product_records.where("raw_data->>'status' = ?", "draft").count
+    published_products = 0
+    draft_products = 0
+    
+    # Process products in Ruby to avoid JSON operators
+    product_records.find_each do |product|
+      status = product.raw_data["status"] rescue nil
+      published_products += 1 if status == "active"
+      draft_products += 1 if status == "draft"
+    end
 
     # Product sales analysis from orders
     product_sales = {}
@@ -149,7 +156,12 @@ class Analytics::ProductsController < Analytics::BaseController
     end
 
     # Inventory turnover (would need historical data for accurate calculation)
-    total_variants = product_records.joins("JOIN LATERAL jsonb_array_elements(raw_data->'variants') AS variant(data) ON true").count
+    total_variants = 0
+    product_records.find_each do |product|
+      if product.raw_data["variants"]
+        total_variants += product.raw_data["variants"].length
+      end
+    end
 
     {
       total_inventory_value: total_inventory_value,

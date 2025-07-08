@@ -33,7 +33,19 @@ class Analytics::RevenueController < Analytics::BaseController
   def calculate_revenue_metrics
     order_records = order_records_scope
 
-    total_revenue = order_records.sum("CAST(raw_data->>'total_price' AS DECIMAL)")
+    # Calculate totals by processing in Ruby
+    total_revenue = 0
+    tax_collected = 0
+    shipping_revenue = 0
+    discounts_given = 0
+    
+    order_records.find_each do |order|
+      total_revenue += order.raw_data["total_price"].to_f rescue 0
+      tax_collected += order.raw_data["total_tax"].to_f rescue 0
+      shipping_revenue += order.raw_data["total_shipping"].to_f rescue 0
+      discounts_given += order.raw_data["total_discounts"].to_f rescue 0
+    end
+    
     total_orders = order_records.count
 
     # Calculate previous period for comparison
@@ -42,7 +54,10 @@ class Analytics::RevenueController < Analytics::BaseController
     previous_end = @start_date
 
     previous_orders = order_records_scope_for_period(previous_start, previous_end)
-    previous_revenue = previous_orders.sum("CAST(raw_data->>'total_price' AS DECIMAL)")
+    previous_revenue = 0
+    previous_orders.find_each do |order|
+      previous_revenue += order.raw_data["total_price"].to_f rescue 0
+    end
     previous_order_count = previous_orders.count
 
     {
@@ -51,9 +66,9 @@ class Analytics::RevenueController < Analytics::BaseController
       average_order_value: total_orders > 0 ? (total_revenue / total_orders).round(2) : 0,
       revenue_growth: calculate_percentage_change(previous_revenue, total_revenue),
       order_growth: calculate_percentage_change(previous_order_count, total_orders),
-      tax_collected: order_records.sum("CAST(raw_data->>'total_tax' AS DECIMAL)"),
-      shipping_revenue: order_records.sum("CAST(raw_data->>'total_shipping' AS DECIMAL)"),
-      discounts_given: order_records.sum("CAST(raw_data->>'total_discounts' AS DECIMAL)")
+      tax_collected: tax_collected,
+      shipping_revenue: shipping_revenue,
+      discounts_given: discounts_given
     }
   end
 
@@ -61,15 +76,16 @@ class Analytics::RevenueController < Analytics::BaseController
     order_records = order_records_scope
 
     # Group by day for detailed trends
-    daily_revenue = order_records
-      .group("DATE(created_at)")
-      .sum("CAST(raw_data->>'total_price' AS DECIMAL)")
-      .transform_keys { |date| date.strftime("%Y-%m-%d") }
-
-    daily_orders = order_records
-      .group("DATE(created_at)")
-      .count
-      .transform_keys { |date| date.strftime("%Y-%m-%d") }
+    daily_revenue = {}
+    daily_orders = {}
+    
+    order_records.find_each do |order|
+      date_key = order.created_at.to_date.strftime("%Y-%m-%d")
+      revenue = order.raw_data["total_price"].to_f rescue 0
+      
+      daily_revenue[date_key] = (daily_revenue[date_key] || 0) + revenue
+      daily_orders[date_key] = (daily_orders[date_key] || 0) + 1
+    end
 
     # Calculate moving averages
     revenue_values = daily_revenue.values
@@ -89,29 +105,55 @@ class Analytics::RevenueController < Analytics::BaseController
   def calculate_fulfillment_metrics
     order_records = order_records_scope
 
-    fulfilled_orders = order_records.where("raw_data->>'fulfillment_status' = ?", "fulfilled")
-    pending_orders = order_records.where("raw_data->>'fulfillment_status' IS NULL OR raw_data->>'fulfillment_status' = ?", "pending")
-    cancelled_orders = order_records.where("raw_data->>'cancelled_at' IS NOT NULL")
+    # Process orders in Ruby
+    fulfilled_orders = []
+    pending_orders = []
+    cancelled_orders = []
+    fulfillment_times = []
+    fulfilled_revenue = 0
+    pending_revenue = 0
+    cancelled_revenue = 0
 
-    # Calculate fulfillment times for fulfilled orders
-    fulfilled_with_times = fulfilled_orders.where("raw_data->>'fulfilled_at' IS NOT NULL")
-    fulfillment_times = fulfilled_with_times.map do |order|
-      created = Time.parse(order.raw_data["created_at"])
-      fulfilled = Time.parse(order.raw_data["fulfilled_at"])
-      (fulfilled - created) / 1.day
+    order_records.find_each do |order|
+      fulfillment_status = order.raw_data["fulfillment_status"] rescue nil
+      cancelled_at = order.raw_data["cancelled_at"] rescue nil
+      total_price = order.raw_data["total_price"].to_f rescue 0
+
+      if cancelled_at
+        cancelled_orders << order
+        cancelled_revenue += total_price
+      elsif fulfillment_status == "fulfilled"
+        fulfilled_orders << order
+        fulfilled_revenue += total_price
+        
+        # Calculate fulfillment time if data available
+        fulfilled_at = order.raw_data["fulfilled_at"] rescue nil
+        created_at = order.raw_data["created_at"] rescue nil
+        
+        if fulfilled_at && created_at
+          created = Time.parse(created_at)
+          fulfilled = Time.parse(fulfilled_at)
+          fulfillment_times << (fulfilled - created) / 1.day
+        end
+      elsif fulfillment_status.nil? || fulfillment_status == "pending"
+        pending_orders << order
+        pending_revenue += total_price
+      end
     end
 
+    total_orders = order_records.count
+
     {
-      total_orders: order_records.count,
+      total_orders: total_orders,
       fulfilled_count: fulfilled_orders.count,
       pending_count: pending_orders.count,
       cancelled_count: cancelled_orders.count,
-      fulfillment_rate: order_records.count > 0 ? (fulfilled_orders.count.to_f / order_records.count * 100).round(1) : 0,
-      cancellation_rate: order_records.count > 0 ? (cancelled_orders.count.to_f / order_records.count * 100).round(1) : 0,
+      fulfillment_rate: total_orders > 0 ? (fulfilled_orders.count.to_f / total_orders * 100).round(1) : 0,
+      cancellation_rate: total_orders > 0 ? (cancelled_orders.count.to_f / total_orders * 100).round(1) : 0,
       avg_fulfillment_time: fulfillment_times.any? ? (fulfillment_times.sum / fulfillment_times.length).round(1) : 0,
-      fulfilled_revenue: fulfilled_orders.sum("CAST(raw_data->>'total_price' AS DECIMAL)"),
-      pending_revenue: pending_orders.sum("CAST(raw_data->>'total_price' AS DECIMAL)"),
-      cancelled_revenue: cancelled_orders.sum("CAST(raw_data->>'total_price' AS DECIMAL)")
+      fulfilled_revenue: fulfilled_revenue,
+      pending_revenue: pending_revenue,
+      cancelled_revenue: cancelled_revenue
     }
   end
 
@@ -119,10 +161,12 @@ class Analytics::RevenueController < Analytics::BaseController
     order_records = order_records_scope
 
     # Revenue by source
-    revenue_by_source = order_records
-      .joins(:data_source)
-      .group("data_sources.source_type")
-      .sum("CAST(raw_data->>'total_price' AS DECIMAL)")
+    revenue_by_source = {}
+    order_records.includes(:data_source).find_each do |order|
+      source_type = order.data_source.source_type
+      total_price = order.raw_data["total_price"].to_f rescue 0
+      revenue_by_source[source_type] = (revenue_by_source[source_type] || 0) + total_price
+    end
 
     # Revenue by product category (if available)
     revenue_by_category = {}
@@ -153,16 +197,21 @@ class Analytics::RevenueController < Analytics::BaseController
       "VIP Customers" => 0
     }
 
+    # First, get customer order counts
+    customer_order_counts = {}
     order_records.find_each do |order|
-      customer_email = order.raw_data["customer"]&.dig("email")
+      customer_email = order.raw_data.dig("customer", "email") rescue nil
+      next unless customer_email
+      customer_order_counts[customer_email] = (customer_order_counts[customer_email] || 0) + 1
+    end
+
+    # Then segment revenue
+    order_records.find_each do |order|
+      customer_email = order.raw_data.dig("customer", "email") rescue nil
       next unless customer_email
 
-      total_price = order.raw_data["total_price"].to_f
-
-      # Simple segmentation logic - in practice this would be more sophisticated
-      customer_orders_count = order_records
-        .where("raw_data->'customer'->>'email' = ?", customer_email)
-        .count
+      total_price = order.raw_data["total_price"].to_f rescue 0
+      customer_orders_count = customer_order_counts[customer_email] || 0
 
       if customer_orders_count == 1
         segments["New Customers"] += total_price

@@ -111,6 +111,20 @@ Rails.application.routes.draw do
 
   # AI-powered features
   namespace :ai do
+    # Redirect old predictive_analytics path to new predictions path
+    get 'predictive_analytics', to: redirect('/ai/predictions')
+    
+    resources :predictions, only: [:index] do
+      collection do
+        get :forecasts
+        get :models
+        get :scenarios
+        post :run_prediction
+        post :train_model
+        post :configure_model
+      end
+    end
+
     resources :presentations do
       member do
         get :download

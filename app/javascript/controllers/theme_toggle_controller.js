@@ -10,23 +10,31 @@ export default class extends Controller {
   }
   
   toggle() {
-    const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
+    const currentTheme = document.documentElement.getAttribute('data-color-scheme') || 'light'
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light'
+    
     this.applyTheme(newTheme)
     localStorage.setItem('theme', newTheme)
+    
+    // Dispatch custom event for other components to react to theme change
+    window.dispatchEvent(new CustomEvent('theme:changed', { detail: { theme: newTheme } }))
   }
   
   applyTheme(theme) {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark')
-      if (this.hasIconTarget) {
-        this.iconTarget.textContent = '☀️'
-      }
-    } else {
-      document.documentElement.classList.remove('dark')
-      if (this.hasIconTarget) {
-        this.iconTarget.textContent = '🌙'
-      }
+    // Add transition class before changing theme
+    document.body.classList.add('theme-transition')
+    
+    // Apply theme
+    document.documentElement.setAttribute('data-color-scheme', theme)
+    
+    // Update icon
+    if (this.hasIconTarget) {
+      this.iconTarget.textContent = theme === 'dark' ? '☀️' : '🌙'
     }
+    
+    // Remove transition class after a delay
+    setTimeout(() => {
+      document.body.classList.remove('theme-transition')
+    }, 300)
   }
 }

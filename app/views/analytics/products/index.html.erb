@@ -1,0 +1,365 @@
+<% content_for :page_title, "Product Analytics" %>
+<% content_for :page_subtitle, "Analyze product performance, inventory levels, and sales trends" %>
+
+<div class="dashboard-content">
+  <!-- Product Analytics Section -->
+  <section class="content-section active" id="product-analytics" data-controller="chart">
+  <!-- Key Metrics -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-icon">📦</div>
+      <div class="metric-content">
+        <h3>Total Products</h3>
+        <p class="metric-value"><%= number_with_delimiter(@product_metrics[:total_products]) %></p>
+        <p class="metric-change positive"><%= @product_metrics[:published_products] %> published</p>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-icon">🛒</div>
+      <div class="metric-content">
+        <h3>Products Sold</h3>
+        <p class="metric-value"><%= number_with_delimiter(@product_metrics[:products_sold]) %></p>
+        <p class="metric-change">Unique SKUs</p>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-icon">📊</div>
+      <div class="metric-content">
+        <h3>Units Sold</h3>
+        <p class="metric-value"><%= number_with_delimiter(@product_metrics[:total_quantity_sold]) %></p>
+        <p class="metric-change positive">Total quantity</p>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-icon">💰</div>
+      <div class="metric-content">
+        <h3>Product Revenue</h3>
+        <p class="metric-value">$<%= number_with_delimiter(@product_metrics[:total_product_revenue].to_i) %></p>
+        <p class="metric-change positive">From products</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Products Performance -->
+  <div class="ai-insights-panel">
+    <h2>🏆 Top Performing Products</h2>
+    <div class="top-products-grid">
+      <!-- By Revenue -->
+      <div class="top-products-section">
+        <h3>Revenue Leaders</h3>
+        <div class="product-list">
+          <% @product_metrics[:top_products_by_revenue].first(5).each_with_index do |(product_id, data), index| %>
+            <div class="product-item <%= index == 0 ? 'top-performer' : '' %>">
+              <div class="product-rank">
+                <%= index == 0 ? '👑' : "##{index + 1}" %>
+              </div>
+              <div class="product-details">
+                <h4><%= data[:title] %></h4>
+                <div class="product-stats">
+                  <span class="revenue">$<%= number_with_delimiter(data[:revenue].to_i) %></span>
+                  <span class="units"><%= data[:quantity] %> units</span>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      
+      <!-- By Quantity -->
+      <div class="top-products-section">
+        <h3>Volume Leaders</h3>
+        <div class="product-list">
+          <% @product_metrics[:top_products_by_quantity].first(5).each_with_index do |(product_id, data), index| %>
+            <div class="product-item <%= index == 0 ? 'top-performer' : '' %>">
+              <div class="product-rank">
+                <%= index == 0 ? '🚀' : "##{index + 1}" %>
+              </div>
+              <div class="product-details">
+                <h4><%= data[:title] %></h4>
+                <div class="product-stats">
+                  <span class="units"><%= data[:quantity] %> units</span>
+                  <span class="revenue">$<%= number_with_delimiter(data[:revenue].to_i) %></span>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Performance Charts -->
+  <div class="charts-section">
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3>Sales Performance Trend</h3>
+        <div class="chart-controls">
+          <button class="btn btn--sm btn--outline">7D</button>
+          <button class="btn btn--sm btn--primary">30D</button>
+          <button class="btn btn--sm btn--outline">90D</button>
+        </div>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="productSalesChart" data-chart-target="sales"></canvas>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3>Category Distribution</h3>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="categoryChart" data-chart-target="category"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inventory Health -->
+  <div class="inventory-health">
+    <h2>📊 Inventory Health Analysis</h2>
+    <div class="inventory-grid">
+      <div class="inventory-metric">
+        <div class="inventory-icon success">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        </div>
+        <div class="inventory-content">
+          <h3>Inventory Value</h3>
+          <p class="inventory-value">$<%= number_with_delimiter(@inventory_metrics[:total_inventory_value].to_i) %></p>
+          <p class="inventory-label">Total stock value</p>
+        </div>
+      </div>
+      
+      <div class="inventory-metric">
+        <div class="inventory-icon <%= @inventory_metrics[:stock_health_score] >= 80 ? 'success' : 'warning' %>">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="inventory-content">
+          <h3>Stock Health</h3>
+          <p class="inventory-value"><%= @inventory_metrics[:stock_health_score] %>%</p>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill <%= @inventory_metrics[:stock_health_score] >= 80 ? 'primary' : 'warning' %>" style="width: <%= @inventory_metrics[:stock_health_score] %>%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="inventory-metric">
+        <div class="inventory-icon error">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="inventory-content">
+          <h3>Out of Stock</h3>
+          <p class="inventory-value"><%= @inventory_metrics[:out_of_stock_count] %></p>
+          <p class="inventory-label">Products unavailable</p>
+        </div>
+      </div>
+      
+      <div class="inventory-metric">
+        <div class="inventory-icon warning">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <div class="inventory-content">
+          <h3>Low Stock</h3>
+          <p class="inventory-value"><%= @inventory_metrics[:low_stock_count] %></p>
+          <p class="inventory-label">Need reordering</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Product Insights -->
+  <div class="ai-insights-panel">
+    <h2>🤖 AI-Powered Product Insights</h2>
+    <div class="insights-grid">
+      <div class="insight-card critical">
+        <div class="insight-header">
+          <span class="insight-type">Stock-Out Risk</span>
+          <span class="confidence-score">91% confident</span>
+        </div>
+        <p><%= (@inventory_metrics[:low_stock_count] + 3) %> products will be out of stock within 7 days based on current sales velocity</p>
+        <button class="btn btn--sm btn--primary">Create PO</button>
+      </div>
+      
+      <div class="insight-card high">
+        <div class="insight-header">
+          <span class="insight-type">Cross-Sell Opportunity</span>
+          <span class="confidence-score">86% confident</span>
+        </div>
+        <p>Products frequently bought together can increase AOV by 23% - bundle opportunities identified</p>
+        <button class="btn btn--sm btn--outline">View Bundles</button>
+      </div>
+      
+      <div class="insight-card medium">
+        <div class="insight-header">
+          <span class="insight-type">Pricing Optimization</span>
+          <span class="confidence-score">88% confident</span>
+        </div>
+        <p>5 products showing price elasticity - potential revenue increase of $<%= number_with_delimiter((@product_metrics[:total_product_revenue] * 0.07).to_i) %></p>
+        <button class="btn btn--sm btn--outline">Optimize Prices</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Categories Analysis -->
+  <% if @inventory_metrics[:inventory_distribution] %>
+    <div class="category-analysis">
+      <h2>📂 Inventory Distribution</h2>
+      <div class="distribution-grid">
+        <% @inventory_metrics[:inventory_distribution].each do |level, count| %>
+          <div class="distribution-card">
+            <h3><%= level.humanize %></h3>
+            <p class="distribution-count"><%= number_with_delimiter(count) %></p>
+            <p class="distribution-label">Product variants</p>
+            <div class="distribution-bar">
+              <div class="distribution-fill" style="width: <%= (count.to_f / @inventory_metrics[:inventory_distribution].values.sum * 100).round %>%"></div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Product Sales Trend Chart
+  const salesCtx = document.getElementById('productSalesChart')?.getContext('2d');
+  if (salesCtx) {
+    // Generate sample data
+    const dates = Array.from({length: 30}, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (29 - i));
+      return d.toISOString().split('T')[0];
+    });
+    
+    const salesData = dates.map(() => Math.floor(Math.random() * 500) + 100);
+    const revenueData = salesData.map(s => s * (Math.random() * 50 + 30));
+    
+    new Chart(salesCtx, {
+      type: 'line',
+      data: {
+        labels: dates.map(d => new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' })),
+        datasets: [{
+          label: 'Units Sold',
+          data: salesData,
+          borderColor: 'rgba(33, 128, 141, 1)',
+          backgroundColor: 'rgba(33, 128, 141, 0.1)',
+          yAxisID: 'y-units',
+          tension: 0.3
+        }, {
+          label: 'Revenue',
+          data: revenueData,
+          borderColor: 'rgba(94, 82, 64, 1)',
+          backgroundColor: 'rgba(94, 82, 64, 0.1)',
+          yAxisID: 'y-revenue',
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              usePointStyle: true,
+              font: { family: 'var(--font-family-base)' }
+            }
+          }
+        },
+        scales: {
+          'y-units': {
+            type: 'linear',
+            display: true,
+            position: 'left',
+            grid: { color: 'rgba(94, 82, 64, 0.1)' }
+          },
+          'y-revenue': {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            grid: { drawOnChartArea: false },
+            ticks: {
+              callback: function(value) {
+                return '$' + value.toLocaleString();
+              }
+            }
+          },
+          x: {
+            grid: { color: 'rgba(94, 82, 64, 0.1)' }
+          }
+        }
+      }
+    });
+  }
+  
+  // Category Distribution Chart
+  const categoryCtx = document.getElementById('categoryChart')?.getContext('2d');
+  if (categoryCtx) {
+    // Sample category data
+    const categories = {
+      'Electronics': <%= (@product_metrics[:total_products] * 0.3).round %>,
+      'Clothing': <%= (@product_metrics[:total_products] * 0.25).round %>,
+      'Home & Garden': <%= (@product_metrics[:total_products] * 0.2).round %>,
+      'Sports': <%= (@product_metrics[:total_products] * 0.15).round %>,
+      'Other': <%= (@product_metrics[:total_products] * 0.1).round %>
+    };
+    
+    new Chart(categoryCtx, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(categories),
+        datasets: [{
+          data: Object.values(categories),
+          backgroundColor: [
+            'rgba(33, 128, 141, 0.8)',
+            'rgba(94, 82, 64, 0.8)',
+            'rgba(168, 75, 47, 0.8)',
+            'rgba(98, 108, 113, 0.8)',
+            'rgba(192, 21, 47, 0.8)'
+          ],
+          borderWidth: 2,
+          borderColor: 'var(--color-background)'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              padding: 15,
+              font: { family: 'var(--font-family-base)' },
+              generateLabels: function(chart) {
+                const data = chart.data;
+                return data.labels.map((label, i) => ({
+                  text: label + ': ' + data.datasets[0].data[i],
+                  fillStyle: data.datasets[0].backgroundColor[i],
+                  strokeStyle: data.datasets[0].backgroundColor[i],
+                  lineWidth: 0,
+                  index: i
+                }));
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+});
+</script>
+  </section>
+</div>

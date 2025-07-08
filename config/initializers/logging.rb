@@ -38,13 +38,18 @@ Rails.application.configure do
   end
 end
 
+# Initialize structured logger for notifications
+# Ensure the service is loaded
+require_relative "../../app/services/structured_logger"
+NOTIFICATION_LOGGER = StructuredLogger.new(component: "notifications")
+
 # Monkey patch ActiveSupport::Notifications to add structured logging
 ActiveSupport::Notifications.subscribe("sql.active_record") do |name, start, finish, id, payload|
   duration = (finish - start) * 1000
 
   # Log slow queries
   if duration > 100 # More than 100ms
-    structured_logger.warn("Slow database query detected",
+    NOTIFICATION_LOGGER.warn("Slow database query detected",
       query: payload[:sql],
       duration_ms: duration.round(2),
       name: payload[:name],
@@ -73,7 +78,7 @@ ActiveSupport::Notifications.subscribe("render_template.action_view") do |name, 
   duration = (finish - start) * 1000
 
   if duration > 500 # More than 500ms
-    structured_logger.warn("Slow view rendering detected",
+    NOTIFICATION_LOGGER.warn("Slow view rendering detected",
       template: payload[:identifier],
       duration_ms: duration.round(2)
     )

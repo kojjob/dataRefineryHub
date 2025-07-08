@@ -8,17 +8,21 @@ class DataflowProController < ApplicationController
   
   def set_dataflow_navigation
     @dataflow_sections = [
-      { id: 'dashboard', icon: '📊', text: 'Dashboard', path: dashboard_path },
-      { id: 'predictive', icon: '🔮', text: 'Predictive Analytics', path: analytics_path },
-      { id: 'builder', icon: '🛠️', text: 'Analytics Builder', path: analytics_dashboard_path },
-      { id: 'etl', icon: '🔄', text: 'ETL Pipelines', path: pipeline_dashboard_index_path },
+      { id: 'dashboard', icon: '📊', text: 'Dashboard', path: '/dashboard' },
+      { id: 'analytics', icon: '📈', text: 'Analytics Dashboard', path: '/analytics' },
+      { id: 'revenue', icon: '💰', text: 'Revenue Analytics', path: '/analytics/revenue' },
+      { id: 'customers', icon: '👥', text: 'Customer Analytics', path: '/analytics/customers' },
+      { id: 'products', icon: '📦', text: 'Product Analytics', path: '/analytics/products' },
+      { id: 'risks', icon: '⚠️', text: 'Risk Analysis', path: '/analytics/risks' },
+      { id: 'predictive', icon: '🔮', text: 'Predictive Analytics', path: '/ai/predictions' },
+      { id: 'etl', icon: '🔄', text: 'ETL Pipelines', path: '/pipeline_dashboard' },
       { id: 'templates', icon: '📋', text: 'Industry Templates', path: '#' },
-      { id: 'marketplace', icon: '🛍️', text: 'Integration Marketplace', path: data_sources_path },
-      { id: 'collaboration', icon: '👥', text: 'Team Collaboration', path: '#' },
+      { id: 'marketplace', icon: '🛍️', text: 'Integration Marketplace', path: '/data_sources' },
+      { id: 'collaboration', icon: '🤝', text: 'Team Collaboration', path: '#' },
       { id: 'mobile', icon: '📱', text: 'Mobile Dashboard', path: '#' },
-      { id: 'partner', icon: '🏢', text: 'Partner Portal', path: organization_path },
-      { id: 'costs', icon: '💰', text: 'Cost Optimization', path: billing_organization_path },
-      { id: 'security', icon: '🔒', text: 'Security & Compliance', path: audit_logs_organization_path }
+      { id: 'partner', icon: '🏢', text: 'Partner Portal', path: '/organization' },
+      { id: 'costs', icon: '💸', text: 'Cost Optimization', path: '/organization/billing' },
+      { id: 'security', icon: '🔒', text: 'Security & Compliance', path: '/organization/audit_logs' }
     ]
     
     # Set active section based on controller
@@ -26,6 +30,16 @@ class DataflowProController < ApplicationController
     when 'dashboard'
       'dashboard'
     when 'analytics'
+      'analytics'
+    when 'revenue'
+      'revenue'
+    when 'customers'
+      'customers'
+    when 'products'
+      'products'
+    when 'risks'
+      'risks'
+    when 'predictions'
       'predictive'
     when 'pipeline_dashboard', 'pipeline_monitoring'
       'etl'

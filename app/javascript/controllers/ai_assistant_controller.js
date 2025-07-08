@@ -4,12 +4,12 @@ export default class extends Controller {
   static targets = ["modal", "input", "chatContainer"]
   
   open() {
-    this.modalTarget.classList.add('show')
-    this.inputTarget.focus()
+    this.modalTarget.classList.add('active')
+    setTimeout(() => this.inputTarget.focus(), 100)
   }
   
   close() {
-    this.modalTarget.classList.remove('show')
+    this.modalTarget.classList.remove('active')
   }
   
   handleKeypress(event) {

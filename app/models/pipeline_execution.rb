@@ -92,6 +92,18 @@ class PipelineExecution < ApplicationRecord
     return 0 unless progress
     [ progress, 100 ].min
   end
+  
+  def job_type
+    pipeline_name&.underscore&.humanize || "Data Sync"
+  end
+  
+  def processed_records
+    records_processed
+  end
+  
+  def total_records
+    result_summary&.dig("total_records") || 0
+  end
 
   def records_processed
     return 0 unless data_source_id

@@ -1,4 +1,5 @@
-<% content_for :page_title, "Connect Data Source" %>
+<% content_for :page_title, "Connect #{params[:source_type]&.humanize || 'Data Source'}" %>
+<% content_for :page_subtitle, "Set up your integration in just a few steps" %>
 
 <%
   # Initialize data for the wizard
@@ -6,246 +7,424 @@
   data_source_configs = @wizard_data[:configurations]
   sync_frequencies = @wizard_data[:sync_frequencies]
   file_config = @wizard_data[:file_config]
+  
+  # Pre-select source type if provided
+  @data_source.source_type = params[:source_type] if params[:source_type].present?
 %>
 
-<div class="min-h-screen bg-gray-50">
-  <!-- Professional Header -->
-  <div class="bg-white border-b border-gray-200 shadow-sm">
-    <div class="px-4 sm:px-6 lg:px-8 py-6">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div class="flex items-center space-x-3">
-            <div class="p-2 bg-indigo-600 rounded-lg shadow-sm">
-              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7h-4l-2-3H6a2 2 0 00-2 2v3M4 7v10a2 2 0 002 2h12a2 2 0 002-2V9a2 2 0 00-2-2h-1" />
-              </svg>
-            </div>
-            <h1 class="text-2xl font-semibold text-gray-900">
-              Connect Data Source
-            </h1>
-          </div>
-          <p class="mt-1 text-sm text-gray-600">Seamlessly integrate your business data for powerful insights</p>
-        </div>
-        <div class="mt-4 sm:mt-0">
-          <%= link_to data_sources_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 shadow-sm transition-colors duration-200" do %>
-            <svg class="h-4 w-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-            </svg>
-            Back to Sources
-          <% end %>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" 
+<div class="dashboard-content data-source-wizard">
+  <div class="wizard-container" 
        data-controller="data-source-wizard auto-save" 
        data-auto-save-url-value="<%= auto_save_data_sources_path %>">
     
-    <!-- Professional Main Card Container -->
-    <div class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
-      <!-- Auto-save Status -->
-      <div class="px-6 py-3 bg-green-50 border-b border-gray-200">
-        <div class="flex items-center justify-between">
-          <div class="text-sm font-medium text-gray-700" data-auto-save-target="status">
-            <span class="inline-flex items-center">
-              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-              All changes saved automatically
-            </span>
-          </div>
-          <div class="text-xs font-medium text-gray-600" data-auto-save-target="timestamp">
-            Last saved: <span data-auto-save-target="time" class="font-medium">--</span>
-          </div>
+    <!-- Progress Section -->
+    <div class="wizard-progress">
+      <div class="progress-header">
+        <div class="progress-info">
+          <h2 data-data-source-wizard-target="stepTitle">Choose Your Platform</h2>
+          <p data-data-source-wizard-target="stepDescription">Select the platform you want to connect</p>
+        </div>
+        <div class="progress-stats">
+          <span class="step-indicator">
+            Step <span data-data-source-wizard-target="currentStep">1</span> of 4
+          </span>
+          <span class="progress-percent" data-data-source-wizard-target="progressPercent">25%</span>
         </div>
       </div>
       
-        <!-- Professional Progress Indicator -->
-        <div class="bg-indigo-600 px-6 py-6">
-          <div data-controller="data-source-wizard" 
-               data-data-source-wizard-total-steps-value="4"
-               class="space-y-4">
-            
-            <!-- Step Info -->
-            <div class="flex items-center justify-between text-white">
-              <div>
-                <h2 class="text-xl font-semibold" data-data-source-wizard-target="stepTitle">Choose Your Platform</h2>
-                <p class="text-indigo-100 text-sm mt-1" data-data-source-wizard-target="stepDescription">Select the platform you want to connect</p>
-              </div>
-              <div class="text-right">
-                <div class="text-lg font-medium">
-                  Step <span data-data-source-wizard-target="currentStep" class="text-xl font-semibold">1</span> of 4
-                </div>
-                <div class="text-sm text-indigo-100" data-data-source-wizard-target="progressPercent">25% Complete</div>
-              </div>
-            </div>
-            
-            <!-- Professional Progress Bar -->
-            <div class="relative">
-              <div class="w-full bg-indigo-700 rounded-full h-2 overflow-hidden">
-                <div class="h-full bg-white rounded-full transition-all duration-500 ease-out" 
-                     data-data-source-wizard-target="progressBar" 
-                     style="width: 25%"></div>
-              </div>
-            </div>
-            
-            <!-- Professional Step Indicators -->
-            <div class="flex justify-between items-center">
-              <div class="flex items-center">
-                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center mr-3">
-                  <span class="font-medium text-indigo-600">1</span>
-                </div>
-                <span class="text-white font-medium text-sm">Platform</span>
-              </div>
-              <div class="flex items-center">
-                <div class="w-8 h-8 bg-indigo-700 rounded-full flex items-center justify-center mr-3">
-                  <span class="font-medium text-indigo-200">2</span>
-                </div>
-                <span class="text-indigo-100 text-sm">Configure</span>
-              </div>
-              <div class="flex items-center">
-                <div class="w-8 h-8 bg-indigo-700 rounded-full flex items-center justify-center mr-3">
-                  <span class="font-medium text-indigo-200">3</span>
-                </div>
-                <span class="text-indigo-100 text-sm">Preview</span>
-              </div>
-              <div class="flex items-center">
-                <div class="w-8 h-8 bg-indigo-700 rounded-full flex items-center justify-center mr-3">
-                  <span class="font-medium text-indigo-200">4</span>
-                </div>
-                <span class="text-indigo-100 text-sm">Launch</span>
-              </div>
-            </div>
-          </div>
+      <!-- Progress Bar -->
+      <div class="progress-bar-container">
+        <div class="progress-bar">
+          <div class="progress-fill" 
+               data-data-source-wizard-target="progressBar" 
+               style="width: 25%"></div>
         </div>
-
-        <!-- Enhanced Form Container -->
-        <%= form_with model: @data_source, local: true, 
-                      data: { 
-                        data_source_wizard_target: "form",
-                        auto_save_target: "form",
-                        turbo: false 
-                      }, 
-                      class: "h-full relative",
-                      html: { 
-                        'aria-label': 'Data Source Configuration Wizard',
-                        role: 'form' 
-                      } do |form| %>
+      </div>
+      
+      <!-- Step Indicators -->
+      <div class="step-indicators">
+        <div class="step-item active" data-step="1">
+          <div class="step-number">
+            <span>1</span>
+            <svg class="step-check" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <span class="step-label">Platform</span>
+        </div>
         
-          <!-- Step 1: Platform Selection -->
-          <div class="wizard-step p-8" data-data-source-wizard-target="step1" data-step="1" role="tabpanel" aria-labelledby="step1-tab">
-            <%= render 'platform_selection', 
-                  data_source_configs: data_source_configs.reject { |k, v| v[:status] == 'coming_soon' },
-                  form: form %>
+        <div class="step-connector"></div>
+        
+        <div class="step-item" data-step="2">
+          <div class="step-number">
+            <span>2</span>
+            <svg class="step-check" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <span class="step-label">Configure</span>
+        </div>
+        
+        <div class="step-connector"></div>
+        
+        <div class="step-item" data-step="3">
+          <div class="step-number">
+            <span>3</span>
+            <svg class="step-check" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <span class="step-label">Preview</span>
+        </div>
+        
+        <div class="step-connector"></div>
+        
+        <div class="step-item" data-step="4">
+          <div class="step-number">
+            <span>4</span>
+            <svg class="step-check" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <span class="step-label">Launch</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="wizard-form-container">
+      <%= form_with model: @data_source, local: true, 
+                    data: { 
+                      data_source_wizard_target: "form",
+                      auto_save_target: "form",
+                      turbo: false 
+                    }, 
+                    class: "wizard-form" do |form| %>
+        
+        <!-- Auto-save Status -->
+        <div class="autosave-status" data-auto-save-target="status">
+          <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span class="status-text">All changes saved</span>
+          </div>
+          <div class="status-time" data-auto-save-target="timestamp">
+            Last saved: <span data-auto-save-target="time">just now</span>
+          </div>
+        </div>
+        
+        <!-- Step 1: Platform Selection -->
+        <div class="wizard-step active" data-data-source-wizard-target="step1" data-step="1">
+          <div class="step-content">
+            <h3 class="step-title">Select Your Integration Platform</h3>
+            <p class="step-subtitle">Choose from our supported platforms to start syncing your data</p>
             
-            <!-- Coming Soon Platforms -->
-            <%= render 'coming_soon_platforms', 
-                  data_source_configs: data_source_configs.select { |k, v| v[:status] == 'coming_soon' } %>
-          </div>
-
-          <!-- Step 2: Configuration -->
-          <div class="wizard-step hidden p-8" data-data-source-wizard-target="step2" data-step="2" role="tabpanel" aria-labelledby="step2-tab">
-            <%= render 'configuration_step', 
-                  form: form,
-                  sync_frequencies: sync_frequencies %>
-          </div>
-
-          <!-- Step 3: Data Preview -->
-          <div class="wizard-step hidden p-8" data-data-source-wizard-target="step3" data-step="3" role="tabpanel" aria-labelledby="step3-tab">
-            <%= render 'data_preview_step', 
-                  file_config: file_config %>
-          </div>
-
-          <!-- Step 4: Final Setup -->
-          <div class="wizard-step hidden p-8" data-data-source-wizard-target="step4" data-step="4" role="tabpanel" aria-labelledby="step4-tab">
-            <%= render 'final_setup_step', 
-                  form: form %>
-          </div>
-
-          <!-- Enhanced Navigation Footer -->
-          <%= render 'wizard_navigation' %>
-
-        <% end %>
-      </div>
-    </div>
-
-    <!-- Professional Help Section -->
-    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- Setup Guide -->
-      <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
-        <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-          <div class="p-2 bg-blue-600 rounded-lg shadow-sm mr-3">
-            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-            </svg>
-          </div>
-          Integration Guides
-        </h3>
-        <div class="space-y-3">
-          <% ['Shopify', 'QuickBooks', 'Stripe'].each do |platform| %>
-            <a href="#" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors duration-200">
-              <span class="text-sm font-medium text-gray-900">How to connect <%= platform %></span>
-              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-              </svg>
-            </a>
-          <% end %>
-        </div>
-      </div>
-
-      <!-- Support -->
-      <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
-        <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-          <div class="p-2 bg-green-600 rounded-lg shadow-sm mr-3">
-            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-          Need Help?
-        </h3>
-        <div class="space-y-4">
-          <p class="text-sm text-gray-600">
-            Our support team is here to help you get connected quickly and securely.
-          </p>
-          <div class="flex space-x-3">
-            <a href="mailto:support@datarefinery.com" 
-               class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium shadow-sm hover:bg-indigo-700 transition-colors duration-200">
-              <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              Email Support
-            </a>
-            <a href="#" 
-               class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 shadow-sm transition-colors duration-200">
-              <svg class="h-4 w-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              Live Chat
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Error Display -->
-    <% if @data_source.errors.any? %>
-      <div class="mt-8 bg-white shadow-sm rounded-lg border border-red-200 p-6">
-        <div class="flex items-start">
-          <div class="p-2 bg-red-600 rounded-lg shadow-sm mr-4">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
-            </svg>
-          </div>
-          <div>
-            <h3 class="text-lg font-medium text-red-900 mb-2">Please fix the following errors:</h3>
-            <ul class="list-disc list-inside space-y-1 text-red-700">
-              <% @data_source.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
+            <div class="platforms-grid">
+              <% data_source_configs.reject { |k, v| v[:status] == 'coming_soon' }.each do |key, config| %>
+                <div class="platform-card <%= 'selected' if @data_source.source_type == key.to_s %>" 
+                     data-source-type="<%= key %>"
+                     data-action="click->data-source-wizard#selectPlatform">
+                  <div class="platform-icon <%= key %>">
+                    <%= config[:icon] || '🔗' %>
+                  </div>
+                  <h4><%= config[:name] %></h4>
+                  <p><%= config[:description] %></p>
+                  <%= form.radio_button :source_type, key, 
+                                        class: "platform-radio", 
+                                        data: { 
+                                          action: "change->data-source-wizard#platformSelected",
+                                          config: config.to_json 
+                                        } %>
+                </div>
               <% end %>
-            </ul>
+            </div>
+            
+            <!-- Coming Soon Section -->
+            <div class="coming-soon-section">
+              <h4>Coming Soon</h4>
+              <div class="platforms-grid coming-soon">
+                <% data_source_configs.select { |k, v| v[:status] == 'coming_soon' }.each do |key, config| %>
+                  <div class="platform-card disabled">
+                    <div class="platform-icon <%= key %>">
+                      <%= config[:icon] || '🔗' %>
+                    </div>
+                    <h4><%= config[:name] %></h4>
+                    <p><%= config[:description] %></p>
+                    <span class="coming-soon-badge">Coming Soon</span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    <% end %>
+
+        <!-- Step 2: Configuration -->
+        <div class="wizard-step" data-data-source-wizard-target="step2" data-step="2">
+          <div class="step-content">
+            <h3 class="step-title">Configure Your Connection</h3>
+            <p class="step-subtitle">Enter your credentials and set up sync preferences</p>
+            
+            <div class="configuration-form">
+              <!-- Basic Settings -->
+              <div class="form-section">
+                <h4>Basic Information</h4>
+                <div class="form-group">
+                  <%= form.label :name, class: "form-label" %>
+                  <%= form.text_field :name, 
+                                      placeholder: "e.g., Production Store", 
+                                      class: "form-input",
+                                      data: { auto_save_target: "field" } %>
+                  <p class="form-hint">Give your integration a memorable name</p>
+                </div>
+                
+                <div class="form-group">
+                  <%= form.label :description, class: "form-label" %>
+                  <%= form.text_area :description, 
+                                     rows: 3,
+                                     placeholder: "Optional description...",
+                                     class: "form-input",
+                                     data: { auto_save_target: "field" } %>
+                </div>
+              </div>
+              
+              <!-- Platform-specific Configuration -->
+              <div class="form-section" data-data-source-wizard-target="platformConfig">
+                <h4>Authentication</h4>
+                <div id="platform-specific-fields">
+                  <!-- Fields will be dynamically inserted based on platform selection -->
+                </div>
+              </div>
+              
+              <!-- Sync Settings -->
+              <div class="form-section">
+                <h4>Sync Settings</h4>
+                <div class="form-group">
+                  <%= form.label :sync_frequency, "Sync Frequency", class: "form-label" %>
+                  <%= form.select :sync_frequency, 
+                                  options_for_select(sync_frequencies.map { |f| [f[:label], f[:value]] }, 'daily'),
+                                  {},
+                                  class: "form-select",
+                                  data: { auto_save_target: "field" } %>
+                  <p class="form-hint">How often should we sync your data?</p>
+                </div>
+                
+                <div class="form-group">
+                  <label class="toggle-label">
+                    <%= form.check_box :active, class: "toggle-input", checked: true %>
+                    <span class="toggle-switch"></span>
+                    <span class="toggle-text">Enable automatic syncing</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Data Preview -->
+        <div class="wizard-step" data-data-source-wizard-target="step3" data-step="3">
+          <div class="step-content">
+            <h3 class="step-title">Preview Your Data</h3>
+            <p class="step-subtitle">Verify that we can connect and preview your data</p>
+            
+            <div class="preview-section">
+              <!-- Connection Test -->
+              <div class="connection-test" data-data-source-wizard-target="connectionTest">
+                <div class="test-status">
+                  <div class="status-icon loading">
+                    <svg class="spin" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  </div>
+                  <div class="status-message">
+                    <h4>Testing Connection...</h4>
+                    <p>Verifying your credentials and access permissions</p>
+                  </div>
+                </div>
+                
+                <button type="button" 
+                        class="btn btn--outline"
+                        data-action="click->data-source-wizard#testConnection">
+                  Test Connection
+                </button>
+              </div>
+              
+              <!-- Data Preview Table -->
+              <div class="data-preview" data-data-source-wizard-target="dataPreview">
+                <h4>Sample Data</h4>
+                <div class="preview-table-container">
+                  <p class="preview-placeholder">Test your connection to see a preview of your data</p>
+                </div>
+              </div>
+              
+              <!-- Data Mapping -->
+              <div class="data-mapping">
+                <h4>Field Mapping</h4>
+                <p class="form-hint">We'll automatically map your fields to our data model</p>
+                <div class="mapping-list" data-data-source-wizard-target="fieldMapping">
+                  <!-- Field mappings will be shown here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Final Setup -->
+        <div class="wizard-step" data-data-source-wizard-target="step4" data-step="4">
+          <div class="step-content">
+            <h3 class="step-title">Ready to Launch!</h3>
+            <p class="step-subtitle">Review your configuration and start syncing</p>
+            
+            <div class="review-section">
+              <!-- Configuration Summary -->
+              <div class="summary-card">
+                <h4>Configuration Summary</h4>
+                <div class="summary-items" data-data-source-wizard-target="configSummary">
+                  <div class="summary-item">
+                    <span class="summary-label">Platform</span>
+                    <span class="summary-value" data-summary="platform">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span class="summary-label">Name</span>
+                    <span class="summary-value" data-summary="name">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span class="summary-label">Sync Frequency</span>
+                    <span class="summary-value" data-summary="frequency">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span class="summary-label">Status</span>
+                    <span class="summary-value" data-summary="status">Active</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Next Steps -->
+              <div class="next-steps-card">
+                <h4>What Happens Next?</h4>
+                <div class="steps-timeline">
+                  <div class="timeline-item">
+                    <div class="timeline-icon">
+                      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div class="timeline-content">
+                      <h5>Initial Sync</h5>
+                      <p>We'll start syncing your historical data immediately</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-icon">
+                      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </div>
+                    <div class="timeline-content">
+                      <h5>Automatic Updates</h5>
+                      <p>Your data will sync automatically based on your schedule</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-icon">
+                      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    </div>
+                    <div class="timeline-content">
+                      <h5>View Insights</h5>
+                      <p>Access your analytics dashboard to see insights</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="wizard-navigation">
+          <button type="button" 
+                  class="btn btn--outline"
+                  data-action="click->data-source-wizard#previousStep"
+                  data-data-source-wizard-target="prevButton"
+                  disabled>
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Previous
+          </button>
+          
+          <div class="nav-center">
+            <%= link_to "Cancel", data_sources_path, class: "btn btn--ghost" %>
+          </div>
+          
+          <button type="button" 
+                  class="btn btn--primary"
+                  data-action="click->data-source-wizard#nextStep"
+                  data-data-source-wizard-target="nextButton">
+            Next
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          
+          <%= form.submit "Create Integration", 
+                          class: "btn btn--primary",
+                          data: { data_source_wizard_target: "submitButton" },
+                          style: "display: none;" %>
+        </div>
+        
+      <% end %>
+    </div>
   </div>
-  
+
+  <!-- Help Section -->
+  <div class="help-section">
+    <div class="help-card">
+      <div class="help-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      </div>
+      <div class="help-content">
+        <h3>Integration Guides</h3>
+        <p>Step-by-step instructions for each platform</p>
+        <%= link_to "View Guides", "#", class: "help-link" %>
+      </div>
+    </div>
+    
+    <div class="help-card">
+      <div class="help-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div class="help-content">
+        <h3>Need Help?</h3>
+        <p>Our support team is here to assist you</p>
+        <div class="help-actions">
+          <%= link_to "Email Support", "mailto:support@datarefinery.com", class: "help-link" %>
+          <%= link_to "Live Chat", "#", class: "help-link" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Display -->
+  <% if @data_source.errors.any? %>
+    <div class="error-panel">
+      <div class="error-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div class="error-content">
+        <h3>Please fix the following errors:</h3>
+        <ul class="error-list">
+          <% @data_source.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
 </div>

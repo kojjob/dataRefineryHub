@@ -37,7 +37,6 @@ DB PostgreSQL
 Encryption Lockbox + Rails encrypted attributes
 Testing RSpec, FactoryBot, Shoulda, Timecop, DatabaseCleaner
 
-
 ⸻
 
 🧪 Code Quality & Testing
@@ -93,7 +92,6 @@ Dashboard render < 2 s on <100k records
 ETL throughput > 10 k records/minute
 DB efficiency No N+1s; proper indexing
 
-
 ⸻
 
 💼 Business Logic Priorities
@@ -121,7 +119,6 @@ bundle exec brakeman        # static security analysis
 rails db:setup              # create, migrate, seed
 kamal deploy                # deploy to staging/production
 
-
 ⸻
 
 🌿 Git Branching
@@ -141,7 +138,6 @@ Longer explanation and context...
 🤖 Generated with Claude Code
 
 Co-Authored-By: Claude <noreply@anthropic.com>
-
 
 ⸻
 

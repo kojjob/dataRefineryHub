@@ -1,158 +1,219 @@
 <% content_for :page_title, "Integration Marketplace" %>
 <% content_for :page_subtitle, "Connect with 200+ business tools and data sources" %>
 
-<div class="px-df-32 py-df-24">
-  <!-- Search Bar -->
-  <div class="mb-df-32">
-    <div class="flex gap-df-8 max-w-2xl">
-      <input type="text" 
-             class="form-control flex-1" 
-             placeholder="Search integrations..."
-             data-controller="search"
-             data-action="input->search#filter">
-      <%= link_to new_data_source_path, class: "btn btn--primary" do %>
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+<div class="dashboard-content integration-marketplace">
+  <!-- Search and Filter Section -->
+  <div class="marketplace-header">
+    <div class="search-section">
+      <div class="search-box">
+        <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        Add Integration
-      <% end %>
+        <input type="text" 
+               class="search-input" 
+               placeholder="Search integrations..."
+               data-action="input->integration-marketplace#search">
+      </div>
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="connected">Connected</button>
+        <button class="filter-btn" data-filter="popular">Popular</button>
+        <button class="filter-btn" data-filter="new">New</button>
+      </div>
+    </div>
+    <%= link_to new_data_source_path, class: "btn btn--primary" do %>
+      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+      Add Integration
+    <% end %>
+  </div>
+
+  <!-- Integration Stats -->
+  <div class="integration-stats">
+    <div class="stat-card connected">
+      <div class="stat-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <p class="stat-value"><%= @connected_sources&.count || 0 %></p>
+        <p class="stat-label">Connected</p>
+      </div>
+    </div>
+    
+    <div class="stat-card syncing">
+      <div class="stat-icon">
+        <svg class="spin" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <p class="stat-value"><%= @syncing_sources&.count || 0 %></p>
+        <p class="stat-label">Syncing</p>
+      </div>
+    </div>
+    
+    <div class="stat-card errors">
+      <div class="stat-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <p class="stat-value"><%= @error_sources&.count || 0 %></p>
+        <p class="stat-label">Need Attention</p>
+      </div>
+    </div>
+    
+    <div class="stat-card inactive">
+      <div class="stat-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <p class="stat-value"><%= @disconnected_sources&.count || 0 %></p>
+        <p class="stat-label">Inactive</p>
+      </div>
     </div>
   </div>
 
-  <!-- Integration Status Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-df-20 mb-df-32">
-    <%= render Dataflow::MetricCardComponent.new(
-      icon: "✅",
-      title: "Connected",
-      value: @connected_sources.count,
-      change: "Active integrations"
-    ) %>
-    
-    <%= render Dataflow::MetricCardComponent.new(
-      icon: "🔄",
-      title: "Syncing",
-      value: @syncing_sources.count,
-      change: "Currently processing"
-    ) %>
-    
-    <%= render Dataflow::MetricCardComponent.new(
-      icon: "⚠️",
-      title: "Errors",
-      value: @error_sources.count,
-      change: "Need attention",
-      change_type: :negative
-    ) %>
-    
-    <%= render Dataflow::MetricCardComponent.new(
-      icon: "🔌",
-      title: "Disconnected",
-      value: @disconnected_sources.count,
-      change: "Inactive"
-    ) %>
-  </div>
-
-  <!-- Connected Integrations -->
-  <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border mb-df-32">
-    <h2 class="text-df-2xl font-semibold mb-df-20">Your Integrations</h2>
-    
-    <% if @data_sources.any? %>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-df-20">
+  <!-- Your Integrations Section -->
+  <% if @data_sources&.any? %>
+    <div class="integrations-section">
+      <h2 class="section-title">Your Integrations</h2>
+      <div class="connected-integrations-grid">
         <% @data_sources.each do |data_source| %>
-          <div class="bg-df-background rounded-df-lg p-df-20 border border-df-border hover:shadow-df-md transition-shadow">
-            <div class="flex items-start justify-between mb-df-16">
-              <div class="flex items-center gap-df-12">
-                <div class="w-12 h-12 rounded-df-md bg-df-primary text-white flex items-center justify-center text-xl font-semibold">
-                  <%= data_source.source_type.first(2).upcase %>
-                </div>
-                <div>
-                  <h3 class="text-df-lg font-semibold"><%= data_source.name %></h3>
-                  <p class="text-df-sm text-df-text-secondary"><%= data_source.source_type.humanize %></p>
-                </div>
+          <div class="integration-card connected-card" data-integration="<%= data_source.source_type %>">
+            <div class="integration-header">
+              <div class="integration-icon <%= data_source.source_type %>">
+                <%= case data_source.source_type
+                    when 'shopify' then '🛍️'
+                    when 'stripe' then '💳'
+                    when 'google_analytics' then '📊'
+                    when 'quickbooks' then '📋'
+                    when 'mailchimp' then '📧'
+                    when 'hubspot' then '🎯'
+                    when 'salesforce' then '☁️'
+                    else '🔗'
+                    end %>
               </div>
-              <span class="px-df-12 py-df-4 rounded-df-sm text-df-xs font-medium <%= case data_source.status
-                when 'connected' then 'bg-green-100 text-green-800'
-                when 'syncing' then 'bg-blue-100 text-blue-800'
-                when 'error' then 'bg-red-100 text-red-800'
-                else 'bg-gray-100 text-gray-800'
-              end %>">
+              <div class="integration-info">
+                <h3><%= data_source.name %></h3>
+                <p><%= data_source.source_type.humanize %></p>
+              </div>
+              <div class="integration-status <%= data_source.status %>">
+                <span class="status-dot"></span>
                 <%= data_source.status.humanize %>
-              </span>
+              </div>
             </div>
             
-            <div class="space-y-df-8 mb-df-16">
-              <div class="flex justify-between text-df-sm">
-                <span class="text-df-text-secondary">Last Sync</span>
-                <span class="font-medium">
+            <div class="integration-stats">
+              <div class="stat-row">
+                <span class="stat-label">Last Sync</span>
+                <span class="stat-value">
                   <%= data_source.extraction_jobs.successful.last&.completed_at ? 
                       time_ago_in_words(data_source.extraction_jobs.successful.last.completed_at) + " ago" : 
                       "Never" %>
                 </span>
               </div>
-              <div class="flex justify-between text-df-sm">
-                <span class="text-df-text-secondary">Records</span>
-                <span class="font-medium"><%= number_with_delimiter(data_source.raw_data_records.count) %></span>
+              <div class="stat-row">
+                <span class="stat-label">Records</span>
+                <span class="stat-value"><%= number_with_delimiter(data_source.raw_data_records.count) %></span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Next Sync</span>
+                <span class="stat-value">In 2 hours</span>
               </div>
             </div>
             
-            <div class="flex gap-df-8">
-              <%= link_to "View Details", data_source_path(data_source), class: "btn btn--outline btn--sm flex-1" %>
+            <div class="integration-actions">
+              <%= link_to data_source_path(data_source), class: "action-btn" do %>
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Settings
+              <% end %>
               <% if data_source.status == 'connected' %>
-                <%= button_to "Sync Now", sync_now_data_source_path(data_source), 
+                <%= button_to sync_now_data_source_path(data_source), 
                     method: :post, 
-                    class: "btn btn--primary btn--sm flex-1",
-                    data: { turbo_method: :post } %>
+                    class: "action-btn primary" do %>
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Sync Now
+                <% end %>
               <% end %>
             </div>
           </div>
         <% end %>
       </div>
-    <% else %>
-      <div class="text-center py-df-32">
-        <div class="mx-auto w-24 h-24 bg-df-secondary rounded-full flex items-center justify-center mb-df-16">
-          <svg class="w-12 h-12 text-df-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+    </div>
+  <% else %>
+    <!-- Empty State -->
+    <div class="empty-state-container">
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
           </svg>
         </div>
-        <h3 class="text-df-xl font-semibold mb-df-8">No integrations yet</h3>
-        <p class="text-df-text-secondary mb-df-20">Connect your first data source to start syncing</p>
-        <%= link_to new_data_source_path, class: "btn btn--primary" do %>
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-          </svg>
-          Add Your First Integration
-        <% end %>
+        <h3>No integrations yet</h3>
+        <p>Connect your first data source to start syncing business data.</p>
+        <button class="btn btn--primary">Browse Integrations</button>
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 
-  <!-- Available Integrations -->
-  <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border">
-    <h2 class="text-df-2xl font-semibold mb-df-20">Popular Integrations</h2>
-    
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-df-20">
+  <!-- Popular Integrations -->
+  <div class="integrations-section">
+    <h2 class="section-title">Popular Integrations</h2>
+    <div class="integrations-grid">
       <% [
-        { title: "CRM & Sales", count: 45, connectors: ["Salesforce", "HubSpot", "Pipedrive", "Zoho CRM"], color: "blue" },
-        { title: "Marketing & Analytics", count: 38, connectors: ["Google Analytics", "Facebook Ads", "Mailchimp", "Klaviyo"], color: "purple" },
-        { title: "Accounting & Finance", count: 32, connectors: ["QuickBooks", "Xero", "Stripe", "PayPal"], color: "green" },
-        { title: "E-commerce", count: 28, connectors: ["Shopify", "WooCommerce", "Amazon", "eBay"], color: "orange" },
-        { title: "Support & Service", count: 22, connectors: ["Zendesk", "Intercom", "Freshdesk", "ServiceNow"], color: "red" },
-        { title: "Productivity", count: 18, connectors: ["Slack", "Teams", "Asana", "Trello"], color: "indigo" }
-      ].each do |category| %>
-        <div class="bg-df-background rounded-df-lg p-df-20 border border-df-border hover:shadow-df-md transition-shadow">
-          <div class="flex items-center justify-between mb-df-16">
-            <h3 class="text-df-xl font-semibold"><%= category[:title] %></h3>
-            <span class="text-df-sm text-df-text-secondary"><%= category[:count] %> connectors</span>
-          </div>
-          <div class="flex flex-wrap gap-df-8 mb-df-16">
-            <% category[:connectors].each do |connector| %>
-              <span class="px-df-12 py-df-6 bg-<%= category[:color] %>-100 text-<%= category[:color] %>-800 rounded-df-sm text-df-sm font-medium">
-                <%= connector %>
-              </span>
+        { name: 'Shopify', type: 'shopify', icon: '🛍️', description: 'E-commerce platform', color: 'primary' },
+        { name: 'Stripe', type: 'stripe', icon: '💳', description: 'Payment processing', color: 'purple' },
+        { name: 'QuickBooks', type: 'quickbooks', icon: '📊', description: 'Accounting software', color: 'blue' },
+        { name: 'Google Analytics', type: 'google_analytics', icon: '📈', description: 'Web analytics', color: 'orange' },
+        { name: 'Mailchimp', type: 'mailchimp', icon: '📧', description: 'Email marketing', color: 'yellow' },
+        { name: 'HubSpot', type: 'hubspot', icon: '🎯', description: 'CRM & Marketing', color: 'red', coming_soon: true },
+        { name: 'Salesforce', type: 'salesforce', icon: '☁️', description: 'Customer CRM', color: 'blue', coming_soon: true },
+        { name: 'Amazon', type: 'amazon', icon: '📦', description: 'E-commerce marketplace', color: 'orange', coming_soon: true }
+      ].each do |integration| %>
+        <div class="integration-card <%= 'coming-soon' if integration[:coming_soon] %>" data-integration="<%= integration[:type] %>">
+          <div class="card-header">
+            <div class="icon-wrapper <%= integration[:color] %>">
+              <span class="icon"><%= integration[:icon] %></span>
+            </div>
+            <% if integration[:coming_soon] %>
+              <span class="coming-soon-badge">Coming Soon</span>
             <% end %>
           </div>
-          <button class="btn btn--outline btn--sm btn--full-width">View All →</button>
+          <div class="card-content">
+            <h3><%= integration[:name] %></h3>
+            <p><%= integration[:description] %></p>
+          </div>
+          <div class="card-footer">
+            <% if integration[:coming_soon] %>
+              <button class="btn btn--outline" disabled>Coming Soon</button>
+            <% else %>
+              <%= link_to "Connect", new_data_source_path(source_type: integration[:type]), 
+                  class: "btn btn--primary" %>
+            <% end %>
+          </div>
         </div>
       <% end %>
+    </div>
+  </div>
+
+  <!-- More Integrations Coming Soon -->
+  <div class="more-integrations">
+    <div class="more-content">
+      <h3>Can't find what you're looking for?</h3>
+      <p>We're constantly adding new integrations. Let us know what you need!</p>
+      <button class="btn btn--outline">Request Integration</button>
     </div>
   </div>
 </div>

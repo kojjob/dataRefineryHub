@@ -18,13 +18,13 @@ export default class extends Controller {
 
   open() {
     this.isOpen = true
-    this.menuTarget.classList.add("show")
+    this.menuTarget.classList.add("active")
     document.addEventListener("click", this.boundHandleClickOutside)
   }
 
   close() {
     this.isOpen = false
-    this.menuTarget.classList.remove("show")
+    this.menuTarget.classList.remove("active")
     document.removeEventListener("click", this.boundHandleClickOutside)
   }
 

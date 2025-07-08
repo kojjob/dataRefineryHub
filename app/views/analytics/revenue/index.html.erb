@@ -1,0 +1,330 @@
+<% content_for :page_title, "Revenue Analytics" %>
+<% content_for :page_subtitle, "Track revenue performance, growth trends, and financial insights" %>
+
+<div class="dashboard-content">
+  <!-- Revenue Analytics Section -->
+  <section class="content-section active" id="revenue-analytics" data-controller="chart">
+  <!-- Key Metrics -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-icon">💰</div>
+      <div class="metric-content">
+        <h3>Total Revenue</h3>
+        <p class="metric-value">$<%= number_with_delimiter(@revenue_metrics[:total_revenue].to_i) %></p>
+        <p class="metric-change <%= @revenue_metrics[:revenue_growth] >= 0 ? 'positive' : 'negative' %>">
+          <%= @revenue_metrics[:revenue_growth] >= 0 ? '+' : '' %><%= @revenue_metrics[:revenue_growth] %>% vs last period
+        </p>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-icon">🛍️</div>
+      <div class="metric-content">
+        <h3>Total Orders</h3>
+        <p class="metric-value"><%= number_with_delimiter(@revenue_metrics[:total_orders]) %></p>
+        <p class="metric-change <%= @revenue_metrics[:order_growth] >= 0 ? 'positive' : 'negative' %>">
+          <%= @revenue_metrics[:order_growth] > 0 ? '+' : '' %><%= @revenue_metrics[:order_growth] %>% growth rate
+        </p>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-icon">💵</div>
+      <div class="metric-content">
+        <h3>Average Order Value</h3>
+        <p class="metric-value">$<%= number_with_precision(@revenue_metrics[:average_order_value], precision: 2) %></p>
+        <p class="metric-change positive">Per transaction</p>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-icon">📋</div>
+      <div class="metric-content">
+        <h3>Tax Collected</h3>
+        <p class="metric-value">$<%= number_with_delimiter(@revenue_metrics[:tax_collected].to_i) %></p>
+        <p class="metric-change">Total tax revenue</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenue Trends Chart -->
+  <div class="charts-section">
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3>Revenue & Order Trends</h3>
+        <div class="chart-controls">
+          <button class="btn btn--sm btn--outline">7D</button>
+          <button class="btn btn--sm btn--primary">30D</button>
+          <button class="btn btn--sm btn--outline">90D</button>
+        </div>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="revenueTrendsChart" data-chart-target="revenue"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fulfillment Performance -->
+  <div class="insights-panel">
+    <h2>📦 Order Fulfillment Performance</h2>
+    <div class="insights-grid">
+      <div class="insight-card <%= @fulfillment_metrics[:fulfillment_rate] >= 95 ? 'high' : 'medium' %>">
+        <div class="insight-header">
+          <span class="insight-type">Fulfillment Rate</span>
+          <span class="confidence-score"><%= @fulfillment_metrics[:fulfillment_rate] %>%</span>
+        </div>
+        <p><%= number_with_delimiter(@fulfillment_metrics[:fulfilled_count]) %> of <%= number_with_delimiter(@fulfillment_metrics[:total_orders]) %> orders successfully fulfilled</p>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill <%= @fulfillment_metrics[:fulfillment_rate] >= 95 ? 'primary' : 'warning' %>" style="width: <%= @fulfillment_metrics[:fulfillment_rate] %>%"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="insight-card medium">
+        <div class="insight-header">
+          <span class="insight-type">Pending Orders</span>
+          <span class="confidence-score"><%= number_with_delimiter(@fulfillment_metrics[:pending_count]) %> orders</span>
+        </div>
+        <p>$<%= number_with_delimiter(@fulfillment_metrics[:pending_revenue].to_i) %> revenue awaiting fulfillment</p>
+        <button class="btn btn--sm btn--outline">View Details</button>
+      </div>
+      
+      <div class="insight-card <%= @fulfillment_metrics[:avg_fulfillment_time] <= 2 ? 'high' : 'medium' %>">
+        <div class="insight-header">
+          <span class="insight-type">Avg. Fulfillment Time</span>
+          <span class="confidence-score"><%= @fulfillment_metrics[:avg_fulfillment_time] %> days</span>
+        </div>
+        <p>Time from order placement to delivery completion</p>
+        <button class="btn btn--sm btn--outline">Optimize</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenue Breakdown -->
+  <div class="revenue-breakdown">
+    <h2>💸 Revenue Breakdown & Analysis</h2>
+    <div class="breakdown-grid">
+      <!-- Revenue Sources -->
+      <div class="breakdown-card">
+        <h3>Revenue Sources</h3>
+        <div class="breakdown-list">
+          <div class="breakdown-item">
+            <div class="breakdown-info">
+              <span class="breakdown-label">Product Sales</span>
+              <span class="breakdown-value">$<%= number_with_delimiter((@revenue_metrics[:total_revenue] * 0.85).to_i) %></span>
+            </div>
+            <div class="breakdown-progress">
+              <div class="progress-bar">
+                <div class="progress-fill primary" style="width: 85%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="breakdown-item">
+            <div class="breakdown-info">
+              <span class="breakdown-label">Shipping Revenue</span>
+              <span class="breakdown-value">$<%= number_with_delimiter(@revenue_metrics[:shipping_revenue].to_i) %></span>
+            </div>
+            <div class="breakdown-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: <%= @revenue_metrics[:total_revenue] > 0 ? (@revenue_metrics[:shipping_revenue].to_f / @revenue_metrics[:total_revenue] * 100).round : 0 %>%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="breakdown-item">
+            <div class="breakdown-info">
+              <span class="breakdown-label">Tax Collected</span>
+              <span class="breakdown-value">$<%= number_with_delimiter(@revenue_metrics[:tax_collected].to_i) %></span>
+            </div>
+            <div class="breakdown-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: <%= @revenue_metrics[:total_revenue] > 0 ? (@revenue_metrics[:tax_collected].to_f / @revenue_metrics[:total_revenue] * 100).round : 0 %>%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deductions -->
+      <div class="breakdown-card">
+        <h3>Deductions & Costs</h3>
+        <div class="breakdown-list">
+          <div class="breakdown-item negative">
+            <div class="breakdown-info">
+              <span class="breakdown-label">Discounts Given</span>
+              <span class="breakdown-value">-$<%= number_with_delimiter(@revenue_metrics[:discounts_given].to_i) %></span>
+            </div>
+            <div class="breakdown-progress">
+              <div class="progress-bar">
+                <div class="progress-fill warning" style="width: <%= @revenue_metrics[:total_revenue] > 0 ? (@revenue_metrics[:discounts_given].to_f / @revenue_metrics[:total_revenue] * 100).round : 0 %>%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="breakdown-item negative">
+            <div class="breakdown-info">
+              <span class="breakdown-label">Cancellations</span>
+              <span class="breakdown-value">-$<%= number_with_delimiter((@revenue_metrics[:total_revenue] * @fulfillment_metrics[:cancellation_rate] / 100).to_i) %></span>
+            </div>
+            <div class="breakdown-progress">
+              <div class="progress-bar">
+                <div class="progress-fill error" style="width: <%= @fulfillment_metrics[:cancellation_rate] %>%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Revenue Insights -->
+  <div class="ai-insights-panel">
+    <h2>🤖 AI-Powered Revenue Insights</h2>
+    <div class="insights-grid">
+      <div class="insight-card critical">
+        <div class="insight-header">
+          <span class="insight-type">Revenue Anomaly</span>
+          <span class="confidence-score">92% confident</span>
+        </div>
+        <p>Unusual spike in refunds detected last week - $<%= number_with_delimiter((@revenue_metrics[:total_revenue] * 0.03).to_i) %> above normal</p>
+        <button class="btn btn--sm btn--primary">Investigate</button>
+      </div>
+      
+      <div class="insight-card high">
+        <div class="insight-header">
+          <span class="insight-type">Growth Opportunity</span>
+          <span class="confidence-score">88% confident</span>
+        </div>
+        <p>Increasing AOV by 10% could generate additional $<%= number_with_delimiter((@revenue_metrics[:total_revenue] * 0.1).to_i) %> revenue</p>
+        <button class="btn btn--sm btn--outline">View Strategy</button>
+      </div>
+      
+      <div class="insight-card medium">
+        <div class="insight-header">
+          <span class="insight-type">Seasonal Pattern</span>
+          <span class="confidence-score">95% confident</span>
+        </div>
+        <p>Revenue typically increases 23% next month based on historical patterns</p>
+        <button class="btn btn--sm btn--outline">Prepare Inventory</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const ctx = document.getElementById('revenueTrendsChart')?.getContext('2d');
+  if (!ctx) return;
+  
+  const dailyRevenue = <%= @revenue_trends[:daily_revenue].to_json.html_safe %>;
+  const dailyOrders = <%= @revenue_trends[:daily_orders].to_json.html_safe %>;
+  
+  const dates = Object.keys(dailyRevenue).sort();
+  const revenueData = dates.map(date => dailyRevenue[date]);
+  const ordersData = dates.map(date => dailyOrders[date]);
+  
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: dates.map(d => new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' })),
+      datasets: [{
+        label: 'Revenue',
+        data: revenueData,
+        borderColor: 'rgba(33, 128, 141, 1)',
+        backgroundColor: 'rgba(33, 128, 141, 0.1)',
+        yAxisID: 'y-revenue',
+        tension: 0.3,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }, {
+        label: 'Orders',
+        data: ordersData,
+        borderColor: 'rgba(94, 82, 64, 1)',
+        backgroundColor: 'rgba(94, 82, 64, 0.1)',
+        yAxisID: 'y-orders',
+        tension: 0.3,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            usePointStyle: true,
+            font: {
+              family: 'var(--font-family-base)'
+            }
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          titleColor: '#13343B',
+          bodyColor: '#626C71',
+          borderColor: 'rgba(94, 82, 64, 0.2)',
+          borderWidth: 1,
+          padding: 12,
+          displayColors: true,
+          callbacks: {
+            label: function(context) {
+              if (context.dataset.label === 'Revenue') {
+                return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+              }
+              return context.dataset.label + ': ' + context.parsed.y.toLocaleString();
+            }
+          }
+        }
+      },
+      scales: {
+        'y-revenue': {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          grid: {
+            color: 'rgba(94, 82, 64, 0.1)'
+          },
+          ticks: {
+            callback: function(value) {
+              return '$' + value.toLocaleString();
+            },
+            font: {
+              family: 'var(--font-family-base)'
+            }
+          }
+        },
+        'y-orders': {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          grid: {
+            drawOnChartArea: false,
+          },
+          ticks: {
+            font: {
+              family: 'var(--font-family-base)'
+            }
+          }
+        },
+        x: {
+          grid: {
+            color: 'rgba(94, 82, 64, 0.1)'
+          },
+          ticks: {
+            font: {
+              family: 'var(--font-family-base)'
+            }
+          }
+        }
+      }
+    }
+  });
+});
+</script>
+  </section>
+</div>

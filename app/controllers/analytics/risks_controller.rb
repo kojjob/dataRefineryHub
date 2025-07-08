@@ -46,17 +46,30 @@ class Analytics::RisksController < Analytics::BaseController
     revenue_concentration = total_revenue > 0 ? (top_customer_revenue / total_revenue * 100).round(1) : 0
 
     # Order failure analysis
-    failed_orders = order_records.where("raw_data->>'financial_status' = ?", "cancelled")
-    failed_orders_count = failed_orders.count
+    failed_orders_count = 0
+    order_records.find_each do |order|
+      financial_status = order.raw_data["financial_status"] rescue nil
+      failed_orders_count += 1 if financial_status == "cancelled"
+    end
     total_orders_count = order_records.count
     failure_rate = total_orders_count > 0 ? (failed_orders_count.to_f / total_orders_count * 100).round(1) : 0
 
     # Customer churn indicators
-    recent_orders = order_records.where("created_at >= ?", 2.weeks.ago)
-    recent_customers = recent_orders.pluck("raw_data->'customer'->>'email'").uniq.compact
+    recent_orders = order_records.where("raw_data_records.created_at >= ?", 2.weeks.ago)
+    recent_customers = []
+    recent_orders.find_each do |order|
+      email = order.raw_data.dig("customer", "email") rescue nil
+      recent_customers << email if email
+    end
+    recent_customers.uniq!
 
-    older_orders = order_records.where("created_at < ?", 2.weeks.ago).where("created_at >= ?", 6.weeks.ago)
-    older_customers = older_orders.pluck("raw_data->'customer'->>'email'").uniq.compact
+    older_orders = order_records.where("raw_data_records.created_at < ?", 2.weeks.ago).where("raw_data_records.created_at >= ?", 6.weeks.ago)
+    older_customers = []
+    older_orders.find_each do |order|
+      email = order.raw_data.dig("customer", "email") rescue nil
+      older_customers << email if email
+    end
+    older_customers.uniq!
 
     returning_customers = (recent_customers & older_customers).length
     churn_risk = older_customers.any? ? ((older_customers.length - returning_customers).to_f / older_customers.length * 100).round(1) : 0
@@ -73,9 +86,13 @@ class Analytics::RisksController < Analytics::BaseController
     geographic_concentration = total_revenue > 0 ? (top_country_revenue / total_revenue * 100).round(1) : 0
 
     # Payment method risks
-    payment_methods = order_records.where("raw_data->'payment_details' IS NOT NULL")
-                                  .group("raw_data->'payment_details'->>'method'")
-                                  .count
+    payment_methods = {}
+    order_records.find_each do |order|
+      method = order.raw_data.dig("payment_details", "method") rescue nil
+      if method
+        payment_methods[method] = (payment_methods[method] || 0) + 1
+      end
+    end
 
     # Overall risk score calculation
     overall_risk_score = calculate_overall_risk_score(
@@ -213,7 +230,8 @@ class Analytics::RisksController < Analytics::BaseController
     # Identify potential markets (this would be enhanced with market research data)
     potential_markets = [ "Canada", "United Kingdom", "Australia", "Germany", "France" ] - current_markets
 
-    expansion_potential = potential_markets.length * country_revenue.values.average.to_f * 0.1 # Conservative estimate
+    avg_country_revenue = country_revenue.values.any? ? country_revenue.values.sum.to_f / country_revenue.values.length : 0
+    expansion_potential = potential_markets.length * avg_country_revenue * 0.1 # Conservative estimate
 
     {
       current_markets: country_revenue,
@@ -225,22 +243,35 @@ class Analytics::RisksController < Analytics::BaseController
 
   def analyze_seasonal_patterns(order_records)
     # Analyze monthly order patterns
-    monthly_orders = order_records
-      .group("EXTRACT(month FROM created_at)")
-      .count
+    monthly_orders = {}
+    order_records.find_each do |order|
+      month = order.created_at.month
+      monthly_orders[month] = (monthly_orders[month] || 0) + 1
+    end
 
     current_month = Time.current.month
 
     # Simple seasonal analysis (would be enhanced with historical data)
-    peak_months = monthly_orders.sort_by { |_k, v| -v }.first(3).map { |k, _v| k.to_i }
+    peak_months = monthly_orders.sort_by { |_k, v| -v }.first(3).map { |k, _v| k }
+
+    if peak_months.empty?
+      # No data available, return default values
+      return {
+        monthly_patterns: monthly_orders,
+        peak_season: "No data",
+        days_until_peak: 0,
+        peak_multiplier: 1.0,
+        upcoming_peak: false
+      }
+    end
 
     next_peak = peak_months.find { |month| month > current_month } || peak_months.first
     days_until_peak = (Date.new(Time.current.year, next_peak, 1) - Date.current).to_i
     days_until_peak += 365 if days_until_peak < 0
 
-    avg_orders = monthly_orders.values.sum / monthly_orders.length.to_f
+    avg_orders = monthly_orders.values.any? ? monthly_orders.values.sum.to_f / monthly_orders.length : 1
     peak_orders = monthly_orders[next_peak] || avg_orders
-    peak_multiplier = peak_orders / avg_orders
+    peak_multiplier = avg_orders > 0 ? peak_orders / avg_orders : 1.0
 
     {
       monthly_patterns: monthly_orders,
@@ -358,7 +389,11 @@ class Analytics::RisksController < Analytics::BaseController
     order_records = order_records_scope
 
     # Payment failure analysis
-    payment_failures = order_records.where("raw_data->>'financial_status' IN (?)", [ "cancelled", "failed", "declined" ])
+    payment_failures = []
+    order_records.find_each do |order|
+      financial_status = order.raw_data["financial_status"] rescue nil
+      payment_failures << order if ["cancelled", "failed", "declined"].include?(financial_status)
+    end
 
     {
       payment_failure_rate: calculate_payment_failure_rate(payment_failures, order_records),
@@ -444,7 +479,7 @@ class Analytics::RisksController < Analytics::BaseController
 
   def analyze_processing_capacity
     # Simple capacity analysis based on recent job performance
-    recent_jobs = extraction_jobs_scope.where("created_at >= ?", 7.days.ago)
+    recent_jobs = extraction_jobs_scope.where("extraction_jobs.created_at >= ?", 7.days.ago)
     avg_duration = recent_jobs.completed.average("EXTRACT(EPOCH FROM (completed_at - started_at))") || 0
 
     {
@@ -460,10 +495,13 @@ class Analytics::RisksController < Analytics::BaseController
   end
 
   def calculate_revenue_volatility(order_records)
-    daily_revenue = order_records
-      .group("DATE(created_at)")
-      .sum("CAST(raw_data->>'total_price' AS DECIMAL)")
-      .values
+    daily_revenue = {}
+    order_records.find_each do |order|
+      date_key = order.created_at.to_date
+      total_price = order.raw_data["total_price"].to_f rescue 0
+      daily_revenue[date_key] = (daily_revenue[date_key] || 0) + total_price
+    end
+    daily_revenue = daily_revenue.values
 
     return 0 if daily_revenue.length < 2
 
@@ -476,10 +514,13 @@ class Analytics::RisksController < Analytics::BaseController
 
   def analyze_cash_flow_patterns(order_records)
     # Simple cash flow risk analysis
-    weekly_revenue = order_records
-      .group("DATE_TRUNC('week', created_at)")
-      .sum("CAST(raw_data->>'total_price' AS DECIMAL)")
-      .values
+    weekly_revenue = {}
+    order_records.find_each do |order|
+      week_key = order.created_at.beginning_of_week
+      total_price = order.raw_data["total_price"].to_f rescue 0
+      weekly_revenue[week_key] = (weekly_revenue[week_key] || 0) + total_price
+    end
+    weekly_revenue = weekly_revenue.values
 
     return "Low" if weekly_revenue.length < 4
 

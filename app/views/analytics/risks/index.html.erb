@@ -1,0 +1,309 @@
+<% content_for :page_title, "Risk Analysis" %>
+<% content_for :page_subtitle, "Identify business risks and growth opportunities" %>
+
+<div class="dashboard-content">
+  <!-- Risk Analysis Section -->
+  <section class="content-section active" id="risk-analysis" data-controller="chart">
+  <!-- Risk Score Overview -->
+  <div class="risk-score-banner">
+    <div class="risk-score-content">
+      <h2>Overall Risk Assessment</h2>
+      <div class="risk-meter">
+        <div class="risk-meter-value <%= @risk_indicators[:risk_level].downcase %>">
+          <%= @risk_indicators[:overall_risk_score] %>
+        </div>
+        <div class="risk-meter-label">Risk Score</div>
+        <div class="risk-meter-status <%= @risk_indicators[:risk_level].downcase %>">
+          <%= @risk_indicators[:risk_level] %> Risk
+        </div>
+      </div>
+      <div class="risk-gauge">
+        <div class="risk-gauge-fill <%= @risk_indicators[:risk_level].downcase %>" style="width: <%= @risk_indicators[:overall_risk_score] %>%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Risk Metrics -->
+  <div class="metrics-grid">
+    <div class="metric-card <%= @risk_indicators[:top_customer_dependency] ? 'warning' : '' %>">
+      <div class="metric-icon"><%= @risk_indicators[:top_customer_dependency] ? '⚠️' : '✅' %></div>
+      <div class="metric-content">
+        <h3>Revenue Concentration</h3>
+        <p class="metric-value"><%= @risk_indicators[:revenue_concentration] %>%</p>
+        <p class="metric-change <%= @risk_indicators[:top_customer_dependency] ? 'negative' : 'positive' %>">
+          <%= @risk_indicators[:top_customer_dependency] ? 'High dependency risk' : 'Well diversified' %>
+        </p>
+      </div>
+    </div>
+    
+    <div class="metric-card <%= @risk_indicators[:high_failure_rate] ? 'warning' : '' %>">
+      <div class="metric-icon"><%= @risk_indicators[:high_failure_rate] ? '❌' : '✅' %></div>
+      <div class="metric-content">
+        <h3>Order Failure Rate</h3>
+        <p class="metric-value"><%= @risk_indicators[:order_failure_rate] %>%</p>
+        <p class="metric-change <%= @risk_indicators[:high_failure_rate] ? 'negative' : 'positive' %>">
+          <%= @risk_indicators[:high_failure_rate] ? 'Above threshold' : 'Within limits' %>
+        </p>
+      </div>
+    </div>
+    
+    <div class="metric-card <%= @risk_indicators[:high_churn_risk] ? 'warning' : '' %>">
+      <div class="metric-icon"><%= @risk_indicators[:high_churn_risk] ? '📉' : '📈' %></div>
+      <div class="metric-content">
+        <h3>Customer Churn Risk</h3>
+        <p class="metric-value"><%= @risk_indicators[:customer_churn_risk] %>%</p>
+        <p class="metric-change <%= @risk_indicators[:high_churn_risk] ? 'negative' : 'positive' %>">
+          <%= @risk_indicators[:high_churn_risk] ? 'Retention needed' : 'Healthy retention' %>
+        </p>
+      </div>
+    </div>
+    
+    <div class="metric-card <%= @risk_indicators[:geographic_dependency] ? 'warning' : '' %>">
+      <div class="metric-icon"><%= @risk_indicators[:geographic_dependency] ? '🌍' : '🌐' %></div>
+      <div class="metric-content">
+        <h3>Geographic Risk</h3>
+        <p class="metric-value"><%= @risk_indicators[:geographic_concentration] %>%</p>
+        <p class="metric-change <%= @risk_indicators[:geographic_dependency] ? 'negative' : 'positive' %>">
+          <%= @risk_indicators[:geographic_dependency] ? 'Single market risk' : 'Good distribution' %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Risk Mitigation Recommendations -->
+  <% if @risk_indicators[:recommendations].any? %>
+    <div class="ai-insights-panel">
+      <h2>🛡️ Risk Mitigation Recommendations</h2>
+      <div class="insights-grid">
+        <% @risk_indicators[:recommendations].each_with_index do |recommendation, index| %>
+          <div class="insight-card <%= index == 0 ? 'critical' : (index == 1 ? 'high' : 'medium') %>">
+            <div class="insight-header">
+              <span class="insight-type">Action Item <%= index + 1 %></span>
+              <span class="confidence-score"><%= index == 0 ? 'Urgent' : (index == 1 ? 'Important' : 'Recommended') %></span>
+            </div>
+            <p><%= recommendation %></p>
+            <button class="btn btn--sm <%= index == 0 ? 'btn--primary' : 'btn--outline' %>">Take Action</button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Risk Trend Charts -->
+  <div class="charts-section">
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3>Risk Score Trend</h3>
+        <div class="chart-controls">
+          <button class="btn btn--sm btn--outline">7D</button>
+          <button class="btn btn--sm btn--primary">30D</button>
+          <button class="btn btn--sm btn--outline">90D</button>
+        </div>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="riskTrendChart" data-chart-target="trend"></canvas>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3>Risk Distribution</h3>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="riskDistributionChart" data-chart-target="distribution"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Growth Opportunities -->
+  <div class="growth-opportunities">
+    <h2>🚀 Growth Opportunities Analysis</h2>
+    <div class="opportunity-stats">
+      <div class="stat-card">
+        <h3><%= @growth_opportunities[:total_opportunities] %></h3>
+        <p>Total Opportunities</p>
+      </div>
+      <div class="stat-card highlight">
+        <h3><%= @growth_opportunities[:high_impact_count] %></h3>
+        <p>High Impact</p>
+      </div>
+      <div class="stat-card">
+        <h3>$<%= number_with_delimiter(@growth_opportunities[:estimated_total_impact].to_i) %></h3>
+        <p>Potential Value</p>
+      </div>
+    </div>
+
+    <div class="opportunities-grid">
+      <% @growth_opportunities[:opportunities].each do |opportunity| %>
+        <div class="opportunity-card <%= opportunity[:priority] %>">
+          <div class="opportunity-header">
+            <span class="opportunity-type"><%= opportunity[:type].humanize %></span>
+            <span class="opportunity-priority <%= opportunity[:priority] %>">
+              <%= opportunity[:priority] == 'high' ? '🔥' : (opportunity[:priority] == 'medium' ? '⭐' : '💡') %>
+              <%= opportunity[:priority].capitalize %>
+            </span>
+          </div>
+          <h3><%= opportunity[:title] %></h3>
+          <p><%= opportunity[:description] %></p>
+          
+          <% if opportunity[:estimated_impact] %>
+            <div class="opportunity-impact">
+              <span class="impact-icon">💰</span>
+              <span class="impact-value">$<%= number_with_delimiter(opportunity[:estimated_impact].to_i) %></span>
+              <span class="impact-label">potential impact</span>
+            </div>
+          <% end %>
+          
+          <div class="opportunity-meta">
+            <% if opportunity[:markets] %>
+              <div class="meta-item">
+                <span class="meta-label">Markets:</span>
+                <span class="meta-value"><%= opportunity[:markets].join(", ") %></span>
+              </div>
+            <% end %>
+            <% if opportunity[:preparation_time] %>
+              <div class="meta-item">
+                <span class="meta-label">Timeline:</span>
+                <span class="meta-value"><%= opportunity[:preparation_time] %> days</span>
+              </div>
+            <% end %>
+          </div>
+          
+          <button class="btn btn--sm btn--outline">Explore Opportunity</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- AI Risk Insights -->
+  <div class="ai-insights-panel">
+    <h2>🤖 AI-Powered Risk Predictions</h2>
+    <div class="insights-grid">
+      <div class="insight-card critical">
+        <div class="insight-header">
+          <span class="insight-type">Revenue Risk Alert</span>
+          <span class="confidence-score">93% confident</span>
+        </div>
+        <p>Seasonal downturn expected in 45 days - prepare inventory and cash flow adjustments</p>
+        <button class="btn btn--sm btn--primary">View Forecast</button>
+      </div>
+      
+      <div class="insight-card high">
+        <div class="insight-header">
+          <span class="insight-type">Market Expansion</span>
+          <span class="confidence-score">87% confident</span>
+        </div>
+        <p>3 new geographic markets show high potential with minimal risk - estimated $<%= number_with_delimiter((@growth_opportunities[:estimated_total_impact] * 0.3).to_i) %> revenue</p>
+        <button class="btn btn--sm btn--outline">Analyze Markets</button>
+      </div>
+      
+      <div class="insight-card medium">
+        <div class="insight-header">
+          <span class="insight-type">Supplier Risk</span>
+          <span class="confidence-score">82% confident</span>
+        </div>
+        <p>Consider diversifying suppliers - current concentration could impact 35% of product line</p>
+        <button class="btn btn--sm btn--outline">Review Suppliers</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Risk Trend Chart
+  const trendCtx = document.getElementById('riskTrendChart')?.getContext('2d');
+  if (trendCtx) {
+    const dates = Array.from({length: 30}, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (29 - i));
+      return d.toISOString().split('T')[0];
+    });
+    
+    const riskScores = dates.map((_, i) => {
+      // Simulate risk score fluctuation around current score
+      const base = <%= @risk_indicators[:overall_risk_score] %>;
+      return Math.max(0, Math.min(100, base + (Math.random() - 0.5) * 20 - (i * 0.2)));
+    });
+    
+    new Chart(trendCtx, {
+      type: 'line',
+      data: {
+        labels: dates.map(d => new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' })),
+        datasets: [{
+          label: 'Risk Score',
+          data: riskScores,
+          borderColor: 'rgba(168, 75, 47, 1)',
+          backgroundColor: 'rgba(168, 75, 47, 0.1)',
+          tension: 0.3,
+          pointRadius: 3,
+          pointHoverRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            min: 0,
+            max: 100,
+            grid: { color: 'rgba(94, 82, 64, 0.1)' }
+          },
+          x: {
+            grid: { color: 'rgba(94, 82, 64, 0.1)' }
+          }
+        }
+      }
+    });
+  }
+  
+  // Risk Distribution Chart
+  const distCtx = document.getElementById('riskDistributionChart')?.getContext('2d');
+  if (distCtx) {
+    const riskCategories = {
+      'Revenue Risk': <%= @risk_indicators[:revenue_concentration] %>,
+      'Customer Risk': <%= @risk_indicators[:customer_churn_risk] %>,
+      'Order Risk': <%= @risk_indicators[:order_failure_rate] %>,
+      'Geographic Risk': <%= @risk_indicators[:geographic_concentration] %>,
+      'Operational Risk': <%= [20, @risk_indicators[:overall_risk_score] - 20].max %>
+    };
+    
+    new Chart(distCtx, {
+      type: 'radar',
+      data: {
+        labels: Object.keys(riskCategories),
+        datasets: [{
+          label: 'Risk Level',
+          data: Object.values(riskCategories),
+          borderColor: 'rgba(168, 75, 47, 1)',
+          backgroundColor: 'rgba(168, 75, 47, 0.2)',
+          pointBackgroundColor: 'rgba(168, 75, 47, 1)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgba(168, 75, 47, 1)'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            min: 0,
+            max: 100,
+            ticks: {
+              stepSize: 20
+            }
+          }
+        }
+      }
+    });
+  }
+});
+</script>
+  </section>
+</div>

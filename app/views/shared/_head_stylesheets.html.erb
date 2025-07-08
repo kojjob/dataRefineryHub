@@ -6,6 +6,12 @@
 <%= stylesheet_link_tag "dashboard_premium", "data-turbo-track": "reload" %>
 <%= stylesheet_link_tag "premium_landing", "data-turbo-track": "reload" %>
 <%= stylesheet_link_tag "performance_optimizations", "data-turbo-track": "reload" %>
+<!-- DataFlow Pro must come last to override other styles -->
+<%= stylesheet_link_tag "dataflow_pro", "data-turbo-track": "reload" %>
+<%= stylesheet_link_tag "pipeline_dashboard", "data-turbo-track": "reload" if controller_name == 'pipeline_dashboard' %>
+<%= stylesheet_link_tag "integration_marketplace", "data-turbo-track": "reload" if controller_name == 'data_sources' && action_name == 'index' %>
+<%= stylesheet_link_tag "data_source_wizard", "data-turbo-track": "reload" if controller_name == 'data_sources' && (action_name == 'new' || action_name == 'create') %>
+<%= stylesheet_link_tag "organization_dashboard", "data-turbo-track": "reload" if controller_name == 'organizations' %>
 
 <!-- Performance optimizations -->
 <link rel="preconnect" href="https://fonts.googleapis.com">

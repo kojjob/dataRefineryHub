@@ -1,184 +1,292 @@
-<% content_for :page_title, "ETL Pipeline Builder" %>
-<% content_for :page_subtitle, "Visual workflow designer with real-time monitoring" %>
+<% content_for :page_title, "Pipeline Control Center" %>
+<% content_for :page_subtitle, "Real-time ETL monitoring and orchestration" %>
 
-<div class="px-df-32 py-df-24">
-  <!-- Pipeline Statistics -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-df-20 mb-df-32">
-    <%= render Dataflow::MetricCardComponent.new(
-      icon: "📊",
-      title: "Total Pipelines",
-      value: @statistics[:total_pipelines],
-      change: "All time"
-    ) %>
-    
-    <%= render Dataflow::MetricCardComponent.new(
-      icon: "🏃",
-      title: "Running",
-      value: @statistics[:running_pipelines],
-      change: "Active now"
-    ) %>
-    
-    <%= render Dataflow::MetricCardComponent.new(
-      icon: "✅",
-      title: "Successful",
-      value: @statistics[:successful_pipelines],
-      change: "Last 24h",
-      change_type: :positive
-    ) %>
-    
-    <%= render Dataflow::MetricCardComponent.new(
-      icon: "❌",
-      title: "Failed",
-      value: @statistics[:failed_pipelines],
-      change: "Last 24h",
-      change_type: :negative
-    ) %>
-    
-    <%= render Dataflow::MetricCardComponent.new(
-      icon: "⏱️",
-      title: "Avg Duration",
-      value: @statistics[:average_duration],
-      change: "Per pipeline"
-    ) %>
-    
-    <%= render Dataflow::MetricCardComponent.new(
-      icon: "📈",
-      title: "Success Rate",
-      value: "#{@statistics[:success_rate]}%",
-      change: "Last 24h",
-      change_type: @statistics[:success_rate] >= 90 ? :positive : :negative
-    ) %>
-  </div>
+<!-- Pipeline Dashboard -->
+<div class="pipeline-dashboard" data-controller="pipeline-dashboard">
+  <!-- Performance Overview -->
+  <div class="performance-overview">
+    <div class="performance-grid">
+      <!-- Total Pipelines -->
+      <div class="performance-card">
+        <div class="performance-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+          </svg>
+        </div>
+        <div class="performance-content">
+          <p class="performance-label">Total Pipelines</p>
+          <p class="performance-value"><%= @statistics[:total_pipelines] %></p>
+          <div class="performance-trend">
+            <span class="trend-text">All configured pipelines</span>
+          </div>
+        </div>
+      </div>
 
-  <!-- Pipeline Builder Interface -->
-  <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border mb-df-32">
-    <div class="flex items-center justify-between mb-df-20">
-      <h2 class="text-df-2xl font-semibold">Pipeline Builder</h2>
-      <button class="btn btn--primary">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-        </svg>
-        Create New Pipeline
-      </button>
-    </div>
-    
-    <div class="bg-df-background rounded-df-lg p-df-32 border-2 border-dashed border-df-border">
-      <div class="flex items-center justify-center space-x-df-32">
-        <div class="text-center">
-          <div class="w-24 h-24 bg-df-primary rounded-df-lg flex items-center justify-center text-white text-3xl mb-df-8">📥</div>
-          <p class="font-medium">Data Source</p>
-          <p class="text-df-sm text-df-text-secondary">Select input</p>
+      <!-- Running Pipelines -->
+      <div class="performance-card active">
+        <div class="performance-icon running">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
         </div>
-        <svg class="w-12 h-12 text-df-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-        </svg>
-        <div class="text-center">
-          <div class="w-24 h-24 bg-df-warning rounded-df-lg flex items-center justify-center text-white text-3xl mb-df-8">⚙️</div>
-          <p class="font-medium">Transform</p>
-          <p class="text-df-sm text-df-text-secondary">Process data</p>
+        <div class="performance-content">
+          <p class="performance-label">Running Now</p>
+          <p class="performance-value"><%= @statistics[:running_pipelines] %></p>
+          <div class="performance-trend positive">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+            <span class="trend-text">Active pipelines</span>
+          </div>
         </div>
-        <svg class="w-12 h-12 text-df-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-        </svg>
-        <div class="text-center">
-          <div class="w-24 h-24 bg-df-success rounded-df-lg flex items-center justify-center text-white text-3xl mb-df-8">📤</div>
-          <p class="font-medium">Destination</p>
-          <p class="text-df-sm text-df-text-secondary">Output target</p>
+        <div class="live-indicator">
+          <span class="live-dot"></span>
+          LIVE
+        </div>
+      </div>
+
+      <!-- Success Rate -->
+      <div class="performance-card">
+        <div class="performance-icon success">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="performance-content">
+          <p class="performance-label">Success Rate</p>
+          <p class="performance-value"><%= @statistics[:success_rate] %>%</p>
+          <div class="performance-trend <%= @statistics[:success_rate] >= 95 ? 'positive' : 'warning' %>">
+            <span class="trend-text">Last 24 hours</span>
+          </div>
+        </div>
+        <div class="performance-chart">
+          <canvas id="successRateChart" width="80" height="40"></canvas>
+        </div>
+      </div>
+
+      <!-- Average Duration -->
+      <div class="performance-card">
+        <div class="performance-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="performance-content">
+          <p class="performance-label">Avg Duration</p>
+          <p class="performance-value"><%= @statistics[:average_duration] %></p>
+          <div class="performance-trend">
+            <span class="trend-text">Per pipeline run</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Active Pipelines -->
-  <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border mb-df-32">
-    <h2 class="text-df-2xl font-semibold mb-df-20">Active Pipelines</h2>
-    
+  <!-- Active Pipelines Monitor -->
+  <div class="active-pipelines-monitor">
+    <div class="monitor-header">
+      <h2>Active Pipeline Executions</h2>
+      <div class="monitor-controls">
+        <button class="btn btn--sm btn--outline" data-action="click->pipeline-dashboard#refreshPipelines">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Refresh
+        </button>
+        <button class="btn btn--primary">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          New Pipeline
+        </button>
+      </div>
+    </div>
+
     <% if @pipeline_executions.any? %>
-      <div class="space-y-df-16">
+      <div class="pipeline-grid">
         <% @pipeline_executions.each do |pipeline| %>
-          <div class="bg-df-background rounded-df-lg p-df-20 border border-df-border">
-            <div class="flex items-center justify-between mb-df-12">
-              <div class="flex items-center gap-df-12">
-                <div class="w-10 h-10 rounded-df-md flex items-center justify-center <%= case pipeline.status
-                  when 'running' then 'bg-blue-100 text-blue-600'
-                  when 'completed' then 'bg-green-100 text-green-600'
-                  when 'failed' then 'bg-red-100 text-red-600'
-                  else 'bg-gray-100 text-gray-600'
-                end %>">
-                  <%= case pipeline.status
-                    when 'running' then '🔄'
-                    when 'completed' then '✅'
-                    when 'failed' then '❌'
-                    else '⏸️'
-                  end %>
-                </div>
-                <div>
-                  <h3 class="text-df-lg font-semibold"><%= pipeline.pipeline_name %></h3>
-                  <p class="text-df-sm text-df-text-secondary">
-                    Started <%= time_ago_in_words(pipeline.started_at) %> ago
-                    <% if pipeline.data_source %>
-                      • <%= pipeline.data_source.name %>
-                    <% end %>
-                  </p>
-                </div>
+          <div class="pipeline-card <%= pipeline.status %>" data-pipeline-id="<%= pipeline.id %>">
+            <div class="pipeline-header">
+              <div class="pipeline-info">
+                <h3><%= pipeline.job_type.humanize %></h3>
+                <p><%= pipeline.data_source.name %></p>
               </div>
-              
-              <div class="flex items-center gap-df-16">
-                <% if pipeline.status == 'running' %>
-                  <div class="text-right">
-                    <p class="text-df-sm text-df-text-secondary">Progress</p>
-                    <p class="text-df-lg font-semibold"><%= pipeline.progress_percentage || 0 %>%</p>
-                  </div>
-                <% end %>
-                
-                <%= link_to "View Details", pipeline_dashboard_path(pipeline), class: "btn btn--outline btn--sm" %>
+              <div class="pipeline-status-badge <%= pipeline.status %>">
+                <span class="status-icon"></span>
+                <%= pipeline.status.upcase %>
               </div>
             </div>
             
-            <% if pipeline.status == 'running' %>
-              <div class="w-full bg-df-secondary rounded-full h-2">
-                <div class="bg-df-primary h-2 rounded-full transition-all duration-300" style="width: <%= pipeline.progress_percentage || 0 %>%"></div>
+            <div class="pipeline-progress">
+              <div class="progress-header">
+                <span class="progress-label">Progress</span>
+                <span class="progress-percentage"><%= pipeline.progress_percentage || 0 %>%</span>
               </div>
-            <% end %>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: <%= pipeline.progress_percentage || 0 %>%">
+                  <div class="progress-glow"></div>
+                </div>
+              </div>
+              <div class="progress-stats">
+                <span class="stat-item">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                  <%= number_with_delimiter(pipeline.processed_records) %> / <%= number_with_delimiter(pipeline.total_records) %>
+                </span>
+                <span class="stat-item">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <%= distance_of_time_in_words_to_now(pipeline.started_at) %>
+                </span>
+              </div>
+            </div>
+
+            <div class="pipeline-actions">
+              <button class="action-btn" title="View Details">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+              <% if pipeline.status == 'running' %>
+                <button class="action-btn warning" title="Pause Pipeline">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              <% else %>
+                <button class="action-btn success" title="Resume Pipeline">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              <% end %>
+              <button class="action-btn error" title="Stop Pipeline">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                </svg>
+              </button>
+            </div>
           </div>
         <% end %>
       </div>
-      
-      <div class="mt-df-20">
-        <%= paginate @pipeline_executions %>
-      </div>
     <% else %>
-      <div class="text-center py-df-32">
-        <div class="mx-auto w-24 h-24 bg-df-secondary rounded-full flex items-center justify-center mb-df-16">
-          <svg class="w-12 h-12 text-df-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
-          </svg>
-        </div>
-        <h3 class="text-df-xl font-semibold mb-df-8">No active pipelines</h3>
-        <p class="text-df-text-secondary mb-df-20">Create your first pipeline to start processing data</p>
-        <button class="btn btn--primary">Create Pipeline</button>
+      <div class="empty-state">
+        <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+        <h3>No Active Pipelines</h3>
+        <p>All pipelines are currently idle. Start a new pipeline to begin processing data.</p>
+        <button class="btn btn--primary">Create New Pipeline</button>
       </div>
     <% end %>
   </div>
 
-  <!-- Manual Interventions -->
-  <% if @manual_interventions.any? %>
-    <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border">
-      <h2 class="text-df-2xl font-semibold mb-df-20 flex items-center">
-        <span class="mr-2">⚠️</span> Manual Interventions Required
-      </h2>
-      
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-df-16">
-        <% @manual_interventions.each do |task| %>
-          <%= render Dataflow::InsightCardComponent.new(
-            type: "Action Required",
-            confidence: 100,
-            message: "#{task.name} - #{task.description || 'Manual approval needed'}",
-            action_text: "Take Action",
-            severity: :high
-          ) %>
-        <% end %>
+  <!-- Pipeline History -->
+  <div class="pipeline-history">
+    <div class="history-header">
+      <h2>Execution History</h2>
+      <div class="history-filters">
+        <select class="filter-select">
+          <option>All Statuses</option>
+          <option>Completed</option>
+          <option>Failed</option>
+          <option>Running</option>
+        </select>
+        <select class="filter-select">
+          <option>Last 24 Hours</option>
+          <option>Last 7 Days</option>
+          <option>Last 30 Days</option>
+        </select>
       </div>
     </div>
-  <% end %>
+
+    <% if @recent_activities && @recent_activities.any? %>
+      <div class="history-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Pipeline</th>
+              <th>Source</th>
+              <th>Started</th>
+              <th>Duration</th>
+              <th>Records</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @recent_activities.each do |execution| %>
+              <tr class="history-row" data-execution-id="<%= execution.id %>">
+                <td>
+                  <div class="pipeline-name">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <%= execution.job_type.humanize %>
+                  </div>
+                </td>
+                <td><%= execution.data_source.name %></td>
+                <td><%= execution.started_at.strftime("%b %d, %I:%M %p") %></td>
+                <td>
+                  <% if execution.completed_at %>
+                    <%= distance_of_time_in_words(execution.started_at, execution.completed_at) %>
+                  <% else %>
+                    <span class="in-progress">In Progress</span>
+                  <% end %>
+                </td>
+                <td>
+                  <div class="record-count">
+                    <%= number_with_delimiter(execution.processed_records) %>
+                    <% if execution.total_records > 0 %>
+                      <span class="record-percentage">(<%= ((execution.processed_records.to_f / execution.total_records) * 100).round %>%)</span>
+                    <% end %>
+                  </div>
+                </td>
+                <td>
+                  <span class="status-pill <%= execution.status %>">
+                    <%= execution.status.humanize %>
+                  </span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="icon-btn" title="View Details">
+                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </button>
+                    <% if execution.status == 'failed' %>
+                      <button class="icon-btn" title="Retry">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                      </button>
+                    <% end %>
+                    <button class="icon-btn" title="Download Logs">
+                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <h3>No Execution History</h3>
+        <p>Pipeline execution history will appear here once pipelines have been run.</p>
+      </div>
+    <% end %>
+  </div>
 </div>

@@ -1,0 +1,386 @@
+/* Enhanced Flash Messages Styles */
+/* Provides animations, transitions, and visual enhancements for the flash message system */
+
+/* Flash Messages Container */
+#flash-messages-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  max-width: 28rem;
+  width: 100%;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  #flash-messages-container {
+    top: 0.5rem;
+    right: 0.5rem;
+    left: 0.5rem;
+    max-width: none;
+  }
+}
+
+/* Flash Message Base Styles */
+.flash-message {
+  pointer-events: auto;
+  margin-bottom: 0.75rem;
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(8px);
+  border-left: 4px solid;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Entrance Animation */
+.flash-message.animate-in {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Exit Animation */
+.flash-message.dismissing {
+  transform: translateX(100%);
+  opacity: 0;
+  max-height: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Progress Bar Styles */
+.flash-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.8) 0%, 
+    rgba(255, 255, 255, 0.6) 50%, 
+    rgba(255, 255, 255, 0.8) 100%);
+  transition: width linear;
+  border-radius: 0 0 0.375rem 0;
+}
+
+/* Flash Message Type Specific Styles */
+
+/* Success Messages */
+.flash-message.flash-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-left-color: #047857;
+  color: white;
+}
+
+.flash-message.flash-success .flash-icon {
+  color: #d1fae5;
+}
+
+.flash-message.flash-success .flash-dismiss:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Error Messages */
+.flash-message.flash-error {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-left-color: #b91c1c;
+  color: white;
+}
+
+.flash-message.flash-error .flash-icon {
+  color: #fecaca;
+}
+
+.flash-message.flash-error .flash-dismiss:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Warning Messages */
+.flash-message.flash-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border-left-color: #b45309;
+  color: white;
+}
+
+.flash-message.flash-warning .flash-icon {
+  color: #fed7aa;
+}
+
+.flash-message.flash-warning .flash-dismiss:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Info Messages */
+.flash-message.flash-info {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-left-color: #1d4ed8;
+  color: white;
+}
+
+.flash-message.flash-info .flash-icon {
+  color: #dbeafe;
+}
+
+.flash-message.flash-info .flash-dismiss:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Notice Messages */
+.flash-message.flash-notice {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-left-color: #6d28d9;
+  color: white;
+}
+
+.flash-message.flash-notice .flash-icon {
+  color: #e9d5ff;
+}
+
+.flash-message.flash-notice .flash-dismiss:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Alert Messages */
+.flash-message.flash-alert {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  border-left-color: #c2410c;
+  color: white;
+}
+
+.flash-message.flash-alert .flash-icon {
+  color: #fed7aa;
+}
+
+.flash-message.flash-alert .flash-dismiss:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Default Messages */
+.flash-message.flash-default {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  border-left-color: #374151;
+  color: white;
+}
+
+.flash-message.flash-default .flash-icon {
+  color: #e5e7eb;
+}
+
+.flash-message.flash-default .flash-dismiss:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Flash Message Content */
+.flash-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+  opacity: 0.95;
+}
+
+.flash-content {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+/* Action Button Styles */
+.flash-action {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.75rem;
+  padding: 0.375rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0.375rem;
+  color: white;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.flash-action:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.flash-action:active {
+  transform: translateY(0);
+}
+
+/* Dismiss Button */
+.flash-dismiss {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.flash-dismiss:hover {
+  opacity: 1;
+}
+
+.flash-dismiss:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Icon Styles */
+.flash-icon {
+  flex-shrink: 0;
+  margin-right: 0.75rem;
+  opacity: 0.9;
+}
+
+/* Persistent Message Indicator */
+.flash-message.persistent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 1rem 1rem 0;
+  border-color: transparent rgba(255, 255, 255, 0.3) transparent transparent;
+}
+
+/* Hover Effects */
+.flash-message:hover {
+  transform: translateX(-4px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+}
+
+.flash-message.dismissing:hover {
+  transform: translateX(100%);
+}
+
+/* Focus Styles for Accessibility */
+.flash-message:focus {
+  outline: 3px solid rgba(59, 130, 246, 0.5);
+  outline-offset: 2px;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .flash-message {
+    transition: opacity 0.2s ease;
+    transform: none;
+  }
+  
+  .flash-message.animate-in {
+    opacity: 1;
+  }
+  
+  .flash-message.dismissing {
+    opacity: 0;
+    transform: none;
+  }
+  
+  .flash-message:hover {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .flash-message {
+    border: 2px solid;
+    backdrop-filter: none;
+  }
+  
+  .flash-action {
+    border: 2px solid;
+    backdrop-filter: none;
+  }
+}
+
+/* Dark Mode Adjustments */
+@media (prefers-color-scheme: dark) {
+  .flash-message {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Print Styles */
+@media print {
+  #flash-messages-container {
+    display: none;
+  }
+}
+
+/* Animation Keyframes */
+@keyframes flash-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes flash-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes flash-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes flash-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Utility Classes */
+.flash-stacked {
+  margin-bottom: 0.5rem;
+}
+
+.flash-compact .flash-title {
+  font-size: 0.75rem;
+}
+
+.flash-compact .flash-content {
+  font-size: 0.75rem;
+}
+
+.flash-large {
+  padding: 1.5rem;
+}
+
+.flash-large .flash-title {
+  font-size: 1rem;
+}
+
+.flash-large .flash-content {
+  font-size: 0.875rem;
+}
