@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_09_100053) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_09_112000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,43 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_100053) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "ai_agent_configurations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "agent_type", null: false
+    t.boolean "enabled", default: true
+    t.json "settings"
+    t.json "learning_data"
+    t.float "performance_score"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agent_type"], name: "index_ai_agent_configurations_on_agent_type"
+    t.index ["organization_id", "agent_type"], name: "idx_on_organization_id_agent_type_587471fea7", unique: true
+    t.index ["organization_id"], name: "index_ai_agent_configurations_on_organization_id"
+  end
+
+  create_table "ai_automated_actions", force: :cascade do |t|
+    t.bigint "insight_id"
+    t.bigint "organization_id", null: false
+    t.string "action_type", null: false
+    t.json "parameters"
+    t.integer "status", default: 0
+    t.datetime "executed_at"
+    t.datetime "approved_at"
+    t.datetime "completed_at"
+    t.bigint "approved_by_id"
+    t.json "result"
+    t.string "suggested_by", default: "bi_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action_type"], name: "index_ai_automated_actions_on_action_type"
+    t.index ["approved_by_id"], name: "index_ai_automated_actions_on_approved_by_id"
+    t.index ["executed_at"], name: "index_ai_automated_actions_on_executed_at"
+    t.index ["insight_id"], name: "index_ai_automated_actions_on_insight_id"
+    t.index ["organization_id", "status"], name: "index_ai_automated_actions_on_organization_id_and_status"
+    t.index ["organization_id"], name: "index_ai_automated_actions_on_organization_id"
+    t.index ["status"], name: "index_ai_automated_actions_on_status"
   end
 
   create_table "ai_insights", force: :cascade do |t|
@@ -139,6 +176,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_100053) do
     t.index ["session_id"], name: "index_ai_presentation_views_on_session_id"
     t.index ["user_id", "created_at"], name: "index_ai_presentation_views_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_ai_presentation_views_on_user_id"
+  end
+
+  create_table "ai_queries", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "user_id", null: false
+    t.text "query", null: false
+    t.text "response"
+    t.json "context"
+    t.json "entities"
+    t.string "intent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_ai_queries_on_created_at"
+    t.index ["intent"], name: "index_ai_queries_on_intent"
+    t.index ["organization_id", "user_id", "created_at"], name: "index_ai_queries_on_organization_id_and_user_id_and_created_at"
+    t.index ["organization_id"], name: "index_ai_queries_on_organization_id"
+    t.index ["user_id"], name: "index_ai_queries_on_user_id"
   end
 
   create_table "alerts", force: :cascade do |t|
@@ -773,6 +827,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_100053) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "ai_agent_configurations", "organizations"
+  add_foreign_key "ai_automated_actions", "ai_insights", column: "insight_id"
+  add_foreign_key "ai_automated_actions", "organizations"
+  add_foreign_key "ai_automated_actions", "users", column: "approved_by_id"
   add_foreign_key "ai_insights", "data_sources"
   add_foreign_key "ai_insights", "organizations"
   add_foreign_key "ai_insights", "presentations"
@@ -783,6 +841,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_100053) do
   add_foreign_key "ai_presentation_views", "organizations"
   add_foreign_key "ai_presentation_views", "presentations"
   add_foreign_key "ai_presentation_views", "users"
+  add_foreign_key "ai_queries", "organizations"
+  add_foreign_key "ai_queries", "users"
   add_foreign_key "alerts", "data_sources"
   add_foreign_key "alerts", "organizations"
   add_foreign_key "alerts", "pipeline_executions"

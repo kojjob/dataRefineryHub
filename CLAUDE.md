@@ -1,14 +1,14 @@
-Below is the updated CLAUDE.md refined for clarity and completeness. I’ve also included key contextual details about Rails 8 based on its official release and features. Let me know if you’d like this as a .claude.md file in your repo!
+Below is the updated CLAUDE.md refined for clarity and completeness. I've also included key contextual details about Rails 8 based on its official release and features. Let me know if you'd like this as a .claude.md file in your repo!
 
 ⸻
 
-🧠 CLAUDE.md — Data Refinery Platform for Rails 8
+🧠 CLAUDE.md — Data Refinery Platform for Rails 8
 
 🎯 Project Purpose
 
-A production-grade, multi-tenant SaaS built with Ruby on Rails 8 (Ruby 3.4), transforming raw business data into unified, actionable insights for SMBs. Claude agents assist developers with code generation, guidance, and task automation.
+A production-grade, multi-tenant SaaS built with Ruby on Rails 8 (Ruby 3.4), transforming raw business data into unified, actionable insights for SMBs. Claude agents assist developers with code generation, guidance, and task automation.
 
-⚡ Rails 8 (released Nov 7, 2024) empowers apps to run without Redis/Sidekiq by default—using Solid Queue, Cache, and Cable—simplifying infrastructure and reducing costs  ￼.
+⚡ Rails 8 (released Nov 7, 2024) empowers apps to run without Redis/Sidekiq by default—using Solid Queue, Cache, and Cable—simplifying infrastructure and reducing costs  ￼.
 
 ⸻
 
@@ -25,12 +25,12 @@ A production-grade, multi-tenant SaaS built with Ruby on Rails 8 (Ruby 3.4),
 ⚙️ Tech Stack & Architecture
 
 Layer Technology
-Framework Ruby on Rails 8.0.2 (Ruby 3.4.3) ()
+Framework Ruby on Rails 8.0.2 (Ruby 3.4.3) ()
 Background Jobs Solid Queue (DB-backed queue) ()
 Caching Solid Cache (DB-backed caching) ()
 WebSockets Solid Cable (DB‑backed Action Cable) ()
 Asset Pipeline Propshaft (default replacement for Sprockets) ()
-Deployment Kamal 2 (gen’d by default) ()
+Deployment Kamal 2 (gen'd by default) ()
 Auth & AuthZ Devise + Pundit
 Frontend Hotwire (Turbo + Stimulus) + TailwindCSS
 DB PostgreSQL
@@ -42,9 +42,9 @@ Testing RSpec, FactoryBot, Shoulda, Timecop, DatabaseCleaner
 🧪 Code Quality & Testing
  • Adhere strictly to Rails conventions & patterns
  • Use rubocop, brakeman, and CI checks
- • Achieve > 90% test coverage
+ • Achieve > 90% test coverage
  • Conduct thorough unit, integration & system tests
- • ETL and API workflows must be end‑to‑end tested
+ • ETL and API workflows must be end‑to‑e tested
  • Test isolation via Timecop and DBCleaner
 
 ⸻
@@ -80,16 +80,16 @@ Testing RSpec, FactoryBot, Shoulda, Timecop, DatabaseCleaner
  • Live updates using Turbo Streams
  • Reusable, testable UI using ViewComponent
  • WCAG 2.1 AA accessibility standards
- • Dashboard performance < 2 s via lazy loading & caching
+ • Dashboard performance < 2 s via lazy loading & caching
 
 ⸻
 
 ⏱️ Performance Metrics
 
 Metric Target
-API response < 200 ms typical
-Dashboard render < 2 s on <100k records
-ETL throughput > 10 k records/minute
+API response < 200 ms typical
+Dashboard render < 2 s on <100k records
+ETL throughput > 10 k records/minute
 DB efficiency No N+1s; proper indexing
 
 ⸻
@@ -174,7 +174,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ⸻
 
 🚀 Deployment Strategy
- • Docker-based deployment via Kamal 2
+ • Docker-based deployment via Kamal 2
  • Staging and prod separations
  • Zero-downtime rollouts
  • Scheduled database backups & restore testing
@@ -184,20 +184,23 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 🤖 Claude Agent Protocol
  • Adhere exactly to this spec
- • Don’t digress—avoid unnecessary questions
+ • Don't digress—avoid unnecessary questions
  • Generate idiomatic Rails 8 + Hotwire + Tailwind code
  • Use RSpec; avoid undocumented gems
  • Prefer native Rails features over new dependencies
 
 ⸻
 
-✅ Rails 8 Highlights
+✅ Rails 8 Highlights
  • Defaults to Solid adapters (Queue, Cache, Cable) enabling Redis-free stacks  ￼ ￼ ￼ ￼ ￼
  • Introduces Propshaft as the new asset pipeline  ￼
  • Built-in authentication generator for baseline session management and password reset  ￼
- • Ships with Kamal 2 for streamlined container-based deployments  ￼
+ • Ships with Kamal 2 for streamlined container-based deployments  ￼
 
 ⸻
+
+💻 Command Line Options
+ • claude --dangerously-skip-permissions: Bypass permission checks during development (use with caution)
 
 Would you like me to commit this file directly into your repo under docs/CLAUDE.md or publish it as a standalone .claude.md?
 

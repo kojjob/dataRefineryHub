@@ -194,6 +194,33 @@ Rails.application.routes.draw do
       end
     end
 
+    # Natural Language Chat Interface
+    resources :chat, only: [] do
+      collection do
+        post :create
+        post :voice
+        get :suggestions
+        get :history
+        post :feedback
+        post :execute_action
+      end
+    end
+    
+    # Automated Actions
+    resources :automated_actions, only: [:index, :show] do
+      member do
+        post :approve
+        post :reject
+        post :execute
+        get :preview
+      end
+      collection do
+        get :pending
+        get :history
+        post :configure
+      end
+    end
+
     resources :data_integration, only: [] do
       collection do
         get :dashboard
