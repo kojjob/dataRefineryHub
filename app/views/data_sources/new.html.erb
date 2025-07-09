@@ -168,20 +168,22 @@
               <div class="form-section">
                 <h4>Basic Information</h4>
                 <div class="form-group">
-                  <%= form.label :name, class: "form-label" %>
-                  <%= form.text_field :name, 
-                                      placeholder: "e.g., Production Store", 
-                                      class: "form-input",
+                  <%= form.label :name, class: "block text-sm font-medium mb-2", style: "color: var(--color-text-secondary);" %>
+                  <%= form.text_field :name,
+                                      placeholder: "e.g., Production Store",
+                                      class: "w-full px-3 py-2 text-sm border-0 focus:ring-2 focus:ring-offset-0",
+                                      style: "background-color: var(--color-surface); border: 1px solid var(--color-card-border); border-radius: var(--radius-lg); color: var(--color-text); focus:ring-color: var(--color-primary);",
                                       data: { auto_save_target: "field" } %>
-                  <p class="form-hint">Give your integration a memorable name</p>
+                  <p class="mt-2 text-sm" style="color: var(--color-text-secondary);">Give your integration a memorable name</p>
                 </div>
-                
+
                 <div class="form-group">
-                  <%= form.label :description, class: "form-label" %>
-                  <%= form.text_area :description, 
+                  <%= form.label :description, class: "block text-sm font-medium mb-2", style: "color: var(--color-text-secondary);" %>
+                  <%= form.text_area :description,
                                      rows: 3,
                                      placeholder: "Optional description...",
-                                     class: "form-input",
+                                     class: "w-full px-3 py-2 text-sm border-0 focus:ring-2 focus:ring-offset-0",
+                                     style: "background-color: var(--color-surface); border: 1px solid var(--color-card-border); border-radius: var(--radius-lg); color: var(--color-text); focus:ring-color: var(--color-primary);",
                                      data: { auto_save_target: "field" } %>
                 </div>
               </div>
@@ -198,13 +200,14 @@
               <div class="form-section">
                 <h4>Sync Settings</h4>
                 <div class="form-group">
-                  <%= form.label :sync_frequency, "Sync Frequency", class: "form-label" %>
-                  <%= form.select :sync_frequency, 
+                  <%= form.label :sync_frequency, "Sync Frequency", class: "block text-sm font-medium mb-2", style: "color: var(--color-text-secondary);" %>
+                  <%= form.select :sync_frequency,
                                   options_for_select(sync_frequencies.map { |f| [f[:label], f[:value]] }, 'daily'),
                                   {},
-                                  class: "form-select",
+                                  class: "w-full px-3 py-2 text-sm border-0 focus:ring-2 focus:ring-offset-0",
+                                  style: "background-color: var(--color-surface); border: 1px solid var(--color-card-border); border-radius: var(--radius-lg); color: var(--color-text); focus:ring-color: var(--color-primary);",
                                   data: { auto_save_target: "field" } %>
-                  <p class="form-hint">How often should we sync your data?</p>
+                  <p class="mt-2 text-sm" style="color: var(--color-text-secondary);">How often should we sync your data?</p>
                 </div>
                 
                 <div class="form-group">
@@ -381,7 +384,7 @@
   <div class="help-section">
     <div class="help-card">
       <div class="help-icon">
-        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
       </div>
@@ -394,7 +397,7 @@
     
     <div class="help-card">
       <div class="help-icon">
-        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </div>
@@ -413,7 +416,7 @@
   <% if @data_source.errors.any? %>
     <div class="error-panel">
       <div class="error-icon">
-        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-error);">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </div>

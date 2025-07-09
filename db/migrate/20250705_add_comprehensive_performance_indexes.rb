@@ -39,15 +39,17 @@ class AddComprehensivePerformanceIndexes < ActiveRecord::Migration[8.0]
                 name: 'idx_notifications_unread'
     end
 
-    # 4. Add missing foreign key indexes
-    unless index_exists?(:ai_insights, :acknowledged_by)
-      add_index :ai_insights, :acknowledged_by, algorithm: :concurrently,
-                name: 'idx_ai_insights_acknowledged_by'
-    end
+    # 4. Add missing foreign key indexes (only if tables exist)
+    if table_exists?(:ai_insights)
+      unless index_exists?(:ai_insights, :acknowledged_by)
+        add_index :ai_insights, :acknowledged_by, algorithm: :concurrently,
+                  name: 'idx_ai_insights_acknowledged_by'
+      end
 
-    unless index_exists?(:ai_insights, :read_by)
-      add_index :ai_insights, :read_by, algorithm: :concurrently,
-                name: 'idx_ai_insights_read_by'
+      unless index_exists?(:ai_insights, :read_by)
+        add_index :ai_insights, :read_by, algorithm: :concurrently,
+                  name: 'idx_ai_insights_read_by'
+      end
     end
 
     # 5. Add partial indexes for status fields
@@ -58,24 +60,30 @@ class AddComprehensivePerformanceIndexes < ActiveRecord::Migration[8.0]
                 name: 'idx_extraction_jobs_active'
     end
 
-    unless index_exists?(:pipeline_executions, [ :organization_id, :started_at ], name: 'idx_pipeline_executions_running')
-      add_index :pipeline_executions, [ :organization_id, :started_at ],
-                where: "status = 'running'",
-                algorithm: :concurrently,
-                name: 'idx_pipeline_executions_running'
+    if column_exists?(:pipeline_executions, :organization_id)
+      unless index_exists?(:pipeline_executions, [ :organization_id, :started_at ], name: 'idx_pipeline_executions_running')
+        add_index :pipeline_executions, [ :organization_id, :started_at ],
+                  where: "status = 'running'",
+                  algorithm: :concurrently,
+                  name: 'idx_pipeline_executions_running'
+      end
     end
 
-    # 6. Add indexes for time-based queries
-    unless index_exists?(:ai_presentation_views, [ :organization_id, :started_at ])
-      add_index :ai_presentation_views, [ :organization_id, :started_at ],
-                algorithm: :concurrently,
-                name: 'idx_ai_presentation_views_org_started'
+    # 6. Add indexes for time-based queries (only if tables exist)
+    if table_exists?(:ai_presentation_views)
+      unless index_exists?(:ai_presentation_views, [ :organization_id, :started_at ])
+        add_index :ai_presentation_views, [ :organization_id, :started_at ],
+                  algorithm: :concurrently,
+                  name: 'idx_ai_presentation_views_org_started'
+      end
     end
 
-    unless index_exists?(:ai_presentation_interactions, [ :organization_id, :timestamp ])
-      add_index :ai_presentation_interactions, [ :organization_id, :timestamp ],
-                algorithm: :concurrently,
-                name: 'idx_ai_presentation_interactions_org_timestamp'
+    if table_exists?(:ai_presentation_interactions)
+      unless index_exists?(:ai_presentation_interactions, [ :organization_id, :timestamp ])
+        add_index :ai_presentation_interactions, [ :organization_id, :timestamp ],
+                  algorithm: :concurrently,
+                  name: 'idx_ai_presentation_interactions_org_timestamp'
+      end
     end
 
     # 7. Add indexes for pipeline configuration queries

@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   # Debug routes (remove in production)
   get "debug/session_info", to: "debug#session_info" unless Rails.env.production?
+  get "debug/test_flash", to: "debug#test_flash" unless Rails.env.production?
 
   # Monitoring endpoints
   get "health", to: "monitoring#health"
@@ -20,6 +21,16 @@ Rails.application.routes.draw do
   get "dashboard", to: "dashboard#index"
   get "dashboard/analytics", to: "dashboard#analytics"
   get "dashboard/reports", to: "dashboard#reports"
+
+  # Industry Templates
+  resources :industry_templates, only: [:index, :show] do
+    member do
+      post :apply
+    end
+    collection do
+      post :reset
+    end
+  end
 
   # Include data quality monitoring routes
   load Rails.root.join("config", "routes", "data_quality_routes.rb")

@@ -11,12 +11,21 @@ class DashboardController < DataflowProController
     @data_quality_metrics = calculate_data_quality_metrics
     @recent_activity = calculate_recent_activity
     # @system_status is set in ApplicationController
-    
+
+    # Check if user has a template applied
+    @template = current_user.dashboard_template.present? ?
+                IndustryTemplate.find_template(current_user.dashboard_template) : nil
+
     # Add stats for DataFlow Pro
     @stats[:monthly_active_users] = calculate_monthly_active_users
     @stats[:data_quality_score] = @data_quality_metrics[:overall][:overall_quality_score]
     @stats[:active_pipelines] = @data_sources.connected.count
-    
+
+    # Add template-specific stats if template is applied
+    if @template
+      @stats.merge!(get_template_specific_stats(@template[:id]))
+    end
+
     # Render DataFlow Pro dashboard
     render :dataflow_pro
   end
@@ -27,6 +36,41 @@ class DashboardController < DataflowProController
     # Calculate unique users who have accessed the system in the last 30 days
     # For now, we'll use organization members as a proxy
     current_organization.users.where("last_sign_in_at >= ?", 30.days.ago).count
+  end
+
+  def get_template_specific_stats(template_id)
+    case template_id
+    when 'retail_ecommerce'
+      {
+        conversion_rate: 3.2,
+        avg_order_value: 125,
+        inventory_turnover: 8.5,
+        customer_lifetime_value: 450
+      }
+    when 'manufacturing'
+      {
+        production_efficiency: 92,
+        quality_score: 98.5,
+        downtime_hours: 2.3,
+        oee_score: 85
+      }
+    when 'professional_services'
+      {
+        billable_hours: 1680,
+        utilization_rate: 87,
+        project_margin: 28.5,
+        client_satisfaction: 4.6
+      }
+    when 'healthcare'
+      {
+        patient_satisfaction: 4.8,
+        readmission_rate: 8.2,
+        bed_occupancy: 78,
+        compliance_score: 96
+      }
+    else
+      {}
+    end
   end
 
   def calculate_dashboard_stats

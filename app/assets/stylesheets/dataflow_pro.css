@@ -1583,6 +1583,241 @@ h2 {
   font-size: var(--font-size-xl);
 }
 
+/* Industry Templates Styling */
+.template-card {
+  transition: all var(--duration-normal) var(--ease-standard);
+  position: relative;
+  overflow: hidden;
+}
+
+.template-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-primary-light);
+}
+
+.template-card:hover .template-preview {
+  background: linear-gradient(135deg,
+    var(--color-primary-light) 0%,
+    var(--color-primary) 100%);
+}
+
+.template-preview {
+  background: linear-gradient(135deg,
+    var(--color-primary-light) 0%,
+    var(--color-surface) 100%);
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.template-preview-dashboard .metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-24);
+  margin-bottom: var(--space-32);
+}
+
+.template-preview-dashboard .ai-insights-panel {
+  margin-bottom: var(--space-32);
+}
+
+.template-preview-dashboard .charts-section {
+  display: grid;
+  gap: var(--space-24);
+}
+
+.template-preview-dashboard .chart-container {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.template-preview-dashboard .chart-container:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-light);
+}
+
+.template-preview-dashboard .chart-header {
+  padding: var(--space-20);
+  border-bottom: 1px solid var(--color-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.template-preview-dashboard .chart-header h3 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.template-preview-dashboard .chart-controls {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.template-preview-dashboard .chart-wrapper {
+  padding: var(--space-20);
+}
+
+/* Industry Templates Cards Grid */
+.cards-grid .template-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.cards-grid .template-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--color-primary);
+}
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-32);
+}
+
+.section-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin: 0 0 var(--space-8) 0;
+  line-height: var(--line-height-tight);
+}
+
+.section-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Unified Navigation Styling */
+.nav-link {
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.nav-link:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.nav-link--secondary:hover {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+.nav-link--active {
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+}
+
+/* Navigation System Status */
+#unified-sidebar .system-status {
+  background: linear-gradient(135deg,
+    var(--color-background) 0%,
+    var(--color-surface) 100%);
+  border: 1px solid var(--color-card-border);
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+#unified-sidebar .system-status:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-sm);
+}
+
+/* User Profile Section */
+#unified-sidebar .user-profile {
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+#unified-sidebar .user-profile:hover {
+  background-color: var(--color-background);
+  border-radius: var(--radius-md);
+}
+
+/* Mobile Navigation */
+.mobile-nav-toggle {
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.mobile-nav-toggle:hover {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  border-radius: var(--radius-md);
+}
+
+/* Unified Navigation Styling */
+.unified-nav-item {
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.unified-nav-item:hover {
+  background-color: var(--color-background);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.unified-nav-item:hover .unified-nav-icon {
+  transform: scale(1.05);
+}
+
+.unified-nav-item--active {
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+  box-shadow: var(--shadow-md);
+}
+
+.unified-nav-item--active:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Unified Navigation Icon Gradients */
+.unified-nav-icon {
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+/* Section Headers */
+.unified-nav-section-header {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-12);
+}
+
+/* User Profile Section */
+.unified-nav-profile {
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.unified-nav-profile:hover {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Mobile Navigation Button */
+.unified-mobile-nav-toggle {
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.unified-mobile-nav-toggle:hover {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
 .type-name {
   font-weight: var(--font-weight-medium);
   color: var(--color-text);

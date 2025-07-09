@@ -286,4 +286,4 @@ window.createFlashMessage = function(type, message, options = {}) {
 }
 
 // Export for use in other modules
-export { FlashController }
+export { FlashController };

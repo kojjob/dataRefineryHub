@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_08_232513) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_09_100053) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -64,7 +64,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_232513) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["acknowledged_at"], name: "index_ai_insights_on_acknowledged_at"
-    t.index ["acknowledged_by"], name: "idx_ai_insights_acknowledged_by"
     t.index ["actionable", "impact_level"], name: "index_ai_insights_on_actionable_and_impact_level"
     t.index ["actionable"], name: "index_ai_insights_on_actionable"
     t.index ["confidence_score"], name: "index_ai_insights_on_confidence_score", where: "(confidence_score > 0.7)"
@@ -78,7 +77,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_232513) do
     t.index ["organization_id"], name: "index_ai_insights_on_organization_id"
     t.index ["presentation_id"], name: "index_ai_insights_on_presentation_id"
     t.index ["read_at"], name: "index_ai_insights_on_read_at"
-    t.index ["read_by"], name: "idx_ai_insights_read_by"
     t.index ["user_id"], name: "index_ai_insights_on_user_id"
   end
 
@@ -102,7 +100,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_232513) do
     t.datetime "updated_at", null: false
     t.index ["interaction_type"], name: "index_ai_presentation_interactions_on_interaction_type"
     t.index ["organization_id", "created_at"], name: "idx_on_organization_id_created_at_9ffea752e8"
-    t.index ["organization_id", "timestamp"], name: "idx_ai_presentation_interactions_org_timestamp"
     t.index ["organization_id"], name: "index_ai_presentation_interactions_on_organization_id"
     t.index ["presentation_id", "created_at"], name: "idx_on_presentation_id_created_at_00cdb8309d"
     t.index ["presentation_id"], name: "index_ai_presentation_interactions_on_presentation_id"
@@ -136,7 +133,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_232513) do
     t.datetime "updated_at", null: false
     t.index ["completed"], name: "index_ai_presentation_views_on_completed"
     t.index ["organization_id", "created_at"], name: "index_ai_presentation_views_on_organization_id_and_created_at"
-    t.index ["organization_id", "started_at"], name: "idx_ai_presentation_views_org_started"
     t.index ["organization_id"], name: "index_ai_presentation_views_on_organization_id"
     t.index ["presentation_id", "created_at"], name: "index_ai_presentation_views_on_presentation_id_and_created_at"
     t.index ["presentation_id"], name: "index_ai_presentation_views_on_presentation_id"
@@ -431,7 +427,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_232513) do
     t.index ["execution_mode", "status"], name: "index_pipeline_executions_on_execution_mode_and_status"
     t.index ["execution_mode"], name: "index_pipeline_executions_on_execution_mode"
     t.index ["manual_intervention_required"], name: "index_pipeline_executions_on_manual_intervention_required"
-    t.index ["organization_id", "started_at"], name: "idx_pipeline_executions_running", where: "((status)::text = 'running'::text)"
     t.index ["organization_id"], name: "index_pipeline_executions_on_organization_id"
     t.index ["pipeline_name", "status"], name: "index_pipeline_executions_on_pipeline_name_and_status"
     t.index ["pipeline_name"], name: "index_pipeline_executions_on_pipeline_name"
@@ -743,6 +738,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_232513) do
     t.string "confirmation_token"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
+    t.string "dashboard_template"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["confirmed_at"], name: "index_users_on_confirmed_at"
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true

@@ -1,190 +1,319 @@
-<% content_for :page_title, "Dashboard" %>
-<% content_for :page_subtitle, "Real-time insights and AI-powered analytics for your business" %>
+<% content_for :page_title, "Data Refinery Dashboard" %>
+<% content_for :page_subtitle, "Real-time data processing insights and AI-powered analytics" %>
 
-<!-- DataFlow Pro Dashboard -->
-<div class="content-section active">
-  <!-- Metrics Grid -->
-  <div class="metrics-grid">
-    <div class="metric-card">
-      <div class="metric-icon">📊</div>
-      <div class="metric-content">
-        <h3>Data Sources</h3>
-        <p class="metric-value"><%= @stats[:total_data_sources] %></p>
-        <p class="metric-change positive">
-          <%= @stats[:connected_sources] %> connected
-        </p>
+<div class="dashboard-content">
+  <!-- Executive Dashboard Header -->
+  <section class="content-section active" id="dashboard-overview">
+
+    <!-- Dashboard Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold mb-2" style="color: var(--color-text);">Data Refinery Dashboard</h1>
+        <p style="color: var(--color-text-secondary);">Real-time data processing insights and AI-powered analytics</p>
       </div>
-    </div>
+      <div class="flex items-center gap-3">
+        <!-- Industry Templates Button -->
+        <%= link_to industry_templates_path, class: "btn btn--outline btn--sm inline-flex items-center gap-2" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
+          </svg>
+          Industry Templates
+        <% end %>
 
-    <div class="metric-card">
-      <div class="metric-icon">📈</div>
-      <div class="metric-content">
-        <h3>Records Processed</h3>
-        <p class="metric-value"><%= number_with_delimiter(@stats[:total_records]) %></p>
-        <p class="metric-change positive">↑ 8.2% vs last month</p>
-      </div>
-    </div>
+        <!-- AI Assistant Button -->
+        <button class="btn btn--outline btn--sm inline-flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+          </svg>
+          AI Assistant
+        </button>
 
-    <div class="metric-card">
-      <div class="metric-icon">✅</div>
-      <div class="metric-content">
-        <h3>Pipeline Health</h3>
-        <p class="metric-value">98%</p>
-        <p class="metric-change positive">Excellent</p>
-      </div>
-    </div>
+        <!-- Theme Toggle -->
+        <button class="btn btn--outline btn--sm" data-controller="theme-toggle" data-action="click->theme-toggle#toggle">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
 
-    <div class="metric-card">
-      <div class="metric-icon">🕒</div>
-      <div class="metric-content">
-        <h3>Last Sync</h3>
-        <p class="metric-value">
-          <%= @stats[:last_sync] ? time_ago_in_words(@stats[:last_sync]) + " ago" : "Never" %>
-        </p>
-        <p class="metric-change <%= @stats[:last_sync] ? 'positive' : '' %>">
-          <%= @stats[:last_sync] ? 'Active' : 'Inactive' %>
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Charts Section -->
-  <div class="charts-section">
-    <div class="chart-container">
-      <div class="chart-header">
-        <h3>Revenue Trends</h3>
-        <div class="chart-controls">
-          <button class="btn btn--outline" style="padding: var(--space-6) var(--space-12); font-size: var(--font-size-sm);">Daily</button>
-          <button class="btn btn--outline" style="padding: var(--space-6) var(--space-12); font-size: var(--font-size-sm);">Weekly</button>
-          <button class="btn btn--primary" style="padding: var(--space-6) var(--space-12); font-size: var(--font-size-sm);">Monthly</button>
+        <!-- User Profile -->
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: var(--color-primary);">
+            <span class="text-sm font-semibold" style="color: var(--color-primary-contrast);">
+              <%= current_user.first_name&.first || 'U' %>
+            </span>
+          </div>
         </div>
       </div>
-      <div class="chart-wrapper">
-        <canvas id="revenueChart"></canvas>
-      </div>
     </div>
 
-    <div class="chart-container">
-      <div class="chart-header">
-        <h3>Customer Segments</h3>
-        <div class="chart-controls">
-          <button class="btn btn--outline" style="padding: var(--space-6) var(--space-12); font-size: var(--font-size-sm);">Export</button>
-        </div>
-      </div>
-      <div class="chart-wrapper">
-        <canvas id="segmentChart"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <!-- AI Insights -->
-  <h2 style="font-size: var(--font-size-xl); font-weight: var(--font-weight-semibold); margin: var(--space-32) 0 var(--space-20) 0;">AI-Powered Insights</h2>
-  
-  <div class="insights-grid">
-    <div class="insight-card critical">
-      <div class="insight-header">
-        <span class="insight-type">🚨 Critical Alert</span>
-        <span class="confidence-score">95% confidence</span>
-      </div>
-      <p>Revenue from your Shopify store has declined by 23% in the past week. This appears to be correlated with a 45% drop in email campaign engagement.</p>
-      <button class="btn btn--primary">Investigate</button>
-    </div>
-
-    <div class="insight-card high">
-      <div class="insight-header">
-        <span class="insight-type">💡 Opportunity</span>
-        <span class="confidence-score">88% confidence</span>
-      </div>
-      <p>Customers who purchase Product A are 3.2x more likely to buy Product B within 30 days. Consider creating a bundle offer.</p>
-      <button class="btn btn--secondary">View Details</button>
-    </div>
-
-    <div class="insight-card medium">
-      <div class="insight-header">
-        <span class="insight-type">📊 Trend Analysis</span>
-        <span class="confidence-score">92% confidence</span>
-      </div>
-      <p>Weekend sales have increased by 15% over the past month. Peak hours are Saturday 2-4 PM EST.</p>
-      <button class="btn btn--secondary">Learn More</button>
-    </div>
-  </div>
-
-  <!-- Data Sources Section -->
-  <h2 style="font-size: var(--font-size-xl); font-weight: var(--font-weight-semibold); margin: var(--space-32) 0 var(--space-20) 0;">Connected Data Sources</h2>
-  
-  <div class="chart-container">
-    <% if @data_sources.any? %>
-      <div style="display: flex; flex-direction: column; gap: var(--space-16);">
-        <% @data_sources.first(5).each do |data_source| %>
-          <div style="display: flex; align-items: center; padding: var(--space-16); border: 1px solid var(--color-border); border-radius: var(--radius-md); transition: all var(--duration-fast) var(--ease-standard);">
-            <div style="width: 40px; height: 40px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-weight: var(--font-weight-semibold); margin-right: var(--space-16); <%= case data_source.source_type
-              when 'shopify' then 'background-color: rgba(33, 128, 141, 0.1); color: var(--color-primary);'
-              when 'stripe' then 'background-color: rgba(147, 51, 234, 0.1); color: rgb(147, 51, 234);'
-              when 'google_analytics' then 'background-color: rgba(251, 146, 60, 0.1); color: rgb(251, 146, 60);'
-              when 'quickbooks' then 'background-color: rgba(59, 130, 246, 0.1); color: rgb(59, 130, 246);'
-              when 'mailchimp' then 'background-color: rgba(250, 204, 21, 0.1); color: rgb(250, 204, 21);'
-              else 'background-color: var(--color-secondary); color: var(--color-text-secondary);'
-              end %>">
-              <%= data_source.source_type.first(2).upcase %>
-            </div>
-            <div style="flex: 1;">
-              <p style="font-weight: var(--font-weight-medium); margin-bottom: var(--space-4);"><%= data_source.name %></p>
-              <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary);"><%= data_source.source_type.humanize %></p>
-            </div>
-            <div style="display: flex; align-items: center; gap: var(--space-12);">
-              <span style="padding: var(--space-4) var(--space-12); border-radius: var(--radius-full); font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); <%= case data_source.status
-                when 'connected' then 'background-color: rgba(33, 128, 141, 0.1); color: var(--color-success);'
-                when 'syncing' then 'background-color: rgba(59, 130, 246, 0.1); color: rgb(59, 130, 246);'
-                when 'error' then 'background-color: rgba(192, 21, 47, 0.1); color: var(--color-error);'
-                else 'background-color: var(--color-secondary); color: var(--color-text-secondary);'
-                end %>">
-                <%= data_source.status.humanize %>
-              </span>
-              <%= link_to data_source_path(data_source), style: "color: var(--color-text-secondary); text-decoration: none;" do %>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                </svg>
-              <% end %>
+    <!-- Template Status Indicator -->
+    <% if current_user.dashboard_template.present? %>
+      <div class="mb-8 p-4 rounded-lg" style="background-color: var(--color-primary-light); border: 1px solid var(--color-primary); border-left: 4px solid var(--color-primary);">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-primary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
+            </svg>
+            <div>
+              <p class="font-medium" style="color: var(--color-primary);">
+                Active Template: <%= IndustryTemplate.find_template(current_user.dashboard_template)&.dig(:name) || current_user.dashboard_template.humanize %>
+              </p>
+              <p class="text-sm" style="color: var(--color-text-secondary);">Your dashboard is configured with industry-specific metrics and insights</p>
             </div>
           </div>
-        <% end %>
-      </div>
-      
-      <div style="text-align: center; margin-top: var(--space-24);">
-        <%= link_to "View All Data Sources →", data_sources_path, class: "btn btn--secondary" %>
-      </div>
-    <% else %>
-      <div style="text-align: center; padding: var(--space-32);">
-        <div style="width: 64px; height: 64px; margin: 0 auto var(--space-16); background-color: var(--color-secondary); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center;">
-          <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="color: var(--color-text-secondary);">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-          </svg>
+          <div class="flex items-center gap-2">
+            <%= link_to industry_templates_path, class: "btn btn--outline btn--sm" do %>
+              Change Template
+            <% end %>
+            <%= form_with url: reset_industry_templates_path, method: :post, local: true, class: "inline" do |form| %>
+              <%= form.submit "Reset", class: "btn btn--outline btn--sm",
+                  confirm: "Reset dashboard to default layout?" %>
+            <% end %>
+          </div>
         </div>
-        <h3 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-medium); margin-bottom: var(--space-8);">No data sources connected</h3>
-        <p style="color: var(--color-text-secondary); margin-bottom: var(--space-24);">Get started by connecting your first data source to unlock powerful insights.</p>
-        <%= link_to "Add Data Source", new_data_source_path, class: "btn btn--primary" %>
       </div>
     <% end %>
-  </div>
+
+    <!-- Data Refinery KPI Metrics Grid -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3 style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-text-secondary, #6b7280) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 0 var(--space-8, 8px) 0 !important; line-height: 1.2 !important;">Data Sources</h3>
+          <p class="metric-value" style="font-size: var(--font-size-3xl, 24px) !important; font-weight: var(--font-weight-bold, 600) !important; color: var(--color-text, #111827) !important; margin: 0 0 var(--space-4, 4px) 0 !important; line-height: 1.1 !important; font-variant-numeric: tabular-nums;"><%= @stats[:total_data_sources] %></p>
+          <p class="metric-change positive" style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-success, #10b981) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 !important; line-height: 1.2 !important;">
+            <%= @stats[:connected_sources] %> connected
+          </p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3 style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-text-secondary, #6b7280) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 0 var(--space-8, 8px) 0 !important; line-height: 1.2 !important;">Records Processed</h3>
+          <p class="metric-value" style="font-size: var(--font-size-3xl, 24px) !important; font-weight: var(--font-weight-bold, 600) !important; color: var(--color-text, #111827) !important; margin: 0 0 var(--space-4, 4px) 0 !important; line-height: 1.1 !important; font-variant-numeric: tabular-nums;"><%= number_with_delimiter(@stats[:total_records]) %></p>
+          <p class="metric-change positive" style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-success, #10b981) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 !important; line-height: 1.2 !important;">↑ 8.2% vs last month</p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3 style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-text-secondary, #6b7280) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 0 var(--space-8, 8px) 0 !important; line-height: 1.2 !important;">Data Quality Score</h3>
+          <p class="metric-value" style="font-size: var(--font-size-3xl, 24px) !important; font-weight: var(--font-weight-bold, 600) !important; color: var(--color-text, #111827) !important; margin: 0 0 var(--space-4, 4px) 0 !important; line-height: 1.1 !important; font-variant-numeric: tabular-nums;"><%= @stats[:data_quality_score] || 0 %>%</p>
+          <p class="metric-change <%= (@stats[:data_quality_score] || 0) >= 90 ? 'positive' : 'neutral' %>" style="font-size: var(--font-size-sm, 12px) !important; color: <%= (@stats[:data_quality_score] || 0) >= 90 ? 'var(--color-success, #10b981)' : 'var(--color-text-secondary, #6b7280)' %> !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 !important; line-height: 1.2 !important;">
+            <%= (@stats[:data_quality_score] || 0) >= 90 ? 'Excellent' : 'Good' %>
+          </p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3 style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-text-secondary, #6b7280) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 0 var(--space-8, 8px) 0 !important; line-height: 1.2 !important;">Active Pipelines</h3>
+          <p class="metric-value" style="font-size: var(--font-size-3xl, 24px) !important; font-weight: var(--font-weight-bold, 600) !important; color: var(--color-text, #111827) !important; margin: 0 0 var(--space-4, 4px) 0 !important; line-height: 1.1 !important; font-variant-numeric: tabular-nums;"><%= @stats[:active_pipelines] || 0 %></p>
+          <p class="metric-change <%= @stats[:active_pipelines] && @stats[:active_pipelines] > 0 ? 'positive' : 'neutral' %>" style="font-size: var(--font-size-sm, 12px) !important; color: <%= @stats[:active_pipelines] && @stats[:active_pipelines] > 0 ? 'var(--color-success, #10b981)' : 'var(--color-text-secondary, #6b7280)' %> !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 !important; line-height: 1.2 !important;">
+            <%= @stats[:active_pipelines] && @stats[:active_pipelines] > 0 ? 'Running' : 'Idle' %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI-Powered Data Insights Panel -->
+    <div class="ai-insights-panel mb-8">
+      <h2 class="flex items-center gap-2 mb-6">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+        AI-Powered Data Insights
+      </h2>
+
+      <div class="insights-grid">
+        <div class="insight-card critical">
+          <div class="insight-header">
+            <span class="insight-type">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-error);">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+              </svg>
+              Critical Data Quality Issue
+            </span>
+            <span class="confidence-score">95% confidence</span>
+          </div>
+          <p>Data completeness has dropped to 78% in your Shopify integration. Missing product descriptions and customer addresses may impact analytics accuracy.</p>
+          <button class="btn btn--primary btn--sm">Investigate</button>
+        </div>
+
+        <div class="insight-card high">
+          <div class="insight-header">
+            <span class="insight-type">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-warning);">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              Pipeline Optimization
+            </span>
+            <span class="confidence-score">88% confidence</span>
+          </div>
+          <p>Your data processing pipeline could be 40% faster by adjusting sync frequency for low-priority data sources during peak hours.</p>
+          <button class="btn btn--outline btn--sm">Optimize</button>
+        </div>
+
+        <div class="insight-card medium">
+          <div class="insight-header">
+            <span class="insight-type">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-primary);">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+              Data Pattern Analysis
+            </span>
+            <span class="confidence-score">92% confidence</span>
+          </div>
+          <p>Customer transaction patterns show 15% increase in weekend activity. Consider adjusting data processing schedules for better resource utilization.</p>
+          <button class="btn btn--outline btn--sm">Learn More</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Processing Charts Section -->
+    <div class="charts-section">
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Data Processing Volume
+          </h3>
+          <div class="chart-controls">
+            <button class="btn btn--outline btn--sm">Daily</button>
+            <button class="btn btn--outline btn--sm">Weekly</button>
+            <button class="btn btn--primary btn--sm">Monthly</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="processingChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Data Quality Trends
+          </h3>
+          <div class="chart-controls">
+            <button class="btn btn--outline btn--sm">Export</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="qualityChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connected Data Sources Section -->
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3 class="flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+          </svg>
+          Connected Data Sources
+        </h3>
+        <div class="flex items-center gap-2">
+          <%= link_to new_data_source_path, class: "btn btn--primary btn--sm" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Source
+          <% end %>
+        </div>
+      </div>
+
+      <% if @data_sources.any? %>
+        <div class="space-y-4">
+          <% @data_sources.first(5).each do |data_source| %>
+            <div class="flex items-center p-4 border border-gray-200 rounded-lg transition-all duration-200 hover:shadow-md" style="border-color: var(--color-card-border); background-color: var(--color-surface);">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center font-semibold mr-4" style="background-color: var(--color-primary-light); color: var(--color-primary);">
+                <%= data_source.source_type.first(2).upcase %>
+              </div>
+              <div class="flex-1">
+                <p class="font-medium mb-1" style="color: var(--color-text);"><%= data_source.name %></p>
+                <p class="text-sm" style="color: var(--color-text-secondary);"><%= data_source.source_type.humanize %></p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded-full text-xs font-medium" style="<%= case data_source.status
+                  when 'connected' then 'background-color: var(--color-success-light); color: var(--color-success);'
+                  when 'syncing' then 'background-color: var(--color-primary-light); color: var(--color-primary);'
+                  when 'error' then 'background-color: var(--color-error-light); color: var(--color-error);'
+                  else 'background-color: var(--color-surface); color: var(--color-text-secondary);'
+                  end %>">
+                  <%= data_source.status.humanize %>
+                </span>
+                <%= link_to data_source_path(data_source), style: "color: var(--color-text-secondary); text-decoration: none;" do %>
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                  </svg>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="text-center mt-6">
+          <%= link_to "View All Data Sources", data_sources_path, class: "btn btn--outline btn--sm" %>
+        </div>
+      <% else %>
+        <div class="text-center py-12">
+          <div class="w-12 h-12 mx-auto mb-4 rounded-lg flex items-center justify-center" style="background-color: var(--color-surface); border: 1px solid var(--color-card-border);">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2" style="color: var(--color-text);">No data sources connected</h3>
+          <p class="mb-6" style="color: var(--color-text-secondary);">Get started by connecting your first data source to unlock powerful insights.</p>
+          <%= link_to "Add Data Source", new_data_source_path, class: "btn btn--primary btn--sm" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  // Initialize charts when page loads
+  // Initialize data refinery charts when page loads
   document.addEventListener('DOMContentLoaded', function() {
-    // Revenue Chart
-    const revenueCtx = document.getElementById('revenueChart');
-    if (revenueCtx) {
-      new Chart(revenueCtx, {
+    // Data Processing Volume Chart
+    const processingCtx = document.getElementById('processingChart');
+    if (processingCtx) {
+      new Chart(processingCtx, {
         type: 'line',
         data: {
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
           datasets: [{
-            label: 'Revenue',
-            data: [30000, 35000, 32000, 38000, 42000, 45000],
+            label: 'Records Processed',
+            data: [125000, 142000, 138000, 156000, 168000, 175000],
             borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary'),
             backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary') + '20',
-            tension: 0.4
+            tension: 0.4,
+            fill: true
           }]
         },
         options: {
@@ -200,7 +329,7 @@
               beginAtZero: true,
               ticks: {
                 callback: function(value) {
-                  return '$' + (value / 1000) + 'k';
+                  return (value / 1000) + 'k';
                 }
               }
             }
@@ -209,18 +338,18 @@
       });
     }
 
-    // Segment Chart
-    const segmentCtx = document.getElementById('segmentChart');
-    if (segmentCtx) {
-      new Chart(segmentCtx, {
+    // Data Quality Trends Chart
+    const qualityCtx = document.getElementById('qualityChart');
+    if (qualityCtx) {
+      new Chart(qualityCtx, {
         type: 'doughnut',
         data: {
-          labels: ['New', 'Returning', 'VIP', 'At Risk'],
+          labels: ['Excellent', 'Good', 'Fair', 'Poor'],
           datasets: [{
-            data: [30, 45, 15, 10],
+            data: [65, 25, 8, 2],
             backgroundColor: [
-              getComputedStyle(document.documentElement).getPropertyValue('--color-primary'),
               getComputedStyle(document.documentElement).getPropertyValue('--color-success'),
+              getComputedStyle(document.documentElement).getPropertyValue('--color-primary'),
               getComputedStyle(document.documentElement).getPropertyValue('--color-warning'),
               getComputedStyle(document.documentElement).getPropertyValue('--color-error')
             ]

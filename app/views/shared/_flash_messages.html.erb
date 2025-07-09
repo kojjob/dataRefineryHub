@@ -2,14 +2,22 @@
 <% if flash.any? %>
   <div class="flash-messages">
     <% flash.each do |type, message_data| %>
-      <% 
+      <%
         # Handle both simple string messages and complex hash messages
         if message_data.is_a?(Hash)
           message = message_data['message'] || message_data[:message]
           title = message_data['title'] || message_data[:title]
+          action_text = message_data['action_text'] || message_data[:action_text]
+          action_url = message_data['action_url'] || message_data[:action_url]
+          persistent = message_data['persistent'] || message_data[:persistent]
+          auto_dismiss = message_data['auto_dismiss'] || message_data[:auto_dismiss]
         else
           message = message_data
           title = nil
+          action_text = nil
+          action_url = nil
+          persistent = false
+          auto_dismiss = nil
         end
         
         # Set type based on flash type
@@ -39,17 +47,47 @@
         end
       %>
       
-      <div class="alert alert--<%= alert_type %>" data-controller="flash" data-action="animationend->flash#remove">
-        <span class="alert__icon"><%= icon %></span>
+      <div class="alert alert--<%= alert_type %>"
+           data-controller="flash"
+           data-action="animationend->flash#remove"
+           <% if persistent %>data-flash-persistent-value="true"<% end %>
+           <% if auto_dismiss %>data-flash-auto-dismiss-value="<%= auto_dismiss %>"<% end %>
+           <% if action_url %>data-flash-action-url-value="<%= action_url %>"<% end %>
+           <% if action_text %>data-flash-action-text-value="<%= action_text %>"<% end %>
+           role="alert"
+           aria-live="polite"
+           tabindex="-1">
+        <span class="alert__icon" aria-hidden="true"><%= icon %></span>
         <div class="alert__content">
           <% if title.present? %>
             <strong><%= title %></strong><br>
           <% end %>
           <%= message %>
         </div>
-        <button type="button" class="alert__close" data-action="click->flash#dismiss" aria-label="Dismiss">
+        <button type="button"
+                class="alert__close"
+                data-action="click->flash#dismiss"
+                data-flash-target="dismissButton"
+                aria-label="Dismiss notification"
+                title="Dismiss (or press Escape)">
           &times;
         </button>
+
+        <% if action_text && action_url %>
+          <a href="<%= action_url %>"
+             class="alert__action"
+             data-flash-target="actionButton">
+            <%= action_text %>
+          </a>
+        <% end %>
+
+        <!-- Progress bar to show remaining time (only for non-persistent messages) -->
+        <% unless persistent %>
+          <div class="alert__progress"
+               data-flash-target="progressBar"
+               aria-hidden="true"
+               title="Auto-dismiss progress"></div>
+        <% end %>
       </div>
     <% end %>
   </div>
@@ -68,6 +106,37 @@
   .alert {
     animation: slideIn 0.3s ease-out;
     margin-bottom: var(--space-12);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .alert:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .alert:hover::after {
+    content: "Hover to pause • Press Esc to dismiss";
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0;
+    animation: fadeInTooltip 0.3s ease forwards;
+    pointer-events: none;
+    z-index: 1001;
+  }
+
+  @keyframes fadeInTooltip {
+    to { opacity: 1; }
   }
   
   .alert.dismissing {
@@ -96,6 +165,62 @@
     }
   }
   
+  /* Progress bar styles */
+  .alert__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    transform-origin: left;
+    transition: transform linear;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  }
+
+  .alert--success .alert__progress {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  .alert--error .alert__progress {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  .alert--warning .alert__progress {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  .alert--info .alert__progress {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Action button styles */
+  .alert__action {
+    display: inline-block;
+    margin-left: var(--space-12);
+    padding: var(--space-6) var(--space-12);
+    background: rgba(255, 255, 255, 0.2);
+    color: inherit;
+    text-decoration: none;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .alert__action:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .alert__action:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+
   @media (max-width: 768px) {
     .flash-messages {
       left: var(--space-16);

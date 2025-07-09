@@ -15,9 +15,21 @@ class Users::SessionsController < Devise::SessionsController
         # Log session configuration (removed manual session setting to avoid conflicts with Devise)
         Rails.logger.info "Session store: #{Rails.application.config.session_store}"
         Rails.logger.info "Session options: #{Rails.application.config.session_options}"
+
+        # Set a welcome flash message with our unified system
+        flash[:success] = {
+          message: "Welcome back, #{resource.first_name}! You've successfully signed in.",
+          title: "Sign In Successful"
+        }
       else
         Rails.logger.warn "Sign in failed for email: #{params.dig(:user, :email)}"
         Rails.logger.warn "Errors: #{resource.errors.full_messages}" if resource.errors.any?
+
+        # Set error flash message
+        flash[:error] = {
+          message: "Invalid email or password. Please check your credentials and try again.",
+          title: "Sign In Failed"
+        }
       end
     end
   end
