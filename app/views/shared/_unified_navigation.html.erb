@@ -1,190 +1,156 @@
-<!-- Unified Professional Sidebar Navigation -->
-<div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col" id="unified-sidebar">
-  <!-- Sidebar component with design system compliance -->
-  <div style="display: flex; flex-direction: column; flex-grow: 1; gap: var(--space-20); overflow-y: auto; background-color: var(--color-surface); border-right: 1px solid var(--color-card-border); padding: var(--space-24);">
+<!-- Unified Professional Sidebar Navigation with DataFlow Pro Styling -->
+<div class="sidebar" id="unified-sidebar" data-controller="dataflow-navigation" data-dataflow-navigation-target="sidebar">
+  <div class="sidebar-content">
     
     <!-- Logo Section -->
-    <div style="display: flex; height: var(--space-64); flex-shrink: 0; align-items: center;">
-      <%= link_to dashboard_path, style: "display: flex; align-items: center; gap: var(--space-12); text-decoration: none; transition: all var(--duration-normal) var(--ease-standard);" do %>
-        <div style="display: flex; height: var(--space-40); width: var(--space-40); align-items: center; justify-content: center; border-radius: var(--radius-xl); background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); box-shadow: var(--shadow-lg);">
-          <svg style="height: var(--space-24); width: var(--space-24); color: var(--color-primary-contrast);" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-          </svg>
-        </div>
-        <span style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-text);">DataReflow</span>
-      <% end %>
+    <div class="sidebar-header">
+      <h2>Data ReFlow</h2>
+      <button class="sidebar-toggle lg:hidden" data-action="click->dataflow-navigation#toggleSidebar">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
     </div>
 
     <!-- Navigation Menu -->
-    <nav style="display: flex; flex: 1; flex-direction: column;">
-      <ul role="list" style="display: flex; flex: 1; flex-direction: column; gap: var(--space-24); list-style: none; padding: 0; margin: 0;">
+    <nav class="nav-container">
+      <ul class="nav-menu">
         
         <!-- Overview Section -->
-        <li>
-          <div style="font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); line-height: var(--line-height-normal); color: var(--color-text-secondary); margin-bottom: var(--space-12); text-transform: uppercase; letter-spacing: 0.05em;">Overview</div>
-          <ul role="list" style="display: flex; flex-direction: column; gap: var(--space-8); list-style: none; padding: 0; margin: 0;">
-            <%= render 'shared/unified_nav_item', 
-                       path: dashboard_path, 
-                       icon_gradient: 'from-blue-500 to-blue-600',
-                       icon_path: 'M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25',
-                       title: 'Dashboard',
-                       subtitle: 'Overview & metrics',
-                       controller: 'dashboard' %>
+        <li class="nav-section">
+          <div class="nav-section-title">Overview</div>
+          <ul class="nav-section-items">
+            <%= link_to dashboard_path, class: "nav-item #{controller_name == 'dashboard' ? 'active' : ''}" do %>
+              <span class="nav-icon">📊</span>
+              <span class="nav-text">Dashboard</span>
+            <% end %>
             
-            <%= render 'shared/unified_nav_item', 
-                       path: analytics_path, 
-                       icon_gradient: 'from-emerald-500 to-green-600',
-                       icon_path: 'M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z',
-                       title: 'Analytics',
-                       subtitle: 'Deep insights',
-                       controller: 'analytics' %>
+            <%= link_to analytics_path, class: "nav-item #{controller_name == 'analytics' ? 'active' : ''}" do %>
+              <span class="nav-icon">📈</span>
+              <span class="nav-text">Analytics Dashboard</span>
+            <% end %>
             
-            <%= render 'shared/unified_nav_item',
-                       path: data_sources_path,
-                       icon_gradient: 'from-purple-500 to-purple-600',
-                       icon_path: 'M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 18.653 16.556 20.5 12 20.5s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125',
-                       title: 'Data Sources',
-                       subtitle: 'Integrations',
-                       controller: 'data_sources' %>
+            <%= link_to data_sources_path, class: "nav-item #{controller_name == 'data_sources' ? 'active' : ''}" do %>
+              <span class="nav-icon">🛠️</span>
+              <span class="nav-text">Integration Marketplace</span>
+            <% end %>
 
-            <%= render 'shared/unified_nav_item',
-                       path: industry_templates_path,
-                       icon_gradient: 'from-indigo-500 to-blue-600',
-                       icon_path: 'M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z',
-                       title: 'Industry Templates',
-                       subtitle: 'Pre-built dashboards',
-                       controller: 'industry_templates' %>
+            <%= link_to industry_templates_path, class: "nav-item #{controller_name == 'industry_templates' ? 'active' : ''}" do %>
+              <span class="nav-icon">📋</span>
+              <span class="nav-text">Industry Templates</span>
+            <% end %>
 
-            <%= render 'shared/unified_nav_item',
-                       path: pipeline_dashboard_index_path,
-                       icon_gradient: 'from-amber-500 to-orange-600',
-                       icon_path: 'M9.348 14.651a3.75 3.75 0 010-5.303m5.304 0a3.75 3.75 0 010 5.303m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.789m13.788 0c3.808 3.808 3.808 9.981 0 13.79M12 12h.008v.007H12V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z',
-                       title: 'Pipelines',
-                       subtitle: 'Data processing',
-                       controller: 'pipeline_dashboard' %>
+            <%= link_to pipeline_dashboard_index_path, class: "nav-item #{controller_name == 'pipeline_dashboard' ? 'active' : ''}" do %>
+              <span class="nav-icon">🔄</span>
+              <span class="nav-text">ETL Pipelines</span>
+            <% end %>
           </ul>
         </li>
 
         <!-- Data Management Section -->
-        <li>
-          <div style="font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); line-height: var(--line-height-normal); color: var(--color-text-secondary); margin-bottom: var(--space-12); text-transform: uppercase; letter-spacing: 0.05em;">Data Management</div>
-          <ul role="list" style="display: flex; flex-direction: column; gap: var(--space-8); list-style: none; padding: 0; margin: 0;">
-            <%= render 'shared/unified_nav_item', 
-                       path: '#orders', 
-                       icon_gradient: 'from-orange-500 to-red-500',
-                       icon_path: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z',
-                       title: 'Orders',
-                       subtitle: 'Order management',
-                       controller: 'orders' %>
+        <li class="nav-section">
+          <div class="nav-section-title">Data Management</div>
+          <ul class="nav-section-items">
+            <%= link_to analytics_revenue_index_path, class: "nav-item #{controller_name == 'revenue' ? 'active' : ''}" do %>
+              <span class="nav-icon">💰</span>
+              <span class="nav-text">Revenue Analytics</span>
+            <% end %>
             
-            <%= render 'shared/unified_nav_item', 
-                       path: '#customers', 
-                       icon_gradient: 'from-cyan-500 to-blue-500',
-                       icon_path: 'M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z',
-                       title: 'Customers',
-                       subtitle: 'Customer insights',
-                       controller: 'customers' %>
+            <%= link_to analytics_customers_path, class: "nav-item #{controller_name == 'customers' ? 'active' : ''}" do %>
+              <span class="nav-icon">👥</span>
+              <span class="nav-text">Customer Analytics</span>
+            <% end %>
 
-            <%= render 'shared/unified_nav_item', 
-                       path: '#products', 
-                       icon_gradient: 'from-pink-500 to-rose-500',
-                       icon_path: 'M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z',
-                       title: 'Products',
-                       subtitle: 'Product catalog',
-                       controller: 'products' %>
+            <%= link_to analytics_products_path, class: "nav-item #{controller_name == 'products' ? 'active' : ''}" do %>
+              <span class="nav-icon">📦</span>
+              <span class="nav-text">Product Analytics</span>
+            <% end %>
           </ul>
         </li>
 
         <!-- AI & Intelligence Section -->
-        <li>
-          <div style="font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); line-height: var(--line-height-normal); color: var(--color-text-secondary); margin-bottom: var(--space-12); text-transform: uppercase; letter-spacing: 0.05em;">AI & Intelligence</div>
-          <ul role="list" style="display: flex; flex-direction: column; gap: var(--space-8); list-style: none; padding: 0; margin: 0;">
-            <%= render 'shared/unified_nav_item', 
-                       path: dashboard_ai_bi_agent_index_path, 
-                       icon_gradient: 'from-violet-500 to-purple-600',
-                       icon_path: 'M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l.15.3m-.15-.3a2.25 2.25 0 00.659-1.591V8.818c0-.597-.237-1.17-.659-1.591L15.409 3.104M19.8 15.3l-.659.659A2.25 2.25 0 0117.818 21H4.427c-1.164 0-2.134-.933-2.134-2.093 0-.583.243-1.14.673-1.543l3.433-3.205c.158-.147.361-.21.567-.173 8.134 1.49 8.334 1.49 16.468 0a.75.75 0 01.567.173l.15.14',
-                       title: 'BI Agent',
-                       subtitle: 'AI Business Assistant',
-                       controller: 'ai/bi_agent',
-                       badge: 'NEW' %>
+        <li class="nav-section">
+          <div class="nav-section-title">AI & Intelligence</div>
+          <ul class="nav-section-items">
+            <%= link_to dashboard_ai_bi_agent_index_path, class: "nav-item #{controller_path == 'ai/bi_agent' ? 'active' : ''}" do %>
+              <span class="nav-icon">🤖</span>
+              <span class="nav-text">BI Agent</span>
+              <span class="nav-badge">NEW</span>
+            <% end %>
             
-            <%= render 'shared/unified_nav_item', 
-                       path: history_ai_chat_index_path, 
-                       icon_gradient: 'from-blue-500 to-cyan-600',
-                       icon_path: 'M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z',
-                       title: 'AI Chat',
-                       subtitle: 'Natural language queries',
-                       controller: 'ai/chat' %>
+            <%= link_to history_ai_chat_index_path, class: "nav-item #{controller_path == 'ai/chat' ? 'active' : ''}" do %>
+              <span class="nav-icon">💬</span>
+              <span class="nav-text">AI Chat</span>
+            <% end %>
             
-            <%= render 'shared/unified_nav_item', 
-                       path: ai_automated_actions_path, 
-                       icon_gradient: 'from-amber-500 to-orange-600',
-                       icon_path: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z',
-                       title: 'Automated Actions',
-                       subtitle: 'Smart automation',
-                       controller: 'ai/automated_actions' %>
+            <%= link_to ai_automated_actions_path, class: "nav-item #{controller_path == 'ai/automated_actions' ? 'active' : ''}" do %>
+              <span class="nav-icon">⚡</span>
+              <span class="nav-text">Automated Actions</span>
+            <% end %>
             
-            <%= render 'shared/unified_nav_item', 
-                       path: weekly_report_ai_bi_agent_index_path, 
-                       icon_gradient: 'from-green-500 to-emerald-600',
-                       icon_path: 'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z',
-                       title: 'Scheduled Reports',
-                       subtitle: 'Automated insights',
-                       controller: 'ai/reports' %>
+            <%= link_to ai_predictions_path, class: "nav-item #{controller_path == 'ai/predictions' ? 'active' : ''}" do %>
+              <span class="nav-icon">🔮</span>
+              <span class="nav-text">Predictive Analytics</span>
+            <% end %>
           </ul>
         </li>
 
+        <!-- Additional Features -->
+        <li class="nav-section">
+          <div class="nav-section-title">Features</div>
+          <ul class="nav-section-items">
+            <%= link_to analytics_risks_path, class: "nav-item #{controller_name == 'risks' ? 'active' : ''}" do %>
+              <span class="nav-icon">⚠️</span>
+              <span class="nav-text">Risk Analysis</span>
+            <% end %>
+            <%= link_to '#', class: "nav-item" do %>
+              <span class="nav-icon">🤝</span>
+              <span class="nav-text">Team Collaboration</span>
+            <% end %>
+            <%= link_to '#', class: "nav-item" do %>
+              <span class="nav-icon">📱</span>
+              <span class="nav-text">Mobile Dashboard</span>
+            <% end %>
+          </ul>
+        </li>
+        
         <!-- Management Section -->
-        <li>
-          <div style="font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); line-height: var(--line-height-normal); color: var(--color-text-secondary); margin-bottom: var(--space-12); text-transform: uppercase; letter-spacing: 0.05em;">Management</div>
-          <ul role="list" style="display: flex; flex-direction: column; gap: var(--space-8); list-style: none; padding: 0; margin: 0;">
-            <%= render 'shared/unified_nav_item', 
-                       path: users_path, 
-                       icon_gradient: 'from-gray-500 to-gray-600',
-                       icon_path: 'M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z',
-                       title: 'Team',
-                       subtitle: 'User management',
-                       controller: 'users' %>
+        <li class="nav-section">
+          <div class="nav-section-title">Management</div>
+          <ul class="nav-section-items">
+            <%= link_to organization_path, class: "nav-item #{controller_name == 'organizations' && action_name == 'show' ? 'active' : ''}" do %>
+              <span class="nav-icon">🏢</span>
+              <span class="nav-text">Partner Portal</span>
+            <% end %>
             
-            <%= render 'shared/unified_nav_item', 
-                       path: organization_path, 
-                       icon_gradient: 'from-slate-500 to-slate-600',
-                       icon_path: 'M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z',
-                       title: 'Settings',
-                       subtitle: 'Organization',
-                       controller: 'organizations' %>
+            <%= link_to billing_organization_path, class: "nav-item #{controller_name == 'organizations' && action_name == 'billing' ? 'active' : ''}" do %>
+              <span class="nav-icon">💸</span>
+              <span class="nav-text">Cost Optimization</span>
+            <% end %>
 
-            <%= render 'shared/unified_nav_item', 
-                       path: '#reports', 
-                       icon_gradient: 'from-violet-500 to-purple-600',
-                       icon_path: 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z',
-                       title: 'Reports',
-                       subtitle: 'Analytics reports',
-                       controller: 'reports' %>
+            <%= link_to audit_logs_organization_path, class: "nav-item #{controller_name == 'organizations' && action_name == 'audit_logs' ? 'active' : ''}" do %>
+              <span class="nav-icon">🔒</span>
+              <span class="nav-text">Security & Compliance</span>
+            <% end %>
           </ul>
         </li>
 
-        <!-- Bottom section with user profile -->
-        <li style="margin-top: auto;">
-          <!-- User Profile -->
-          <div style="display: flex; align-items: center; gap: var(--space-12); padding: var(--space-12); border-radius: var(--radius-lg); background-color: var(--color-background); border: 1px solid var(--color-card-border); transition: all var(--duration-normal) var(--ease-standard);">
+        <!-- User Profile Section -->
+        <li class="nav-user-profile">
+          <div class="user-profile-card">
             <% if current_user&.avatar&.attached? %>
-              <%= image_tag current_user.avatar, style: "height: var(--space-32); width: var(--space-32); border-radius: 50%; background-color: var(--color-surface);" %>
+              <%= image_tag current_user.avatar, class: "user-avatar" %>
             <% else %>
-              <div style="height: var(--space-32); width: var(--space-32); border-radius: 50%; background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-primary-contrast);">
-                  <%= current_user&.first_name&.first || 'U' %>
-                </span>
+              <div class="user-avatar">
+                <span><%= current_user&.first_name&.first || 'U' %></span>
               </div>
             <% end %>
-            <div style="flex: 1; min-width: 0;">
-              <p style="font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-text); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><%= current_user&.full_name || 'User' %></p>
-              <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><%= current_user&.email %></p>
+            <div class="user-info">
+              <p class="user-name"><%= current_user&.full_name || 'User' %></p>
+              <p class="user-email"><%= current_user&.email %></p>
             </div>
-            <%= link_to destroy_user_session_path, method: :delete,
-                style: "color: var(--color-text-secondary); transition: color var(--duration-normal) var(--ease-standard); padding: var(--space-4);",
-                title: "Sign out" do %>
-              <svg style="height: var(--space-16); width: var(--space-16);" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <%= link_to destroy_user_session_path, method: :delete, class: "logout-btn", title: "Sign out" do %>
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
               </svg>
             <% end %>
@@ -193,27 +159,4 @@
       </ul>
     </nav>
   </div>
-</div>
-
-<!-- Mobile navigation -->
-<div style="position: sticky; top: 0; z-index: 40; display: flex; align-items: center; gap: var(--space-24); background-color: var(--color-surface); border-bottom: 1px solid var(--color-card-border); padding: var(--space-16); box-shadow: var(--shadow-sm);" class="lg:hidden">
-  <button type="button" style="margin: calc(-1 * var(--space-8)); padding: var(--space-8); color: var(--color-text-secondary); border-radius: var(--radius-md); transition: all var(--duration-normal) var(--ease-standard);" data-controller="mobile-sidebar" data-action="click->mobile-sidebar#toggle">
-    <span class="sr-only">Open sidebar</span>
-    <svg style="height: var(--space-24); width: var(--space-24);" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-    </svg>
-  </button>
-  <div style="flex: 1; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); line-height: var(--line-height-normal); color: var(--color-text);">Dashboard</div>
-  <a href="#" style="text-decoration: none;">
-    <span class="sr-only">Your profile</span>
-    <% if current_user&.avatar&.attached? %>
-      <%= image_tag current_user.avatar, style: "height: var(--space-32); width: var(--space-32); border-radius: 50%; background-color: var(--color-surface);" %>
-    <% else %>
-      <div style="height: var(--space-32); width: var(--space-32); border-radius: 50%; background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); display: flex; align-items: center; justify-content: center;">
-        <span style="font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-primary-contrast);">
-          <%= current_user&.first_name&.first || 'U' %>
-        </span>
-      </div>
-    <% end %>
-  </a>
 </div>

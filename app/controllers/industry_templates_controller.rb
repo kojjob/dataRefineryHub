@@ -1,4 +1,4 @@
-class IndustryTemplatesController < ApplicationController
+class IndustryTemplatesController < DataflowProController
   before_action :authenticate_user!
   before_action :set_template, only: [:show, :apply]
 

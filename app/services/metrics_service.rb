@@ -147,8 +147,11 @@ class MetricsService
     gauge("users.active.daily", User.where("last_sign_in_at > ?", 24.hours.ago).count)
 
     # Subscription metrics by tier
-    Organization.group(:subscription_tier).count.each do |tier, count|
-      gauge("subscriptions.active", count, tags: { tier: tier })
+    # Skip if subscription_tier column doesn't exist
+    if Organization.column_names.include?('subscription_tier')
+      Organization.group(:subscription_tier).count.each do |tier, count|
+        gauge("subscriptions.active", count, tags: { tier: tier })
+      end
     end
 
     # Data source metrics

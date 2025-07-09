@@ -14,9 +14,11 @@ class DataflowProController < ApplicationController
       { id: 'customers', icon: '👥', text: 'Customer Analytics', path: '/analytics/customers' },
       { id: 'products', icon: '📦', text: 'Product Analytics', path: '/analytics/products' },
       { id: 'risks', icon: '⚠️', text: 'Risk Analysis', path: '/analytics/risks' },
+      { id: 'bi_agent', icon: '🤖', text: 'BI Agent', path: '/ai/bi_agent/dashboard' },
+      { id: 'ai_chat', icon: '💬', text: 'AI Chat', path: '/ai/chat/history' },
       { id: 'predictive', icon: '🔮', text: 'Predictive Analytics', path: '/ai/predictions' },
       { id: 'etl', icon: '🔄', text: 'ETL Pipelines', path: '/pipeline_dashboard' },
-      { id: 'templates', icon: '📋', text: 'Industry Templates', path: '#' },
+      { id: 'templates', icon: '📋', text: 'Industry Templates', path: '/industry_templates' },
       { id: 'marketplace', icon: '🛍️', text: 'Integration Marketplace', path: '/data_sources' },
       { id: 'collaboration', icon: '🤝', text: 'Team Collaboration', path: '#' },
       { id: 'mobile', icon: '📱', text: 'Mobile Dashboard', path: '#' },
@@ -39,10 +41,16 @@ class DataflowProController < ApplicationController
       'products'
     when 'risks'
       'risks'
+    when 'bi_agent'
+      'bi_agent'
+    when 'chat'
+      'ai_chat'
     when 'predictions'
       'predictive'
     when 'pipeline_dashboard', 'pipeline_monitoring'
       'etl'
+    when 'industry_templates'
+      'templates'
     when 'data_sources'
       'marketplace'
     when 'organizations'

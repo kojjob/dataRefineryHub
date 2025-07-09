@@ -14,7 +14,7 @@ module Ai
     scope :successful, -> { where.not(response: nil) }
     
     # Enum for tracking query intents
-    enum intent: {
+    enum :intent, {
       general: 0,
       revenue_analysis: 1,
       customer_analysis: 2,
@@ -22,7 +22,7 @@ module Ai
       anomaly_detection: 4,
       forecast: 5,
       action_request: 6
-    }, _prefix: true
+    }, prefix: true
     
     # Encrypt sensitive context data
     encrypts :context if Rails.application.config.respond_to?(:active_record_encryption)

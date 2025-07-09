@@ -5,6 +5,11 @@ class MetricsCollectorJob < ApplicationJob
   queue_as :low_priority
 
   def perform
+    # Temporarily disabled due to missing database columns/tables
+    # TODO: Re-enable after running solid_queue:install and adding subscription_tier column
+    Rails.logger.info "MetricsCollectorJob is temporarily disabled"
+    return
+    
     # Record business metrics
     MetricsService.record_business_metrics
 

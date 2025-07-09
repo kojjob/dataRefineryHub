@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Ai
-  class BiAgentController < ApplicationController
+  class BiAgentController < ::DataflowProController
     before_action :ensure_organization_member
 
     def dashboard
