@@ -12,6 +12,7 @@
 <%= stylesheet_link_tag "integration_marketplace", "data-turbo-track": "reload" if controller_name == 'data_sources' && action_name == 'index' %>
 <%= stylesheet_link_tag "data_source_wizard", "data-turbo-track": "reload" if controller_name == 'data_sources' && (action_name == 'new' || action_name == 'create') %>
 <%= stylesheet_link_tag "organization_dashboard", "data-turbo-track": "reload" if controller_name == 'organizations' %>
+<%= stylesheet_link_tag "billing_dashboard", "data-turbo-track": "reload" if controller_name == 'organizations' && action_name == 'billing' %>
 
 <!-- Performance optimizations -->
 <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -100,7 +100,7 @@ class OrganizationsController < DataflowProController
     file_uploads_size = @organization.data_sources
                                     .where(source_type: "file_upload")
                                     .joins(:raw_data_records)
-                                    .sum("LENGTH(raw_data_records.data)")
+                                    .sum("LENGTH(raw_data_records.data::text)")
 
     total_bytes = estimated_data_size + file_uploads_size
     (total_bytes / 1024.0 / 1024.0 / 1024.0).round(2) # Convert to GB

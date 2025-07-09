@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_08_232513) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -294,6 +294,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
     t.json "extraction_metadata", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "job_type", default: "manual_sync"
     t.index ["created_at"], name: "idx_extraction_jobs_active", where: "((status)::text = ANY ((ARRAY['running'::character varying, 'queued'::character varying])::text[]))"
     t.index ["data_source_id", "status", "updated_at"], name: "idx_extraction_jobs_source_status_updated"
     t.index ["data_source_id", "status"], name: "index_extraction_jobs_on_data_source_id_and_status"
@@ -490,6 +491,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
     t.json "validation_errors", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "data"
     t.index ["data_source_id", "external_id", "checksum"], name: "index_raw_data_records_on_source_id_checksum", unique: true
     t.index ["data_source_id"], name: "index_raw_data_records_on_data_source_id"
     t.index ["extraction_job_id", "processing_status"], name: "idx_on_extraction_job_id_processing_status_8bea689c27"
