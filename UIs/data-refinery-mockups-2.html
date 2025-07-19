@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Refinery Platform - Additional UI Mockups</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* DataFlow Pro Theme Variables */
+        :root {
+            --df-background: rgba(252, 252, 249, 1);
+            --df-surface: rgba(255, 255, 253, 1);
+            --df-text: rgba(19, 52, 59, 1);
+            --df-text-secondary: rgba(98, 108, 113, 1);
+            --df-primary: rgba(33, 128, 141, 1);
+            --df-primary-hover: rgba(29, 116, 128, 1);
+            --df-primary-active: rgba(26, 104, 115, 1);
+            --df-secondary: rgba(94, 82, 64, 0.12);
+            --df-secondary-hover: rgba(94, 82, 64, 0.2);
+            --df-secondary-active: rgba(94, 82, 64, 0.25);
+            --df-border: rgba(94, 82, 64, 0.2);
+            --df-card-border: rgba(94, 82, 64, 0.12);
+            --df-error: rgba(192, 21, 47, 1);
+            --df-success: rgba(33, 128, 141, 1);
+            --df-warning: rgba(168, 75, 47, 1);
+            --df-info: rgba(98, 108, 113, 1);
+            --df-focus-ring: rgba(33, 128, 141, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--df-background);
+            color: var(--df-text);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--df-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--df-border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--df-text-secondary);
+        }
+
+        /* Page navigation */
+        .page-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: var(--df-surface);
+            border-bottom: 1px solid var(--df-border);
+            padding: 1rem 2rem;
+        }
+
+        .page-section {
+            display: none;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Custom components */
+        .df-card {
+            background: var(--df-surface);
+            border: 1px solid var(--df-card-border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .df-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .df-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .df-btn-primary {
+            background: var(--df-primary);
+            color: white;
+        }
+
+        .df-btn-primary:hover {
+            background: var(--df-primary-hover);
+        }
+
+        .df-btn-secondary {
+            background: var(--df-secondary);
+            color: var(--df-text);
+            border: 1px solid var(--df-border);
+        }
+
+        .df-btn-secondary:hover {
+            background: var(--df-secondary-hover);
+        }
+
+        .df-btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        /* Chat interface */
+        .chat-message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .chat-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+        }
+
+        .chat-message.ai .chat-bubble {
+            background: var(--df-secondary);
+            color: var(--df-text);
+        }
+
+        .chat-message.user .chat-bubble {
+            background: var(--df-primary);
+            color: white;
+        }
+
+        /* Presentation builder */
+        .slide-thumbnail {
+            aspect-ratio: 16/9;
+            background: var(--df-surface);
+            border: 2px solid var(--df-border);
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .slide-thumbnail:hover {
+            border-color: var(--df-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .slide-thumbnail.active {
+            border-color: var(--df-primary);
+            box-shadow: 0 0 0 3px rgba(33, 128, 141, 0.2);
+        }
+
+        /* Code editor */
+        .code-editor {
+            font-family: 'Berkeley Mono', 'Monaco', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .code-line-number {
+            color: #858585;
+            margin-right: 16px;
+            user-select: none;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Wizard steps */
+        .wizard-step {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .wizard-step.completed {
+            background: var(--df-success);
+            color: white;
+        }
+
+        .wizard-step.active {
+            background: var(--df-primary);
+            color: white;
+        }
+
+        .wizard-step.inactive {
+            background: var(--df-secondary);
+            color: var(--df-text-secondary);
+        }
+
+        /* Data preview table */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .data-table th {
+            background: var(--df-secondary);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--df-text-secondary);
+            border-bottom: 1px solid var(--df-border);
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--df-card-border);
+            font-size: 14px;
+        }
+
+        .data-table tr:hover td {
+            background: var(--df-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Navigation -->
+    <div class="page-nav">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <h1 class="text-xl font-bold" style="color: var(--df-primary);">Data Refinery Platform</h1>
+                <nav class="flex gap-4">
+                    <button onclick="showPage('pipeline-monitoring')" class="df-btn df-btn-secondary">Pipeline Monitor</button>
+                    <button onclick="showPage('ai-chat')" class="df-btn df-btn-secondary">AI Chat</button>
+                    <button onclick="showPage('presentations')" class="df-btn df-btn-secondary">Presentations</button>
+                    <button onclick="showPage('data-wizard')" class="df-btn df-btn-secondary">Data Wizard</button>
+                    <button onclick="showPage('settings')" class="df-btn df-btn-secondary">Settings</button>
+                    <button onclick="showPage('api-docs')" class="df-btn df-btn-secondary">API Docs</button>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm" style="color: var(--df-text-secondary);">Additional Mockups</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pipeline Monitoring Page -->
+    <div id="pipeline-monitoring" class="page-section active">
+        <div class="max-w-7xl mx-auto px-8 py-8">
+            <!-- Page Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Pipeline Monitoring</h1>
+                    <p style="color: var(--df-text-secondary);">Real-time pipeline execution monitoring and logs</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="df-btn df-btn-secondary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                        </svg>
+                        Filters
+                    </button>
+                    <button class="df-btn df-btn-primary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- System Health Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="df-card text-center">
+                    <div class="w-20 h-20 mx-auto mb-3 relative">
+                        <svg class="w-20 h-20 transform -rotate-90">
+                            <circle cx="40" cy="40" r="36" stroke-width="8" fill="none" style="stroke: var(--df-secondary);"></circle>
+                            <circle cx="40" cy="40" r="36" stroke-width="8" fill="none" 
+                                    style="stroke: var(--df-success); stroke-dasharray: 226; stroke-dashoffset: 23;"
+                                    stroke-linecap="round"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-2xl font-bold">90%</span>
+                        </div>
+                    </div>
+                    <h3 class="font-semibold mb-1">System Health</h3>
+                    <p class="text-sm" style="color: var(--df-text-secondary);">All systems operational</p>
+                </div>
+
+                <div class="df-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-semibold">CPU Usage</h3>
+                        <span class="text-lg font-bold">42%</span>
+                    </div>
+                    <div class="w-full h-2 rounded-full overflow-hidden mb-2" style="background: var(--df-secondary);">
+                        <div class="h-full rounded-full transition-all duration-300" style="width: 42%; background: var(--df-primary);"></div>
+                    </div>
+                    <p class="text-xs" style="color: var(--df-text-secondary);">4 cores @ 2.4GHz</p>
+                </div>
+
+                <div class="df-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-semibold">Memory</h3>
+                        <span class="text-lg font-bold">6.8GB</span>
+                    </div>
+                    <div class="w-full h-2 rounded-full overflow-hidden mb-2" style="background: var(--df-secondary);">
+                        <div class="h-full rounded-full transition-all duration-300" style="width: 68%; background: var(--df-warning);"></div>
+                    </div>
+                    <p class="text-xs" style="color: var(--df-text-secondary);">68% of 10GB used</p>
+                </div>
+
+                <div class="df-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-semibold">Queue</h3>
+                        <span class="text-lg font-bold">12</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm">
+                        <span style="color: var(--df-success);">3 running</span>
+                        <span style="color: var(--df-text-secondary);">•</span>
+                        <span style="color: var(--df-warning);">9 queued</span>
+                    </div>
+                    <p class="text-xs mt-1" style="color: var(--df-text-secondary);">Avg wait: 2.3 min</p>
+                </div>
+            </div>
+
+            <!-- Active Executions -->
+            <div class="df-card mb-8">
+                <h2 class="text-xl font-semibold mb-4">Active Executions</h2>
+                <div class="space-y-4">
+                    <!-- Running Pipeline -->
+                    <div class="p-4 rounded-lg" style="background: var(--df-secondary);">
+                        <div class="flex items-start justify-between mb-3">
+                            <div>
+                                <h3 class="font-medium flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full animate-pulse" style="background: var(--df-success);"></span>
+                                    Customer Data ETL Pipeline
+                                </h3>
+                                <p class="text-sm mt-1" style="color: var(--df-text-secondary);">
+                                    Execution ID: exec_2024_03_15_14_23_45 • Started by: Automated Schedule
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-medium" style="color: var(--df-success);">Running</span>
+                                <button class="df-btn df-btn-secondary df-btn-sm">View Logs</button>
+                            </div>
+                        </div>
+
+                        <!-- Execution Progress -->
+                        <div class="mb-3">
+                            <div class="flex items-center justify-between text-sm mb-1">
+                                <span>Stage 3 of 5: Transform Data</span>
+                                <span>67%</span>
+                            </div>
+                            <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-border);">
+                                <div class="h-full rounded-full transition-all duration-300" style="width: 67%; background: var(--df-primary);"></div>
+                            </div>
+                        </div>
+
+                        <!-- Execution Metrics -->
+                        <div class="grid grid-cols-4 gap-4 text-sm">
+                            <div>
+                                <span style="color: var(--df-text-secondary);">Duration</span>
+                                <p class="font-medium">12:34</p>
+                            </div>
+                            <div>
+                                <span style="color: var(--df-text-secondary);">Records</span>
+                                <p class="font-medium">145,234 / 217,456</p>
+                            </div>
+                            <div>
+                                <span style="color: var(--df-text-secondary);">Throughput</span>
+                                <p class="font-medium">196 rec/s</p>
+                            </div>
+                            <div>
+                                <span style="color: var(--df-text-secondary);">Est. Completion</span>
+                                <p class="font-medium">6 min</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Queued Pipeline -->
+                    <div class="p-4 rounded-lg" style="background: var(--df-secondary);">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <h3 class="font-medium flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full" style="background: var(--df-warning);"></span>
+                                    Financial Data Sync
+                                </h3>
+                                <p class="text-sm mt-1" style="color: var(--df-text-secondary);">
+                                    QuickBooks → BigQuery • Queued 3 min ago • Priority: High
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-medium" style="color: var(--df-warning);">Queued</span>
+                                <button class="df-btn df-btn-secondary df-btn-sm">Start Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Execution History -->
+            <div class="df-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold">Execution History</h2>
+                    <select class="px-3 py-2 rounded-lg border text-sm" style="background: var(--df-surface); border-color: var(--df-border);">
+                        <option>Last 24 hours</option>
+                        <option>Last 7 days</option>
+                        <option>Last 30 days</option>
+                    </select>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Pipeline</th>
+                                <th>Status</th>
+                                <th>Started</th>
+                                <th>Duration</th>
+                                <th>Records</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-medium">Customer Data ETL</td>
+                                <td>
+                                    <span class="px-2 py-1 rounded text-xs font-medium" style="background: rgba(33, 128, 141, 0.1); color: var(--df-success);">
+                                        Completed
+                                    </span>
+                                </td>
+                                <td class="text-sm">2 hours ago</td>
+                                <td class="text-sm">18m 42s</td>
+                                <td class="text-sm">217,456</td>
+                                <td>
+                                    <button class="text-sm" style="color: var(--df-primary);">View Details</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Marketing Analytics</td>
+                                <td>
+                                    <span class="px-2 py-1 rounded text-xs font-medium" style="background: rgba(192, 21, 47, 0.1); color: var(--df-error);">
+                                        Failed
+                                    </span>
+                                </td>
+                                <td class="text-sm">3 hours ago</td>
+                                <td class="text-sm">5m 12s</td>
+                                <td class="text-sm">45,123</td>
+                                <td>
+                                    <button class="text-sm" style="color: var(--df-primary);">View Error</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Inventory Sync</td>
+                                <td>
+                                    <span class="px-2 py-1 rounded text-xs font-medium" style="background: rgba(33, 128, 141, 0.1); color: var(--df-success);">
+                                        Completed
+                                    </span>
+                                </td>
+                                <td class="text-sm">5 hours ago</td>
+                                <td class="text-sm">8m 15s</td>
+                                <td class="text-sm">89,234</td>
+                                <td>
+                                    <button class="text-sm" style="color: var(--df-primary);">View Details</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chat Interface -->
+    <div id="ai-chat" class="page-section">
+        <div class="max-w-6xl mx-auto px-8 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Chat History Sidebar -->
+                <div class="lg:col-span-1">
+                    <div class="df-card h-full">
+                        <h2 class="font-semibold mb-4">Chat History</h2>
+                        <div class="space-y-2">
+                            <div class="p-3 rounded-lg cursor-pointer transition-all hover:bg-gray-50" style="background: var(--df-primary); color: white;">
+                                <p class="font-medium">Revenue Analysis Q1 2024</p>
+                                <p class="text-xs opacity-90">Today at 2:45 PM</p>
+                            </div>
+                            <div class="p-3 rounded-lg cursor-pointer transition-all" style="background: var(--df-secondary);">
+                                <p class="font-medium">Customer Segmentation</p>
+                                <p class="text-xs" style="color: var(--df-text-secondary);">Yesterday at 10:30 AM</p>
+                            </div>
+                            <div class="p-3 rounded-lg cursor-pointer transition-all" style="background: var(--df-secondary);">
+                                <p class="font-medium">Pipeline Optimization</p>
+                                <p class="text-xs" style="color: var(--df-text-secondary);">Mar 12 at 3:15 PM</p>
+                            </div>
+                            <div class="p-3 rounded-lg cursor-pointer transition-all" style="background: var(--df-secondary);">
+                                <p class="font-medium">Data Quality Issues</p>
+                                <p class="text-xs" style="color: var(--df-text-secondary);">Mar 10 at 9:00 AM</p>
+                            </div>
+                        </div>
+                        <button class="df-btn df-btn-primary w-full mt-4">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            New Chat
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Interface -->
+                <div class="lg:col-span-2">
+                    <div class="df-card h-full flex flex-col">
+                        <div class="flex items-center justify-between pb-4 border-b" style="border-color: var(--df-border);">
+                            <h2 class="font-semibold">AI Assistant - Revenue Analysis Q1 2024</h2>
+                            <div class="flex gap-2">
+                                <button class="df-btn df-btn-secondary df-btn-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                    </svg>
+                                    Export
+                                </button>
+                                <button class="df-btn df-btn-secondary df-btn-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.032 4.026a9.001 9.001 0 01-4.432 3.898A9.002 9.002 0 017.5 21a9 9 0 010-18 9.002 9.002 0 015.784 2.118 9.001 9.001 0 014.432 3.898m0 8.968a9.001 9.001 0 00-4.432-3.898m4.432 3.898a3 3 0 100-8.968"/>
+                                    </svg>
+                                    Share
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Chat Messages -->
+                        <div class="flex-1 overflow-y-auto py-6">
+                            <div class="chat-message user">
+                                <div class="chat-bubble">
+                                    Show me revenue trends for Q1 2024 compared to Q1 2023
+                                </div>
+                            </div>
+
+                            <div class="chat-message ai">
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background: var(--df-primary);">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
+                                </div>
+                                <div class="chat-bubble">
+                                    <p class="mb-3">I've analyzed your revenue data for Q1 2024 compared to Q1 2023. Here are the key findings:</p>
+                                    
+                                    <div class="p-4 rounded-lg mb-3" style="background: var(--df-background);">
+                                        <h4 class="font-semibold mb-2">Revenue Growth Summary</h4>
+                                        <ul class="space-y-2 text-sm">
+                                            <li class="flex justify-between">
+                                                <span>Q1 2024 Total Revenue:</span>
+                                                <span class="font-medium">$1,247,892</span>
+                                            </li>
+                                            <li class="flex justify-between">
+                                                <span>Q1 2023 Total Revenue:</span>
+                                                <span class="font-medium">$982,456</span>
+                                            </li>
+                                            <li class="flex justify-between font-semibold" style="color: var(--df-success);">
+                                                <span>YoY Growth:</span>
+                                                <span>+27.0%</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <canvas id="revenueComparisonChart" height="200"></canvas>
+                                    </div>
+
+                                    <p class="text-sm">The growth was primarily driven by:</p>
+                                    <ul class="list-disc list-inside text-sm mt-2 space-y-1">
+                                        <li>45% increase in Enterprise plan subscriptions</li>
+                                        <li>New product launches in February contributing $178K</li>
+                                        <li>Improved customer retention (89% vs 82% last year)</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="chat-message user">
+                                <div class="chat-bubble">
+                                    Which products contributed most to this growth?
+                                </div>
+                            </div>
+
+                            <div class="chat-message ai animate-slide-in">
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background: var(--df-primary);">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
+                                </div>
+                                <div class="chat-bubble">
+                                    <p class="mb-3">Here are the top products by revenue contribution to Q1 2024 growth:</p>
+                                    
+                                    <div class="space-y-3">
+                                        <div class="p-3 rounded-lg" style="background: var(--df-background);">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h5 class="font-medium">Data Pipeline Pro</h5>
+                                                <span class="text-sm font-medium" style="color: var(--df-success);">+$142,350</span>
+                                            </div>
+                                            <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-secondary);">
+                                                <div class="h-full rounded-full" style="width: 54%; background: var(--df-primary);"></div>
+                                            </div>
+                                            <p class="text-xs mt-1" style="color: var(--df-text-secondary);">54% of total growth</p>
+                                        </div>
+
+                                        <div class="p-3 rounded-lg" style="background: var(--df-background);">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h5 class="font-medium">AI Analytics Suite</h5>
+                                                <span class="text-sm font-medium" style="color: var(--df-success);">+$89,234</span>
+                                            </div>
+                                            <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-secondary);">
+                                                <div class="h-full rounded-full" style="width: 34%; background: var(--df-primary);"></div>
+                                            </div>
+                                            <p class="text-xs mt-1" style="color: var(--df-text-secondary);">34% of total growth</p>
+                                        </div>
+
+                                        <div class="p-3 rounded-lg" style="background: var(--df-background);">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h5 class="font-medium">Enterprise Connectors</h5>
+                                                <span class="text-sm font-medium" style="color: var(--df-success);">+$33,852</span>
+                                            </div>
+                                            <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-secondary);">
+                                                <div class="h-full rounded-full" style="width: 12%; background: var(--df-primary);"></div>
+                                            </div>
+                                            <p class="text-xs mt-1" style="color: var(--df-text-secondary);">12% of total growth</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 flex gap-2">
+                                        <button class="df-btn df-btn-primary df-btn-sm">Generate Report</button>
+                                        <button class="df-btn df-btn-secondary df-btn-sm">Deep Dive Analysis</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Input Area -->
+                        <div class="pt-4 border-t" style="border-color: var(--df-border);">
+                            <div class="flex gap-2">
+                                <input type="text" 
+                                       placeholder="Ask me about your data..."
+                                       class="flex-1 px-4 py-3 rounded-lg border" 
+                                       style="background: var(--df-background); border-color: var(--df-border);">
+                                <button class="df-btn df-btn-primary">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                    </svg>
+                                    Send
+                                </button>
+                            </div>
+                            <div class="flex gap-2 mt-2">
+                                <button class="text-sm px-3 py-1 rounded-full border" style="border-color: var(--df-border); color: var(--df-text-secondary);">
+                                    Show me churn analysis
+                                </button>
+                                <button class="text-sm px-3 py-1 rounded-full border" style="border-color: var(--df-border); color: var(--df-text-secondary);">
+                                    Compare with competitors
+                                </button>
+                                <button class="text-sm px-3 py-1 rounded-full border" style="border-color: var(--df-border); color: var(--df-text-secondary);">
+                                    Forecast next quarter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Presentations Builder -->
+    <div id="presentations" class="page-section">
+        <div class="max-w-7xl mx-auto px-8 py-8">
+            <!-- Page Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">AI Presentation Builder</h1>
+                    <p style="color: var(--df-text-secondary);">Create data-driven presentations with AI assistance</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="df-btn df-btn-secondary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        Import
+                    </button>
+                    <button class="df-btn df-btn-primary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        New Presentation
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Slide Navigator -->
+                <div class="lg:col-span-1">
+                    <div class="df-card">
+                        <h3 class="font-semibold mb-4">Slides</h3>
+                        <div class="space-y-3">
+                            <div class="slide-thumbnail active">
+                                <div class="h-full flex items-center justify-center text-xs font-medium">
+                                    1. Title Slide
+                                </div>
+                            </div>
+                            <div class="slide-thumbnail">
+                                <div class="h-full flex items-center justify-center text-xs font-medium">
+                                    2. Executive Summary
+                                </div>
+                            </div>
+                            <div class="slide-thumbnail">
+                                <div class="h-full flex items-center justify-center text-xs font-medium">
+                                    3. Revenue Overview
+                                </div>
+                            </div>
+                            <div class="slide-thumbnail">
+                                <div class="h-full flex items-center justify-center text-xs font-medium">
+                                    4. Customer Insights
+                                </div>
+                            </div>
+                            <button class="df-btn df-btn-secondary w-full mt-3">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                Add Slide
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide Editor -->
+                <div class="lg:col-span-3">
+                    <div class="df-card">
+                        <!-- Editor Toolbar -->
+                        <div class="flex items-center justify-between pb-4 mb-4 border-b" style="border-color: var(--df-border);">
+                            <div class="flex items-center gap-2">
+                                <button class="p-2 rounded hover:bg-gray-100">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                </button>
+                                <button class="p-2 rounded hover:bg-gray-100">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </button>
+                                <button class="p-2 rounded hover:bg-gray-100">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                </button>
+                                <div class="w-px h-6 mx-2" style="background: var(--df-border);"></div>
+                                <button class="px-3 py-1 rounded text-sm font-medium" style="background: var(--df-primary); color: white;">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
+                                    AI Assist
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button class="df-btn df-btn-secondary df-btn-sm">Preview</button>
+                                <button class="df-btn df-btn-primary df-btn-sm">Present</button>
+                            </div>
+                        </div>
+
+                        <!-- Slide Canvas -->
+                        <div class="aspect-video rounded-lg flex items-center justify-center" style="background: #f8f8f8; border: 1px solid var(--df-border);">
+                            <div class="text-center max-w-2xl mx-auto p-8">
+                                <h1 class="text-4xl font-bold mb-4" style="color: var(--df-text);">Q1 2024 Business Review</h1>
+                                <p class="text-xl mb-8" style="color: var(--df-text-secondary);">Data-Driven Insights & Strategic Recommendations</p>
+                                
+                                <div class="flex items-center justify-center gap-8 mt-12">
+                                    <div class="text-center">
+                                        <p class="text-3xl font-bold" style="color: var(--df-primary);">$1.25M</p>
+                                        <p class="text-sm" style="color: var(--df-text-secondary);">Total Revenue</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-3xl font-bold" style="color: var(--df-success);">+27%</p>
+                                        <p class="text-sm" style="color: var(--df-text-secondary);">YoY Growth</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-3xl font-bold" style="color: var(--df-primary);">89%</p>
+                                        <p class="text-sm" style="color: var(--df-text-secondary);">Customer Retention</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Suggestions Panel -->
+                        <div class="mt-6 p-4 rounded-lg" style="background: var(--df-secondary);">
+                            <h4 class="font-medium mb-3 flex items-center gap-2">
+                                <svg class="w-4 h-4" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                </svg>
+                                AI Suggestions
+                            </h4>
+                            <div class="space-y-2">
+                                <div class="flex items-start gap-3">
+                                    <span class="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style="background: var(--df-primary);"></span>
+                                    <p class="text-sm">Consider adding a comparison chart showing Q1 performance against industry benchmarks</p>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style="background: var(--df-primary);"></span>
+                                    <p class="text-sm">Your audience might appreciate a breakdown of revenue by product category</p>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style="background: var(--df-primary);"></span>
+                                    <p class="text-sm">Add speaker notes about the factors driving the 27% growth</p>
+                                </div>
+                            </div>
+                            <button class="df-btn df-btn-primary df-btn-sm mt-3">Apply All Suggestions</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Source Configuration Wizard -->
+    <div id="data-wizard" class="page-section">
+        <div class="max-w-4xl mx-auto px-8 py-8">
+            <!-- Wizard Header -->
+            <div class="df-card mb-8">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="wizard-step completed">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                        <div class="h-1 w-24 rounded" style="background: var(--df-success);"></div>
+                        <div class="wizard-step active">2</div>
+                        <div class="h-1 w-24 rounded" style="background: var(--df-border);"></div>
+                        <div class="wizard-step inactive">3</div>
+                        <div class="h-1 w-24 rounded" style="background: var(--df-border);"></div>
+                        <div class="wizard-step inactive">4</div>
+                    </div>
+                    <button class="text-sm" style="color: var(--df-text-secondary);">Cancel</button>
+                </div>
+                <div class="mt-4">
+                    <h2 class="text-xl font-semibold">Configure Shopify Connection</h2>
+                    <p class="text-sm mt-1" style="color: var(--df-text-secondary);">Step 2 of 4 - Authentication</p>
+                </div>
+            </div>
+
+            <!-- Configuration Form -->
+            <div class="df-card">
+                <div class="space-y-6">
+                    <!-- Store Information -->
+                    <div>
+                        <h3 class="font-medium mb-4">Store Information</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Store URL</label>
+                                <div class="flex gap-2">
+                                    <input type="text" 
+                                           placeholder="mystore" 
+                                           class="flex-1 px-4 py-2 rounded-lg border"
+                                           style="background: var(--df-background); border-color: var(--df-border);">
+                                    <span class="px-4 py-2 rounded-lg" style="background: var(--df-secondary); color: var(--df-text-secondary);">
+                                        .myshopify.com
+                                    </span>
+                                </div>
+                                <p class="text-xs mt-1" style="color: var(--df-text-secondary);">Enter your Shopify store subdomain</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">API Access Token</label>
+                                <input type="password" 
+                                       placeholder="shppa_xxxxxxxxxxxxxxxxxxxxxxxxxxxx" 
+                                       class="w-full px-4 py-2 rounded-lg border"
+                                       style="background: var(--df-background); border-color: var(--df-border);">
+                                <p class="text-xs mt-1" style="color: var(--df-text-secondary);">
+                                    You can generate this in your Shopify admin under Apps → Private apps
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Selection -->
+                    <div>
+                        <h3 class="font-medium mb-4">Select Data to Sync</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-all hover:bg-gray-50" style="border: 1px solid var(--df-border);">
+                                <input type="checkbox" checked class="mt-1">
+                                <div class="flex-1">
+                                    <p class="font-medium">Orders</p>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">Sales transactions, line items, and fulfillment data</p>
+                                </div>
+                            </label>
+
+                            <label class="flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-all hover:bg-gray-50" style="border: 1px solid var(--df-border);">
+                                <input type="checkbox" checked class="mt-1">
+                                <div class="flex-1">
+                                    <p class="font-medium">Customers</p>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">Customer profiles, addresses, and purchase history</p>
+                                </div>
+                            </label>
+
+                            <label class="flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-all hover:bg-gray-50" style="border: 1px solid var(--df-border);">
+                                <input type="checkbox" checked class="mt-1">
+                                <div class="flex-1">
+                                    <p class="font-medium">Products</p>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">Product catalog, variants, and inventory levels</p>
+                                </div>
+                            </label>
+
+                            <label class="flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-all hover:bg-gray-50" style="border: 1px solid var(--df-border);">
+                                <input type="checkbox" class="mt-1">
+                                <div class="flex-1">
+                                    <p class="font-medium">Analytics</p>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">Traffic sources, conversion rates, and marketing data</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Sync Settings -->
+                    <div>
+                        <h3 class="font-medium mb-4">Sync Settings</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Sync Frequency</label>
+                                <select class="w-full px-4 py-2 rounded-lg border" style="background: var(--df-background); border-color: var(--df-border);">
+                                    <option>Every 15 minutes</option>
+                                    <option>Every hour</option>
+                                    <option selected>Every 2 hours</option>
+                                    <option>Every 6 hours</option>
+                                    <option>Daily</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Historical Data</label>
+                                <select class="w-full px-4 py-2 rounded-lg border" style="background: var(--df-background); border-color: var(--df-border);">
+                                    <option>Last 30 days</option>
+                                    <option>Last 90 days</option>
+                                    <option selected>Last 12 months</option>
+                                    <option>Last 24 months</option>
+                                    <option>All available data</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Test Connection -->
+                    <div class="p-4 rounded-lg" style="background: var(--df-secondary);">
+                        <button class="df-btn df-btn-secondary w-full">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            Test Connection
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex items-center justify-between mt-8 pt-6 border-t" style="border-color: var(--df-border);">
+                    <button class="df-btn df-btn-secondary">
+                        <svg class="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                        Previous
+                    </button>
+                    <button class="df-btn df-btn-primary">
+                        Next: Preview Data
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Organization Settings -->
+    <div id="settings" class="page-section">
+        <div class="max-w-6xl mx-auto px-8 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Settings Navigation -->
+                <div class="lg:col-span-1">
+                    <div class="df-card">
+                        <nav class="space-y-1">
+                            <a href="#" class="block px-4 py-2 rounded-lg font-medium" style="background: var(--df-primary); color: white;">
+                                General
+                            </a>
+                            <a href="#" class="block px-4 py-2 rounded-lg transition-all hover:bg-gray-50" style="color: var(--df-text-secondary);">
+                                Team Members
+                            </a>
+                            <a href="#" class="block px-4 py-2 rounded-lg transition-all hover:bg-gray-50" style="color: var(--df-text-secondary);">
+                                Billing & Usage
+                            </a>
+                            <a href="#" class="block px-4 py-2 rounded-lg transition-all hover:bg-gray-50" style="color: var(--df-text-secondary);">
+                                Security
+                            </a>
+                            <a href="#" class="block px-4 py-2 rounded-lg transition-all hover:bg-gray-50" style="color: var(--df-text-secondary);">
+                                API Keys
+                            </a>
+                            <a href="#" class="block px-4 py-2 rounded-lg transition-all hover:bg-gray-50" style="color: var(--df-text-secondary);">
+                                Integrations
+                            </a>
+                            <a href="#" class="block px-4 py-2 rounded-lg transition-all hover:bg-gray-50" style="color: var(--df-text-secondary);">
+                                Notifications
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="lg:col-span-3">
+                    <!-- Organization Profile -->
+                    <div class="df-card mb-6">
+                        <h2 class="text-xl font-semibold mb-6">Organization Profile</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Organization Name</label>
+                                <input type="text" 
+                                       value="Acme Corporation" 
+                                       class="w-full px-4 py-2 rounded-lg border"
+                                       style="background: var(--df-background); border-color: var(--df-border);">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Industry</label>
+                                <select class="w-full px-4 py-2 rounded-lg border" style="background: var(--df-background); border-color: var(--df-border);">
+                                    <option>E-commerce</option>
+                                    <option>SaaS</option>
+                                    <option>Healthcare</option>
+                                    <option>Finance</option>
+                                    <option>Manufacturing</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Timezone</label>
+                                <select class="w-full px-4 py-2 rounded-lg border" style="background: var(--df-background); border-color: var(--df-border);">
+                                    <option>America/New_York (EST)</option>
+                                    <option>America/Chicago (CST)</option>
+                                    <option>America/Denver (MST)</option>
+                                    <option>America/Los_Angeles (PST)</option>
+                                    <option>Europe/London (GMT)</option>
+                                </select>
+                            </div>
+
+                            <div class="pt-4">
+                                <button class="df-btn df-btn-primary">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Usage Statistics -->
+                    <div class="df-card mb-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-semibold">Usage & Limits</h2>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium" style="background: var(--df-primary); color: white;">
+                                Enterprise Plan
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium">Data Sources</span>
+                                    <span class="text-sm">24 / ∞</span>
+                                </div>
+                                <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-secondary);">
+                                    <div class="h-full rounded-full" style="width: 24%; background: var(--df-primary);"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium">Monthly Records</span>
+                                    <span class="text-sm">1.2M / ∞</span>
+                                </div>
+                                <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-secondary);">
+                                    <div class="h-full rounded-full" style="width: 35%; background: var(--df-primary);"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium">API Requests</span>
+                                    <span class="text-sm">847K / ∞</span>
+                                </div>
+                                <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-secondary);">
+                                    <div class="h-full rounded-full" style="width: 42%; background: var(--df-primary);"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium">Team Members</span>
+                                    <span class="text-sm">12 / ∞</span>
+                                </div>
+                                <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-secondary);">
+                                    <div class="h-full rounded-full" style="width: 12%; background: var(--df-primary);"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 rounded-lg" style="background: var(--df-secondary);">
+                            <p class="text-sm"><strong>Next billing date:</strong> April 1, 2024</p>
+                            <p class="text-sm"><strong>Monthly cost:</strong> $499 (Enterprise Plan)</p>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="df-card">
+                        <h2 class="text-xl font-semibold mb-4">Recent Activity</h2>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3">
+                                <div class="w-2 h-2 rounded-full mt-2" style="background: var(--df-success);"></div>
+                                <div class="flex-1">
+                                    <p class="font-medium">New data source connected</p>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">Stripe integration added by john@acme.com</p>
+                                    <p class="text-xs" style="color: var(--df-text-secondary);">2 hours ago</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <div class="w-2 h-2 rounded-full mt-2" style="background: var(--df-primary);"></div>
+                                <div class="flex-1">
+                                    <p class="font-medium">Pipeline configuration updated</p>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">Customer Data ETL modified by sarah@acme.com</p>
+                                    <p class="text-xs" style="color: var(--df-text-secondary);">5 hours ago</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <div class="w-2 h-2 rounded-full mt-2" style="background: var(--df-warning);"></div>
+                                <div class="flex-1">
+                                    <p class="font-medium">New team member invited</p>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">mike@acme.com invited by admin@acme.com</p>
+                                    <p class="text-xs" style="color: var(--df-text-secondary);">Yesterday</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Documentation -->
+    <div id="api-docs" class="page-section">
+        <div class="max-w-7xl mx-auto px-8 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- API Navigation -->
+                <div class="lg:col-span-1">
+                    <div class="df-card">
+                        <h3 class="font-semibold mb-4">API Reference</h3>
+                        <nav class="space-y-1">
+                            <a href="#" class="block px-3 py-2 rounded text-sm font-medium" style="background: var(--df-primary); color: white;">
+                                Getting Started
+                            </a>
+                            <a href="#" class="block px-3 py-2 rounded text-sm transition-all hover:bg-gray-50" style="color: var(--df-text-secondary);">
+                                Authentication
+                            </a>
+                            <div class="pt-2">
+                                <p class="px-3 py-1 text-xs font-semibold uppercase" style="color: var(--df-text-secondary);">Endpoints</p>
+                                <a href="#" class="block px-3 py-2 rounded text-sm transition-all hover:bg-gray-50">Data Sources</a>
+                                <a href="#" class="block px-3 py-2 rounded text-sm transition-all hover:bg-gray-50">Pipelines</a>
+                                <a href="#" class="block px-3 py-2 rounded text-sm transition-all hover:bg-gray-50">Analytics</a>
+                                <a href="#" class="block px-3 py-2 rounded text-sm transition-all hover:bg-gray-50">Webhooks</a>
+                            </div>
+                            <div class="pt-2">
+                                <p class="px-3 py-1 text-xs font-semibold uppercase" style="color: var(--df-text-secondary);">Resources</p>
+                                <a href="#" class="block px-3 py-2 rounded text-sm transition-all hover:bg-gray-50">SDKs</a>
+                                <a href="#" class="block px-3 py-2 rounded text-sm transition-all hover:bg-gray-50">Examples</a>
+                                <a href="#" class="block px-3 py-2 rounded text-sm transition-all hover:bg-gray-50">Postman</a>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- API Content -->
+                <div class="lg:col-span-3">
+                    <div class="df-card mb-6">
+                        <h1 class="text-2xl font-bold mb-2">Getting Started with Data Refinery API</h1>
+                        <p style="color: var(--df-text-secondary);">Build powerful data integrations with our REST API</p>
+
+                        <div class="mt-6 p-4 rounded-lg" style="background: rgba(33, 128, 141, 0.05); border: 1px solid var(--df-primary);">
+                            <p class="font-medium mb-2">Base URL</p>
+                            <code class="text-sm">https://api.datarefinery.io/v1</code>
+                        </div>
+                    </div>
+
+                    <!-- Quick Start -->
+                    <div class="df-card mb-6">
+                        <h2 class="text-xl font-semibold mb-4">Quick Start</h2>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="font-medium mb-2">1. Get your API Key</h3>
+                                <p class="text-sm mb-3" style="color: var(--df-text-secondary);">
+                                    Navigate to Settings → API Keys in your dashboard to generate a new API key.
+                                </p>
+                            </div>
+
+                            <div>
+                                <h3 class="font-medium mb-2">2. Make your first request</h3>
+                                <div class="code-editor">
+                                    <div>
+                                        <span class="code-line-number">1</span>curl -X GET https://api.datarefinery.io/v1/data-sources \
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">2</span>  -H "Authorization: Bearer YOUR_API_KEY" \
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">3</span>  -H "Content-Type: application/json"
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="font-medium mb-2">3. Response</h3>
+                                <div class="code-editor">
+                                    <div>
+                                        <span class="code-line-number">1</span>{
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">2</span>  "data": [
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">3</span>    {
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">4</span>      "id": "ds_123456",
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">5</span>      "name": "My Shopify Store",
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">6</span>      "type": "shopify",
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">7</span>      "status": "connected",
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">8</span>      "last_sync": "2024-03-15T14:23:45Z"
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">9</span>    }
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">10</span>  ],
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">11</span>  "meta": {
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">12</span>    "total": 24,
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">13</span>    "page": 1,
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">14</span>    "per_page": 20
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">15</span>  }
+                                    </div>
+                                    <div>
+                                        <span class="code-line-number">16</span>}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rate Limits -->
+                    <div class="df-card">
+                        <h2 class="text-xl font-semibold mb-4">Rate Limits</h2>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Plan</th>
+                                        <th>Requests/Hour</th>
+                                        <th>Requests/Day</th>
+                                        <th>Burst Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Free Trial</td>
+                                        <td>100</td>
+                                        <td>1,000</td>
+                                        <td>10/sec</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Starter</td>
+                                        <td>1,000</td>
+                                        <td>10,000</td>
+                                        <td>50/sec</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Growth</td>
+                                        <td>5,000</td>
+                                        <td>50,000</td>
+                                        <td>100/sec</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Enterprise</td>
+                                        <td>Unlimited</td>
+                                        <td>Unlimited</td>
+                                        <td>Custom</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-4 p-3 rounded-lg" style="background: var(--df-secondary);">
+                            <p class="text-sm"><strong>Note:</strong> Rate limit headers are included in all API responses:</p>
+                            <ul class="list-disc list-inside text-sm mt-2 space-y-1">
+                                <li><code>X-RateLimit-Limit</code> - Requests allowed per hour</li>
+                                <li><code>X-RateLimit-Remaining</code> - Requests remaining</li>
+                                <li><code>X-RateLimit-Reset</code> - UTC timestamp when limit resets</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Page navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Revenue Comparison Chart for AI Chat
+            const revenueComparisonCtx = document.getElementById('revenueComparisonChart');
+            if (revenueComparisonCtx) {
+                new Chart(revenueComparisonCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['January', 'February', 'March'],
+                        datasets: [{
+                            label: 'Q1 2023',
+                            data: [312000, 325000, 345000],
+                            backgroundColor: 'rgba(33, 128, 141, 0.5)'
+                        }, {
+                            label: 'Q1 2024',
+                            data: [398000, 412000, 437000],
+                            backgroundColor: 'rgba(33, 128, 141, 1)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + (value / 1000) + 'k';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

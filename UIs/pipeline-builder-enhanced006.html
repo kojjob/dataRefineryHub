@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Refinery Platform - Pipeline Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <style>
+        :root {
+            --bg-cream: #EAE4D5;
+            --teal-primary: #14B8A6;
+            --teal-dark: #0D9488;
+            --teal-light: #5EEAD4;
+            --teal-50: #F0FDFA;
+            --gray-800: #1F2937;
+            --gray-600: #4B5563;
+            --gray-400: #9CA3AF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --info: #3B82F6;
+        }
+        
+        body {
+            background-color: var(--bg-cream);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+        }
+        
+        .teal-gradient {
+            background: linear-gradient(135deg, var(--teal-primary) 0%, var(--teal-dark) 100%);
+        }
+        
+        /* Pipeline Canvas */
+        .pipeline-canvas {
+            background-image: 
+                radial-gradient(circle, #d1d5db 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            min-height: 600px;
+            position: relative;
+            overflow: auto;
+        }
+        
+        /* Pipeline Nodes */
+        .pipeline-node {
+            background: white;
+            border: 2px solid var(--teal-primary);
+            border-radius: 12px;
+            padding: 16px;
+            position: absolute;
+            cursor: move;
+            min-width: 220px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.2s;
+        }
+        
+        .pipeline-node:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        .pipeline-node.selected {
+            border-color: var(--teal-dark);
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+        }
+        
+        .pipeline-node.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        
+        /* Node Types */
+        .node-source { border-left: 4px solid #3B82F6; }
+        .node-transform { border-left: 4px solid #8B5CF6; }
+        .node-filter { border-left: 4px solid #F59E0B; }
+        .node-join { border-left: 4px solid #10B981; }
+        .node-aggregate { border-left: 4px solid #EF4444; }
+        .node-destination { border-left: 4px solid #14B8A6; }
+        
+        /* Connection Lines */
+        .connection-line {
+            stroke: var(--teal-primary);
+            stroke-width: 2;
+            fill: none;
+            pointer-events: none;
+        }
+        
+        .connection-line.animated {
+            stroke-dasharray: 5, 5;
+            animation: dash 0.5s linear infinite;
+        }
+        
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -10;
+            }
+        }
+        
+        /* Node Ports */
+        .node-port {
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--teal-primary);
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            cursor: crosshair;
+            transition: all 0.2s;
+        }
+        
+        .node-port:hover {
+            transform: scale(1.3);
+            background: var(--teal-primary);
+        }
+        
+        .node-port.input {
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .node-port.output {
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        /* Toolbox */
+        .toolbox-item {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: grab;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .toolbox-item:hover {
+            border-color: var(--teal-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toolbox-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        
+        /* Properties Panel */
+        .properties-panel {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 320px;
+            background: white;
+            border-left: 1px solid #e5e7eb;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 10;
+        }
+        
+        .properties-panel.open {
+            transform: translateX(0);
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Code Editor */
+        .code-editor {
+            font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 8px;
+            overflow: auto;
+        }
+        
+        .code-editor .keyword { color: #f472b6; }
+        .code-editor .string { color: #a5f3fc; }
+        .code-editor .number { color: #fde047; }
+        .code-editor .comment { color: #64748b; }
+        
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.7;
+                transform: scale(0.95);
+            }
+        }
+        
+        .animate-slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-badge.draft { background: #f3f4f6; color: #6b7280; }
+        .status-badge.active { background: #d1fae5; color: #065f46; }
+        .status-badge.running { background: #dbeafe; color: #1e40af; }
+        .status-badge.error { background: #fee2e2; color: #991b1b; }
+        
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--gray-400);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: var(--teal-primary);
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--teal-primary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--teal-dark);
+        }
+        
+        /* Mini Map */
+        .minimap {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .minimap-viewport {
+            position: absolute;
+            background: rgba(20, 184, 166, 0.2);
+            border: 2px solid var(--teal-primary);
+            cursor: move;
+        }
+    </style>
+</head>
+<body class="min-h-screen overflow-hidden">
+    <!-- Navigation Header -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glassmorphism">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 teal-gradient rounded-lg flex items-center justify-center shadow-lg">
+                            <i data-feather="database" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h1 class="text-2xl font-bold text-gray-800">DataRefinery</h1>
+                    </div>
+                    <div class="hidden lg:flex items-center space-x-6">
+                        <a href="#" class="text-gray-600 hover:text-teal-600 font-medium transition-colors">Dashboard</a>
+                        <a href="#" class="text-gray-600 hover:text-teal-600 font-medium transition-colors">Data Sources</a>
+                        <a href="#" class="text-teal-600 font-medium">Pipelines</a>
+                        <a href="#" class="text-gray-600 hover:text-teal-600 font-medium transition-colors">Monitoring</a>
+                        <a href="#" class="text-gray-600 hover:text-teal-600 font-medium transition-colors">Data Quality</a>
+                        <a href="#" class="text-gray-600 hover:text-teal-600 font-medium transition-colors">Analytics</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                        <i data-feather="bell" class="w-5 h-5 text-gray-600"></i>
+                    </button>
+                    <div class="flex items-center space-x-3 pl-4 border-l border-gray-200">
+                        <div class="hidden md:text-right">
+                            <p class="text-sm font-medium text-gray-800">John Doe</p>
+                            <p class="text-xs text-gray-500">Premium Plan</p>
+                        </div>
+                        <div class="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+                            <span class="text-teal-600 font-semibold">JD</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-16 h-screen flex flex-col">
+        <!-- Pipeline Header -->
+        <div class="glassmorphism border-b border-gray-200">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <button class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                            <i data-feather="chevron-left" class="w-5 h-5 text-gray-600"></i>
+                        </button>
+                        <div>
+                            <div class="flex items-center space-x-3">
+                                <input type="text" 
+                                       value="Customer 360 Pipeline" 
+                                       class="text-xl font-bold text-gray-800 bg-transparent border-none outline-none focus:ring-2 focus:ring-teal-500 rounded px-2 py-1">
+                                <span class="status-badge active">Active</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">Last modified 2 hours ago by John Doe</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center space-x-2">
+                            <i data-feather="clock" class="w-4 h-4"></i>
+                            <span>Version History</span>
+                        </button>
+                        <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center space-x-2">
+                            <i data-feather="play" class="w-4 h-4"></i>
+                            <span>Test Run</span>
+                        </button>
+                        <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center space-x-2">
+                            <i data-feather="save" class="w-4 h-4"></i>
+                            <span>Save</span>
+                        </button>
+                        <button class="px-4 py-2 teal-gradient text-white rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center space-x-2">
+                            <i data-feather="upload-cloud" class="w-4 h-4"></i>
+                            <span>Deploy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pipeline Builder Container -->
+        <div class="flex-1 flex overflow-hidden">
+            <!-- Left Sidebar - Toolbox -->
+            <div class="w-64 glassmorphism border-r border-gray-200 p-4 overflow-y-auto">
+                <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Components</h3>
+                
+                <!-- Search -->
+                <div class="relative mb-4">
+                    <input type="text" 
+                           placeholder="Search components..." 
+                           class="w-full px-3 py-2 pl-9 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <i data-feather="search" class="w-4 h-4 text-gray-400 absolute left-3 top-2.5"></i>
+                </div>
+                
+                <!-- Component Categories -->
+                <div class="space-y-4">
+                    <!-- Sources -->
+                    <div>
+                        <h4 class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Sources</h4>
+                        <div class="space-y-2">
+                            <div class="toolbox-item" draggable="true" data-type="source" data-subtype="database">
+                                <i data-feather="database" class="w-5 h-5 text-blue-600 mx-auto mb-1"></i>
+                                <p class="text-xs font-medium text-gray-700">Database</p>
+                            </div>
+                            <div class="toolbox-item" draggable="true" data-type="source" data-subtype="api">
+                                <i data-feather="globe" class="w-5 h-5 text-blue-600 mx-auto mb-1"></i>
+                                <p class="text-xs font-medium text-gray-700">API</p>
+                            </div>
+                            <div class="toolbox-item" draggable="true" data-type="source" data-subtype="file">
+                                <i data-feather="file" class="w-5 h-5 text-blue-600 mx-auto mb-1"></i>
+                                <p class="text-xs font-medium text-gray-700">File Upload</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Transformations -->
+                    <div>
+                        <h4 class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Transformations</h4>
+                        <div class="space-y-2">
+                            <div class="toolbox-item" draggable="true" data-type="transform" data-subtype="map">
+                                <i data-feather="shuffle" class="w-5 h-5 text-purple-600 mx-auto mb-1"></i>
+                                <p class="text-xs font-medium text-gray-700">Map Fields</p>
+                            </div>
+                            <div class="toolbox-item" draggable="true" data-type="filter" data-subtype="filter">
+                                <i data-feather="filter" class="w-5 h-5 text-orange-600 mx-auto mb-1"></i>
+                                <p class="text-xs font-medium text-gray-700">Filter</p>
+                            </div>
+                            <div class="toolbox-item" draggable="true" data-type="join" data-subtype="join">
+                                <i data-feather="git-merge" class="w-5 h-5 text-green-600 mx-auto mb-1"></i>
+                                <p class="text-xs font-medium text-gray-700">Join</p>
+                            </div>
+                            <div class="toolbox-item" draggable="true" data-type="aggregate" data-subtype="aggregate">
+                                <i data-feather="layers" class="w-5 h-5 text-red-600 mx-auto mb-1"></i>
+                                <p class="text-xs font-medium text-gray-700">Aggregate</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Destinations -->
+                    <div>
+                        <h4 class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Destinations</h4>
+                        <div class="space-y-2">
+                            <div class="toolbox-item" draggable="true" data-type="destination" data-subtype="warehouse">
+                                <i data-feather="hard-drive" class="w-5 h-5 text-teal-600 mx-auto mb-1"></i>
+                                <p class="text-xs font-medium text-gray-700">Data Warehouse</p>
+                            </div>
+                            <div class="toolbox-item" draggable="true" data-type="destination" data-subtype="database">
+                                <i data-feather="server" class="w-5 h-5 text-teal-600 mx-auto mb-1"></i>
+                                <p class="text-xs font-medium text-gray-700">Database</p>
+                            </div>
+                            <div class="toolbox-item" draggable="true" data-type="destination" data-subtype="api">
+                                <i data-feather="send" class="w-5 h-5 text-teal-600 mx-auto mb-1"></i>
+                                <p class="text-xs font-medium text-gray-700">API Endpoint</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline Canvas -->
+            <div class="flex-1 relative">
+                <div class="pipeline-canvas" id="pipelineCanvas">
+                    <!-- SVG for connections -->
+                    <svg class="absolute inset-0 w-full h-full pointer-events-none" id="connectionsSvg">
+                        <!-- Connection lines will be drawn here -->
+                    </svg>
+                    
+                    <!-- Example Pipeline Nodes -->
+                    <div class="pipeline-node node-source" style="left: 50px; top: 100px;" data-node-id="1">
+                        <div class="node-port input" style="display: none;"></div>
+                        <div class="node-port output"></div>
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i data-feather="database" class="w-5 h-5 text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 text-sm">Shopify Orders</h4>
+                                <p class="text-xs text-gray-500">Database Source</p>
+                            </div>
+                        </div>
+                        <div class="text-xs space-y-1">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Table:</span>
+                                <span class="text-gray-800 font-medium">orders</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Records:</span>
+                                <span class="text-gray-800 font-medium">45,230</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pipeline-node node-filter" style="left: 350px; top: 100px;" data-node-id="2">
+                        <div class="node-port input"></div>
+                        <div class="node-port output"></div>
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i data-feather="filter" class="w-5 h-5 text-orange-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 text-sm">Remove Test Orders</h4>
+                                <p class="text-xs text-gray-500">Filter</p>
+                            </div>
+                        </div>
+                        <div class="text-xs space-y-1">
+                            <div class="bg-gray-50 rounded p-2 font-mono">
+                                status != 'test'
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pipeline-node node-join" style="left: 650px; top: 100px;" data-node-id="3">
+                        <div class="node-port input"></div>
+                        <div class="node-port output"></div>
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i data-feather="git-merge" class="w-5 h-5 text-green-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 text-sm">Join Customer Data</h4>
+                                <p class="text-xs text-gray-500">Left Join</p>
+                            </div>
+                        </div>
+                        <div class="text-xs space-y-1">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Join On:</span>
+                                <span class="text-gray-800 font-medium">customer_id</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Table:</span>
+                                <span class="text-gray-800 font-medium">customers</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pipeline-node node-destination" style="left: 950px; top: 100px;" data-node-id="4">
+                        <div class="node-port input"></div>
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+                                <i data-feather="hard-drive" class="w-5 h-5 text-teal-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 text-sm">BigQuery</h4>
+                                <p class="text-xs text-gray-500">Data Warehouse</p>
+                            </div>
+                        </div>
+                        <div class="text-xs space-y-1">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Dataset:</span>
+                                <span class="text-gray-800 font-medium">analytics</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Table:</span>
+                                <span class="text-gray-800 font-medium">orders_enriched</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Connection lines -->
+                    <svg class="absolute inset-0 w-full h-full pointer-events-none">
+                        <path d="M 270 120 L 350 120" class="connection-line animated" />
+                        <path d="M 570 120 L 650 120" class="connection-line animated" />
+                        <path d="M 870 120 L 950 120" class="connection-line animated" />
+                    </svg>
+                    
+                    <!-- Mini Map -->
+                    <div class="minimap">
+                        <div class="minimap-viewport" style="width: 50%; height: 30%; left: 10%; top: 20%;"></div>
+                    </div>
+                </div>
+                
+                <!-- Properties Panel -->
+                <div class="properties-panel" id="propertiesPanel">
+                    <div class="p-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-gray-800">Node Properties</h3>
+                            <button onclick="closePropertiesPanel()" class="text-gray-400 hover:text-gray-600">
+                                <i data-feather="x" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 space-y-4">
+                        <!-- Node Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Node Name</label>
+                            <input type="text" 
+                                   value="Shopify Orders" 
+                                   class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        </div>
+                        
+                        <!-- Source Configuration -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Data Source</label>
+                            <select class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                <option>Shopify Production</option>
+                                <option>Shopify Staging</option>
+                                <option>PostgreSQL Main</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Table Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Table</label>
+                            <select class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                <option>orders</option>
+                                <option>customers</option>
+                                <option>products</option>
+                                <option>inventory</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Advanced Settings -->
+                        <div class="border-t border-gray-200 pt-4">
+                            <button class="w-full text-left flex items-center justify-between text-sm font-medium text-gray-700">
+                                <span>Advanced Settings</span>
+                                <i data-feather="chevron-down" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- SQL Preview -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Generated SQL</label>
+                            <div class="code-editor">
+                                <span class="keyword">SELECT</span> *<br>
+                                <span class="keyword">FROM</span> shopify.orders<br>
+                                <span class="keyword">WHERE</span> created_at >= <span class="string">'2024-01-01'</span><br>
+                                <span class="keyword">LIMIT</span> <span class="number">1000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar - Pipeline Info -->
+            <div class="w-64 glassmorphism border-l border-gray-200 p-4 overflow-y-auto">
+                <!-- Pipeline Details -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Pipeline Details</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-xs text-gray-600">Type</p>
+                            <p class="text-sm font-medium text-gray-800">ETL Pipeline</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-600">Schedule</p>
+                            <p class="text-sm font-medium text-gray-800">Every 6 hours</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-600">Last Run</p>
+                            <p class="text-sm font-medium text-gray-800">2 hours ago</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-600">Avg Duration</p>
+                            <p class="text-sm font-medium text-gray-800">12 minutes</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pipeline Validation -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Validation</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-start space-x-2">
+                            <i data-feather="check-circle" class="w-4 h-4 text-green-500 mt-0.5"></i>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-700">All nodes connected</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <i data-feather="check-circle" class="w-4 h-4 text-green-500 mt-0.5"></i>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-700">Schema validation passed</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <i data-feather="alert-circle" class="w-4 h-4 text-yellow-500 mt-0.5"></i>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-700">Consider adding error handling</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pipeline Templates -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Templates</h3>
+                    <div class="space-y-2">
+                        <button class="w-full text-left p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <p class="text-sm font-medium text-gray-800">E-commerce Analytics</p>
+                            <p class="text-xs text-gray-500">Shopify → BigQuery</p>
+                        </button>
+                        <button class="w-full text-left p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <p class="text-sm font-medium text-gray-800">Customer 360</p>
+                            <p class="text-xs text-gray-500">Multi-source aggregation</p>
+                        </button>
+                        <button class="w-full text-left p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <p class="text-sm font-medium text-gray-800">Real-time Sync</p>
+                            <p class="text-xs text-gray-500">CDC → Streaming</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Toolbar -->
+        <div class="glassmorphism border-t border-gray-200">
+            <div class="container mx-auto px-6 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <button class="p-2 rounded-lg hover:bg-gray-100 transition-colors" title="Zoom In">
+                            <i data-feather="zoom-in" class="w-4 h-4 text-gray-600"></i>
+                        </button>
+                        <button class="p-2 rounded-lg hover:bg-gray-100 transition-colors" title="Zoom Out">
+                            <i data-feather="zoom-out" class="w-4 h-4 text-gray-600"></i>
+                        </button>
+                        <button class="p-2 rounded-lg hover:bg-gray-100 transition-colors" title="Fit to Screen">
+                            <i data-feather="maximize" class="w-4 h-4 text-gray-600"></i>
+                        </button>
+                        <div class="w-px h-6 bg-gray-300"></div>
+                        <button class="p-2 rounded-lg hover:bg-gray-100 transition-colors" title="Undo">
+                            <i data-feather="rotate-ccw" class="w-4 h-4 text-gray-600"></i>
+                        </button>
+                        <button class="p-2 rounded-lg hover:bg-gray-100 transition-colors" title="Redo">
+                            <i data-feather="rotate-cw" class="w-4 h-4 text-gray-600"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4 text-sm text-gray-600">
+                        <span>4 nodes</span>
+                        <span>•</span>
+                        <span>3 connections</span>
+                        <span>•</span>
+                        <span>Est. 45,000 records/run</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Feather Icons
+        feather.replace();
+
+        // Pipeline node management
+        let selectedNode = null;
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+
+        // Make nodes draggable
+        const pipelineNodes = document.querySelectorAll('.pipeline-node');
+        pipelineNodes.forEach(node => {
+            node.addEventListener('mousedown', startDrag);
+            node.addEventListener('click', selectNode);
+        });
+
+        function startDrag(e) {
+            if (e.target.classList.contains('node-port')) return;
+            
+            isDragging = true;
+            const node = e.currentTarget;
+            node.classList.add('dragging');
+            
+            const rect = node.getBoundingClientRect();
+            const canvas = document.getElementById('pipelineCanvas').getBoundingClientRect();
+            
+            dragOffset.x = e.clientX - rect.left;
+            dragOffset.y = e.clientY - rect.top;
+            
+            function onMouseMove(e) {
+                if (!isDragging) return;
+                
+                const x = e.clientX - canvas.left - dragOffset.x;
+                const y = e.clientY - canvas.top - dragOffset.y;
+                
+                node.style.left = Math.max(0, x) + 'px';
+                node.style.top = Math.max(0, y) + 'px';
+                
+                // Update connections
+                updateConnections();
+            }
+            
+            function onMouseUp() {
+                isDragging = false;
+                node.classList.remove('dragging');
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+            }
+            
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        }
+
+        function selectNode(e) {
+            if (e.target.classList.contains('node-port')) return;
+            
+            // Remove previous selection
+            document.querySelectorAll('.pipeline-node').forEach(n => {
+                n.classList.remove('selected');
+            });
+            
+            // Select current node
+            e.currentTarget.classList.add('selected');
+            selectedNode = e.currentTarget;
+            
+            // Open properties panel
+            openPropertiesPanel();
+        }
+
+        function openPropertiesPanel() {
+            document.getElementById('propertiesPanel').classList.add('open');
+        }
+
+        function closePropertiesPanel() {
+            document.getElementById('propertiesPanel').classList.remove('open');
+            if (selectedNode) {
+                selectedNode.classList.remove('selected');
+                selectedNode = null;
+            }
+        }
+
+        function updateConnections() {
+            // Update SVG connection lines based on node positions
+            // This would be implemented with proper path calculations
+        }
+
+        // Toolbox drag and drop
+        const toolboxItems = document.querySelectorAll('.toolbox-item');
+        toolboxItems.forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('nodeType', item.dataset.type);
+                e.dataTransfer.setData('nodeSubtype', item.dataset.subtype);
+                item.classList.add('dragging');
+            });
+            
+            item.addEventListener('dragend', () => {
+                item.classList.remove('dragging');
+            });
+        });
+
+        // Canvas drop handling
+        const canvas = document.getElementById('pipelineCanvas');
+        canvas.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        canvas.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const nodeType = e.dataTransfer.getData('nodeType');
+            const nodeSubtype = e.dataTransfer.getData('nodeSubtype');
+            
+            if (nodeType) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                createNewNode(nodeType, nodeSubtype, x, y);
+            }
+        });
+
+        function createNewNode(type, subtype, x, y) {
+            // Create new pipeline node at the specified position
+            console.log(`Creating ${type} node of subtype ${subtype} at (${x}, ${y})`);
+            // Implementation would create actual DOM elements
+        }
+
+        // Click outside to close properties panel
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.pipeline-node') && !e.target.closest('.properties-panel')) {
+                closePropertiesPanel();
+            }
+        });
+    </script>
+</body>
+</html>

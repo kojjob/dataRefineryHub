@@ -1,0 +1,1802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Refinery Platform - UI Mockups</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* DataFlow Pro Theme Variables */
+        :root {
+            --df-background: rgba(252, 252, 249, 1);
+            --df-surface: rgba(255, 255, 253, 1);
+            --df-text: rgba(19, 52, 59, 1);
+            --df-text-secondary: rgba(98, 108, 113, 1);
+            --df-primary: rgba(33, 128, 141, 1);
+            --df-primary-hover: rgba(29, 116, 128, 1);
+            --df-primary-active: rgba(26, 104, 115, 1);
+            --df-secondary: rgba(94, 82, 64, 0.12);
+            --df-secondary-hover: rgba(94, 82, 64, 0.2);
+            --df-secondary-active: rgba(94, 82, 64, 0.25);
+            --df-border: rgba(94, 82, 64, 0.2);
+            --df-card-border: rgba(94, 82, 64, 0.12);
+            --df-error: rgba(192, 21, 47, 1);
+            --df-success: rgba(33, 128, 141, 1);
+            --df-warning: rgba(168, 75, 47, 1);
+            --df-info: rgba(98, 108, 113, 1);
+            --df-focus-ring: rgba(33, 128, 141, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--df-background);
+            color: var(--df-text);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--df-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--df-border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--df-text-secondary);
+        }
+
+        /* Page navigation */
+        .page-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: var(--df-surface);
+            border-bottom: 1px solid var(--df-border);
+            padding: 1rem 2rem;
+        }
+
+        .page-section {
+            display: none;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Custom components */
+        .df-card {
+            background: var(--df-surface);
+            border: 1px solid var(--df-card-border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .df-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .df-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .df-btn-primary {
+            background: var(--df-primary);
+            color: white;
+        }
+
+        .df-btn-primary:hover {
+            background: var(--df-primary-hover);
+        }
+
+        .df-btn-secondary {
+            background: var(--df-secondary);
+            color: var(--df-text);
+            border: 1px solid var(--df-border);
+        }
+
+        .df-btn-secondary:hover {
+            background: var(--df-secondary-hover);
+        }
+
+        .df-metric-card {
+            background: var(--df-surface);
+            border: 1px solid var(--df-card-border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .df-metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Sidebar */
+        .df-sidebar {
+            width: 280px;
+            background: var(--df-surface);
+            border-right: 1px solid var(--df-border);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            padding-top: 80px;
+        }
+
+        .df-main-content {
+            margin-left: 280px;
+            padding: 32px;
+        }
+
+        .df-nav-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--df-text-secondary);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .df-nav-item:hover {
+            background: var(--df-secondary);
+            color: var(--df-text);
+        }
+
+        .df-nav-item.active {
+            background: var(--df-primary);
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Navigation -->
+    <div class="page-nav">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <h1 class="text-xl font-bold" style="color: var(--df-primary);">Data Refinery Platform</h1>
+                <nav class="flex gap-4">
+                    <button onclick="showPage('dashboard')" class="df-btn df-btn-secondary">Dashboard</button>
+                    <button onclick="showPage('data-sources')" class="df-btn df-btn-secondary">Data Sources</button>
+                    <button onclick="showPage('pipelines')" class="df-btn df-btn-secondary">Pipelines</button>
+                    <button onclick="showPage('ai-insights')" class="df-btn df-btn-secondary">AI Insights</button>
+                    <button onclick="showPage('data-quality')" class="df-btn df-btn-secondary">Data Quality</button>
+                    <button onclick="showPage('manual-tasks')" class="df-btn df-btn-secondary">Manual Tasks</button>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm" style="color: var(--df-text-secondary);">UI Mockups</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard" class="page-section active">
+        <div class="df-sidebar">
+            <div class="p-6">
+                <div class="mb-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--df-primary);">
+                            <span class="text-white font-bold">DR</span>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold">Data Refinery</h2>
+                            <p class="text-xs" style="color: var(--df-text-secondary);">Enterprise Plan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <nav>
+                    <div class="mb-6">
+                        <p class="text-xs font-semibold uppercase mb-3" style="color: var(--df-text-secondary);">Main</p>
+                        <div class="df-nav-item active">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                            Dashboard
+                        </div>
+                        <div class="df-nav-item">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                            </svg>
+                            Data Sources
+                        </div>
+                        <div class="df-nav-item">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            Pipelines
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <p class="text-xs font-semibold uppercase mb-3" style="color: var(--df-text-secondary);">AI Features</p>
+                        <div class="df-nav-item">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                            </svg>
+                            AI Insights
+                        </div>
+                        <div class="df-nav-item">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            Natural Language Query
+                        </div>
+                        <div class="df-nav-item">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Presentations
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="text-xs font-semibold uppercase mb-3" style="color: var(--df-text-secondary);">Monitor</p>
+                        <div class="df-nav-item">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Data Quality
+                        </div>
+                        <div class="df-nav-item">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Manual Tasks
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <div class="df-main-content">
+            <!-- Dashboard Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold mb-2">Data Refinery Dashboard</h1>
+                <p style="color: var(--df-text-secondary);">Real-time data processing insights and AI-powered analytics</p>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="df-metric-card">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="p-3 rounded-lg" style="background: var(--df-secondary);">
+                            <svg class="w-6 h-6" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium px-2 py-1 rounded-full" style="background: var(--df-primary); color: white;">+12%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-1">24</h3>
+                    <p class="text-sm" style="color: var(--df-text-secondary);">Data Sources</p>
+                    <p class="text-xs mt-2" style="color: var(--df-success);">18 connected</p>
+                </div>
+
+                <div class="df-metric-card">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="p-3 rounded-lg" style="background: var(--df-secondary);">
+                            <svg class="w-6 h-6" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium px-2 py-1 rounded-full" style="background: var(--df-success); color: white;">↑ 8.2%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-1">1.2M</h3>
+                    <p class="text-sm" style="color: var(--df-text-secondary);">Records Processed</p>
+                    <p class="text-xs mt-2" style="color: var(--df-text-secondary);">This month</p>
+                </div>
+
+                <div class="df-metric-card">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="p-3 rounded-lg" style="background: var(--df-secondary);">
+                            <svg class="w-6 h-6" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium px-2 py-1 rounded-full" style="background: var(--df-success); color: white;">Excellent</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-1">94%</h3>
+                    <p class="text-sm" style="color: var(--df-text-secondary);">Data Quality Score</p>
+                    <p class="text-xs mt-2" style="color: var(--df-text-secondary);">2 issues found</p>
+                </div>
+
+                <div class="df-metric-card">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="p-3 rounded-lg" style="background: var(--df-secondary);">
+                            <svg class="w-6 h-6" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium px-2 py-1 rounded-full animate-pulse" style="background: var(--df-primary); color: white;">Active</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-1">6</h3>
+                    <p class="text-sm" style="color: var(--df-text-secondary);">Active Pipelines</p>
+                    <p class="text-xs mt-2" style="color: var(--df-text-secondary);">2 scheduled</p>
+                </div>
+            </div>
+
+            <!-- AI Insights Panel -->
+            <div class="df-card mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold flex items-center gap-2">
+                        <svg class="w-5 h-5" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                        AI-Powered Data Insights
+                    </h2>
+                    <button class="df-btn df-btn-secondary">
+                        View All Insights
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-4 rounded-lg border-l-4" style="background: rgba(192, 21, 47, 0.05); border-color: var(--df-error);">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 mt-0.5" style="color: var(--df-error);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                            </svg>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="font-medium">Critical Data Quality Issue</h3>
+                                    <span class="text-xs" style="color: var(--df-text-secondary);">95% confidence</span>
+                                </div>
+                                <p class="text-sm mb-3" style="color: var(--df-text-secondary);">Data completeness has dropped to 78% in your Shopify integration. Missing product descriptions may impact analytics.</p>
+                                <button class="df-btn df-btn-primary df-btn-sm">Investigate</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-lg border-l-4" style="background: rgba(168, 75, 47, 0.05); border-color: var(--df-warning);">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 mt-0.5" style="color: var(--df-warning);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="font-medium">Pipeline Optimization</h3>
+                                    <span class="text-xs" style="color: var(--df-text-secondary);">88% confidence</span>
+                                </div>
+                                <p class="text-sm mb-3" style="color: var(--df-text-secondary);">Your data processing pipeline could be 40% faster by adjusting sync frequency during peak hours.</p>
+                                <button class="df-btn df-btn-secondary df-btn-sm">Optimize</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-lg border-l-4" style="background: rgba(33, 128, 141, 0.05); border-color: var(--df-primary);">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 mt-0.5" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="font-medium">Data Pattern Analysis</h3>
+                                    <span class="text-xs" style="color: var(--df-text-secondary);">92% confidence</span>
+                                </div>
+                                <p class="text-sm mb-3" style="color: var(--df-text-secondary);">Customer transaction patterns show 15% increase in weekend activity. Consider adjusting processing schedules.</p>
+                                <button class="df-btn df-btn-secondary df-btn-sm">Learn More</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="df-card">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-semibold">Data Processing Volume</h3>
+                        <div class="flex gap-2">
+                            <button class="px-3 py-1 rounded text-sm" style="background: var(--df-secondary); color: var(--df-text-secondary);">Daily</button>
+                            <button class="px-3 py-1 rounded text-sm" style="background: var(--df-primary); color: white;">Weekly</button>
+                            <button class="px-3 py-1 rounded text-sm" style="background: var(--df-secondary); color: var(--df-text-secondary);">Monthly</button>
+                        </div>
+                    </div>
+                    <canvas id="processingChart" height="200"></canvas>
+                </div>
+
+                <div class="df-card">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-semibold">Data Quality Trends</h3>
+                        <button class="df-btn df-btn-secondary df-btn-sm">Export</button>
+                    </div>
+                    <canvas id="qualityChart" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="df-card">
+                <h3 class="font-semibold mb-4">Recent Pipeline Activity</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--df-secondary);">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full animate-pulse" style="background: var(--df-success);"></div>
+                            <div>
+                                <p class="font-medium">Customer Data Sync</p>
+                                <p class="text-sm" style="color: var(--df-text-secondary);">Shopify → Data Warehouse</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium" style="color: var(--df-success);">Running</p>
+                            <p class="text-xs" style="color: var(--df-text-secondary);">Started 2 min ago</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--df-secondary);">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full" style="background: var(--df-primary);"></div>
+                            <div>
+                                <p class="font-medium">Financial Data ETL</p>
+                                <p class="text-sm" style="color: var(--df-text-secondary);">QuickBooks → BigQuery</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium" style="color: var(--df-primary);">Completed</p>
+                            <p class="text-xs" style="color: var(--df-text-secondary);">15 min ago</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--df-secondary);">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full" style="background: var(--df-warning);"></div>
+                            <div>
+                                <p class="font-medium">Marketing Analytics Pipeline</p>
+                                <p class="text-sm" style="color: var(--df-text-secondary);">Google Analytics → Snowflake</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium" style="color: var(--df-warning);">Scheduled</p>
+                            <p class="text-xs" style="color: var(--df-text-secondary);">In 2 hours</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Sources Page -->
+    <div id="data-sources" class="page-section">
+        <div class="max-w-7xl mx-auto px-8 py-8">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold mb-2">Integration Marketplace</h1>
+                <p style="color: var(--df-text-secondary);">Connect with 200+ business tools and data sources</p>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="df-card mb-8">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex-1 relative">
+                        <svg class="absolute left-3 top-3 w-5 h-5" style="color: var(--df-text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input type="text" placeholder="Search integrations..." class="w-full pl-10 pr-4 py-2 rounded-lg border" style="background: var(--df-background); border-color: var(--df-border);">
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="df-btn df-btn-primary">All</button>
+                        <button class="df-btn df-btn-secondary">Connected</button>
+                        <button class="df-btn df-btn-secondary">Popular</button>
+                        <button class="df-btn df-btn-secondary">New</button>
+                    </div>
+                    <button class="df-btn df-btn-primary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Add Integration
+                    </button>
+                </div>
+            </div>
+
+            <!-- Integration Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="df-card flex items-center gap-4">
+                    <div class="p-3 rounded-lg" style="background: rgba(33, 128, 141, 0.1);">
+                        <svg class="w-6 h-6" style="color: var(--df-success);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold">18</p>
+                        <p class="text-sm" style="color: var(--df-text-secondary);">Connected</p>
+                    </div>
+                </div>
+
+                <div class="df-card flex items-center gap-4">
+                    <div class="p-3 rounded-lg" style="background: rgba(33, 128, 141, 0.1);">
+                        <svg class="w-6 h-6 animate-spin" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold">3</p>
+                        <p class="text-sm" style="color: var(--df-text-secondary);">Syncing</p>
+                    </div>
+                </div>
+
+                <div class="df-card flex items-center gap-4">
+                    <div class="p-3 rounded-lg" style="background: rgba(192, 21, 47, 0.1);">
+                        <svg class="w-6 h-6" style="color: var(--df-error);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold">2</p>
+                        <p class="text-sm" style="color: var(--df-text-secondary);">Need Attention</p>
+                    </div>
+                </div>
+
+                <div class="df-card flex items-center gap-4">
+                    <div class="p-3 rounded-lg" style="background: var(--df-secondary);">
+                        <svg class="w-6 h-6" style="color: var(--df-text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold">1</p>
+                        <p class="text-sm" style="color: var(--df-text-secondary);">Inactive</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connected Sources -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold mb-4">Your Integrations</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="df-card">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-lg flex items-center justify-center text-2xl" style="background: rgba(96, 165, 250, 0.1);">
+                                    🛍️
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold">My Shopify Store</h3>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">Shopify</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1" style="background: rgba(33, 128, 141, 0.1); color: var(--df-success);">
+                                <span class="w-1.5 h-1.5 rounded-full" style="background: var(--df-success);"></span>
+                                Connected
+                            </span>
+                        </div>
+
+                        <div class="space-y-2 mb-4">
+                            <div class="flex justify-between text-sm">
+                                <span style="color: var(--df-text-secondary);">Last Sync</span>
+                                <span>5 minutes ago</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span style="color: var(--df-text-secondary);">Records</span>
+                                <span>245,892</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span style="color: var(--df-text-secondary);">Next Sync</span>
+                                <span>In 55 minutes</span>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button class="df-btn df-btn-secondary flex-1">Settings</button>
+                            <button class="df-btn df-btn-primary flex-1">Sync Now</button>
+                        </div>
+                    </div>
+
+                    <div class="df-card">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-lg flex items-center justify-center text-2xl" style="background: rgba(139, 92, 246, 0.1);">
+                                    💳
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold">Stripe Payments</h3>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">Stripe</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 animate-pulse" style="background: rgba(33, 128, 141, 0.1); color: var(--df-primary);">
+                                <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: var(--df-primary);"></span>
+                                Syncing
+                            </span>
+                        </div>
+
+                        <div class="space-y-2 mb-4">
+                            <div class="flex justify-between text-sm">
+                                <span style="color: var(--df-text-secondary);">Progress</span>
+                                <span>67%</span>
+                            </div>
+                            <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-secondary);">
+                                <div class="h-full rounded-full transition-all duration-300" style="width: 67%; background: var(--df-primary);"></div>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span style="color: var(--df-text-secondary);">Records</span>
+                                <span>89,234 / 133,201</span>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button class="df-btn df-btn-secondary flex-1">Pause</button>
+                            <button class="df-btn df-btn-secondary flex-1">View Logs</button>
+                        </div>
+                    </div>
+
+                    <div class="df-card">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-lg flex items-center justify-center text-2xl" style="background: rgba(34, 197, 94, 0.1);">
+                                    📊
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold">QuickBooks Online</h3>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">QuickBooks</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1" style="background: rgba(192, 21, 47, 0.1); color: var(--df-error);">
+                                <span class="w-1.5 h-1.5 rounded-full" style="background: var(--df-error);"></span>
+                                Error
+                            </span>
+                        </div>
+
+                        <div class="p-3 rounded-lg mb-4" style="background: rgba(192, 21, 47, 0.05); border: 1px solid rgba(192, 21, 47, 0.2);">
+                            <p class="text-sm" style="color: var(--df-error);">Authentication failed. Please reconnect your account.</p>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button class="df-btn df-btn-secondary flex-1">View Error</button>
+                            <button class="df-btn df-btn-primary flex-1">Reconnect</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Available Integrations -->
+            <div>
+                <h2 class="text-xl font-semibold mb-4">Popular Integrations</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="df-card text-center hover:shadow-lg transition-all">
+                        <div class="w-16 h-16 rounded-xl flex items-center justify-center text-3xl mx-auto mb-4" style="background: rgba(251, 146, 60, 0.1);">
+                            📈
+                        </div>
+                        <h3 class="font-semibold mb-1">Google Analytics</h3>
+                        <p class="text-sm mb-4" style="color: var(--df-text-secondary);">Web analytics</p>
+                        <button class="df-btn df-btn-primary w-full">Connect</button>
+                    </div>
+
+                    <div class="df-card text-center hover:shadow-lg transition-all">
+                        <div class="w-16 h-16 rounded-xl flex items-center justify-center text-3xl mx-auto mb-4" style="background: rgba(251, 191, 36, 0.1);">
+                            📧
+                        </div>
+                        <h3 class="font-semibold mb-1">Mailchimp</h3>
+                        <p class="text-sm mb-4" style="color: var(--df-text-secondary);">Email marketing</p>
+                        <button class="df-btn df-btn-primary w-full">Connect</button>
+                    </div>
+
+                    <div class="df-card text-center hover:shadow-lg transition-all opacity-75">
+                        <div class="w-16 h-16 rounded-xl flex items-center justify-center text-3xl mx-auto mb-4" style="background: rgba(239, 68, 68, 0.1);">
+                            🎯
+                        </div>
+                        <h3 class="font-semibold mb-1">HubSpot</h3>
+                        <p class="text-sm mb-4" style="color: var(--df-text-secondary);">CRM & Marketing</p>
+                        <button class="df-btn df-btn-secondary w-full" disabled>Coming Soon</button>
+                    </div>
+
+                    <div class="df-card text-center hover:shadow-lg transition-all opacity-75">
+                        <div class="w-16 h-16 rounded-xl flex items-center justify-center text-3xl mx-auto mb-4" style="background: rgba(59, 130, 246, 0.1);">
+                            ☁️
+                        </div>
+                        <h3 class="font-semibold mb-1">Salesforce</h3>
+                        <p class="text-sm mb-4" style="color: var(--df-text-secondary);">Customer CRM</p>
+                        <button class="df-btn df-btn-secondary w-full" disabled>Coming Soon</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ETL Pipeline Builder Page -->
+    <div id="pipelines" class="page-section">
+        <div class="max-w-7xl mx-auto px-8 py-8">
+            <!-- Page Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">ETL Pipeline Builder</h1>
+                    <p style="color: var(--df-text-secondary);">Design and manage your data transformation pipelines</p>
+                </div>
+                <button class="df-btn df-btn-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Create Pipeline
+                </button>
+            </div>
+
+            <!-- Pipeline Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="df-metric-card">
+                    <h3 class="text-2xl font-bold mb-1">12</h3>
+                    <p class="text-sm" style="color: var(--df-text-secondary);">Total Pipelines</p>
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="w-2 h-2 rounded-full" style="background: var(--df-success);"></span>
+                        <span class="text-xs" style="color: var(--df-text-secondary);">6 active</span>
+                    </div>
+                </div>
+
+                <div class="df-metric-card">
+                    <h3 class="text-2xl font-bold mb-1">847K</h3>
+                    <p class="text-sm" style="color: var(--df-text-secondary);">Records/Hour</p>
+                    <div class="flex items-center gap-2 mt-2">
+                        <svg class="w-4 h-4" style="color: var(--df-success);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                        <span class="text-xs" style="color: var(--df-success);">+12% throughput</span>
+                    </div>
+                </div>
+
+                <div class="df-metric-card">
+                    <h3 class="text-2xl font-bold mb-1">99.8%</h3>
+                    <p class="text-sm" style="color: var(--df-text-secondary);">Success Rate</p>
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="text-xs" style="color: var(--df-text-secondary);">Last 24 hours</span>
+                    </div>
+                </div>
+
+                <div class="df-metric-card">
+                    <h3 class="text-2xl font-bold mb-1">3</h3>
+                    <p class="text-sm" style="color: var(--df-text-secondary);">Scheduled</p>
+                    <div class="flex items-center gap-2 mt-2">
+                        <svg class="w-4 h-4" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="text-xs" style="color: var(--df-text-secondary);">Next in 2h</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Pipeline Builder -->
+            <div class="df-card mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold">Customer Data ETL Pipeline</h2>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 rounded-full text-xs font-medium" style="background: rgba(33, 128, 141, 0.1); color: var(--df-success);">
+                            Active
+                        </span>
+                        <button class="df-btn df-btn-secondary df-btn-sm">Edit</button>
+                        <button class="df-btn df-btn-primary df-btn-sm">Run Now</button>
+                    </div>
+                </div>
+
+                <!-- Pipeline Flow Visualization -->
+                <div class="overflow-x-auto">
+                    <div class="flex items-center gap-4 min-w-max p-4">
+                        <!-- Source -->
+                        <div class="text-center">
+                            <div class="w-32 h-32 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all hover:shadow-lg" style="background: var(--df-secondary); border: 2px solid var(--df-primary);">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-xl" style="background: var(--df-primary); color: white;">
+                                    🛍️
+                                </div>
+                                <p class="font-medium">Shopify</p>
+                                <p class="text-xs" style="color: var(--df-text-secondary);">Source</p>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <svg class="w-8 h-8" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+
+                        <!-- Extract -->
+                        <div class="text-center">
+                            <div class="w-32 h-32 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all hover:shadow-lg" style="background: var(--df-secondary);">
+                                <svg class="w-10 h-10" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                                </svg>
+                                <p class="font-medium">Extract</p>
+                                <p class="text-xs" style="color: var(--df-text-secondary);">245K records</p>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <svg class="w-8 h-8" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+
+                        <!-- Transform -->
+                        <div class="text-center">
+                            <div class="w-32 h-32 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all hover:shadow-lg" style="background: var(--df-secondary);">
+                                <svg class="w-10 h-10" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                <p class="font-medium">Transform</p>
+                                <p class="text-xs" style="color: var(--df-text-secondary);">8 rules</p>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <svg class="w-8 h-8" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+
+                        <!-- Load -->
+                        <div class="text-center">
+                            <div class="w-32 h-32 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all hover:shadow-lg" style="background: var(--df-secondary); border: 2px solid var(--df-success);">
+                                <svg class="w-10 h-10" style="color: var(--df-success);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="font-medium">BigQuery</p>
+                                <p class="text-xs" style="color: var(--df-text-secondary);">Destination</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pipeline Details -->
+                <div class="mt-6 pt-6 border-t" style="border-color: var(--df-border);">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <h4 class="font-medium mb-3">Transformation Rules</h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 text-sm">
+                                    <span class="w-2 h-2 rounded-full" style="background: var(--df-success);"></span>
+                                    <span>Standardize phone numbers</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <span class="w-2 h-2 rounded-full" style="background: var(--df-success);"></span>
+                                    <span>Clean email addresses</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <span class="w-2 h-2 rounded-full" style="background: var(--df-success);"></span>
+                                    <span>Calculate customer LTV</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <span class="w-2 h-2 rounded-full" style="background: var(--df-success);"></span>
+                                    <span>Enrich with geolocation</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="font-medium mb-3">Schedule</h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 text-sm">
+                                    <svg class="w-4 h-4" style="color: var(--df-text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>Every 2 hours</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <svg class="w-4 h-4" style="color: var(--df-text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span>Next run: 14:00 UTC</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="font-medium mb-3">Performance</h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span>Avg Duration</span>
+                                    <span class="font-medium">12 min</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span>Success Rate</span>
+                                    <span class="font-medium" style="color: var(--df-success);">99.8%</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span>Last Run</span>
+                                    <span class="font-medium">45 min ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline List -->
+            <div>
+                <h2 class="text-xl font-semibold mb-4">All Pipelines</h2>
+                <div class="space-y-4">
+                    <div class="df-card">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-2 h-2 rounded-full animate-pulse" style="background: var(--df-success);"></div>
+                                <div>
+                                    <h3 class="font-medium">Financial Data Sync</h3>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">QuickBooks → Data Warehouse • ETL</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="text-right">
+                                    <p class="text-sm font-medium">Running</p>
+                                    <p class="text-xs" style="color: var(--df-text-secondary);">Started 5 min ago</p>
+                                </div>
+                                <button class="df-btn df-btn-secondary df-btn-sm">View</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="df-card">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-2 h-2 rounded-full" style="background: var(--df-primary);"></div>
+                                <div>
+                                    <h3 class="font-medium">Marketing Analytics Pipeline</h3>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">Google Analytics → Snowflake • ELT</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="text-right">
+                                    <p class="text-sm font-medium">Scheduled</p>
+                                    <p class="text-xs" style="color: var(--df-text-secondary);">Next run in 2h</p>
+                                </div>
+                                <button class="df-btn df-btn-secondary df-btn-sm">View</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="df-card">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-2 h-2 rounded-full" style="background: var(--df-text-secondary);"></div>
+                                <div>
+                                    <h3 class="font-medium">Customer Feedback Analysis</h3>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">Multiple Sources → BigQuery • Streaming</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="text-right">
+                                    <p class="text-sm font-medium">Paused</p>
+                                    <p class="text-xs" style="color: var(--df-text-secondary);">Since yesterday</p>
+                                </div>
+                                <button class="df-btn df-btn-secondary df-btn-sm">Resume</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Insights Page -->
+    <div id="ai-insights" class="page-section">
+        <div class="max-w-7xl mx-auto px-8 py-8">
+            <!-- Page Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">AI-Powered Insights</h1>
+                    <p style="color: var(--df-text-secondary);">Natural language queries, predictive analytics, and automated recommendations</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="df-btn df-btn-secondary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Configure AI
+                </button>
+                <button class="df-btn df-btn-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    Generate Report
+                </button>
+            </div>
+
+            <!-- Natural Language Query -->
+            <div class="df-card mb-8">
+                <h2 class="text-xl font-semibold mb-4">Ask Your Data</h2>
+                <div class="relative">
+                    <input type="text" 
+                           placeholder="Try: 'What were our top selling products last month?' or 'Show me customer churn trends'"
+                           class="w-full px-4 py-3 pr-12 rounded-lg border text-lg" 
+                           style="background: var(--df-background); border-color: var(--df-border);">
+                    <button class="absolute right-3 top-3 p-1 rounded-lg hover:bg-gray-100">
+                        <svg class="w-6 h-6" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex gap-2 mt-3">
+                    <button class="px-3 py-1 rounded-full text-sm border" style="border-color: var(--df-border);">Revenue analysis</button>
+                    <button class="px-3 py-1 rounded-full text-sm border" style="border-color: var(--df-border);">Customer insights</button>
+                    <button class="px-3 py-1 rounded-full text-sm border" style="border-color: var(--df-border);">Product performance</button>
+                    <button class="px-3 py-1 rounded-full text-sm border" style="border-color: var(--df-border);">Forecast next quarter</button>
+                </div>
+            </div>
+
+            <!-- AI Insights Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Revenue Prediction -->
+                <div class="df-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold flex items-center gap-2">
+                            <svg class="w-5 h-5" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Revenue Forecast
+                        </h3>
+                        <span class="text-xs px-2 py-1 rounded-full" style="background: var(--df-secondary); color: var(--df-text-secondary);">
+                            92% confidence
+                        </span>
+                    </div>
+                    <div class="mb-4">
+                        <canvas id="revenueChart" height="200"></canvas>
+                    </div>
+                    <div class="p-4 rounded-lg" style="background: var(--df-secondary);">
+                        <p class="text-sm mb-2"><strong>AI Insight:</strong> Based on current trends and seasonal patterns, revenue is projected to increase by 23% in Q2 2024.</p>
+                        <p class="text-sm" style="color: var(--df-text-secondary);">Key drivers: New product launches, marketing campaign effectiveness, and seasonal demand.</p>
+                    </div>
+                </div>
+
+                <!-- Customer Segmentation -->
+                <div class="df-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold flex items-center gap-2">
+                            <svg class="w-5 h-5" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            Customer Segments
+                        </h3>
+                        <button class="df-btn df-btn-secondary df-btn-sm">Analyze</button>
+                    </div>
+                    <div class="mb-4">
+                        <canvas id="segmentChart" height="200"></canvas>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--df-secondary);">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full" style="background: #3B82F6;"></div>
+                                <span class="font-medium">High Value</span>
+                            </div>
+                            <span class="text-sm" style="color: var(--df-text-secondary);">28% of customers • 67% of revenue</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--df-secondary);">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full" style="background: #10B981;"></div>
+                                <span class="font-medium">Growing</span>
+                            </div>
+                            <span class="text-sm" style="color: var(--df-text-secondary);">45% of customers • 24% of revenue</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--df-secondary);">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full" style="background: #F59E0B;"></div>
+                                <span class="font-medium">At Risk</span>
+                            </div>
+                            <span class="text-sm" style="color: var(--df-text-secondary);">27% of customers • 9% of revenue</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Automated Recommendations -->
+            <div class="df-card">
+                <h2 class="text-xl font-semibold mb-4">AI Recommendations</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-4 rounded-lg border-l-4" style="background: rgba(192, 21, 47, 0.05); border-color: var(--df-error);">
+                        <div class="flex items-start gap-3">
+                            <div class="p-2 rounded-lg" style="background: rgba(192, 21, 47, 0.1);">
+                                <svg class="w-5 h-5" style="color: var(--df-error);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-medium mb-1">Churn Risk Alert</h4>
+                                <p class="text-sm mb-2" style="color: var(--df-text-secondary);">127 customers showing churn signals</p>
+                                <p class="text-sm mb-3"><strong>Impact:</strong> Potential $45K monthly revenue loss</p>
+                                <button class="df-btn df-btn-primary df-btn-sm">Create Campaign</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-lg border-l-4" style="background: rgba(168, 75, 47, 0.05); border-color: var(--df-warning);">
+                        <div class="flex items-start gap-3">
+                            <div class="p-2 rounded-lg" style="background: rgba(168, 75, 47, 0.1);">
+                                <svg class="w-5 h-5" style="color: var(--df-warning);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-medium mb-1">Inventory Optimization</h4>
+                                <p class="text-sm mb-2" style="color: var(--df-text-secondary);">5 products need restocking soon</p>
+                                <p class="text-sm mb-3"><strong>Action:</strong> Reorder by March 15 to avoid stockouts</p>
+                                <button class="df-btn df-btn-secondary df-btn-sm">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-lg border-l-4" style="background: rgba(33, 128, 141, 0.05); border-color: var(--df-primary);">
+                        <div class="flex items-start gap-3">
+                            <div class="p-2 rounded-lg" style="background: rgba(33, 128, 141, 0.1);">
+                                <svg class="w-5 h-5" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-medium mb-1">Upsell Opportunity</h4>
+                                <p class="text-sm mb-2" style="color: var(--df-text-secondary);">312 customers ready for upgrade</p>
+                                <p class="text-sm mb-3"><strong>Potential:</strong> $18K additional monthly revenue</p>
+                                <button class="df-btn df-btn-secondary df-btn-sm">Target List</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Quality Page -->
+    <div id="data-quality" class="page-section">
+        <div class="max-w-7xl mx-auto px-8 py-8">
+            <!-- Page Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Data Quality Monitor</h1>
+                    <p style="color: var(--df-text-secondary);">Real-time data quality validation and monitoring</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="df-btn df-btn-secondary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        Configure Rules
+                    </button>
+                    <button class="df-btn df-btn-primary">Run Full Scan</button>
+                </div>
+            </div>
+
+            <!-- Overall Quality Score -->
+            <div class="df-card mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="relative w-32 h-32 mx-auto mb-4">
+                            <svg class="w-32 h-32 transform -rotate-90">
+                                <circle cx="64" cy="64" r="56" stroke-width="12" fill="none" style="stroke: var(--df-secondary);"></circle>
+                                <circle cx="64" cy="64" r="56" stroke-width="12" fill="none" 
+                                        style="stroke: var(--df-success); stroke-dasharray: 352; stroke-dashoffset: 35;"
+                                        stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div>
+                                    <p class="text-3xl font-bold">94%</p>
+                                    <p class="text-sm" style="color: var(--df-text-secondary);">Overall Score</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="font-medium" style="color: var(--df-success);">Excellent Data Quality</p>
+                    </div>
+
+                    <div class="col-span-2">
+                        <h3 class="font-semibold mb-4">Quality Dimensions</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium">Completeness</span>
+                                    <span class="text-sm font-medium">98%</span>
+                                </div>
+                                <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-secondary);">
+                                    <div class="h-full rounded-full" style="width: 98%; background: var(--df-success);"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium">Accuracy</span>
+                                    <span class="text-sm font-medium">95%</span>
+                                </div>
+                                <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-secondary);">
+                                    <div class="h-full rounded-full" style="width: 95%; background: var(--df-success);"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium">Consistency</span>
+                                    <span class="text-sm font-medium">92%</span>
+                                </div>
+                                <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-secondary);">
+                                    <div class="h-full rounded-full" style="width: 92%; background: var(--df-success);"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium">Timeliness</span>
+                                    <span class="text-sm font-medium">88%</span>
+                                </div>
+                                <div class="w-full h-2 rounded-full overflow-hidden" style="background: var(--df-secondary);">
+                                    <div class="h-full rounded-full" style="width: 88%; background: var(--df-warning);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Issues and Alerts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="df-card">
+                    <h3 class="font-semibold mb-4">Active Issues</h3>
+                    <div class="space-y-3">
+                        <div class="p-4 rounded-lg border-l-4" style="background: rgba(192, 21, 47, 0.05); border-color: var(--df-error);">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h4 class="font-medium flex items-center gap-2">
+                                        <svg class="w-4 h-4" style="color: var(--df-error);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Missing Required Fields
+                                    </h4>
+                                    <p class="text-sm mt-1" style="color: var(--df-text-secondary);">156 records missing email addresses in Customer table</p>
+                                    <p class="text-xs mt-2" style="color: var(--df-text-secondary);">Data Source: Shopify • Detected: 2 hours ago</p>
+                                </div>
+                                <button class="df-btn df-btn-sm" style="background: var(--df-error); color: white;">Fix</button>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-lg border-l-4" style="background: rgba(168, 75, 47, 0.05); border-color: var(--df-warning);">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h4 class="font-medium flex items-center gap-2">
+                                        <svg class="w-4 h-4" style="color: var(--df-warning);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                        </svg>
+                                        Format Inconsistency
+                                    </h4>
+                                    <p class="text-sm mt-1" style="color: var(--df-text-secondary);">Phone numbers in multiple formats detected</p>
+                                    <p class="text-xs mt-2" style="color: var(--df-text-secondary);">Data Source: Multiple • Detected: Today</p>
+                                </div>
+                                <button class="df-btn df-btn-secondary df-btn-sm">Review</button>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-lg border-l-4" style="background: rgba(33, 128, 141, 0.05); border-color: var(--df-primary);">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h4 class="font-medium flex items-center gap-2">
+                                        <svg class="w-4 h-4" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Duplicate Records
+                                    </h4>
+                                    <p class="text-sm mt-1" style="color: var(--df-text-secondary);">23 potential duplicate customers found</p>
+                                    <p class="text-xs mt-2" style="color: var(--df-text-secondary);">Data Source: CRM • Detected: Yesterday</p>
+                                </div>
+                                <button class="df-btn df-btn-secondary df-btn-sm">Merge</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="df-card">
+                    <h3 class="font-semibold mb-4">Quality Trends</h3>
+                    <canvas id="qualityTrendChart" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Data Source Quality Table -->
+            <div class="df-card">
+                <h3 class="font-semibold mb-4">Data Source Quality</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b" style="border-color: var(--df-border);">
+                                <th class="text-left py-3 px-4">Data Source</th>
+                                <th class="text-center py-3 px-4">Score</th>
+                                <th class="text-center py-3 px-4">Records</th>
+                                <th class="text-center py-3 px-4">Issues</th>
+                                <th class="text-center py-3 px-4">Last Check</th>
+                                <th class="text-right py-3 px-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b" style="border-color: var(--df-border);">
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-lg">🛍️</span>
+                                        <span class="font-medium">Shopify</span>
+                                    </div>
+                                </td>
+                                <td class="text-center py-3 px-4">
+                                    <span class="px-2 py-1 rounded-full text-sm font-medium" style="background: rgba(33, 128, 141, 0.1); color: var(--df-success);">98%</span>
+                                </td>
+                                <td class="text-center py-3 px-4">245,892</td>
+                                <td class="text-center py-3 px-4">
+                                    <span class="text-sm" style="color: var(--df-error);">2</span>
+                                </td>
+                                <td class="text-center py-3 px-4 text-sm" style="color: var(--df-text-secondary);">10 min ago</td>
+                                <td class="text-right py-3 px-4">
+                                    <button class="df-btn df-btn-secondary df-btn-sm">Validate</button>
+                                </td>
+                            </tr>
+                            <tr class="border-b" style="border-color: var(--df-border);">
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-lg">💳</span>
+                                        <span class="font-medium">Stripe</span>
+                                    </div>
+                                </td>
+                                <td class="text-center py-3 px-4">
+                                    <span class="px-2 py-1 rounded-full text-sm font-medium" style="background: rgba(33, 128, 141, 0.1); color: var(--df-success);">96%</span>
+                                </td>
+                                <td class="text-center py-3 px-4">89,234</td>
+                                <td class="text-center py-3 px-4">
+                                    <span class="text-sm" style="color: var(--df-warning);">5</span>
+                                </td>
+                                <td class="text-center py-3 px-4 text-sm" style="color: var(--df-text-secondary);">1 hour ago</td>
+                                <td class="text-right py-3 px-4">
+                                    <button class="df-btn df-btn-secondary df-btn-sm">Validate</button>
+                                </td>
+                            </tr>
+                            <tr class="border-b" style="border-color: var(--df-border);">
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-lg">📊</span>
+                                        <span class="font-medium">QuickBooks</span>
+                                    </div>
+                                </td>
+                                <td class="text-center py-3 px-4">
+                                    <span class="px-2 py-1 rounded-full text-sm font-medium" style="background: rgba(168, 75, 47, 0.1); color: var(--df-warning);">82%</span>
+                                </td>
+                                <td class="text-center py-3 px-4">56,789</td>
+                                <td class="text-center py-3 px-4">
+                                    <span class="text-sm" style="color: var(--df-error);">12</span>
+                                </td>
+                                <td class="text-center py-3 px-4 text-sm" style="color: var(--df-text-secondary);">3 hours ago</td>
+                                <td class="text-right py-3 px-4">
+                                    <button class="df-btn df-btn-primary df-btn-sm">Fix Issues</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manual Tasks Page -->
+    <div id="manual-tasks" class="page-section">
+        <div class="max-w-7xl mx-auto px-8 py-8">
+            <!-- Page Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Manual Task Queue</h1>
+                    <p style="color: var(--df-text-secondary);">Tasks requiring human review and approval</p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm" style="color: var(--df-text-secondary);">Filter:</span>
+                        <select class="px-3 py-2 rounded-lg border text-sm" style="background: var(--df-surface); border-color: var(--df-border);">
+                            <option>All Tasks</option>
+                            <option>My Tasks</option>
+                            <option>Unassigned</option>
+                            <option>High Priority</option>
+                        </select>
+                    </div>
+                    <button class="df-btn df-btn-primary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Refresh Queue
+                    </button>
+                </div>
+            </div>
+
+            <!-- Task Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="df-metric-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1">8</h3>
+                            <p class="text-sm" style="color: var(--df-text-secondary);">Pending Tasks</p>
+                        </div>
+                        <div class="p-3 rounded-lg" style="background: rgba(168, 75, 47, 0.1);">
+                            <svg class="w-6 h-6" style="color: var(--df-warning);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="df-metric-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1">3</h3>
+                            <p class="text-sm" style="color: var(--df-text-secondary);">In Progress</p>
+                        </div>
+                        <div class="p-3 rounded-lg" style="background: rgba(33, 128, 141, 0.1);">
+                            <svg class="w-6 h-6 animate-spin" style="color: var(--df-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="df-metric-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1">45</h3>
+                            <p class="text-sm" style="color: var(--df-text-secondary);">Completed Today</p>
+                        </div>
+                        <div class="p-3 rounded-lg" style="background: rgba(33, 128, 141, 0.1);">
+                            <svg class="w-6 h-6" style="color: var(--df-success);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="df-metric-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1">2</h3>
+                            <p class="text-sm" style="color: var(--df-text-secondary);">High Priority</p>
+                        </div>
+                        <div class="p-3 rounded-lg" style="background: rgba(192, 21, 47, 0.1);">
+                            <svg class="w-6 h-6" style="color: var(--df-error);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task Queue -->
+            <div class="df-card">
+                <div class="space-y-4">
+                    <!-- High Priority Task -->
+                    <div class="p-4 rounded-lg border-l-4" style="background: rgba(192, 21, 47, 0.02); border-color: var(--df-error);">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="px-2 py-1 rounded text-xs font-medium" style="background: var(--df-error); color: white;">High Priority</span>
+                                    <h3 class="font-semibold">Data Anomaly Requires Review</h3>
+                                    <span class="text-sm" style="color: var(--df-text-secondary);">• Financial Data Sync Pipeline</span>
+                                </div>
+                                <p class="text-sm mb-3" style="color: var(--df-text-secondary);">
+                                    Detected unusual transaction patterns: 157 transactions totaling $892,450 from single customer in 24h period. 
+                                    This exceeds normal limits by 2,450%.
+                                </p>
+                                <div class="flex items-center gap-4 text-sm" style="color: var(--df-text-secondary);">
+                                    <span>Created: 15 min ago</span>
+                                    <span>•</span>
+                                    <span>Pipeline: QuickBooks → BigQuery</span>
+                                    <span>•</span>
+                                    <span>Assigned to: Unassigned</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <button class="df-btn df-btn-primary">Review & Approve</button>
+                                <button class="df-btn df-btn-secondary">Assign to Me</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Approval Required Task -->
+                    <div class="p-4 rounded-lg border-l-4" style="background: rgba(168, 75, 47, 0.02); border-color: var(--df-warning);">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="px-2 py-1 rounded text-xs font-medium" style="background: var(--df-warning); color: white;">Approval Required</span>
+                                    <h3 class="font-semibold">Schema Change Detected</h3>
+                                    <span class="text-sm" style="color: var(--df-text-secondary);">• Customer Data ETL Pipeline</span>
+                                </div>
+                                <p class="text-sm mb-3" style="color: var(--df-text-secondary);">
+                                    Source schema has changed: 3 new columns detected (loyalty_points, referral_code, subscription_tier). 
+                                    Update mapping configuration to include new fields?
+                                </p>
+                                <div class="flex items-center gap-4 text-sm" style="color: var(--df-text-secondary);">
+                                    <span>Created: 1 hour ago</span>
+                                    <span>•</span>
+                                    <span>Pipeline: Shopify → Data Warehouse</span>
+                                    <span>•</span>
+                                    <span>Assigned to: John Doe</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <button class="df-btn df-btn-primary">Approve Changes</button>
+                                <button class="df-btn df-btn-secondary">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manual Processing Task -->
+                    <div class="p-4 rounded-lg border-l-4" style="background: rgba(33, 128, 141, 0.02); border-color: var(--df-primary);">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="px-2 py-1 rounded text-xs font-medium" style="background: var(--df-primary); color: white;">Manual Processing</span>
+                                    <h3 class="font-semibold">Customer Data Enrichment</h3>
+                                    <span class="text-sm" style="color: var(--df-text-secondary);">• Data Quality Pipeline</span>
+                                </div>
+                                <p class="text-sm mb-3" style="color: var(--df-text-secondary);">
+                                    23 customer records require manual verification. Automated enrichment confidence score below threshold (65%). 
+                                    Please verify and update customer information.
+                                </p>
+                                <div class="flex items-center gap-4 text-sm" style="color: var(--df-text-secondary);">
+                                    <span>Created: 2 hours ago</span>
+                                    <span>•</span>
+                                    <span>Records: 23</span>
+                                    <span>•</span>
+                                    <span>Assigned to: You</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <button class="df-btn df-btn-primary">Process Records</button>
+                                <button class="df-btn df-btn-secondary">Skip</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- In Progress Task -->
+                    <div class="p-4 rounded-lg border-l-4 opacity-75" style="background: var(--df-secondary); border-color: var(--df-text-secondary);">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="px-2 py-1 rounded text-xs font-medium flex items-center gap-1" style="background: var(--df-text-secondary); color: white;">
+                                        <svg class="w-3 h-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                        </svg>
+                                        In Progress
+                                    </span>
+                                    <h3 class="font-semibold">Product Catalog Sync Validation</h3>
+                                    <span class="text-sm" style="color: var(--df-text-secondary);">• Inventory Management Pipeline</span>
+                                </div>
+                                <p class="text-sm mb-3" style="color: var(--df-text-secondary);">
+                                    Validating 1,245 product updates. Checking for price discrepancies and inventory conflicts...
+                                </p>
+                                <div class="flex items-center gap-4 text-sm" style="color: var(--df-text-secondary);">
+                                    <span>Started: 5 min ago</span>
+                                    <span>•</span>
+                                    <span>Progress: 67%</span>
+                                    <span>•</span>
+                                    <span>Assigned to: Sarah Smith</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <button class="df-btn df-btn-secondary" disabled>Processing...</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Page navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dashboard Processing Chart
+            const processingCtx = document.getElementById('processingChart');
+            if (processingCtx) {
+                new Chart(processingCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Records Processed',
+                            data: [125000, 142000, 138000, 156000, 168000, 175000, 162000],
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--df-primary'),
+                            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--df-primary') + '20',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return (value / 1000) + 'k';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Dashboard Quality Chart
+            const qualityCtx = document.getElementById('qualityChart');
+            if (qualityCtx) {
+                new Chart(qualityCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Excellent', 'Good', 'Fair', 'Poor'],
+                        datasets: [{
+                            data: [65, 25, 8, 2],
+                            backgroundColor: [
+                                getComputedStyle(document.documentElement).getPropertyValue('--df-success'),
+                                getComputedStyle(document.documentElement).getPropertyValue('--df-primary'),
+                                getComputedStyle(document.documentElement).getPropertyValue('--df-warning'),
+                                getComputedStyle(document.documentElement).getPropertyValue('--df-error')
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // AI Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart');
+            if (revenueCtx) {
+                new Chart(revenueCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+                        datasets: [{
+                            label: 'Actual',
+                            data: [320000, 345000, 338000, 362000, 378000, 395000, 410000, 425000],
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--df-primary'),
+                            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--df-primary') + '20',
+                            tension: 0.4
+                        }, {
+                            label: 'Forecast',
+                            data: [null, null, null, null, null, null, 410000, 425000, 448000, 465000, 482000, 510000],
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--df-primary'),
+                            borderDash: [5, 5],
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + (value / 1000) + 'k';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // AI Segment Chart
+            const segmentCtx = document.getElementById('segmentChart');
+            if (segmentCtx) {
+                new Chart(segmentCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['High Value', 'Growing', 'At Risk'],
+                        datasets: [{
+                            data: [28, 45, 27],
+                            backgroundColor: ['#3B82F6', '#10B981', '#F59E0B']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Data Quality Trend Chart
+            const qualityTrendCtx = document.getElementById('qualityTrendChart');
+            if (qualityTrendCtx) {
+                new Chart(qualityTrendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Completeness',
+                            data: [92, 94, 93, 95, 97, 98],
+                            borderColor: '#10B981',
+                            tension: 0.4
+                        }, {
+                            label: 'Accuracy',
+                            data: [88, 90, 92, 93, 94, 95],
+                            borderColor: '#3B82F6',
+                            tension: 0.4
+                        }, {
+                            label: 'Consistency',
+                            data: [85, 87, 88, 90, 91, 92],
+                            borderColor: '#8B5CF6',
+                            tension: 0.4
+                        }, {
+                            label: 'Timeliness',
+                            data: [82, 84, 85, 86, 87, 88],
+                            borderColor: '#F59E0B',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                min: 80,
+                                max: 100,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

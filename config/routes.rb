@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get "metrics", to: "monitoring#metrics"
   get "ready", to: "monitoring#ready"
   get "alive", to: "monitoring#alive"
+  get "monitoring", to: "monitoring#dashboard"
 
   # Dashboard routes
   get "dashboard", to: "dashboard#index"

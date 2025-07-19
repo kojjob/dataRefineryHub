@@ -65,6 +65,7 @@ gem "paranoia"
 gem "paper_trail"
 gem "validate_url"
 gem "chronic"
+gem "fugit"  # For cron expression parsing
 
 # Monitoring and Observability
 gem "opentelemetry-sdk"

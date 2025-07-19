@@ -1,299 +1,474 @@
-<% content_for :page_title, "Business Intelligence Agent Dashboard" %>
+<% content_for :page_title, "Business Intelligence Agent" %>
+<% content_for :page_subtitle, "Autonomous insights and analytics powered by AI" %>
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50">
-  <!-- Premium Header with Glassmorphism -->
-  <div class="relative bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-xl">
-    <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/10 to-purple-600/10"></div>
-    <div class="relative px-4 sm:px-6 lg:px-8 py-8">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div class="space-y-2">
-          <div class="flex items-center space-x-3">
-            <div class="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg animate-pulse">
-              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+<div class="dashboard-content">
+  <!-- BI Agent Section -->
+  <section class="content-section active" id="bi-agent" data-controller="bi-agent">
+  <!-- BI Agent Header -->
+  <div class="bi-agent-header">
+    <div class="bi-agent-header-content">
+      <div class="bi-agent-title-section">
+        <div class="bi-agent-icon">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div class="bi-agent-title-text">
+          <h2>Business Intelligence Agent</h2>
+          <p>Autonomous insights and analytics powered by AI</p>
+        </div>
+      </div>
+      <div class="bi-agent-controls">
+        <% if @agent_status[:status] == 'active' %>
+          <button id="stop-agent-btn" class="btn btn--danger">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h6v4H9z"></path>
+            </svg>
+            Stop Agent
+          </button>
+        <% else %>
+          <button id="start-agent-btn" class="btn btn--primary">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            Start Agent
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent Status Card -->
+  <div class="metric-card agent-status-card">
+    <div class="agent-status-content">
+      <div class="agent-status-main">
+        <div class="agent-status-icon">
+          <% if @agent_status[:status] == 'active' %>
+            <div class="status-icon status-icon--active">
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <div class="status-pulse"></div>
+            </div>
+          <% else %>
+            <div class="status-icon status-icon--inactive">
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
               </svg>
             </div>
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-900 via-indigo-900 to-purple-900 bg-clip-text text-transparent">
-              Business Intelligence Agent
-            </h1>
-          </div>
-          <p class="text-slate-600 font-medium">Autonomous insights and analytics powered by AI</p>
+          <% end %>
         </div>
-        <div class="mt-4 sm:mt-0">
-          <% if @agent_status[:status] == 'active' %>
-            <button id="stop-agent-btn" class="group inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
-              <svg class="h-5 w-5 mr-2 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h6v4H9z"></path>
+        <div class="agent-status-info">
+          <h3>Agent Status</h3>
+          <p class="agent-status-value <%= @agent_status[:status] == 'active' ? 'status-active' : 'status-inactive' %>">
+            <%= @agent_status[:status].capitalize %>
+          </p>
+        </div>
+      </div>
+      <div class="agent-status-meta">
+        <p class="meta-label">Last updated</p>
+        <p class="meta-value">
+          <%= @agent_status[:last_updated]&.strftime('%B %d, %Y at %I:%M %p') || 'Never' %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BI Agent Metrics Grid -->
+  <div class="metrics-grid">
+    <!-- Insights Generated -->
+    <div class="metric-card">
+      <div class="metric-icon">📊</div>
+      <div class="metric-content">
+        <h3>Insights Generated</h3>
+        <p class="metric-value"><%= @agent_status[:insights_count] || 0 %></p>
+        <p class="metric-change positive">+12% vs last week</p>
+      </div>
+    </div>
+
+    <!-- Agent Uptime -->
+    <div class="metric-card">
+      <div class="metric-icon">⏱️</div>
+      <div class="metric-content">
+        <h3>Agent Uptime</h3>
+        <p class="metric-value"><%= @agent_status[:uptime] || '0h' %></p>
+        <p class="metric-change neutral">Continuous monitoring</p>
+      </div>
+    </div>
+
+    <!-- Weekly Reports -->
+    <div class="metric-card">
+      <div class="metric-icon">📋</div>
+      <div class="metric-content">
+        <h3>Weekly Reports</h3>
+        <p class="metric-value"><%= @weekly_reports.count %></p>
+        <p class="metric-change neutral">Automated summaries</p>
+      </div>
+    </div>
+
+    <!-- Data Sources -->
+    <div class="metric-card">
+      <div class="metric-icon">🔗</div>
+      <div class="metric-content">
+        <h3>Data Sources</h3>
+        <p class="metric-value"><%= current_organization.data_sources.count %></p>
+        <p class="metric-change neutral">Connected platforms</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Insights Section -->
+  <div class="content-card insights-section">
+    <div class="content-card-header">
+      <div class="content-card-title">
+        <div class="content-card-icon insights-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+        </div>
+        <div class="content-card-title-text">
+          <h3>Recent Insights</h3>
+          <p>Latest AI-generated business intelligence</p>
+        </div>
+      </div>
+      <div class="content-card-actions">
+        <button class="btn btn--sm btn--secondary">View All</button>
+      </div>
+    </div>
+    <div class="content-card-body">
+      <% if @recent_insights.any? %>
+        <div class="insights-grid">
+          <% @recent_insights.each_with_index do |insight, index| %>
+            <div class="insight-card" data-priority="<%= insight[:priority] %>">
+              <div class="insight-card-header">
+                <div class="insight-priority-badge priority-<%= insight[:priority] %>">
+                  <span class="priority-indicator"></span>
+                  <span class="priority-text"><%= insight[:priority].capitalize %></span>
+                </div>
+                <div class="insight-timestamp">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12,6 12,12 16,14"></polyline>
+                  </svg>
+                  <span><%= insight[:created_at]&.strftime('%m/%d') %></span>
+                </div>
+              </div>
+              <div class="insight-card-body">
+                <div class="insight-icon-wrapper">
+                  <div class="insight-type-icon">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="insight-content">
+                  <h4 class="insight-title"><%= insight[:title] %></h4>
+                  <p class="insight-description"><%= insight[:description] %></p>
+                </div>
+              </div>
+              <div class="insight-card-footer">
+                <div class="insight-tags">
+                  <span class="insight-tag">AI Generated</span>
+                </div>
+                <button class="insight-action-btn" aria-label="View insight details">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-state insights-empty">
+          <div class="empty-state-visual">
+            <div class="empty-state-icon">
+              <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
-              Stop Agent
-            </button>
-          <% else %>
-            <button id="start-agent-btn" class="group inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
-              <svg class="h-5 w-5 mr-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            </div>
+            <div class="empty-state-pulse"></div>
+          </div>
+          <div class="empty-state-content">
+            <h4>No insights generated yet</h4>
+            <p>Start the agent to begin generating AI-powered business insights</p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Weekly Intelligence Reports Section -->
+  <div class="content-card reports-section enterprise-reports">
+    <div class="content-card-header enterprise-reports-header">
+      <div class="reports-header-main">
+        <div class="reports-header-visual">
+          <div class="reports-icon-container">
+            <div class="reports-icon-primary">
+              <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div class="reports-icon-accent">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              Start Agent
-            </button>
-          <% end %>
+            </div>
+          </div>
+          <div class="reports-header-badge">
+            <span class="badge-text">AI-Powered</span>
+          </div>
+        </div>
+        <div class="reports-header-content">
+          <div class="reports-title-section">
+            <h3 class="reports-main-title">Weekly Intelligence Reports</h3>
+            <p class="reports-subtitle">Comprehensive business intelligence summaries with actionable insights</p>
+          </div>
+          <div class="reports-meta-info">
+            <div class="reports-stats">
+              <div class="stat-item">
+                <span class="stat-value"><%= @weekly_reports.count %></span>
+                <span class="stat-label">Reports Available</span>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <div class="status-indicator-dot active"></div>
+                <span class="stat-label">All Current</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reports-header-actions">
+        <div class="action-group-secondary">
+          <button class="btn btn--sm btn--secondary reports-filter-btn">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
+            </svg>
+            Filter
+          </button>
+        </div>
+        <div class="action-group-primary">
+          <button class="btn btn--primary reports-view-all-enhanced">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            View All Reports
+          </button>
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Agent Status Card -->
-    <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 mb-8 hover:shadow-2xl transition-all duration-500">
-      <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-2xl"></div>
-      <div class="relative">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-4">
-            <div class="relative">
-              <% if @agent_status[:status] == 'active' %>
-                <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
-                  <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                  </svg>
+    <div class="content-card-body enterprise-reports-body">
+      <% if @weekly_reports.any? %>
+        <div class="reports-grid enterprise-grid">
+          <% @weekly_reports.each_with_index do |report, index| %>
+            <div class="report-card enterprise-card" data-report-id="<%= index + 1 %>" data-report-status="ready">
+              <!-- Enhanced Report Card Header -->
+              <div class="report-card-header enterprise-header">
+                <div class="report-header-top">
+                  <div class="report-status-badge">
+                    <div class="status-indicator">
+                      <div class="status-dot ready-status pulsing"></div>
+                      <span class="status-label">Ready</span>
+                    </div>
+                    <div class="report-type-badge">
+                      <span class="type-label">Weekly Intelligence</span>
+                    </div>
+                  </div>
+                  <div class="report-actions-quick">
+                    <button class="quick-action-btn bookmark-btn" aria-label="Bookmark report">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
-              <% else %>
-                <div class="w-16 h-16 bg-gradient-to-br from-gray-400 to-slate-500 rounded-2xl flex items-center justify-center shadow-lg">
-                  <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                  </svg>
-                </div>
-              <% end %>
-            </div>
-            <div>
-              <h2 class="text-lg font-semibold text-gray-900">Agent Status</h2>
-              <p class="text-2xl font-bold bg-gradient-to-r <%= @agent_status[:status] == 'active' ? 'from-green-600 to-emerald-600' : 'from-gray-600 to-slate-600' %> bg-clip-text text-transparent capitalize">
-                <%= @agent_status[:status] %>
-              </p>
-            </div>
-          </div>
-          <div class="text-right">
-            <p class="text-sm text-gray-500">Last updated</p>
-            <p class="text-sm font-semibold text-gray-700">
-              <%= @agent_status[:last_updated]&.strftime('%B %d, %Y at %I:%M %p') || 'Never' %>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Premium Statistics Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <!-- Insights Generated -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
-              </svg>
-            </div>
-            <div class="flex items-center space-x-2 text-xs text-blue-600">
-              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-              </svg>
-              <span>+12%</span>
-            </div>
-          </div>
-          <p class="text-sm font-semibold text-slate-600">Insights Generated</p>
-          <p class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mt-1">
-            <%= @agent_status[:insights_count] || 0 %>
-          </p>
-          <p class="text-xs text-slate-500 mt-2">AI-powered discoveries</p>
-        </div>
-      </div>
-
-      <!-- Uptime -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg group-hover:shadow-green-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
-              </svg>
-            </div>
-          </div>
-          <p class="text-sm font-semibold text-slate-600">Agent Uptime</p>
-          <p class="text-3xl font-bold text-slate-900 mt-1"><%= @agent_status[:uptime] || '0h' %></p>
-          <p class="text-xs text-slate-500 mt-2">Continuous monitoring</p>
-        </div>
-      </div>
-
-      <!-- Weekly Reports -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"></path>
-              </svg>
-            </div>
-          </div>
-          <p class="text-sm font-semibold text-slate-600">Weekly Reports</p>
-          <p class="text-3xl font-bold text-slate-900 mt-1"><%= @weekly_reports.count %></p>
-          <p class="text-xs text-slate-500 mt-2">Automated summaries</p>
-        </div>
-      </div>
-
-      <!-- Data Sources -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-amber-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl shadow-lg group-hover:shadow-orange-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"></path>
-              </svg>
-            </div>
-          </div>
-          <p class="text-sm font-semibold text-slate-600">Data Sources</p>
-          <p class="text-3xl font-bold text-slate-900 mt-1"><%= current_organization.data_sources.count %></p>
-          <p class="text-xs text-slate-500 mt-2">Connected platforms</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent Insights Section -->
-    <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 mb-8">
-      <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-amber-500/5 rounded-2xl"></div>
-      <div class="relative">
-        <div class="px-6 py-4 border-b border-slate-200/50">
-          <div class="flex items-center space-x-2">
-            <div class="p-2 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-lg shadow-lg">
-              <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-amber-900 bg-clip-text text-transparent">
-              Recent Insights
-            </h3>
-          </div>
-          <p class="text-sm text-slate-600 mt-1 ml-10">Latest AI-generated business intelligence</p>
-        </div>
-        
-        <div class="p-6">
-          <% if @recent_insights.any? %>
-            <div class="space-y-4">
-              <% @recent_insights.each do |insight| %>
-                <div class="group relative bg-gradient-to-br from-white to-gray-50 rounded-xl p-4 border border-gray-200/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
-                  <div class="flex items-start space-x-4">
-                    <div class="p-2 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg shadow-md group-hover:shadow-lg transition-all duration-300">
-                      <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z"></path>
+                <div class="report-header-meta">
+                  <div class="report-date-info">
+                    <div class="date-icon">
+                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
                       </svg>
                     </div>
-                    <div class="flex-1">
-                      <h4 class="text-sm font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors duration-300">
-                        <%= insight[:title] %>
-                      </h4>
-                      <p class="text-sm text-gray-600 mt-1"><%= insight[:description] %></p>
+                    <div class="date-content">
+                      <span class="date-primary"><%= report[:created_at]&.strftime('%B %d, %Y') %></span>
+                      <span class="date-secondary">Generated <%= report[:created_at]&.strftime('%l:%M %p') %></span>
                     </div>
-                    <div class="text-xs text-gray-500 whitespace-nowrap">
-                      <%= insight[:created_at]&.strftime('%m/%d/%Y') %>
+                  </div>
+                  <div class="report-id-badge">
+                    <span class="id-prefix">ID</span>
+                    <span class="id-number"><%= sprintf('%03d', index + 1) %></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Enhanced Report Card Body -->
+              <div class="report-card-body enterprise-body">
+                <div class="report-content-main">
+                  <div class="report-title-section">
+                    <h4 class="report-title-primary"><%= report[:title] %></h4>
+                    <div class="report-category-tags">
+                      <span class="category-tag intelligence">Intelligence</span>
+                      <span class="category-tag automated">Automated</span>
+                    </div>
+                  </div>
+                  <div class="report-summary-section">
+                    <p class="report-summary-text"><%= report[:summary] %></p>
+                  </div>
+                  <div class="report-features-grid">
+                    <div class="feature-item">
+                      <div class="feature-icon trends">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                      </div>
+                      <div class="feature-content">
+                        <span class="feature-title">Trend Analysis</span>
+                        <span class="feature-description">Market patterns identified</span>
+                      </div>
+                    </div>
+                    <div class="feature-item">
+                      <div class="feature-icon recommendations">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                      </div>
+                      <div class="feature-content">
+                        <span class="feature-title">AI Insights</span>
+                        <span class="feature-description">Actionable recommendations</span>
+                      </div>
+                    </div>
+                    <div class="feature-item">
+                      <div class="feature-icon performance">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                      </div>
+                      <div class="feature-content">
+                        <span class="feature-title">Performance</span>
+                        <span class="feature-description">KPI analysis & metrics</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="text-center py-12">
-              <div class="w-16 h-16 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="h-8 w-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
               </div>
-              <p class="text-gray-500">No insights generated yet. Start the agent to begin generating insights.</p>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    </div>
 
-    <!-- Weekly Reports Section -->
-    <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20">
-      <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-2xl"></div>
-      <div class="relative">
-        <div class="px-6 py-4 border-b border-slate-200/50">
-          <div class="flex items-center space-x-2">
-            <div class="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-lg">
-              <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-blue-900 bg-clip-text text-transparent">
-              Weekly Reports
-            </h3>
-          </div>
-          <p class="text-sm text-slate-600 mt-1 ml-10">Automated business intelligence summaries</p>
-        </div>
-        
-        <div class="p-6">
-          <% if @weekly_reports.any? %>
-            <div class="space-y-4">
-              <% @weekly_reports.each do |report| %>
-                <div class="group relative bg-gradient-to-br from-white to-gray-50 rounded-xl p-4 border border-gray-200/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
-                  <div class="flex items-start space-x-4">
-                    <div class="p-2 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg shadow-md group-hover:shadow-lg transition-all duration-300">
-                      <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
-                      </svg>
+              <!-- Enhanced Report Card Footer -->
+              <div class="report-card-footer enterprise-footer">
+                <div class="report-metrics-section">
+                  <div class="metrics-grid-enhanced">
+                    <div class="metric-card insights-metric">
+                      <div class="metric-visual">
+                        <div class="metric-icon-wrapper insights">
+                          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                          </svg>
+                        </div>
+                        <div class="metric-progress">
+                          <div class="progress-bar insights-progress" style="width: 85%"></div>
+                        </div>
+                      </div>
+                      <div class="metric-data">
+                        <span class="metric-number">12</span>
+                        <span class="metric-unit">Insights</span>
+                      </div>
                     </div>
-                    <div class="flex-1">
-                      <h4 class="text-sm font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors duration-300">
-                        <%= report[:title] %>
-                      </h4>
-                      <p class="text-sm text-gray-600 mt-1"><%= report[:summary] %></p>
+                    <div class="metric-card pages-metric">
+                      <div class="metric-visual">
+                        <div class="metric-icon-wrapper pages">
+                          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                        <div class="metric-progress">
+                          <div class="progress-bar pages-progress" style="width: 65%"></div>
+                        </div>
+                      </div>
+                      <div class="metric-data">
+                        <span class="metric-number">8</span>
+                        <span class="metric-unit">Pages</span>
+                      </div>
                     </div>
-                    <div class="flex items-center space-x-3">
-                      <span class="text-xs text-gray-500 whitespace-nowrap">
-                        <%= report[:created_at]&.strftime('%m/%d/%Y') %>
-                      </span>
-                      <a href="#" class="inline-flex items-center px-3 py-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300">
-                        View
-                      </a>
+                    <div class="metric-card time-metric">
+                      <div class="metric-visual">
+                        <div class="metric-icon-wrapper time">
+                          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12,6 12,12 16,14"></polyline>
+                          </svg>
+                        </div>
+                        <div class="metric-progress">
+                          <div class="progress-bar time-progress" style="width: 40%"></div>
+                        </div>
+                      </div>
+                      <div class="metric-data">
+                        <span class="metric-number">5</span>
+                        <span class="metric-unit">min read</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="text-center py-12">
-              <div class="w-16 h-16 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="h-8 w-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                <div class="report-actions-section">
+                  <div class="actions-secondary">
+                    <button class="action-btn-enhanced share" title="Share Report">
+                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+                      </svg>
+                    </button>
+                    <button class="action-btn-enhanced download" title="Download PDF">
+                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </button>
+                    <button class="action-btn-enhanced bookmark" title="Bookmark">
+                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="actions-primary">
+                    <a href="#" class="btn btn--primary btn--enhanced report-open-btn">
+                      <div class="btn-content">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span>Open Report</span>
+                      </div>
+                    </a>
+                  </div>
+                </div>
               </div>
-              <p class="text-gray-500">No weekly reports available yet.</p>
             </div>
           <% end %>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Live AI Indicator -->
-  <div class="fixed bottom-6 right-6 z-50">
-    <div class="group relative">
-      <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
-      <div class="relative bg-white/90 backdrop-blur-xl rounded-full px-4 py-2 shadow-xl border border-white/20 flex items-center space-x-2">
-        <div class="relative">
-          <div class="w-2 h-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full animate-pulse"></div>
-          <% if @agent_status[:status] == 'active' %>
-            <div class="absolute inset-0 w-2 h-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full animate-ping"></div>
-          <% end %>
+      <% else %>
+        <div class="empty-state reports-empty">
+          <div class="empty-state-visual">
+            <div class="empty-state-icon">
+              <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div class="empty-state-pulse"></div>
+          </div>
+          <div class="empty-state-content">
+            <h4>No reports available yet</h4>
+            <p>Weekly reports will appear here once the agent starts generating insights</p>
+          </div>
         </div>
-        <span class="text-sm font-semibold text-slate-700">AI Agent <%= @agent_status[:status] == 'active' ? 'Active' : 'Inactive' %></span>
-      </div>
+      <% end %>
     </div>
   </div>
+  </section>
 </div>
+
+
 
 <script>
 document.addEventListener('turbo:load', function() {
@@ -303,8 +478,8 @@ document.addEventListener('turbo:load', function() {
   if (startBtn) {
     startBtn.addEventListener('click', function() {
       this.disabled = true;
-      this.innerHTML = '<svg class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Starting...';
-      
+      this.textContent = 'Starting...';
+
       fetch('/ai/bi_agent/start_agent', {
         method: 'POST',
         headers: {
@@ -319,14 +494,14 @@ document.addEventListener('turbo:load', function() {
         } else {
           alert('Failed to start agent: ' + data.error);
           this.disabled = false;
-          this.innerHTML = '<svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>Start Agent';
+          this.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>Start Agent';
         }
       })
       .catch(error => {
         console.error('Error:', error);
         alert('Failed to start agent');
         this.disabled = false;
-        this.innerHTML = '<svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>Start Agent';
+        this.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>Start Agent';
       });
     });
   }
@@ -334,8 +509,8 @@ document.addEventListener('turbo:load', function() {
   if (stopBtn) {
     stopBtn.addEventListener('click', function() {
       this.disabled = true;
-      this.innerHTML = '<svg class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Stopping...';
-      
+      this.textContent = 'Stopping...';
+
       fetch('/ai/bi_agent/stop_agent', {
         method: 'POST',
         headers: {
@@ -350,44 +525,16 @@ document.addEventListener('turbo:load', function() {
         } else {
           alert('Failed to stop agent: ' + data.error);
           this.disabled = false;
-          this.innerHTML = '<svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h6v4H9z"></path></svg>Stop Agent';
+          this.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h6v4H9z"></path></svg>Stop Agent';
         }
       })
       .catch(error => {
         console.error('Error:', error);
         alert('Failed to stop agent');
         this.disabled = false;
-        this.innerHTML = '<svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h6v4H9z"></path></svg>Stop Agent';
+        this.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h6v4H9z"></path></svg>Stop Agent';
       });
     });
   }
-
-  // Smooth scroll animations
-  const animateOnScroll = () => {
-    const elements = document.querySelectorAll('.relative.bg-white\\/80, .group.relative.bg-white\\/80');
-    
-    elements.forEach((element, index) => {
-      const rect = element.getBoundingClientRect();
-      const isVisible = rect.top <= window.innerHeight && rect.bottom >= 0;
-      
-      if (isVisible && !element.classList.contains('animate-in')) {
-        setTimeout(() => {
-          element.classList.add('animate-in');
-          element.style.opacity = '0';
-          element.style.transform = 'translateY(20px)';
-          
-          requestAnimationFrame(() => {
-            element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-            element.style.opacity = '1';
-            element.style.transform = 'translateY(0)';
-          });
-        }, index * 50);
-      }
-    });
-  };
-  
-  // Initialize animations
-  animateOnScroll();
-  window.addEventListener('scroll', animateOnScroll);
 });
 </script>

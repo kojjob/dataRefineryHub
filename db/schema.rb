@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_09_112000) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_19_160343) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -328,6 +328,44 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_112000) do
     t.check_constraint "source_type::text = ANY (ARRAY['shopify'::character varying, 'quickbooks'::character varying, 'google_analytics'::character varying, 'stripe'::character varying, 'mailchimp'::character varying, 'zendesk'::character varying, 'hubspot'::character varying, 'google_ads'::character varying, 'facebook_ads'::character varying, 'woocommerce'::character varying, 'salesforce'::character varying, 'amazon_seller_central'::character varying, 'custom_api'::character varying, 'file_upload'::character varying, 'postgresql'::character varying, 'mysql'::character varying, 'csv'::character varying, 'api'::character varying, 'google_sheets'::character varying]::text[])", name: "check_valid_source_type"
   end
 
+  create_table "domain_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "event_id", null: false
+    t.string "event_type", null: false
+    t.string "aggregate_type", null: false
+    t.uuid "aggregate_id", null: false
+    t.jsonb "data", default: {}
+    t.jsonb "metadata", default: {}
+    t.datetime "occurred_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["aggregate_id", "aggregate_type"], name: "index_domain_events_on_aggregate_id_and_aggregate_type"
+    t.index ["aggregate_type", "aggregate_id"], name: "index_domain_events_on_aggregate"
+    t.index ["created_at"], name: "index_domain_events_on_created_at"
+    t.index ["event_id"], name: "index_domain_events_on_event_id", unique: true
+    t.index ["event_type"], name: "index_domain_events_on_event_type"
+    t.index ["occurred_at"], name: "index_domain_events_on_occurred_at"
+  end
+
+  create_table "event_timelines", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "event_type", null: false
+    t.string "event_category", null: false
+    t.string "title", null: false
+    t.text "description"
+    t.string "resource_type"
+    t.bigint "resource_id"
+    t.json "metadata", default: {}
+    t.datetime "occurred_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_category"], name: "index_event_timelines_on_event_category"
+    t.index ["event_type"], name: "index_event_timelines_on_event_type"
+    t.index ["occurred_at"], name: "index_event_timelines_on_occurred_at"
+    t.index ["organization_id", "occurred_at"], name: "index_event_timelines_on_organization_id_and_occurred_at"
+    t.index ["organization_id"], name: "index_event_timelines_on_organization_id"
+    t.index ["resource_type", "resource_id"], name: "index_event_timelines_on_resource_type_and_resource_id"
+  end
+
   create_table "extraction_jobs", force: :cascade do |t|
     t.bigint "data_source_id", null: false
     t.string "job_id", null: false
@@ -418,36 +456,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_112000) do
     t.index ["stripe_customer_id"], name: "index_organizations_on_stripe_customer_id", unique: true
   end
 
-  create_table "pipeline_configurations", force: :cascade do |t|
-    t.bigint "organization_id", null: false
-    t.bigint "created_by_id", null: false
-    t.bigint "last_executed_by_id"
-    t.string "name", null: false
-    t.text "description"
-    t.string "pipeline_type", default: "etl", null: false
-    t.string "status", default: "draft", null: false
-    t.jsonb "source_config", default: {}, null: false
-    t.jsonb "destination_config", default: {}, null: false
-    t.jsonb "transformation_rules", default: []
-    t.jsonb "schedule_config", default: {}
-    t.jsonb "dependencies", default: []
-    t.jsonb "retry_policy", default: {}
-    t.jsonb "notification_settings", default: {}
-    t.string "error_handling_strategy", default: "circuit_breaker"
-    t.datetime "last_executed_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_pipeline_configurations_on_created_at"
-    t.index ["created_by_id"], name: "index_pipeline_configurations_on_created_by_id"
-    t.index ["last_executed_by_id"], name: "index_pipeline_configurations_on_last_executed_by_id"
-    t.index ["organization_id", "name"], name: "index_pipeline_configurations_on_organization_id_and_name", unique: true
-    t.index ["organization_id", "status"], name: "idx_pipeline_configs_org_status"
-    t.index ["organization_id"], name: "index_pipeline_configurations_on_organization_id"
-    t.index ["pipeline_type"], name: "index_pipeline_configurations_on_pipeline_type"
-    t.index ["schedule_config"], name: "idx_pipeline_configs_schedule_gin", using: :gin
-    t.index ["status"], name: "index_pipeline_configurations_on_status"
-  end
-
   create_table "pipeline_executions", force: :cascade do |t|
     t.string "execution_id", null: false
     t.string "pipeline_name", null: false
@@ -474,6 +482,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_112000) do
     t.json "configuration", default: {}
     t.json "metadata", default: {}
     t.integer "retry_count", default: 0
+    t.integer "records_processed", default: 0
+    t.integer "records_failed", default: 0
+    t.integer "average_speed", default: 0
+    t.datetime "estimated_completion_at"
+    t.decimal "cpu_usage", precision: 5, scale: 2
+    t.decimal "memory_usage_gb", precision: 8, scale: 2
     t.index ["approved_by_id"], name: "index_pipeline_executions_on_approved_by_id"
     t.index ["data_source_id", "status"], name: "index_pipeline_executions_on_data_source_id_and_status"
     t.index ["data_source_id"], name: "index_pipeline_executions_on_data_source_id"
@@ -488,6 +502,59 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_112000) do
     t.index ["started_at"], name: "index_pipeline_executions_on_started_at"
     t.index ["status"], name: "index_pipeline_executions_on_status"
     t.index ["user_id"], name: "index_pipeline_executions_on_user_id"
+  end
+
+  create_table "pipeline_metrics", force: :cascade do |t|
+    t.bigint "pipeline_execution_id", null: false
+    t.bigint "organization_id", null: false
+    t.integer "records_per_second", default: 0
+    t.decimal "cpu_usage", precision: 5, scale: 2
+    t.decimal "memory_usage_gb", precision: 8, scale: 2
+    t.integer "active_threads", default: 0
+    t.integer "queue_size", default: 0
+    t.datetime "recorded_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_pipeline_metrics_on_organization_id"
+    t.index ["pipeline_execution_id", "recorded_at"], name: "idx_on_pipeline_execution_id_recorded_at_4868b4fad1"
+    t.index ["pipeline_execution_id"], name: "index_pipeline_metrics_on_pipeline_execution_id"
+    t.index ["recorded_at"], name: "index_pipeline_metrics_on_recorded_at"
+  end
+
+  create_table "pipelines", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "created_by_id", null: false
+    t.bigint "last_executed_by_id"
+    t.string "name", null: false
+    t.text "description"
+    t.string "pipeline_type", default: "etl", null: false
+    t.string "status", default: "draft", null: false
+    t.jsonb "source_config", default: {}, null: false
+    t.jsonb "destination_config", default: {}, null: false
+    t.jsonb "transformation_rules", default: []
+    t.jsonb "schedule_config", default: {}
+    t.jsonb "dependencies", default: []
+    t.jsonb "retry_policy", default: {}
+    t.jsonb "notification_settings", default: {}
+    t.string "error_handling_strategy", default: "circuit_breaker"
+    t.datetime "last_executed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "tags", default: []
+    t.integer "aggregate_version", default: 0
+    t.string "schedule_type"
+    t.string "schedule_expression"
+    t.string "schedule_timezone", default: "UTC"
+    t.index ["created_at"], name: "index_pipelines_on_created_at"
+    t.index ["created_by_id"], name: "index_pipelines_on_created_by_id"
+    t.index ["last_executed_by_id"], name: "index_pipelines_on_last_executed_by_id"
+    t.index ["organization_id", "name"], name: "index_pipelines_on_organization_id_and_name", unique: true
+    t.index ["organization_id", "status"], name: "idx_pipeline_configs_org_status"
+    t.index ["organization_id"], name: "index_pipelines_on_organization_id"
+    t.index ["pipeline_type"], name: "index_pipelines_on_pipeline_type"
+    t.index ["schedule_config"], name: "idx_pipeline_configs_schedule_gin", using: :gin
+    t.index ["status"], name: "index_pipelines_on_status"
+    t.index ["tags"], name: "index_pipelines_on_tags", using: :gin
   end
 
   create_table "presentations", force: :cascade do |t|
@@ -631,6 +698,42 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_112000) do
     t.index ["next_run_at"], name: "index_scheduled_uploads_on_next_run_at"
     t.index ["user_id", "active"], name: "index_scheduled_uploads_on_user_id_and_active"
     t.index ["user_id"], name: "index_scheduled_uploads_on_user_id"
+  end
+
+  create_table "system_health_checks", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "check_type", null: false
+    t.string "status", null: false
+    t.decimal "response_time_ms", precision: 10, scale: 2
+    t.decimal "uptime_percentage", precision: 5, scale: 2
+    t.text "error_message"
+    t.json "metadata", default: {}
+    t.datetime "checked_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["check_type"], name: "index_system_health_checks_on_check_type"
+    t.index ["checked_at"], name: "index_system_health_checks_on_checked_at"
+    t.index ["organization_id", "check_type", "checked_at"], name: "idx_health_checks_org_type_checked"
+    t.index ["organization_id"], name: "index_system_health_checks_on_organization_id"
+    t.index ["status"], name: "index_system_health_checks_on_status"
+  end
+
+  create_table "system_metrics", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.decimal "cpu_usage", precision: 5, scale: 2
+    t.decimal "memory_usage", precision: 5, scale: 2
+    t.decimal "storage_usage", precision: 5, scale: 2
+    t.decimal "network_io_read", precision: 10, scale: 2
+    t.decimal "network_io_write", precision: 10, scale: 2
+    t.integer "active_connections", default: 0
+    t.integer "queue_depth", default: 0
+    t.datetime "recorded_at", null: false
+    t.json "metadata", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "recorded_at"], name: "index_system_metrics_on_organization_id_and_recorded_at"
+    t.index ["organization_id"], name: "index_system_metrics_on_organization_id"
+    t.index ["recorded_at"], name: "index_system_metrics_on_recorded_at"
   end
 
   create_table "task_executions", force: :cascade do |t|
@@ -854,16 +957,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_112000) do
   add_foreign_key "data_quality_reports", "data_sources"
   add_foreign_key "data_quality_reports", "users"
   add_foreign_key "data_sources", "organizations"
+  add_foreign_key "event_timelines", "organizations"
   add_foreign_key "extraction_jobs", "data_sources"
   add_foreign_key "notifications", "organizations"
   add_foreign_key "notifications", "users"
-  add_foreign_key "pipeline_configurations", "organizations"
-  add_foreign_key "pipeline_configurations", "users", column: "created_by_id"
-  add_foreign_key "pipeline_configurations", "users", column: "last_executed_by_id"
   add_foreign_key "pipeline_executions", "data_sources"
   add_foreign_key "pipeline_executions", "organizations"
   add_foreign_key "pipeline_executions", "users"
   add_foreign_key "pipeline_executions", "users", column: "approved_by_id"
+  add_foreign_key "pipeline_metrics", "organizations"
+  add_foreign_key "pipeline_metrics", "pipeline_executions"
+  add_foreign_key "pipelines", "organizations"
+  add_foreign_key "pipelines", "users", column: "created_by_id"
+  add_foreign_key "pipelines", "users", column: "last_executed_by_id"
   add_foreign_key "presentations", "organizations"
   add_foreign_key "presentations", "users"
   add_foreign_key "raw_data_records", "data_sources"
@@ -877,6 +983,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_112000) do
   add_foreign_key "scheduled_tasks", "users", column: "created_by_id"
   add_foreign_key "scheduled_uploads", "data_sources"
   add_foreign_key "scheduled_uploads", "users"
+  add_foreign_key "system_health_checks", "organizations"
+  add_foreign_key "system_metrics", "organizations"
   add_foreign_key "task_executions", "tasks"
   add_foreign_key "task_executions", "users", column: "executed_by_id"
   add_foreign_key "task_templates", "organizations"

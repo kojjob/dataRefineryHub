@@ -37,6 +37,32 @@ class PipelineConfiguration < ApplicationRecord
   before_save :validate_configuration
   after_update :update_orchestration_service, if: :saved_change_to_status?
 
+  # Schedule Value Object Integration
+  def schedule
+    return nil unless schedule_type.present?
+    
+    @schedule ||= Domain::PipelineManagement::ValueObjects::Schedule.new(
+      type: schedule_type,
+      expression: schedule_expression,
+      timezone: schedule_timezone
+    )
+  rescue ActiveModel::ValidationError
+    nil
+  end
+  
+  def schedule=(schedule_value_object)
+    if schedule_value_object.nil?
+      self.schedule_type = nil
+      self.schedule_expression = nil
+      self.schedule_timezone = nil
+    else
+      self.schedule_type = schedule_value_object.type
+      self.schedule_expression = schedule_value_object.expression
+      self.schedule_timezone = schedule_value_object.timezone
+    end
+    @schedule = schedule_value_object
+  end
+
   # Execute the pipeline
   def execute(user: nil, parameters: {})
     execution = pipeline_executions.create!(
@@ -157,29 +183,12 @@ class PipelineConfiguration < ApplicationRecord
 
   # Check if pipeline is scheduled
   def scheduled?
-    schedule_config.present?
+    schedule.present?
   end
 
   # Get next scheduled run time
   def next_scheduled_run
-    return nil unless scheduled?
-
-    schedule_type = schedule_config["type"]
-
-    case schedule_type
-    when "cron"
-      cron_parser = Fugit::Cron.parse(schedule_config["cron_expression"])
-      cron_parser.next_time
-    when "interval"
-      last_run = last_executed_at || created_at
-      last_run + schedule_config["interval_minutes"].minutes
-    when "daily"
-      time = Time.parse(schedule_config["time"])
-      next_day = Time.current.hour >= time.hour ? Date.tomorrow : Date.current
-      next_day.to_time + time.hour.hours + time.min.minutes
-    else
-      nil
-    end
+    schedule&.next_run_time(from: last_executed_at || created_at)
   end
 
   # Get execution statistics

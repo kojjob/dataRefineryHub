@@ -898,6 +898,7 @@ DEPENDENCIES
   faraday
   faraday-retry
   friendly_id
+  fugit
   google-analytics-data
   groupdate
   httparty

@@ -29,6 +29,8 @@ module DataRefineryPlatform
       #{config.root}/app/services
       #{config.root}/app/services/extractors
       #{config.root}/app/middleware
+      #{config.root}/app/domain
+      #{config.root}/app/application
     ]
 
     # Full-stack application with API capabilities
