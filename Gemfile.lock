@@ -79,17 +79,12 @@ GEM
     annotate (2.6.5)
       activerecord (>= 2.3.0)
       rake (>= 0.8.7)
-    argon2-kdf (0.3.1)
-      fiddle
     ast (2.4.3)
     base64 (0.3.0)
     bcrypt (3.1.20)
     bcrypt_pbkdf (1.1.1)
     benchmark (0.4.1)
     bigdecimal (3.2.2)
-    blind_index (2.7.0)
-      activesupport (>= 7.1)
-      argon2-kdf (>= 0.2)
     bootsnap (1.18.6)
       msgpack (~> 1.2)
     brakeman (7.0.2)
@@ -99,18 +94,12 @@ GEM
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     chartkick (5.2.0)
-    childprocess (5.1.0)
-      logger (~> 1.5)
-    chronic (0.10.2)
     concurrent-ruby (1.3.5)
     connection_pool (2.5.3)
     crack (1.0.0)
       bigdecimal
       rexml
     crass (1.0.6)
-    creek (2.6.3)
-      nokogiri (>= 1.10.0)
-      rubyzip (>= 1.0.0)
     csv (3.3.5)
     database_cleaner-active_record (2.2.1)
       activerecord (>= 5.a)
@@ -158,7 +147,6 @@ GEM
     ffi (1.17.2-arm64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
     ffi (1.17.2-x86_64-linux-musl)
-    fiddle (1.1.8)
     friendly_id (5.5.1)
       activerecord (>= 4.0.0)
     fugit (1.11.1)
@@ -289,12 +277,6 @@ GEM
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
     language_server-protocol (3.17.0.5)
-    launchy (3.1.1)
-      addressable (~> 2.8)
-      childprocess (~> 5.0)
-      logger (~> 1.6)
-    letter_opener (1.10.0)
-      launchy (>= 2.2, < 4)
     lint_roller (1.1.0)
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -312,7 +294,6 @@ GEM
     mailchimp_api_v3 (0.2.18)
       rest-client (~> 2)
     marcel (1.0.4)
-    memory_profiler (1.1.0)
     method_source (1.1.0)
     mime-types (3.7.0)
       logger
@@ -591,12 +572,7 @@ GEM
     orm_adapter (0.5.0)
     os (1.1.4)
     ostruct (0.6.2)
-    paper_trail (16.0.0)
-      activerecord (>= 6.1)
-      request_store (~> 1.4)
     parallel (1.27.0)
-    paranoia (3.0.1)
-      activerecord (>= 6, < 8.1)
     parser (3.3.8.0)
       ast (~> 2.4.1)
       racc
@@ -672,8 +648,6 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
-    rbnacl (7.1.2)
-      ffi (~> 1)
     rdoc (6.14.1)
       erb
       psych (>= 4.0.0)
@@ -796,10 +770,6 @@ GEM
       bigdecimal
       logger
       ruby-ole
-    spring (4.3.0)
-    spring-watcher-listen (2.1.0)
-      listen (>= 2.7, < 4.0)
-      spring (>= 4)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -815,7 +785,6 @@ GEM
       net-sftp (>= 2.1.2)
       net-ssh (>= 2.8.0)
       ostruct
-    stackprof (0.2.27)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stringio (3.1.7)
@@ -847,9 +816,6 @@ GEM
     uniform_notifier (1.17.0)
     uri (1.0.3)
     useragent (0.16.11)
-    validate_url (1.0.15)
-      activemodel (>= 3.0.0)
-      public_suffix
     vcr (6.3.1)
       base64
     view_component (3.23.2)
@@ -883,13 +849,10 @@ DEPENDENCIES
   activerecord-import
   annotate
   bcrypt (~> 3.1.7)
-  blind_index
   bootsnap
   brakeman
   bullet
   chartkick
-  chronic
-  creek
   database_cleaner-active_record
   debug
   devise
@@ -908,17 +871,13 @@ DEPENDENCIES
   jwt
   kamal
   kaminari
-  letter_opener
   listen
   lockbox
   mailchimp_api_v3
-  memory_profiler
   money-rails
   opentelemetry-exporter-otlp
   opentelemetry-instrumentation-all
   opentelemetry-sdk
-  paper_trail
-  paranoia
   pg (~> 1.1)
   puma (>= 5.0)
   pundit
@@ -928,7 +887,6 @@ DEPENDENCIES
   rails (~> 8.0.2)
   rails-controller-testing
   ransack
-  rbnacl
   request_store
   roo
   roo-xls
@@ -941,10 +899,7 @@ DEPENDENCIES
   solid_cable
   solid_cache
   solid_queue
-  spring
-  spring-watcher-listen
   sprockets-rails
-  stackprof
   stimulus-rails
   stripe
   tailwindcss-rails
@@ -952,7 +907,6 @@ DEPENDENCIES
   timecop
   turbo-rails
   tzinfo-data
-  validate_url
   vcr
   view_component
   webmock
