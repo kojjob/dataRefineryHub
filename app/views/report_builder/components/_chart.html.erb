@@ -1,0 +1,39 @@
+<div class="chart-placeholder" data-chart-type="<%= component.properties['chart_type'] || 'bar' %>">
+  <div class="placeholder-icon">
+    <%= ReportTemplate.chart_options[component.properties['chart_type']&.to_sym || :bar][:icon] %>
+  </div>
+  <div class="placeholder-text">
+    <%= component.properties['title'] || 'Chart' %>
+  </div>
+  <div class="placeholder-subtitle">
+    Click edit to configure data source
+  </div>
+</div>
+
+<style>
+.chart-placeholder {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-8);
+}
+
+.placeholder-text {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-4);
+}
+
+.placeholder-subtitle {
+  font-size: var(--font-size-sm);
+}
+</style>

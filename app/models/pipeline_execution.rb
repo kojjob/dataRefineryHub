@@ -9,6 +9,7 @@ class PipelineExecution < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :approved_by, class_name: "User", optional: true
   has_many :tasks, dependent: :destroy
+  has_many :pipeline_metrics, dependent: :destroy
 
   validates :execution_id, presence: true, uniqueness: true
   validates :pipeline_name, presence: true
@@ -103,6 +104,13 @@ class PipelineExecution < ApplicationRecord
   
   def total_records
     result_summary&.dig("total_records") || 0
+  end
+
+  def destination_type
+    # Extract destination type from parameters or use default
+    parameters&.dig("destination", "type") ||
+    result_summary&.dig("destination_type") ||
+    "Data Warehouse"
   end
 
   def records_processed

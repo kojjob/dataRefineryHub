@@ -1,0 +1,63 @@
+<!-- Landing Page Preview Template -->
+<% if @landing_page.content.present? %>
+  <% content_data = @landing_page.content_json %>
+  
+  <!-- Hero Section -->
+  <% if content_data['hero'] %>
+    <section class="hero">
+      <h1><%= content_data['hero']['title'] || 'Welcome to Our Platform' %></h1>
+      <p><%= content_data['hero']['subtitle'] || 'Transform your business with our powerful solution' %></p>
+      <a href="#" class="cta-button"><%= content_data['hero']['cta_text'] || 'Get Started' %></a>
+    </section>
+  <% end %>
+  
+  <!-- Features Section -->
+  <% if content_data['features'] %>
+    <section class="features">
+      <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; color: #1f2937;">Features</h2>
+      <div class="features-grid">
+        <% content_data['features'].each do |feature| %>
+          <div class="feature">
+            <div class="feature-icon"><%= feature['icon'] %></div>
+            <h3><%= feature['title'] %></h3>
+            <p><%= feature['description'] %></p>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+  
+  <!-- Social Proof Section -->
+  <% if content_data['social_proof'] %>
+    <section class="social-proof">
+      <h2 style="font-size: 2.5rem; margin-bottom: 60px; color: #1f2937;">
+        <%= content_data['social_proof']['title'] || 'What Our Customers Say' %>
+      </h2>
+      <% if content_data['social_proof']['testimonials'] %>
+        <% content_data['social_proof']['testimonials'].each do |testimonial| %>
+          <div class="testimonial">
+            <div class="testimonial-quote">"<%= testimonial['quote'] %>"</div>
+            <div class="testimonial-author"><%= testimonial['author'] %></div>
+            <div class="testimonial-company"><%= testimonial['company'] %></div>
+          </div>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
+<% else %>
+  <!-- Default content when no content is set -->
+  <section class="hero">
+    <h1><%= @landing_page.title || @landing_page.name %></h1>
+    <p><%= @landing_page.description || 'This landing page is currently being built.' %></p>
+    <a href="#" class="cta-button">Get Started</a>
+  </section>
+  
+  <section class="features">
+    <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #1f2937;">
+      Coming Soon
+    </h2>
+    <p style="text-align: center; color: #6b7280; font-size: 1.1rem;">
+      Content for this landing page is still being developed.
+    </p>
+  </section>
+<% end %>

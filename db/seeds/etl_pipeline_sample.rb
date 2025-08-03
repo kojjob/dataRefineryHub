@@ -29,7 +29,7 @@ if org && user
   end
 
   # Create a sample ETL pipeline
-  sample_pipeline = PipelineConfiguration.find_or_create_by!(
+  sample_pipeline = Pipeline.find_or_create_by!(
     name: "Customer Data ETL Pipeline",
     organization: org
   ) do |pipeline|
@@ -110,7 +110,7 @@ if org && user
   end
 
   # Create a second pipeline for API to Database
-  api_pipeline = PipelineConfiguration.find_or_create_by!(
+  api_pipeline = Pipeline.find_or_create_by!(
     name: "Shopify Orders ELT Pipeline",
     organization: org
   ) do |pipeline|
@@ -165,7 +165,7 @@ if org && user
   end
 
   # Create a streaming pipeline
-  streaming_pipeline = PipelineConfiguration.find_or_create_by!(
+  streaming_pipeline = Pipeline.find_or_create_by!(
     name: "Real-time Events Pipeline",
     organization: org
   ) do |pipeline|

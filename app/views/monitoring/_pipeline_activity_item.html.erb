@@ -1,0 +1,113 @@
+<%
+  colors = pipeline_status_colors(pipeline.status)
+  progress = pipeline.progress_percentage || 0
+  duration = pipeline.started_at ? time_ago_in_words(pipeline.started_at) : 'N/A'
+  records_processed = pipeline.records_processed || 0
+  total_records = pipeline.total_records || 0
+  
+  # Get latest metrics
+  latest_metric = pipeline.pipeline_metrics.order(recorded_at: :desc).first
+  cpu_usage = latest_metric&.cpu_usage || 0
+  memory_usage = latest_metric&.memory_usage_gb || 0
+  records_per_second = latest_metric&.records_per_second || 0
+%>
+
+<div class="pipeline-activity-item">
+  <div class="flex items-start justify-between mb-3">
+    <div>
+      <div class="flex items-center gap-3">
+        <h4 class="font-semibold text-gray-900">
+          <%= pipeline.data_source&.name || 'Unknown Pipeline' %>
+        </h4>
+        <span class="pipeline-status-badge pipeline-status-badge--<%= pipeline.status %>">
+          <%= pipeline.status.humanize %>
+        </span>
+      </div>
+      <p class="text-sm text-gray-600 mt-1">
+        <%= pipeline.data_source&.source_type&.humanize || 'Unknown' %> → 
+        <%= pipeline.destination_type&.humanize || 'Data Warehouse' %>
+      </p>
+    </div>
+    <div class="flex items-center gap-1">
+      <% if pipeline.status == 'running' %>
+        <button class="p-1.5 rounded hover:bg-gray-100 transition-colors" data-pipeline-id="<%= pipeline.id %>">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </button>
+      <% elsif pipeline.status == 'failed' %>
+        <button class="p-1.5 rounded hover:bg-red-50 transition-colors" data-pipeline-id="<%= pipeline.id %>">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+        </button>
+      <% end %>
+      <%= link_to pipeline_execution_path(pipeline), class: "p-1.5 rounded hover:bg-gray-100 transition-colors" do %>
+        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+        </svg>
+      <% end %>
+    </div>
+  </div>
+
+  <% if pipeline.status == 'running' && progress > 0 %>
+    <div class="space-y-3">
+      <div>
+        <div class="flex items-center justify-between text-sm mb-1">
+          <span class="text-gray-600">Progress</span>
+          <span class="font-medium text-gray-900">
+            <%= progress.round %>% • 
+            <%= number_with_delimiter(records_processed) %> / 
+            <%= number_with_delimiter(total_records) %> records
+          </span>
+        </div>
+        <div class="pipeline-progress">
+          <div class="pipeline-progress-fill" style="width: <%= progress %>%"></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-5 gap-3 text-sm">
+        <div>
+          <p class="text-gray-600">Duration</p>
+          <p class="font-medium text-gray-900"><%= duration %></p>
+        </div>
+        <div>
+          <p class="text-gray-600">Speed</p>
+          <p class="font-medium text-gray-900"><%= number_with_delimiter(records_per_second) %>/s</p>
+        </div>
+        <div>
+          <p class="text-gray-600">ETA</p>
+          <p class="font-medium text-gray-900">
+            <% if records_per_second > 0 && total_records > records_processed %>
+              <% eta_seconds = (total_records - records_processed) / records_per_second %>
+              <%= distance_of_time_in_words(eta_seconds.seconds) %>
+            <% else %>
+              -
+            <% end %>
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-600">CPU</p>
+          <p class="font-medium text-gray-900"><%= cpu_usage.round %>%</p>
+        </div>
+        <div>
+          <p class="text-gray-600">Memory</p>
+          <p class="font-medium text-gray-900"><%= memory_usage.round(1) %>GB</p>
+        </div>
+      </div>
+    </div>
+  <% elsif pipeline.status == 'pending' || pipeline.status == 'initializing' %>
+    <div class="flex items-center gap-2 text-sm text-gray-600">
+      <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      <span><%= pipeline.status == 'pending' ? 'Waiting to start...' : 'Connecting to source database...' %></span>
+    </div>
+  <% elsif pipeline.status == 'failed' %>
+    <div class="bg-red-50 rounded-lg p-3 text-sm">
+      <p class="font-medium text-red-900">
+        <%= pipeline.error_message || 'Connection timeout after 3 retries' %>
+      </p>
+    </div>
+  <% end %>
+</div>

@@ -15,7 +15,7 @@ RSpec.describe EtlPipelineBuildersController, type: :controller do
     end
 
     it "assigns pipeline configurations" do
-      pipeline = create(:pipeline_configuration, organization: organization)
+      pipeline = create(:pipeline, organization: organization)
 
       get :index
       expect(assigns(:pipelines)).to include(pipeline)
@@ -73,7 +73,7 @@ RSpec.describe EtlPipelineBuildersController, type: :controller do
   end
 
   describe "GET #show" do
-    let(:pipeline) { create(:pipeline_configuration, organization: organization) }
+    let(:pipeline) { create(:pipeline, organization: organization) }
 
     it "returns a successful response" do
       get :show, params: { id: pipeline.id }
@@ -82,7 +82,7 @@ RSpec.describe EtlPipelineBuildersController, type: :controller do
   end
 
   describe "POST #execute" do
-    let(:pipeline) { create(:pipeline_configuration, organization: organization) }
+    let(:pipeline) { create(:pipeline, organization: organization) }
 
     it "executes the pipeline" do
       post :execute, params: { id: pipeline.id }
@@ -91,7 +91,7 @@ RSpec.describe EtlPipelineBuildersController, type: :controller do
   end
 
   describe "POST #test" do
-    let(:pipeline) { create(:pipeline_configuration, organization: organization) }
+    let(:pipeline) { create(:pipeline, organization: organization) }
 
     it "tests the pipeline and returns JSON" do
       post :test, params: { id: pipeline.id }

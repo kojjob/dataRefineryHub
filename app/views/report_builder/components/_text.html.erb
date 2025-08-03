@@ -1,0 +1,62 @@
+<div class="text-component" data-text-type="<%= component.properties['text_type'] || 'paragraph' %>">
+  <% case component.properties['text_type'] %>
+  <% when 'title' %>
+    <h1 class="text-title">
+      <%= component.properties['content'] || 'Report Title' %>
+    </h1>
+  <% when 'subtitle' %>
+    <h2 class="text-subtitle">
+      <%= component.properties['content'] || 'Section Subtitle' %>
+    </h2>
+  <% when 'heading' %>
+    <h3 class="text-heading">
+      <%= component.properties['content'] || 'Section Heading' %>
+    </h3>
+  <% else %>
+    <p class="text-paragraph">
+      <%= component.properties['content'] || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' %>
+    </p>
+  <% end %>
+</div>
+
+<style>
+.text-component {
+  height: 100%;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  text-align: center;
+}
+
+.text-subtitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+  text-align: center;
+}
+
+.text-heading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+  text-align: center;
+}
+
+.text-paragraph {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.6;
+  text-align: center;
+}
+</style>

@@ -18,6 +18,8 @@ class Organization < ApplicationRecord
   has_many :pipelines, dependent: :destroy
   has_many :task_templates, dependent: :destroy
   has_many :scheduled_tasks, dependent: :destroy
+  has_many :projects, dependent: :destroy
+  has_many :report_templates, dependent: :destroy
 
   # AI-related associations
   has_many :ai_presentations, class_name: "Ai::Presentation", dependent: :destroy

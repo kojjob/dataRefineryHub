@@ -1,0 +1,10 @@
+<div>
+  <div class="flex items-center justify-between text-sm mb-1">
+    <span style="color: var(--color-text-secondary);"><%= label %></span>
+    <span class="font-semibold" style="color: var(--color-text);"><%= value.round(1) %>%</span>
+  </div>
+  <div class="w-full rounded-full h-1.5" style="background-color: var(--color-surface-secondary);">
+    <div class="h-1.5 rounded-full transition-all duration-300" 
+         style="width: <%= value %>%; background: linear-gradient(to right, var(--color-<%= color %>-500), var(--color-<%= color %>-600));"></div>
+  </div>
+</div>

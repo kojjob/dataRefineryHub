@@ -1,0 +1,130 @@
+<div class="filter-component">
+  <div class="filter-header">
+    <div class="filter-icon">🔍</div>
+    <div class="filter-title"><%= component.properties['title'] || 'Filter' %></div>
+  </div>
+  
+  <div class="filter-controls">
+    <% case component.properties['filter_type'] %>
+    <% when 'date_range' %>
+      <div class="filter-control">
+        <label>Date Range</label>
+        <div class="date-inputs">
+          <input type="date" value="<%= Date.current.beginning_of_month %>" readonly>
+          <span>to</span>
+          <input type="date" value="<%= Date.current %>" readonly>
+        </div>
+      </div>
+    <% when 'dropdown' %>
+      <div class="filter-control">
+        <label><%= component.properties['label'] || 'Select Option' %></label>
+        <select disabled>
+          <option>All Options</option>
+          <option>Option 1</option>
+          <option>Option 2</option>
+        </select>
+      </div>
+    <% when 'multi_select' %>
+      <div class="filter-control">
+        <label><%= component.properties['label'] || 'Select Multiple' %></label>
+        <div class="multi-select-mock">
+          <div class="selected-tag">Tag 1 ×</div>
+          <div class="selected-tag">Tag 2 ×</div>
+          <input type="text" placeholder="Add more..." disabled>
+        </div>
+      </div>
+    <% else %>
+      <div class="filter-control">
+        <label>Search</label>
+        <input type="text" placeholder="Type to filter..." disabled>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<style>
+.filter-component {
+  height: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  background: #f9fafb;
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.filter-icon {
+  font-size: 16px;
+}
+
+.filter-title {
+  font-weight: 600;
+  color: #374151;
+}
+
+.filter-control {
+  margin-bottom: 12px;
+}
+
+.filter-control label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.filter-control input,
+.filter-control select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.date-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-inputs input {
+  flex: 1;
+}
+
+.date-inputs span {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.multi-select-mock {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.selected-tag {
+  background: #3b82f6;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.multi-select-mock input {
+  border: none;
+  outline: none;
+  flex: 1;
+  min-width: 100px;
+}
+</style>

@@ -35,6 +35,7 @@ class DataSource < ApplicationRecord
   validate :acceptable_uploaded_files
 
   scope :connected, -> { where(status: "connected") }
+  scope :active, -> { where(status: ["connected", "syncing"]) }
   scope :by_type, ->(type) { where(source_type: type) }
   scope :needs_sync, -> { where("next_sync_at <= ?", Time.current) }
   scope :priority_1, -> { where(source_type: %w[shopify quickbooks google_analytics stripe mailchimp]) }

@@ -1,0 +1,209 @@
+<div class="dashboard-content">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-main">
+        <div class="header-title-group">
+          <div class="header-icon-wrapper">
+            <div class="header-icon-gradient">
+              📊
+            </div>
+          </div>
+          <div class="header-text">
+            <h1 class="header-title">Report Builder</h1>
+            <p class="header-subtitle">Create custom reports with no coding required</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <%= link_to new_report_builder_path, class: "btn btn--primary" do %>
+            <svg class="btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Create New Report
+          <% end %>
+          <%= link_to gallery_report_builder_index_path, class: "btn btn--secondary" do %>
+            <svg class="btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+            </svg>
+            Template Gallery
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Start -->
+  <% if @my_templates.empty? && @shared_templates.empty? %>
+    <div class="glass-card" style="text-align: center; padding: var(--space-48); margin-bottom: var(--space-32);">
+      <div style="font-size: 4rem; margin-bottom: var(--space-24);">🎨</div>
+      <h2 style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-text); margin-bottom: var(--space-16);">
+        Build Your First Report
+      </h2>
+      <p style="color: var(--color-text-secondary); margin-bottom: var(--space-32); max-width: 600px; margin-left: auto; margin-right: auto;">
+        Create beautiful, interactive reports with our drag-and-drop builder. No coding skills required.
+      </p>
+      <div style="display: flex; gap: var(--space-16); justify-content: center;">
+        <%= link_to new_report_builder_path, class: "btn btn--primary btn--lg" do %>
+          <svg class="btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Create from Scratch
+        <% end %>
+        <%= link_to gallery_report_builder_index_path, class: "btn btn--outline btn--lg" do %>
+          <svg class="btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+          </svg>
+          Use a Template
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- My Reports -->
+  <% if @my_templates.any? %>
+    <div style="margin-bottom: var(--space-32);">
+      <h2 style="font-size: var(--font-size-xl); font-weight: var(--font-weight-semibold); color: var(--color-text); margin-bottom: var(--space-16);">
+        My Reports
+      </h2>
+      <div class="metrics-grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: var(--space-24);">
+        <% @my_templates.each do |template| %>
+          <div class="glass-card hover-lift">
+            <div style="padding: var(--space-24);">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-16);">
+                <h3 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text);">
+                  <%= template.name %>
+                </h3>
+                <div style="display: flex; gap: var(--space-8);">
+                  <%= link_to edit_report_builder_path(template), class: "btn btn--sm btn--ghost", title: "Edit" do %>
+                    <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  <% end %>
+                  <%= link_to preview_report_builder_path(template), class: "btn btn--sm btn--ghost", title: "Preview" do %>
+                    <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  <% end %>
+                </div>
+              </div>
+              
+              <% if template.description.present? %>
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--space-16); font-size: var(--font-size-sm);">
+                  <%= template.description %>
+                </p>
+              <% end %>
+              
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; gap: var(--space-12); align-items: center;">
+                  <span style="display: inline-flex; align-items: center; padding: var(--space-4) var(--space-12); border-radius: var(--radius-full); font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); background-color: var(--color-primary-light); color: var(--color-primary-dark);">
+                    <%= template.report_components.count %> components
+                  </span>
+                  <span style="color: var(--color-text-muted); font-size: var(--font-size-xs);">
+                    Updated <%= time_ago_in_words(template.updated_at) %> ago
+                  </span>
+                </div>
+                <%= button_to duplicate_report_builder_path(template), method: :post, class: "btn btn--sm btn--ghost", title: "Duplicate" do %>
+                  <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Shared Reports -->
+  <% if @shared_templates.any? %>
+    <div style="margin-bottom: var(--space-32);">
+      <h2 style="font-size: var(--font-size-xl); font-weight: var(--font-weight-semibold); color: var(--color-text); margin-bottom: var(--space-16);">
+        Shared with Me
+      </h2>
+      <div class="metrics-grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: var(--space-24);">
+        <% @shared_templates.each do |template| %>
+          <div class="glass-card hover-lift">
+            <div style="padding: var(--space-24);">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-16);">
+                <h3 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text);">
+                  <%= template.name %>
+                </h3>
+                <div style="display: flex; gap: var(--space-8);">
+                  <%= link_to preview_report_builder_path(template), class: "btn btn--sm btn--ghost", title: "Preview" do %>
+                    <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  <% end %>
+                </div>
+              </div>
+              
+              <p style="color: var(--color-text-secondary); margin-bottom: var(--space-16); font-size: var(--font-size-sm);">
+                By <%= template.user.full_name %>
+              </p>
+              
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--color-text-muted); font-size: var(--font-size-xs);">
+                  <%= template.report_components.count %> components
+                </span>
+                <%= button_to duplicate_report_builder_path(template), method: :post, class: "btn btn--sm btn--outline", title: "Use this template" do %>
+                  Use Template
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Public Templates -->
+  <% if @public_templates.any? %>
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-16);">
+        <h2 style="font-size: var(--font-size-xl); font-weight: var(--font-weight-semibold); color: var(--color-text);">
+          Popular Templates
+        </h2>
+        <%= link_to gallery_report_builder_index_path, style: "color: var(--color-primary); text-decoration: none; font-size: var(--font-size-sm);" do %>
+          View all templates →
+        <% end %>
+      </div>
+      <div class="metrics-grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: var(--space-24);">
+        <% @public_templates.first(3).each do |template| %>
+          <div class="glass-card hover-lift">
+            <div style="padding: var(--space-24);">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-16);">
+                <h3 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text);">
+                  <%= template.name %>
+                  <% if template.is_featured? %>
+                    <span style="display: inline-block; width: 8px; height: 8px; background-color: var(--color-warning); border-radius: 50%; margin-left: var(--space-8);"></span>
+                  <% end %>
+                </h3>
+              </div>
+              
+              <p style="color: var(--color-text-secondary); margin-bottom: var(--space-16); font-size: var(--font-size-sm);">
+                <%= template.description || "No description provided" %>
+              </p>
+              
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; gap: var(--space-12); align-items: center;">
+                  <span style="color: var(--color-text-muted); font-size: var(--font-size-xs);">
+                    By <%= template.organization.name %>
+                  </span>
+                  <span style="color: var(--color-text-muted); font-size: var(--font-size-xs);">
+                    Used <%= number_with_delimiter(template.usage_count) %> times
+                  </span>
+                </div>
+                <%= button_to duplicate_report_builder_path(template), method: :post, class: "btn btn--sm btn--primary" do %>
+                  Use Template
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,482 @@
+/* Monitoring Dashboard Styles */
+
+/* Card Styles */
+.monitoring-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.monitoring-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.monitoring-card-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin: 0;
+}
+
+.monitoring-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+/* Icons */
+.monitoring-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: #e0f2fe;
+  color: #0ea5e9;
+}
+
+.monitoring-icon--purple {
+  background-color: #f3e8ff;
+  color: #9333ea;
+}
+
+.monitoring-icon--red {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+/* Status Indicators */
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.status-indicator--healthy {
+  background-color: #10b981;
+}
+
+.status-indicator--warning {
+  background-color: #f59e0b;
+}
+
+.status-indicator--critical {
+  background-color: #ef4444;
+}
+
+.status-dot-live {
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+  position: relative;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* Progress Bars */
+.monitoring-progress-bar {
+  width: 100%;
+  height: 6px;
+  background-color: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.monitoring-progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.monitoring-progress-bar-fill--purple {
+  background: linear-gradient(to right, #8b5cf6, #7c3aed);
+}
+
+.monitoring-progress-bar-fill--orange {
+  background: linear-gradient(to right, #f97316, #ea580c);
+}
+
+.monitoring-progress-bar-fill--red {
+  background: linear-gradient(to right, #ef4444, #dc2626);
+}
+
+.monitoring-stat-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.monitoring-stat-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+/* Buttons and Controls */
+.monitoring-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.monitoring-button--primary {
+  background-color: #14b8a6;
+  color: white;
+}
+
+.monitoring-button--primary:hover {
+  background-color: #0d9488;
+}
+
+.monitoring-button--secondary {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.monitoring-button--secondary:hover {
+  background-color: #e5e7eb;
+}
+
+.monitoring-button-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background-color: #1e293b;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.monitoring-button-icon:hover {
+  background-color: #334155;
+}
+
+.monitoring-select {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.monitoring-select:hover {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+.monitoring-select--small {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.monitoring-select--dark {
+  background-color: #1e293b;
+  color: white;
+  border-color: #334155;
+}
+
+/* Toggle Switch */
+.monitoring-toggle {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  background-color: #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border: none;
+  padding: 0;
+}
+
+.monitoring-toggle.active {
+  background-color: #14b8a6;
+}
+
+.monitoring-toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.monitoring-toggle.active .monitoring-toggle-slider {
+  transform: translateX(24px);
+}
+
+/* Links */
+.monitoring-link {
+  color: #14b8a6;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.monitoring-link:hover {
+  color: #0d9488;
+}
+
+/* Pipeline Activity Item */
+.pipeline-activity-item {
+  background-color: #fafafa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s;
+}
+
+.pipeline-activity-item:hover {
+  border-color: #14b8a6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.pipeline-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.pipeline-status-badge--running {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.pipeline-status-badge--initializing {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.pipeline-status-badge--failed {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.pipeline-progress {
+  width: 100%;
+  height: 8px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.pipeline-progress-fill {
+  height: 100%;
+  background-color: #10b981;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+/* Alert Items */
+.alert-compact-item {
+  border-radius: 8px;
+  padding: 12px;
+  border-left: 4px solid;
+  background-color: #fafafa;
+}
+
+.alert-compact-item--critical {
+  border-left-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.alert-compact-item--warning {
+  border-left-color: #f59e0b;
+  background-color: #fffbeb;
+}
+
+.alert-compact-item--info {
+  border-left-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+/* Timeline */
+.monitoring-timeline {
+  position: relative;
+}
+
+.timeline-event-item {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.timeline-event-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 28px;
+  bottom: -16px;
+  width: 2px;
+  background-color: #e5e7eb;
+}
+
+.timeline-event-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+  background-color: white;
+  border: 2px solid;
+}
+
+.timeline-event-icon--success {
+  border-color: #10b981;
+}
+
+.timeline-event-icon--error {
+  border-color: #ef4444;
+}
+
+.timeline-event-icon--warning {
+  border-color: #f59e0b;
+}
+
+.timeline-event-icon--info {
+  border-color: #3b82f6;
+}
+
+.timeline-event-content {
+  flex: 1;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.timeline-event-time {
+  font-size: 12px;
+  color: #9ca3af;
+  float: right;
+}
+
+/* Log Viewer */
+.monitoring-log-viewer {
+  background-color: #1e293b;
+  color: #e2e8f0;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 16px;
+  border-radius: 8px;
+  overflow: auto;
+  max-height: 280px;
+}
+
+.monitoring-log-line {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.monitoring-log-timestamp {
+  color: #64748b;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.monitoring-log-level {
+  font-weight: 600;
+  margin-right: 12px;
+  flex-shrink: 0;
+  width: 48px;
+}
+
+.monitoring-log-level--info {
+  color: #60a5fa;
+}
+
+.monitoring-log-level--warn {
+  color: #fbbf24;
+}
+
+.monitoring-log-level--error {
+  color: #f87171;
+}
+
+.monitoring-log-message {
+  flex: 1;
+  white-space: normal;
+  word-break: break-word;
+  color: #e2e8f0;
+}
+
+/* Chart Customizations */
+.chart-js-legend {
+  margin-top: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .monitoring-card {
+    padding: 16px;
+  }
+  
+  .monitoring-card-title {
+    font-size: 10px;
+  }
+  
+  .monitoring-section-title {
+    font-size: 16px;
+  }
+  
+  .monitoring-button {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .monitoring-log-viewer {
+    font-size: 11px;
+  }
+}

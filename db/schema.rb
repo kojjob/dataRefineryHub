@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_03_161531) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_03_200004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -379,6 +379,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_161531) do
     t.index ["user_id"], name: "index_delivery_preferences_on_user_id"
   end
 
+  create_table "domain_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "event_id", null: false
+    t.string "event_type", null: false
+    t.string "aggregate_type", null: false
+    t.uuid "aggregate_id", null: false
+    t.jsonb "data", default: {}
+    t.jsonb "metadata", default: {}
+    t.datetime "occurred_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["aggregate_id", "aggregate_type"], name: "index_domain_events_on_aggregate_id_and_aggregate_type"
+    t.index ["aggregate_type", "aggregate_id"], name: "index_domain_events_on_aggregate"
+    t.index ["created_at"], name: "index_domain_events_on_created_at"
+    t.index ["event_id"], name: "index_domain_events_on_event_id", unique: true
+    t.index ["event_type"], name: "index_domain_events_on_event_type"
+    t.index ["occurred_at"], name: "index_domain_events_on_occurred_at"
+  end
+
   create_table "event_timelines", force: :cascade do |t|
     t.bigint "organization_id", null: false
     t.string "event_type", null: false
@@ -442,6 +460,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_161531) do
     t.index ["display_order"], name: "index_landing_page_contents_on_display_order"
     t.index ["section", "active", "display_order"], name: "index_landing_contents_on_section_active_order"
     t.index ["section"], name: "index_landing_page_contents_on_section"
+  end
+
+  create_table "landing_pages", force: :cascade do |t|
+    t.bigint "project_id", null: false
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.string "title"
+    t.text "description"
+    t.text "content"
+    t.string "meta_description"
+    t.jsonb "settings", default: {}
+    t.string "template_type", default: "standard"
+    t.boolean "published", default: false
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id", "slug"], name: "idx_landing_pages_project_slug_unique", unique: true
+    t.index ["project_id"], name: "index_landing_pages_on_project_id"
+    t.index ["published"], name: "index_landing_pages_on_published"
+    t.index ["slug"], name: "index_landing_pages_on_slug", unique: true
+    t.index ["template_type"], name: "index_landing_pages_on_template_type"
+    t.index ["user_id"], name: "index_landing_pages_on_user_id"
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -576,11 +617,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_161531) do
     t.datetime "last_executed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "tags", default: []
+    t.integer "aggregate_version", default: 0
     t.string "schedule_type"
     t.string "schedule_expression"
     t.string "schedule_timezone", default: "UTC"
-    t.jsonb "tags", default: []
-    t.integer "aggregate_version", default: 0
     t.integer "retry_max_attempts"
     t.string "retry_backoff_strategy"
     t.integer "retry_initial_delay"
@@ -634,6 +675,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_161531) do
     t.index ["user_id"], name: "index_presentations_on_user_id"
   end
 
+  create_table "projects", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "slug", null: false
+    t.string "status", default: "active"
+    t.jsonb "settings", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "slug"], name: "idx_projects_org_slug_unique", unique: true
+    t.index ["organization_id"], name: "index_projects_on_organization_id"
+    t.index ["slug"], name: "index_projects_on_slug", unique: true
+    t.index ["status"], name: "index_projects_on_status"
+    t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
   create_table "raw_data_records", force: :cascade do |t|
     t.bigint "organization_id", null: false
     t.bigint "data_source_id", null: false
@@ -659,6 +717,47 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_161531) do
     t.index ["processed_at"], name: "index_raw_data_records_on_processed_at"
     t.index ["processing_status"], name: "index_raw_data_records_on_processing_status"
     t.index ["record_type"], name: "index_raw_data_records_on_record_type"
+  end
+
+  create_table "report_components", force: :cascade do |t|
+    t.bigint "report_template_id", null: false
+    t.string "component_type", null: false
+    t.string "component_id", null: false
+    t.jsonb "properties", default: {}
+    t.jsonb "data_source", default: {}
+    t.jsonb "styling", default: {}
+    t.integer "position_x", default: 0
+    t.integer "position_y", default: 0
+    t.integer "width", default: 6
+    t.integer "height", default: 4
+    t.integer "z_index", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["component_type"], name: "index_report_components_on_component_type"
+    t.index ["report_template_id", "component_id"], name: "idx_report_components_unique", unique: true
+    t.index ["report_template_id"], name: "index_report_components_on_report_template_id"
+  end
+
+  create_table "report_templates", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "template_type"
+    t.jsonb "configuration", default: {}
+    t.jsonb "query_definition", default: {}
+    t.jsonb "layout", default: {}
+    t.boolean "is_public", default: false
+    t.boolean "is_featured", default: false
+    t.integer "usage_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["is_featured"], name: "index_report_templates_on_is_featured"
+    t.index ["is_public"], name: "index_report_templates_on_is_public"
+    t.index ["name"], name: "index_report_templates_on_name"
+    t.index ["organization_id"], name: "index_report_templates_on_organization_id"
+    t.index ["template_type"], name: "index_report_templates_on_template_type"
+    t.index ["user_id"], name: "index_report_templates_on_user_id"
   end
 
   create_table "scheduled_task_runs", force: :cascade do |t|
@@ -1005,6 +1104,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_161531) do
   add_foreign_key "delivery_preferences", "users"
   add_foreign_key "event_timelines", "organizations"
   add_foreign_key "extraction_jobs", "data_sources"
+  add_foreign_key "landing_pages", "projects"
+  add_foreign_key "landing_pages", "users"
   add_foreign_key "notifications", "organizations"
   add_foreign_key "notifications", "users"
   add_foreign_key "pipeline_executions", "data_sources"
@@ -1018,9 +1119,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_161531) do
   add_foreign_key "pipelines", "users", column: "last_executed_by_id"
   add_foreign_key "presentations", "organizations"
   add_foreign_key "presentations", "users"
+  add_foreign_key "projects", "organizations"
+  add_foreign_key "projects", "users"
   add_foreign_key "raw_data_records", "data_sources"
   add_foreign_key "raw_data_records", "extraction_jobs"
   add_foreign_key "raw_data_records", "organizations"
+  add_foreign_key "report_components", "report_templates"
+  add_foreign_key "report_templates", "organizations"
+  add_foreign_key "report_templates", "users"
   add_foreign_key "scheduled_task_runs", "pipeline_executions"
   add_foreign_key "scheduled_task_runs", "scheduled_tasks"
   add_foreign_key "scheduled_task_runs", "tasks"

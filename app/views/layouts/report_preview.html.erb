@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-white">
+  <head>
+    <%= render 'shared/head_meta' %>
+    <%= render 'shared/head_stylesheets' %>
+    <%= render 'shared/head_fonts' %>
+    <%= render 'shared/head_scripts' %>
+    
+    <style>
+      /* Report preview specific styles */
+      @media print {
+        .no-print { display: none !important; }
+        body { background: white !important; }
+        .shadow-lg { box-shadow: none !important; }
+      }
+      
+      .report-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+      }
+      
+      .report-header {
+        border-bottom: 2px solid var(--color-primary, #14b8a6);
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+      }
+      
+      .report-component {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        background: #fafafa;
+      }
+      
+      .report-component h3 {
+        color: var(--color-primary, #14b8a6);
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50">
+    <!-- Preview Controls -->
+    <div class="no-print bg-white border-b border-gray-200 py-3 px-6 fixed top-0 left-0 right-0 z-50 shadow-sm">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <%= link_to "← Back to Editor", edit_report_builder_path(params[:id]), 
+                      class: "inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500" %>
+          <h1 class="text-lg font-semibold text-gray-900">Report Preview</h1>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+          <button onclick="window.print()" 
+                  class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-teal-600 border border-transparent rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+            </svg>
+            Print Report
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="pt-20 pb-8 px-6">
+      <%= yield %>
+    </div>
+  </body>
+</html>

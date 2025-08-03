@@ -117,6 +117,11 @@
               <span class="nav-text">Delivery Preferences</span>
               <span class="nav-badge">NEW</span>
             <% end %>
+            <%= link_to report_builder_index_path, class: "nav-item #{controller_name == 'report_builder' ? 'active' : ''}" do %>
+              <span class="nav-icon">📊</span>
+              <span class="nav-text">Report Builder</span>
+              <span class="nav-badge">NEW</span>
+            <% end %>
             <%= link_to '#', class: "nav-item" do %>
               <span class="nav-icon">🤝</span>
               <span class="nav-text">Team Collaboration</span>

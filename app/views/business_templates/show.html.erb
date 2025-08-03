@@ -1,187 +1,451 @@
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <!-- Back Link -->
-  <%= link_to business_templates_path, class: "inline-flex items-center text-indigo-600 hover:text-indigo-500 mb-6" do %>
-    <svg class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-    </svg>
-    Back to Templates
-  <% end %>
+<div class="dashboard-content">
+  <!-- Template Overview Section -->
+  <section class="content-section active" id="template-overview">
 
-  <!-- Template Header -->
-  <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 text-white mb-8">
-    <div class="text-6xl mb-4"><%= @template[:icon] %></div>
-    <h1 class="text-4xl font-bold mb-4"><%= @template[:name] %> Template</h1>
-    <p class="text-xl text-indigo-100"><%= @template[:description] %></p>
-  </div>
-
-  <!-- Main Content Grid -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Left Column - Features & Benefits -->
-    <div class="lg:col-span-2 space-y-8">
-      <!-- Key Features -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">Key Features</h2>
-        <div class="space-y-3">
-          <% @template[:features].each do |feature| %>
-            <div class="flex items-start">
-              <svg class="h-6 w-6 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span class="text-gray-700"><%= feature %></span>
-            </div>
+    <!-- Template Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <%= link_to business_templates_path, class: "btn btn--outline btn--sm inline-flex items-center gap-2 mb-4" do %>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Templates
+        <% end %>
+        <div class="flex items-center gap-4 mb-2">
+          <div class="text-4xl"><%= @template[:icon] %></div>
+          <div>
+            <h1 class="text-2xl font-bold" style="color: var(--color-text);"><%= @template[:name] %> Template</h1>
+            <p style="color: var(--color-text-secondary);"><%= @template[:description] %></p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 mt-3">
+          <div class="flex items-center gap-2 px-3 py-1 rounded-full" style="background: rgba(255, 255, 255, 0.1);">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="text-sm" style="color: var(--color-text-secondary);">Setup: <%= @template[:setup_time] %></span>
+          </div>
+          <div class="flex items-center gap-2 px-3 py-1 rounded-full" style="background: rgba(255, 255, 255, 0.1);">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="text-sm" style="color: var(--color-text-secondary);">Complexity: <%= @template[:complexity] %></span>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <% if @applied_template.blank? %>
+          <%= form_with url: apply_business_template_path(@template[:id]), method: :post, local: true, class: "inline" do |form| %>
+            <%= form.submit "Apply Template", class: "btn btn--primary" %>
           <% end %>
+        <% else %>
+          <span class="px-4 py-2 rounded-lg text-sm font-medium" style="background-color: var(--color-success-light); color: var(--color-success);">
+            Template Applied
+          </span>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Template Features Metrics Grid -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3 style="font-size: var(--font-size-sm) !important; color: var(--color-text-secondary) !important; font-weight: var(--font-weight-medium) !important; margin: 0 0 var(--space-8) 0 !important; line-height: 1.2 !important;">Dashboards</h3>
+          <p class="metric-value" style="font-size: var(--font-size-3xl) !important; font-weight: var(--font-weight-bold) !important; color: var(--color-text) !important; margin: 0 0 var(--space-4) 0 !important; line-height: 1.1 !important;"><%= @template[:dashboards]&.count || 0 %></p>
+          <p class="metric-change positive" style="font-size: var(--font-size-sm) !important; color: var(--color-success) !important; font-weight: var(--font-weight-medium) !important; margin: 0 !important; line-height: 1.2 !important;">
+            Pre-configured
+          </p>
         </div>
       </div>
 
-      <!-- Sample Insights -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">Insights You'll Get</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <% @template[:sample_insights].each do |insight| %>
-            <div class="flex items-start">
-              <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                <svg class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <div class="metric-card">
+        <div class="metric-icon">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3 style="font-size: var(--font-size-sm) !important; color: var(--color-text-secondary) !important; font-weight: var(--font-weight-medium) !important; margin: 0 0 var(--space-8) 0 !important; line-height: 1.2 !important;">Reports</h3>
+          <p class="metric-value" style="font-size: var(--font-size-3xl) !important; font-weight: var(--font-weight-bold) !important; color: var(--color-text) !important; margin: 0 0 var(--space-4) 0 !important; line-height: 1.1 !important;"><%= @template[:reports]&.count || 0 %></p>
+          <p class="metric-change positive" style="font-size: var(--font-size-sm) !important; color: var(--color-success) !important; font-weight: var(--font-weight-medium) !important; margin: 0 !important; line-height: 1.2 !important;">
+            Automated
+          </p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3 style="font-size: var(--font-size-sm) !important; color: var(--color-text-secondary) !important; font-weight: var(--font-weight-medium) !important; margin: 0 0 var(--space-8) 0 !important; line-height: 1.2 !important;">Data Sources</h3>
+          <p class="metric-value" style="font-size: var(--font-size-3xl) !important; font-weight: var(--font-weight-bold) !important; color: var(--color-text) !important; margin: 0 0 var(--space-4) 0 !important; line-height: 1.1 !important;"><%= @template[:data_sources]&.count || 0 %></p>
+          <p class="metric-change positive" style="font-size: var(--font-size-sm) !important; color: var(--color-success) !important; font-weight: var(--font-weight-medium) !important; margin: 0 !important; line-height: 1.2 !important;">
+            Integrated
+          </p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3 style="font-size: var(--font-size-sm) !important; color: var(--color-text-secondary) !important; font-weight: var(--font-weight-medium) !important; margin: 0 0 var(--space-8) 0 !important; line-height: 1.2 !important;">AI Features</h3>
+          <p class="metric-value" style="font-size: var(--font-size-3xl) !important; font-weight: var(--font-weight-bold) !important; color: var(--color-text) !important; margin: 0 0 var(--space-4) 0 !important; line-height: 1.1 !important;"><%= @template[:ai_features]&.count || 0 %></p>
+          <p class="metric-change positive" style="font-size: var(--font-size-sm) !important; color: var(--color-success) !important; font-weight: var(--font-weight-medium) !important; margin: 0 !important; line-height: 1.2 !important;">
+            Powered
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI-Powered Template Insights Panel -->
+    <div class="ai-insights-panel mb-8">
+      <h2 class="flex items-center gap-2 mb-6">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Insights You'll Get
+      </h2>
+
+      <div class="insights-grid">
+        <% @template[:sample_insights].each_with_index do |insight, index| %>
+          <div class="insight-card <%= ['high', 'medium', 'critical'][index % 3] %>">
+            <div class="insight-header">
+              <span class="insight-type">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-primary);">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Business Intelligence
+              </span>
+              <span class="confidence-score">AI-Powered</span>
+            </div>
+            <p><%= insight %></p>
+            <button class="btn btn--outline btn--sm">Learn More</button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Template Details Section -->
+    <div class="charts-section">
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Key Features
+          </h3>
+        </div>
+        <div class="space-y-4">
+          <% @template[:features].each do |feature| %>
+            <div class="flex items-center p-4 border border-gray-200 rounded-lg transition-all duration-200 hover:shadow-md" style="border-color: var(--color-card-border); background-color: var(--color-surface);">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center font-semibold mr-4" style="background-color: var(--color-success-light); color: var(--color-success);">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
               </div>
-              <p class="ml-3 text-gray-700"><%= insight %></p>
+              <div class="flex-1">
+                <p class="font-medium" style="color: var(--color-text);"><%= feature %></p>
+              </div>
             </div>
           <% end %>
         </div>
       </div>
 
-      <!-- What's Included -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">What's Included</h2>
-        
-        <div class="space-y-6">
-          <!-- Dashboards -->
-          <div>
-            <h3 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-              <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              Pre-built Dashboards
-            </h3>
-            <ul class="list-disc list-inside space-y-1 text-gray-600 ml-7">
-              <li>Executive Overview Dashboard</li>
-              <li>Operations Dashboard</li>
-              <li>Financial Performance Dashboard</li>
-              <li>Customer Analytics Dashboard</li>
-            </ul>
-          </div>
-
-          <!-- Reports -->
-          <div>
-            <h3 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-              <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Automated Reports
-            </h3>
-            <ul class="list-disc list-inside space-y-1 text-gray-600 ml-7">
-              <li>Daily Summary (Email/WhatsApp)</li>
-              <li>Weekly Performance Report (PDF)</li>
-              <li>Monthly Analysis (PowerPoint)</li>
-              <li>Real-time Alerts (SMS/WhatsApp)</li>
-            </ul>
-          </div>
-
-          <!-- AI Features -->
-          <div>
-            <h3 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-              <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-              AI-Powered Features
-            </h3>
-            <ul class="list-disc list-inside space-y-1 text-gray-600 ml-7">
-              <li>Predictive Analytics</li>
-              <li>Anomaly Detection</li>
-              <li>Natural Language Queries</li>
-              <li>Smart Recommendations</li>
-            </ul>
-          </div>
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+            </svg>
+            Included Integrations
+          </h3>
         </div>
-      </div>
-    </div>
-
-    <!-- Right Column - Integrations & Actions -->
-    <div class="space-y-8">
-      <!-- Data Sources -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Included Integrations</h3>
-        <div class="space-y-3">
+        <div class="space-y-4">
           <% @template[:data_sources].each do |source| %>
-            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-              <svg class="w-5 h-5 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              <span class="text-gray-700"><%= source %></span>
+            <div class="flex items-center p-4 border border-gray-200 rounded-lg transition-all duration-200 hover:shadow-md" style="border-color: var(--color-card-border); background-color: var(--color-surface);">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center font-semibold mr-4" style="background-color: var(--color-primary-light); color: var(--color-primary);">
+                <%= source.first(2).upcase %>
+              </div>
+              <div class="flex-1">
+                <p class="font-medium" style="color: var(--color-text);"><%= source %></p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded-full text-xs font-medium" style="background-color: var(--color-success-light); color: var(--color-success);">
+                  Ready
+                </span>
+              </div>
             </div>
-          <% end %>
-        </div>
-      </div>
-
-      <!-- Apply Template -->
-      <% if @applied_template.blank? && (current_user.organization_admin? || current_user.organization_owner?) %>
-        <div class="bg-indigo-50 rounded-lg p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Ready to Get Started?</h3>
-          <p class="text-gray-600 mb-4">
-            This template will automatically configure your account with all the integrations, dashboards, and reports shown.
-          </p>
-          
-          <%= form_with url: apply_business_template_path(@template[:id]), method: :post, local: true do |f| %>
-            <div class="mb-4">
-              <label class="flex items-center">
-                <%= check_box_tag :include_sample_data, '1', true, class: 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded' %>
-                <span class="ml-2 text-sm text-gray-700">Include sample data for testing</span>
-              </label>
-            </div>
-            
-            <%= f.submit "Apply #{@template[:name]} Template", 
-                data: { turbo_confirm: "This will set up the #{@template[:name]} template. Continue?" },
-                class: "w-full px-4 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200 font-medium" %>
-          <% end %>
-        </div>
-      <% elsif @applied_template == @template[:id] %>
-        <div class="bg-green-50 rounded-lg p-6">
-          <h3 class="text-lg font-semibold text-green-900 mb-2">Template Active</h3>
-          <p class="text-green-700 mb-4">
-            This template is currently active for your organization.
-          </p>
-          <%= link_to "Go to Dashboard", dashboard_path, 
-              class: "w-full inline-flex justify-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700" %>
-        </div>
-      <% else %>
-        <div class="bg-gray-50 rounded-lg p-6">
-          <p class="text-gray-600 text-sm">
-            Only organization administrators can apply templates.
-          </p>
-        </div>
-      <% end %>
-
-      <!-- Support -->
-      <div class="bg-gray-50 rounded-lg p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Need Help?</h3>
-        <p class="text-gray-600 mb-4">
-          Our team is here to help you get the most out of your template.
-        </p>
-        <div class="space-y-2">
-          <%= link_to "#", class: "flex items-center text-indigo-600 hover:text-indigo-500" do %>
-            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-            View Documentation
-          <% end %>
-          <%= link_to "#", class: "flex items-center text-indigo-600 hover:text-indigo-500" do %>
-            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-            Contact Support
           <% end %>
         </div>
       </div>
     </div>
-  </div>
+
+    <!-- Template Components Section -->
+    <div class="charts-section">
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Pre-built Dashboards
+          </h3>
+          <div class="chart-controls">
+            <span class="text-sm" style="color: var(--color-text-secondary);"><%= @template[:dashboards]&.count || 0 %> included</span>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <div class="space-y-3">
+            <% @template[:dashboards].each do |dashboard| %>
+              <div class="flex items-center p-3 rounded-lg transition-all duration-200 hover:shadow-md" style="border: 1px solid var(--color-card-border); background-color: var(--color-surface); min-width: 0;">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4 flex-shrink-0" style="background-color: var(--color-info-light); color: var(--color-info);">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-medium truncate" style="color: var(--color-text); font-size: var(--font-size-sm); line-height: var(--line-height-normal); word-wrap: break-word;" title="<%= dashboard %>"><%= dashboard %></p>
+                  <p class="text-xs mt-1" style="color: var(--color-text-secondary); line-height: var(--line-height-tight);">Ready to use dashboard</p>
+                </div>
+                <div class="flex items-center gap-3 flex-shrink-0">
+                  <span class="px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap" style="background-color: var(--color-success-light); color: var(--color-success);">
+                    Included
+                  </span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Automated Reports
+          </h3>
+          <div class="chart-controls">
+            <span class="text-sm" style="color: var(--color-text-secondary);"><%= @template[:reports]&.count || 0 %> configured</span>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <div class="space-y-3">
+            <% @template[:reports].each do |report| %>
+              <div class="flex items-center p-3 rounded-lg transition-all duration-200 hover:shadow-md" style="border: 1px solid var(--color-card-border); background-color: var(--color-surface); min-width: 0;">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4 flex-shrink-0" style="background-color: var(--color-warning-light); color: var(--color-warning);">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-medium truncate" style="color: var(--color-text); font-size: var(--font-size-sm); line-height: var(--line-height-normal); word-wrap: break-word;" title="<%= report %>"><%= report %></p>
+                  <p class="text-xs mt-1" style="color: var(--color-text-secondary); line-height: var(--line-height-tight);">Automated generation</p>
+                </div>
+                <div class="flex items-center gap-3 flex-shrink-0">
+                  <span class="px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap" style="background-color: var(--color-warning-light); color: var(--color-warning);">
+                    Scheduled
+                  </span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+            AI-Powered Features
+          </h3>
+          <div class="chart-controls">
+            <span class="text-sm" style="color: var(--color-text-secondary);"><%= @template[:ai_features]&.count || 0 %> features</span>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <div class="space-y-3">
+            <% @template[:ai_features].each do |feature| %>
+              <div class="flex items-center p-3 rounded-lg transition-all duration-200 hover:shadow-md" style="border: 1px solid var(--color-card-border); background-color: var(--color-surface); min-width: 0;">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4 flex-shrink-0" style="background-color: var(--color-success-light); color: var(--color-success);">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-medium truncate" style="color: var(--color-text); font-size: var(--font-size-sm); line-height: var(--line-height-normal); word-wrap: break-word;" title="<%= feature %>"><%= feature %></p>
+                  <p class="text-xs mt-1" style="color: var(--color-text-secondary); line-height: var(--line-height-tight);">AI-powered capability</p>
+                </div>
+                <div class="flex items-center gap-3 flex-shrink-0">
+                  <span class="px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap" style="background-color: var(--color-success-light); color: var(--color-success);">
+                    Active
+                  </span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+            Template Application
+          </h3>
+          <div class="chart-controls">
+            <% if @applied_template.blank? %>
+              <%= form_with url: apply_business_template_path(@template[:id]), method: :post, local: true, class: "inline" do |form| %>
+                <%= form.submit "Apply Template", class: "btn btn--primary btn--sm" %>
+              <% end %>
+            <% else %>
+              <span class="px-3 py-1 rounded-full text-xs font-medium" style="background-color: var(--color-success-light); color: var(--color-success);">
+                Applied
+              </span>
+            <% end %>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <% if @applied_template.present? %>
+            <div class="text-center p-6">
+              <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background-color: var(--color-success-light);">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-success);">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <h4 class="font-semibold mb-2" style="color: var(--color-text);">Template Applied Successfully</h4>
+              <p class="text-sm mb-4" style="color: var(--color-text-secondary);">Your organization is now using the <%= @template[:name] %> template.</p>
+              <%= link_to "Go to Dashboard", dashboard_path, class: "btn btn--primary" %>
+            </div>
+          <% else %>
+            <div class="p-4">
+              <p class="text-sm mb-4" style="color: var(--color-text-secondary); line-height: var(--line-height-relaxed); word-wrap: break-word;">Ready to transform your data analytics? Apply this template to automatically configure dashboards, reports, and integrations.</p>
+
+              <div class="p-4 rounded-lg mb-4" style="background-color: var(--color-primary-light);">
+                <h5 class="text-sm font-semibold mb-2" style="color: var(--color-primary); line-height: var(--line-height-normal);">What happens when you apply:</h5>
+                <ul class="text-sm space-y-1" style="color: var(--color-text-secondary); line-height: var(--line-height-relaxed);">
+                  <li class="break-words">• <%= @template[:dashboards]&.count || 0 %> dashboards will be created</li>
+                  <li class="break-words">• <%= @template[:reports]&.count || 0 %> automated reports will be configured</li>
+                  <li class="break-words">• <%= @template[:data_sources]&.count || 0 %> data source integrations will be set up</li>
+                  <li class="break-words">• <%= @template[:ai_features]&.count || 0 %> AI features will be activated</li>
+                </ul>
+              </div>
+
+              <%= form_with url: apply_business_template_path(@template[:id]), method: :post, local: true do |form| %>
+                <div class="mb-4">
+                  <label class="flex items-start gap-2 cursor-pointer">
+                    <%= form.check_box :include_sample_data, { checked: true, class: "rounded mt-1 flex-shrink-0" } %>
+                    <span class="text-sm" style="color: var(--color-text); line-height: var(--line-height-relaxed); word-wrap: break-word;">Include sample data for testing</span>
+                  </label>
+                </div>
+                <div class="w-full">
+                  <%= form.submit "Apply #{@template[:name]} Template", class: "btn btn--primary btn--full-width", style: "white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Need Help?
+          </h3>
+          <div class="chart-controls">
+            <button class="btn btn--outline btn--sm">Support Center</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <div class="space-y-4">
+            <p class="text-sm" style="color: var(--color-text-secondary);">Our team is here to help you get the most out of your template.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <%= link_to "#", class: "flex items-center p-4 rounded-lg transition-all duration-200 hover:shadow-md group", style: "border: 1px solid var(--color-card-border); background-color: var(--color-surface); text-decoration: none; min-width: 0;" do %>
+                <div class="w-12 h-12 rounded-lg flex items-center justify-center mr-4 group-hover:scale-105 transition-transform flex-shrink-0" style="background-color: var(--color-primary-light);">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-primary);">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="font-medium mb-1 truncate" style="color: var(--color-text); font-size: var(--font-size-sm); line-height: var(--line-height-normal);">Documentation</h4>
+                  <p class="text-xs" style="color: var(--color-text-secondary); line-height: var(--line-height-relaxed); word-wrap: break-word;">Step-by-step guides and tutorials</p>
+                </div>
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              <% end %>
+
+              <%= link_to "#", class: "flex items-center p-4 rounded-lg transition-all duration-200 hover:shadow-md group", style: "border: 1px solid var(--color-card-border); background-color: var(--color-surface); text-decoration: none; min-width: 0;" do %>
+                <div class="w-12 h-12 rounded-lg flex items-center justify-center mr-4 group-hover:scale-105 transition-transform flex-shrink-0" style="background-color: var(--color-success-light);">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-success);">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="font-medium mb-1 truncate" style="color: var(--color-text); font-size: var(--font-size-sm); line-height: var(--line-height-normal);">Live Support</h4>
+                  <p class="text-xs" style="color: var(--color-text-secondary); line-height: var(--line-height-relaxed); word-wrap: break-word;">Chat with our expert team</p>
+                </div>
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              <% end %>
+
+              <%= link_to "#", class: "flex items-center p-4 rounded-lg transition-all duration-200 hover:shadow-md group", style: "border: 1px solid var(--color-card-border); background-color: var(--color-surface); text-decoration: none; min-width: 0;" do %>
+                <div class="w-12 h-12 rounded-lg flex items-center justify-center mr-4 group-hover:scale-105 transition-transform flex-shrink-0" style="background-color: var(--color-info-light);">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-info);">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="font-medium mb-1 truncate" style="color: var(--color-text); font-size: var(--font-size-sm); line-height: var(--line-height-normal);">Video Tutorials</h4>
+                  <p class="text-xs" style="color: var(--color-text-secondary); line-height: var(--line-height-relaxed); word-wrap: break-word;">Watch and learn at your pace</p>
+                </div>
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              <% end %>
+
+              <%= link_to "#", class: "flex items-center p-4 rounded-lg transition-all duration-200 hover:shadow-md group", style: "border: 1px solid var(--color-card-border); background-color: var(--color-surface); text-decoration: none; min-width: 0;" do %>
+                <div class="w-12 h-12 rounded-lg flex items-center justify-center mr-4 group-hover:scale-105 transition-transform flex-shrink-0" style="background-color: var(--color-warning-light);">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-warning);">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="font-medium mb-1 truncate" style="color: var(--color-text); font-size: var(--font-size-sm); line-height: var(--line-height-normal);">Community Forum</h4>
+                  <p class="text-xs" style="color: var(--color-text-secondary); line-height: var(--line-height-relaxed); word-wrap: break-word;">Connect with other users</p>
+                </div>
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

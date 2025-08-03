@@ -1,0 +1,186 @@
+<div class="dashboard-content">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-main">
+        <div class="header-title-group">
+          <div class="header-icon-wrapper">
+            <div class="header-icon-gradient">
+              ✨
+            </div>
+          </div>
+          <div class="header-text">
+            <h1 class="header-title">Create New Report</h1>
+            <p class="header-subtitle">Start with a template or build from scratch</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= form_with model: @report_template, url: report_builder_index_path, local: true do |f| %>
+    <div class="glass-card" style="margin-bottom: var(--space-24);">
+      <div style="padding: var(--space-24);">
+        <h2 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text); margin-bottom: var(--space-16);">
+          Basic Information
+        </h2>
+        
+        <div style="display: grid; grid-template-columns: 1fr; gap: var(--space-16);">
+          <div>
+            <%= f.label :name, "Report Name", class: "input-label" %>
+            <%= f.text_field :name, 
+                class: "input-field", 
+                placeholder: "e.g., Monthly Sales Report",
+                required: true,
+                autofocus: true %>
+          </div>
+          
+          <div>
+            <%= f.label :description, "Description", class: "input-label" %>
+            <%= f.text_area :description, 
+                class: "input-field", 
+                rows: 3,
+                placeholder: "Brief description of what this report shows..." %>
+          </div>
+          
+          <div>
+            <%= f.label :template_type, "Report Type", class: "input-label" %>
+            <%= f.select :template_type, 
+                options_for_select([
+                  ['Custom Report', 'custom'],
+                  ['Shared Team Report', 'shared']
+                ], 'custom'),
+                {},
+                class: "input-field" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Template Selection -->
+    <div class="glass-card" style="margin-bottom: var(--space-24);">
+      <div style="padding: var(--space-24);">
+        <h2 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text); margin-bottom: var(--space-16);">
+          Choose a Starting Point
+        </h2>
+        
+        <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-16);">
+          <!-- Blank Canvas -->
+          <label class="template-option">
+            <%= radio_button_tag :template_start, 'blank', true, class: "sr-only" %>
+            <div class="template-card" data-template="blank">
+              <div style="font-size: 3rem; margin-bottom: var(--space-12);">📄</div>
+              <h3 style="font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);">
+                Blank Canvas
+              </h3>
+              <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                Start with an empty report
+              </p>
+            </div>
+          </label>
+          
+          <!-- Dashboard Template -->
+          <label class="template-option">
+            <%= radio_button_tag :template_start, 'dashboard', false, class: "sr-only" %>
+            <div class="template-card" data-template="dashboard">
+              <div style="font-size: 3rem; margin-bottom: var(--space-12);">📊</div>
+              <h3 style="font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);">
+                Dashboard
+              </h3>
+              <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                Multiple metrics & charts
+              </p>
+            </div>
+          </label>
+          
+          <!-- Analytics Template -->
+          <label class="template-option">
+            <%= radio_button_tag :template_start, 'analytics', false, class: "sr-only" %>
+            <div class="template-card" data-template="analytics">
+              <div style="font-size: 3rem; margin-bottom: var(--space-12);">📈</div>
+              <h3 style="font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);">
+                Analytics Report
+              </h3>
+              <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                Deep dive analysis
+              </p>
+            </div>
+          </label>
+          
+          <!-- Table Report -->
+          <label class="template-option">
+            <%= radio_button_tag :template_start, 'table', false, class: "sr-only" %>
+            <div class="template-card" data-template="table">
+              <div style="font-size: 3rem; margin-bottom: var(--space-12);">📋</div>
+              <h3 style="font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);">
+                Table Report
+              </h3>
+              <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                Detailed data table
+              </p>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Initial Components -->
+    <div class="glass-card" style="margin-bottom: var(--space-24);">
+      <div style="padding: var(--space-24);">
+        <h2 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text); margin-bottom: var(--space-16);">
+          Additional Options
+        </h2>
+        
+        <label style="display: flex; align-items: center; gap: var(--space-12); cursor: pointer;">
+          <%= check_box_tag :add_defaults, '1', true, class: "checkbox" %>
+          <span>Add default title and date filter</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display: flex; gap: var(--space-16); justify-content: flex-end;">
+      <%= link_to "Cancel", report_builder_index_path, class: "btn btn--outline" %>
+      <%= f.submit "Create Report", class: "btn btn--primary", data: { disable_with: "Creating..." } %>
+    </div>
+  <% end %>
+</div>
+
+<style>
+.template-option {
+  cursor: pointer;
+}
+
+.template-card {
+  padding: var(--space-24);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: all var(--duration-fast) var(--ease-standard);
+  background: var(--color-surface);
+}
+
+.template-card:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  transform: translateY(-2px);
+}
+
+input[type="radio"]:checked + .template-card {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+</style>

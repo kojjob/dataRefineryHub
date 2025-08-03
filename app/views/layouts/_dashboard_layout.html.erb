@@ -31,7 +31,9 @@
     </main>
     
     <!-- Footer -->
-    <%= render 'shared/footer' %>
+    <% unless controller_name == 'business_templates' %>
+      <%= render 'shared/footer' %>
+    <% end %>
   </div>
   
   <!-- AI Chat Widget -->

@@ -1,0 +1,325 @@
+<div class="properties-header">
+  <h3>Component Properties</h3>
+  <p><%= @component.component_type.titleize %> Component</p>
+</div>
+
+<div class="properties-content">
+  <%= form_with(model: [@report_template, @component], 
+                url: update_component_report_builder_path(@report_template, @component.component_id),
+                method: :patch,
+                local: false,
+                html: { id: "component-properties-form" }) do |form| %>
+    
+    <!-- Basic Properties -->
+    <div class="property-group">
+      <div class="property-group-title">Basic Settings</div>
+      
+      <div class="property-field">
+        <label class="property-label" for="component_title">Title</label>
+        <%= form.text_field :title, 
+            value: @component.properties['title'],
+            class: "property-input",
+            id: "component_title",
+            name: "component[properties][title]" %>
+      </div>
+      
+      <% if @component.component_type == 'text' %>
+        <div class="property-field">
+          <label class="property-label" for="component_text_type">Text Type</label>
+          <%= form.select :text_type,
+              options_for_select([
+                ['Paragraph', 'paragraph'],
+                ['Title', 'title'],
+                ['Subtitle', 'subtitle'],
+                ['Heading', 'heading']
+              ], @component.properties['text_type']),
+              {},
+              { class: "property-select", id: "component_text_type", name: "component[properties][text_type]" } %>
+        </div>
+        
+        <div class="property-field">
+          <label class="property-label" for="component_content">Content</label>
+          <%= form.text_area :content,
+              value: @component.properties['content'],
+              class: "property-textarea",
+              id: "component_content",
+              name: "component[properties][content]" %>
+        </div>
+      <% end %>
+      
+      <% if @component.component_type == 'chart' %>
+        <div class="property-field">
+          <label class="property-label" for="component_chart_type">Chart Type</label>
+          <%= form.select :chart_type,
+              options_for_select([
+                ['Bar Chart', 'bar'],
+                ['Line Chart', 'line'],
+                ['Pie Chart', 'pie'],
+                ['Doughnut Chart', 'doughnut'],
+                ['Area Chart', 'area'],
+                ['Scatter Plot', 'scatter']
+              ], @component.properties['chart_type']),
+              {},
+              { class: "property-select", id: "component_chart_type", name: "component[properties][chart_type]" } %>
+        </div>
+        
+        <div class="property-field">
+          <label class="property-checkbox">
+            <%= form.check_box :show_legend,
+                checked: @component.properties['show_legend'],
+                name: "component[properties][show_legend]" %>
+            <span>Show Legend</span>
+          </label>
+        </div>
+        
+        <div class="property-field">
+          <label class="property-checkbox">
+            <%= form.check_box :show_grid,
+                checked: @component.properties['show_grid'],
+                name: "component[properties][show_grid]" %>
+            <span>Show Grid Lines</span>
+          </label>
+        </div>
+      <% end %>
+      
+      <% if @component.component_type == 'metric' %>
+        <div class="property-field">
+          <label class="property-label" for="component_format">Number Format</label>
+          <%= form.select :format,
+              options_for_select([
+                ['Number', 'number'],
+                ['Currency', 'currency'],
+                ['Percentage', 'percentage']
+              ], @component.properties['format']),
+              {},
+              { class: "property-select", id: "component_format", name: "component[properties][format]" } %>
+        </div>
+        
+        <div class="property-field">
+          <label class="property-label" for="component_sample_value">Sample Value</label>
+          <%= form.text_field :sample_value,
+              value: @component.properties['sample_value'],
+              class: "property-input",
+              id: "component_sample_value",
+              name: "component[properties][sample_value]" %>
+        </div>
+        
+        <div class="property-field">
+          <label class="property-checkbox">
+            <%= form.check_box :show_trend,
+                checked: @component.properties['show_trend'],
+                name: "component[properties][show_trend]" %>
+            <span>Show Trend Indicator</span>
+          </label>
+        </div>
+      <% end %>
+      
+      <% if @component.component_type == 'filter' %>
+        <div class="property-field">
+          <label class="property-label" for="component_filter_type">Filter Type</label>
+          <%= form.select :filter_type,
+              options_for_select([
+                ['Search', 'search'],
+                ['Dropdown', 'dropdown'],
+                ['Multi-select', 'multi_select'],
+                ['Date Range', 'date_range']
+              ], @component.properties['filter_type']),
+              {},
+              { class: "property-select", id: "component_filter_type", name: "component[properties][filter_type]" } %>
+        </div>
+        
+        <div class="property-field">
+          <label class="property-label" for="component_placeholder">Placeholder Text</label>
+          <%= form.text_field :placeholder,
+              value: @component.properties['placeholder'],
+              class: "property-input",
+              id: "component_placeholder",
+              name: "component[properties][placeholder]" %>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- Data Source -->
+    <div class="property-group">
+      <div class="property-group-title">Data Source</div>
+      
+      <div class="property-field">
+        <label class="property-label" for="component_data_table">Data Table</label>
+        <%= form.select :data_table,
+            options_for_select([
+              ['Select a table...', ''],
+              ['Customers', 'customers'],
+              ['Orders', 'orders'],
+              ['Products', 'products'],
+              ['Revenue', 'revenue']
+            ], @component.data_source['table']),
+            {},
+            { class: "property-select", id: "component_data_table", name: "component[data_source][table]" } %>
+      </div>
+      
+      <% if @component.component_type.in?(['chart', 'table']) %>
+        <div class="property-field">
+          <label class="property-label" for="component_data_columns">Columns</label>
+          <%= form.text_field :data_columns,
+              value: @component.data_source['columns']&.join(', '),
+              placeholder: "column1, column2, column3",
+              class: "property-input",
+              id: "component_data_columns",
+              name: "component[data_source][columns]" %>
+          <small style="color: #6b7280; font-size: 12px;">Comma-separated column names</small>
+        </div>
+        
+        <div class="property-field">
+          <label class="property-label" for="component_data_filters">Filters</label>
+          <%= form.text_area :data_filters,
+              value: @component.data_source['filters'],
+              placeholder: "status = 'active'\ndate >= '2024-01-01'",
+              class: "property-textarea",
+              id: "component_data_filters",
+              name: "component[data_source][filters]",
+              style: "min-height: 60px;" %>
+          <small style="color: #6b7280; font-size: 12px;">One filter per line</small>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- Styling -->
+    <div class="property-group">
+      <div class="property-group-title">Styling</div>
+      
+      <div class="property-field">
+        <label class="property-label">Background Color</label>
+        <div class="color-picker">
+          <% %w[#ffffff #f8fafc #f1f5f9 #e2e8f0 #cbd5e1 #94a3b8].each do |color| %>
+            <div class="color-option <%= 'selected' if @component.styling['background'] == color %>" 
+                 style="background-color: <%= color %>"
+                 data-color="<%= color %>"
+                 onclick="selectColor(this, 'component[styling][background]')"></div>
+          <% end %>
+        </div>
+        <%= form.hidden_field :background_color, 
+            value: @component.styling['background'],
+            name: "component[styling][background]",
+            id: "background_color_input" %>
+      </div>
+      
+      <% if @component.component_type.in?(['text', 'metric']) %>
+        <div class="property-field">
+          <label class="property-label">Text Color</label>
+          <div class="color-picker">
+            <% %w[#111827 #374151 #6b7280 #9ca3af #d1d5db #f3f4f6].each do |color| %>
+              <div class="color-option <%= 'selected' if @component.styling['color'] == color %>" 
+                   style="background-color: <%= color %>"
+                   data-color="<%= color %>"
+                   onclick="selectColor(this, 'component[styling][color]')"></div>
+            <% end %>
+          </div>
+          <%= form.hidden_field :text_color, 
+              value: @component.styling['color'],
+              name: "component[styling][color]",
+              id: "text_color_input" %>
+        </div>
+      <% end %>
+      
+      <div class="property-field">
+        <label class="property-label" for="component_border_radius">Border Radius</label>
+        <%= form.select :border_radius,
+            options_for_select([
+              ['None', '0px'],
+              ['Small', '4px'],
+              ['Medium', '8px'],
+              ['Large', '12px'],
+              ['Extra Large', '16px']
+            ], @component.styling['border_radius']),
+            {},
+            { class: "property-select", id: "component_border_radius", name: "component[styling][border_radius]" } %>
+      </div>
+    </div>
+    
+    <!-- Position & Size -->
+    <div class="property-group">
+      <div class="property-group-title">Position & Size</div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div class="property-field">
+          <label class="property-label" for="component_position_x">X Position</label>
+          <%= form.number_field :position_x,
+              value: @component.position_x,
+              class: "property-input",
+              id: "component_position_x" %>
+        </div>
+        
+        <div class="property-field">
+          <label class="property-label" for="component_position_y">Y Position</label>
+          <%= form.number_field :position_y,
+              value: @component.position_y,
+              class: "property-input",
+              id: "component_position_y" %>
+        </div>
+        
+        <div class="property-field">
+          <label class="property-label" for="component_width">Width (Grid Units)</label>
+          <%= form.number_field :width,
+              value: @component.width,
+              min: 1,
+              max: 12,
+              class: "property-input",
+              id: "component_width" %>
+        </div>
+        
+        <div class="property-field">
+          <label class="property-label" for="component_height">Height (Grid Units)</label>
+          <%= form.number_field :height,
+              value: @component.height,
+              min: 1,
+              max: 12,
+              class: "property-input",
+              id: "component_height" %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="property-actions" style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+      <%= form.submit "Update Component", class: "btn btn--primary btn--block" %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+function selectColor(element, inputName) {
+  // Remove selected class from siblings
+  element.parentElement.querySelectorAll('.color-option').forEach(opt => {
+    opt.classList.remove('selected')
+  })
+  
+  // Add selected class to clicked element
+  element.classList.add('selected')
+  
+  // Update hidden input
+  const color = element.dataset.color
+  const input = document.querySelector(`input[name="${inputName}"]`)
+  if (input) {
+    input.value = color
+    
+    // Trigger change event to save
+    input.dispatchEvent(new Event('change'))
+  }
+}
+
+// Auto-save on input changes
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('component-properties-form')
+  if (form) {
+    const inputs = form.querySelectorAll('input, select, textarea')
+    inputs.forEach(input => {
+      input.addEventListener('change', function() {
+        // Auto-save after a short delay
+        clearTimeout(window.propertiesSaveTimeout)
+        window.propertiesSaveTimeout = setTimeout(() => {
+          form.requestSubmit()
+        }, 500)
+      })
+    })
+  }
+})
+</script>

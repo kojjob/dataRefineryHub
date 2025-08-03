@@ -163,8 +163,8 @@ namespace :sample_data do
       PipelineExecution.where(organization: org).destroy_all
       puts "  ✅ Deleted pipeline executions"
 
-      PipelineConfiguration.where(organization: org).destroy_all
-      puts "  ✅ Deleted pipeline configurations"
+      Pipeline.where(organization: org).destroy_all
+      puts "  ✅ Deleted pipelines"
 
       DataSource.where(organization: org).destroy_all
       puts "  ✅ Deleted data sources"

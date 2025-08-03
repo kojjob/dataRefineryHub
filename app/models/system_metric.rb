@@ -29,4 +29,12 @@ class SystemMetric < ApplicationRecord
     return 'warning' if warning?
     'healthy'
   end
+
+  def to_percentage_hash
+    {
+      cpu_usage: cpu_usage&.to_f || 0,
+      memory_usage: memory_usage&.to_f || 0,
+      storage_usage: storage_usage&.to_f || 0
+    }
+  end
 end

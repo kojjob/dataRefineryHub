@@ -156,6 +156,15 @@
   - Executive summary and key insights
 
 #### Week 11: Advanced Reporting
+- [ ] **Visual Report Builder** - Drag-and-drop report creation system
+  - ✅ Design drag-and-drop report builder UI
+  - ✅ Create no-code report builder interface
+  - ✅ Build report template management system
+  - [ ] Implement visual query builder for data selection
+  - ✅ Create report component library (charts, tables, KPIs)
+  - [ ] Build mobile PWA with push notifications
+  - [ ] Add advanced calculations and formulas
+  - [ ] Integrate report builder with delivery system
 - [ ] **Financial Reporting Suite** - Comprehensive financial analytics
   - P&L statement automation from integrated data
   - Cash flow analysis and forecasting

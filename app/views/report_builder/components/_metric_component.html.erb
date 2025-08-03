@@ -1,0 +1,77 @@
+<div class="metric-component">
+  <div class="bg-white border border-gray-200 rounded-lg p-6">
+    <% if config['title'].present? %>
+      <h4 class="text-sm font-medium text-gray-500 mb-2"><%= config['title'] %></h4>
+    <% end %>
+
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="text-3xl font-bold text-gray-900">
+          <% if data.present? %>
+            <% case config['format'] %>
+            <% when 'currency' %>
+              $<%= number_with_delimiter(data) %>
+            <% when 'percentage' %>
+              <%= data %>%
+            <% when 'number' %>
+              <%= number_with_delimiter(data) %>
+            <% else %>
+              <%= data %>
+            <% end %>
+          <% else %>
+            <span class="text-gray-400">--</span>
+          <% end %>
+        </div>
+        
+        <% if config['subtitle'].present? %>
+          <p class="text-sm text-gray-600 mt-1"><%= config['subtitle'] %></p>
+        <% end %>
+
+        <% if config['change'].present? %>
+          <div class="flex items-center mt-2">
+            <% change_value = config['change'].to_f %>
+            <% if change_value > 0 %>
+              <svg class="w-4 h-4 text-green-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="text-green-600 text-sm font-medium">+<%= config['change'] %>%</span>
+            <% elsif change_value < 0 %>
+              <svg class="w-4 h-4 text-red-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="text-red-600 text-sm font-medium"><%= config['change'] %>%</span>
+            <% else %>
+              <span class="text-gray-500 text-sm font-medium">0%</span>
+            <% end %>
+            <% if config['period'].present? %>
+              <span class="text-gray-400 text-sm ml-1">from <%= config['period'] %></span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <% if config['icon'].present? %>
+        <div class="flex-shrink-0">
+          <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <% if config.present? && config.keys.any? %>
+      <div class="mt-4">
+        <details class="text-sm">
+          <summary class="cursor-pointer text-teal-600 hover:text-teal-700">Metric Configuration</summary>
+          <div class="mt-2 bg-gray-50 rounded p-2 text-xs text-gray-700">
+            <% config.each do |key, value| %>
+              <div><strong><%= key.humanize %>:</strong> <%= value %></div>
+            <% end %>
+          </div>
+        </details>
+      </div>
+    <% end %>
+  </div>
+</div>

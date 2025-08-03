@@ -44,9 +44,14 @@ class MonitoringController < ApplicationController
     @system_health = perform_health_checks
     
     # System metrics
-    @current_metrics = SystemMetric.where(organization_id: current_organization.id)
-                                  .order(recorded_at: :desc)
-                                  .first || {}
+    latest_metric = SystemMetric.where(organization_id: current_organization.id)
+                               .order(recorded_at: :desc)
+                               .first
+    @current_metrics = latest_metric&.to_percentage_hash || {
+      cpu_usage: 0,
+      memory_usage: 0,
+      storage_usage: 0
+    }
     
     # Pipeline metrics
     @active_pipelines = current_organization.pipeline_executions
@@ -82,6 +87,14 @@ class MonitoringController < ApplicationController
                                      .where("checked_at > ?", 1.hour.ago)
                                      .group(:check_type)
                                      .order("MAX(checked_at) DESC")
+
+    # Pipeline performance statistics for charts
+    @pipeline_performance = current_organization.pipeline_executions
+                                              .where(created_at: 30.days.ago..Time.current)
+                                              .joins(:data_source)
+                                              .group('data_sources.name')
+                                              .group(:status)
+                                              .count
   end
 
   private
@@ -202,7 +215,7 @@ class MonitoringController < ApplicationController
 
     critical_sources.each do |source_type|
       circuit_breaker = CircuitBreakerService.for("extractor_#{source_type}")
-      if circuit_breaker.open?
+      if circuit_breaker.state == CircuitBreakerService::OPEN
         unhealthy_sources << source_type
       end
     end

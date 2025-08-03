@@ -1,0 +1,23 @@
+<%
+  style = timeline_event_style(event.event_type)
+%>
+
+<div class="timeline-item">
+  <div class="timeline-dot <%= style[:dot] %>">
+    <div class="w-2 h-2 rounded-full <%= style[:icon] %>"></div>
+  </div>
+  <div class="rounded-lg p-4 <%= style[:bg] %>">
+    <div class="flex items-start justify-between">
+      <div>
+        <p class="font-medium" style="color: var(--color-text);"><%= event.title %></p>
+        <p class="text-sm mt-1" style="color: var(--color-text-secondary);"><%= event.description %></p>
+        <% if event.metadata.present? && event.metadata['details'] %>
+          <p class="text-xs mt-2" style="color: var(--color-text-tertiary);"><%= event.metadata['details'] %></p>
+        <% end %>
+      </div>
+      <span class="text-xs whitespace-nowrap" style="color: var(--color-text-tertiary);">
+        <%= event.occurred_at.strftime('%l:%M %p') %>
+      </span>
+    </div>
+  </div>
+</div>
