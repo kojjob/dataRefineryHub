@@ -4,46 +4,46 @@ class NotificationService
   class << self
     def create_notification(user:, type:, title:, message:, data: {})
       # Enhanced notification creation with persistence
-      notification_data = {
+      priority_value = determine_priority_value(type)
+      
+      # Create notification in database
+      notification = Notification.create!(
         user: user,
+        organization: user.organization,
         notification_type: type,
         title: title,
         message: message,
-        data: data,
-        read_at: nil,
-        created_at: Time.current,
-        priority: determine_priority(type),
-        category: categorize_notification(type)
-      }
+        metadata: data,
+        priority: priority_value
+      )
 
       # Log the notification with structured data
       Rails.logger.info do
         "NOTIFICATION_CREATED: #{type} for user #{user.id} - #{title}: #{message} | " \
-        "Data: #{data.to_json} | Priority: #{notification_data[:priority]}"
+        "Data: #{data.to_json} | Priority: #{notification.priority_name}"
       end
 
-      # Store notification (enhanced temporary storage)
-      stored_notification = store_notification_enhanced(user, notification_data)
-
       # Broadcast real-time notification
-      broadcast_notification(user, stored_notification)
+      broadcast_notification(user, notification)
 
       # Send additional alerts for high-priority notifications
-      send_additional_alerts(user, stored_notification) if notification_data[:priority] == "high"
+      send_additional_alerts(user, notification) if notification.high_priority?
 
-      stored_notification
+      notification
     end
 
-    def broadcast_notification(user, notification_data)
+    def broadcast_notification(user, notification)
       broadcast_data = {
         type: "notification",
-        id: SecureRandom.uuid,
-        notification_type: notification_data[:notification_type],
-        title: notification_data[:title],
-        message: notification_data[:message],
-        data: notification_data[:data],
-        timestamp: Time.current.iso8601,
-        read: false
+        id: notification.id,
+        notification_type: notification.notification_type,
+        title: notification.title,
+        message: notification.message,
+        data: notification.metadata,
+        timestamp: notification.created_at.iso8601,
+        read: notification.read?,
+        priority: notification.priority_name,
+        icon: notification.icon
       }
 
       # Broadcast to user-specific channel
@@ -58,19 +58,19 @@ class NotificationService
     def mark_as_read(user:, notification_id:)
       # Implementation for marking notification as read
       Rails.logger.info "Marking notification #{notification_id} as read for user #{user.id}"
-      # TODO: Update notification record when model exists
+      
+      notification = user.notifications.find_by(id: notification_id)
+      notification&.mark_as_read!
     end
 
     def get_unread_count(user)
       # Implementation for getting unread notification count
-      # TODO: Query notification model when it exists
-      0
+      user.notifications.unread.count
     end
 
     def get_recent_notifications(user, limit: 10)
       # Implementation for getting recent notifications
-      # TODO: Query notification model when it exists
-      []
+      user.notifications.recent.limit(limit)
     end
 
     private
@@ -123,6 +123,11 @@ class NotificationService
       end
     end
 
+    def determine_priority_value(notification_type)
+      priority_name = determine_priority(notification_type)
+      Notification::PRIORITIES[priority_name.to_sym] || Notification::PRIORITIES[:normal]
+    end
+
     def categorize_notification(notification_type)
       case notification_type
       when /processing/
@@ -142,20 +147,22 @@ class NotificationService
 
     def send_additional_alerts(user, notification)
       # For high-priority notifications, send additional alerts
-      case notification[:category]
+      category = categorize_notification(notification.notification_type)
+      
+      case category
       when "system"
         # System alerts could trigger external monitoring
-        Rails.logger.error "HIGH_PRIORITY_SYSTEM_ALERT: #{notification[:title]} for user #{user.id}"
+        Rails.logger.error "HIGH_PRIORITY_SYSTEM_ALERT: #{notification.title} for user #{user.id}"
 
         # Could integrate with external alerting (Slack, PagerDuty, etc.)
         send_external_alert(user, notification) if Rails.env.production?
 
       when "processing"
         # Critical processing failures
-        if notification[:notification_type] == "file_processing_failed"
-          retry_count = notification.dig(:data, :retry_count) || 0
+        if notification.notification_type == "file_processing_failed"
+          retry_count = notification.metadata&.dig("retry_count") || 0
           if retry_count >= 3
-            Rails.logger.error "PROCESSING_FAILURE_THRESHOLD_EXCEEDED: #{notification[:title]} for user #{user.id}"
+            Rails.logger.error "PROCESSING_FAILURE_THRESHOLD_EXCEEDED: #{notification.title} for user #{user.id}"
           end
         end
       end
@@ -172,11 +179,11 @@ class NotificationService
         user_id: user.id,
         organization_id: user.organization&.id,
         notification: {
-          id: notification[:id],
-          type: notification[:notification_type],
-          title: notification[:title],
-          message: notification[:message],
-          category: notification[:category]
+          id: notification.id,
+          type: notification.notification_type,
+          title: notification.title,
+          message: notification.message,
+          category: categorize_notification(notification.notification_type)
         },
         timestamp: Time.current.iso8601
       }

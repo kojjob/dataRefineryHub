@@ -3,16 +3,10 @@ default: &default
     - polling_interval: 1
       batch_size: 500
   workers:
-    # High priority ETL workers
-    - queues: "extraction,transformation"
-      threads: 2
-      processes: <%= ENV.fetch("ETL_CONCURRENCY", 2) %>
-      polling_interval: 0.1
-    # Analytics and general workers  
-    - queues: "analytics,loading,default"
+    - queues: "*"
       threads: 3
       processes: <%= ENV.fetch("JOB_CONCURRENCY", 1) %>
-      polling_interval: 0.5
+      polling_interval: 0.1
 
 development:
   <<: *default

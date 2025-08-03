@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require_relative '../../../../app/domain/pipeline_management/value_objects/retry_policy'
 
 RSpec.describe Domain::PipelineManagement::ValueObjects::RetryPolicy do
   describe '#initialize' do
