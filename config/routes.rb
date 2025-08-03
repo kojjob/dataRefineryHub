@@ -23,6 +23,13 @@ Rails.application.routes.draw do
   get "dashboard/analytics", to: "dashboard#analytics"
   get "dashboard/reports", to: "dashboard#reports"
 
+  # Business Templates
+  resources :business_templates, only: [:index, :show] do
+    member do
+      post :apply
+    end
+  end
+
   # Industry Templates
   resources :industry_templates, only: [:index, :show] do
     member do
@@ -286,6 +293,15 @@ Rails.application.routes.draw do
     member do
       patch :change_role
       delete :remove_avatar
+    end
+  end
+
+  # Delivery Preferences
+  resources :delivery_preferences do
+    member do
+      patch :toggle
+      get :preview
+      post :test_delivery
     end
   end
 

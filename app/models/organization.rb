@@ -15,7 +15,7 @@ class Organization < ApplicationRecord
   has_many :visualizations, dependent: :destroy
   has_many :presentations, dependent: :destroy
   has_many :pipeline_executions, dependent: :destroy
-  has_many :pipeline_configurations, dependent: :destroy
+  has_many :pipelines, dependent: :destroy
   has_many :task_templates, dependent: :destroy
   has_many :scheduled_tasks, dependent: :destroy
 
@@ -25,6 +25,9 @@ class Organization < ApplicationRecord
   has_many :ai_presentation_interactions, class_name: "Ai::PresentationInteraction", dependent: :destroy
   has_many :ai_insights, class_name: "Ai::Insight", dependent: :destroy
   has_many :alerts, dependent: :destroy
+  has_many :event_timelines, dependent: :destroy
+  has_many :system_metrics, dependent: :destroy
+  has_many :system_health_checks, dependent: :destroy
 
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
   validates :plan, inclusion: { in: PLANS }

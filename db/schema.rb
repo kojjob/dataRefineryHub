@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_19_160343) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_03_161531) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -101,6 +101,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_19_160343) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["acknowledged_at"], name: "index_ai_insights_on_acknowledged_at"
+    t.index ["acknowledged_by"], name: "idx_ai_insights_acknowledged_by"
     t.index ["actionable", "impact_level"], name: "index_ai_insights_on_actionable_and_impact_level"
     t.index ["actionable"], name: "index_ai_insights_on_actionable"
     t.index ["confidence_score"], name: "index_ai_insights_on_confidence_score", where: "(confidence_score > 0.7)"
@@ -114,6 +115,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_19_160343) do
     t.index ["organization_id"], name: "index_ai_insights_on_organization_id"
     t.index ["presentation_id"], name: "index_ai_insights_on_presentation_id"
     t.index ["read_at"], name: "index_ai_insights_on_read_at"
+    t.index ["read_by"], name: "idx_ai_insights_read_by"
     t.index ["user_id"], name: "index_ai_insights_on_user_id"
   end
 
@@ -137,6 +139,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_19_160343) do
     t.datetime "updated_at", null: false
     t.index ["interaction_type"], name: "index_ai_presentation_interactions_on_interaction_type"
     t.index ["organization_id", "created_at"], name: "idx_on_organization_id_created_at_9ffea752e8"
+    t.index ["organization_id", "timestamp"], name: "idx_ai_presentation_interactions_org_timestamp"
     t.index ["organization_id"], name: "index_ai_presentation_interactions_on_organization_id"
     t.index ["presentation_id", "created_at"], name: "idx_on_presentation_id_created_at_00cdb8309d"
     t.index ["presentation_id"], name: "index_ai_presentation_interactions_on_presentation_id"
@@ -170,6 +173,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_19_160343) do
     t.datetime "updated_at", null: false
     t.index ["completed"], name: "index_ai_presentation_views_on_completed"
     t.index ["organization_id", "created_at"], name: "index_ai_presentation_views_on_organization_id_and_created_at"
+    t.index ["organization_id", "started_at"], name: "idx_ai_presentation_views_org_started"
     t.index ["organization_id"], name: "index_ai_presentation_views_on_organization_id"
     t.index ["presentation_id", "created_at"], name: "index_ai_presentation_views_on_presentation_id_and_created_at"
     t.index ["presentation_id"], name: "index_ai_presentation_views_on_presentation_id"
@@ -265,6 +269,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_19_160343) do
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
   end
 
+  create_table "dashboards", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name", null: false
+    t.string "dashboard_type"
+    t.jsonb "configuration", default: {}
+    t.boolean "active", default: true
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_dashboards_on_active"
+    t.index ["dashboard_type"], name: "index_dashboards_on_dashboard_type"
+    t.index ["organization_id", "active"], name: "index_dashboards_on_organization_id_and_active"
+    t.index ["organization_id"], name: "index_dashboards_on_organization_id"
+  end
+
   create_table "data_quality_reports", force: :cascade do |t|
     t.bigint "data_source_id", null: false
     t.decimal "overall_score", precision: 5, scale: 2, default: "0.0"
@@ -328,22 +347,36 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_19_160343) do
     t.check_constraint "source_type::text = ANY (ARRAY['shopify'::character varying, 'quickbooks'::character varying, 'google_analytics'::character varying, 'stripe'::character varying, 'mailchimp'::character varying, 'zendesk'::character varying, 'hubspot'::character varying, 'google_ads'::character varying, 'facebook_ads'::character varying, 'woocommerce'::character varying, 'salesforce'::character varying, 'amazon_seller_central'::character varying, 'custom_api'::character varying, 'file_upload'::character varying, 'postgresql'::character varying, 'mysql'::character varying, 'csv'::character varying, 'api'::character varying, 'google_sheets'::character varying]::text[])", name: "check_valid_source_type"
   end
 
-  create_table "domain_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "event_id", null: false
-    t.string "event_type", null: false
-    t.string "aggregate_type", null: false
-    t.uuid "aggregate_id", null: false
-    t.jsonb "data", default: {}
-    t.jsonb "metadata", default: {}
-    t.datetime "occurred_at", null: false
+  create_table "delivery_logs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "organization_id", null: false
+    t.string "channel"
+    t.string "status"
+    t.string "report_type"
+    t.jsonb "metadata"
+    t.datetime "delivered_at"
+    t.text "error_message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["aggregate_id", "aggregate_type"], name: "index_domain_events_on_aggregate_id_and_aggregate_type"
-    t.index ["aggregate_type", "aggregate_id"], name: "index_domain_events_on_aggregate"
-    t.index ["created_at"], name: "index_domain_events_on_created_at"
-    t.index ["event_id"], name: "index_domain_events_on_event_id", unique: true
-    t.index ["event_type"], name: "index_domain_events_on_event_type"
-    t.index ["occurred_at"], name: "index_domain_events_on_occurred_at"
+    t.index ["organization_id"], name: "index_delivery_logs_on_organization_id"
+    t.index ["user_id"], name: "index_delivery_logs_on_user_id"
+  end
+
+  create_table "delivery_preferences", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "organization_id", null: false
+    t.string "report_type"
+    t.string "channel"
+    t.string "format"
+    t.jsonb "schedule"
+    t.jsonb "options"
+    t.boolean "active"
+    t.string "delivery_time"
+    t.string "timezone"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_delivery_preferences_on_organization_id"
+    t.index ["user_id"], name: "index_delivery_preferences_on_user_id"
   end
 
   create_table "event_timelines", force: :cascade do |t|
@@ -449,6 +482,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_19_160343) do
     t.string "timezone", default: "UTC"
     t.string "phone"
     t.text "address"
+    t.string "applied_template"
+    t.datetime "template_applied_at"
     t.index ["created_at"], name: "idx_organizations_created"
     t.index ["plan"], name: "index_organizations_on_plan"
     t.index ["slug"], name: "index_organizations_on_slug", unique: true
@@ -495,6 +530,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_19_160343) do
     t.index ["execution_mode", "status"], name: "index_pipeline_executions_on_execution_mode_and_status"
     t.index ["execution_mode"], name: "index_pipeline_executions_on_execution_mode"
     t.index ["manual_intervention_required"], name: "index_pipeline_executions_on_manual_intervention_required"
+    t.index ["organization_id", "started_at"], name: "idx_pipeline_executions_running", where: "((status)::text = 'running'::text)"
     t.index ["organization_id"], name: "index_pipeline_executions_on_organization_id"
     t.index ["pipeline_name", "status"], name: "index_pipeline_executions_on_pipeline_name_and_status"
     t.index ["pipeline_name"], name: "index_pipeline_executions_on_pipeline_name"
@@ -540,11 +576,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_19_160343) do
     t.datetime "last_executed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.jsonb "tags", default: []
-    t.integer "aggregate_version", default: 0
     t.string "schedule_type"
     t.string "schedule_expression"
     t.string "schedule_timezone", default: "UTC"
+    t.jsonb "tags", default: []
+    t.integer "aggregate_version", default: 0
+    t.integer "retry_max_attempts"
+    t.string "retry_backoff_strategy"
+    t.integer "retry_initial_delay"
+    t.integer "retry_max_delay"
+    t.float "retry_multiplier"
     t.index ["created_at"], name: "index_pipelines_on_created_at"
     t.index ["created_by_id"], name: "index_pipelines_on_created_by_id"
     t.index ["last_executed_by_id"], name: "index_pipelines_on_last_executed_by_id"
@@ -954,9 +995,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_19_160343) do
   add_foreign_key "api_keys", "users"
   add_foreign_key "audit_logs", "organizations"
   add_foreign_key "audit_logs", "users"
+  add_foreign_key "dashboards", "organizations"
   add_foreign_key "data_quality_reports", "data_sources"
   add_foreign_key "data_quality_reports", "users"
   add_foreign_key "data_sources", "organizations"
+  add_foreign_key "delivery_logs", "organizations"
+  add_foreign_key "delivery_logs", "users"
+  add_foreign_key "delivery_preferences", "organizations"
+  add_foreign_key "delivery_preferences", "users"
   add_foreign_key "event_timelines", "organizations"
   add_foreign_key "extraction_jobs", "data_sources"
   add_foreign_key "notifications", "organizations"
