@@ -53,7 +53,6 @@ class AiChatChannel < ApplicationCable::Channel
   def mark_messages_as_read(message_ids)
     return unless message_ids.present?
     
-    Ai::Query.where(id: message_ids, user_id: params[:user_id])
-             .update_all(read_at: Time.current)
+    Ai::Query.where(id: message_ids, user_id: params[:user_id]).update_all(read_at: Time.current)
   end
 end

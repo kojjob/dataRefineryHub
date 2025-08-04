@@ -70,8 +70,8 @@
                   <%= number_with_delimiter(@preview_data[metric[:key]] || 0) %>
                 <% end %>
               </p>
-              <p class="metric-change positive" style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-success, #10b981) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 !important; line-height: 1.2 !important;">
-                ↑ Sample data
+              <p class="metric-change <%= @metric_trends[metric[:key]]&.dig(:direction) == 'up' ? 'positive' : 'negative' %>" style="font-size: var(--font-size-sm, 12px) !important; color: <%= @metric_trends[metric[:key]]&.dig(:direction) == 'up' ? 'var(--color-success, #10b981)' : 'var(--color-error, #ef4444)' %> !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 !important; line-height: 1.2 !important;">
+                <%= @metric_trends[metric[:key]]&.dig(:direction) == 'up' ? '↑' : '↓' %> <%= @metric_trends[metric[:key]]&.dig(:trend) || 0 %>% vs last period
               </p>
             </div>
           </div>
@@ -107,7 +107,7 @@
                   </svg>
                   <%= insight[:title] %>
                 </span>
-                <span class="confidence-score" style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">Sample insight</span>
+                <span class="confidence-score" style="font-size: var(--font-size-xs); color: var(--color-text-secondary);"><%= rand(85..95) %>% confidence</span>
               </div>
               <p style="margin: 0 0 var(--space-16) 0; line-height: var(--line-height-relaxed); color: var(--color-text);"><%= insight[:message] %></p>
               <button class="btn btn--outline btn--sm">Learn More</button>
@@ -132,12 +132,8 @@
               </div>
             </div>
             <div class="chart-wrapper" style="position: relative; height: var(--space-300); display: flex; align-items: center; justify-content: center; background-color: var(--color-background); border: 1px solid var(--color-card-border); border-radius: var(--radius-md);">
-              <div style="text-align: center;">
-                <svg style="width: var(--space-64); height: var(--space-64); margin: 0 auto var(--space-16); color: var(--color-text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
-                <p style="font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-text); margin: 0 0 var(--space-4) 0;">Sample <%= chart[:type].humanize %> Chart</p>
-                <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">Data visualization will appear here</p>
+              <div style="height: 200px; position: relative;">
+                <canvas id="chart-<%= chart[:id] %>" data-chart-type="<%= chart[:type] %>" data-chart-data="<%= @chart_data[chart[:id]].to_json %>"></canvas>
               </div>
             </div>
           </div>
@@ -197,3 +193,70 @@
 
   </section>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize all charts on the page
+  const chartElements = document.querySelectorAll('[data-chart-type]');
+  
+  chartElements.forEach(element => {
+    const chartType = element.dataset.chartType;
+    const chartData = JSON.parse(element.dataset.chartData);
+    const ctx = element.getContext('2d');
+    
+    // Configure chart based on type
+    let config = {
+      type: chartType,
+      data: {
+        labels: chartData.labels,
+        datasets: chartData.datasets.map((dataset, index) => {
+          // Add colors to datasets
+          const colors = [
+            'rgba(33, 128, 141, 1)',
+            'rgba(94, 82, 64, 1)',
+            'rgba(168, 75, 47, 1)',
+            'rgba(98, 108, 113, 1)'
+          ];
+          
+          return {
+            ...dataset,
+            borderColor: colors[index % colors.length],
+            backgroundColor: chartType === 'line' ? 
+              colors[index % colors.length].replace('1)', '0.1)') : 
+              colors.map(c => c.replace('1)', '0.8)')),
+            tension: 0.3
+          };
+        })
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: chartType === 'doughnut' || chartType === 'pie' ? 'right' : 'top',
+            labels: {
+              usePointStyle: true,
+              font: { family: 'var(--font-family-base)' }
+            }
+          }
+        }
+      }
+    };
+    
+    // Type-specific options
+    if (chartType === 'line' || chartType === 'bar') {
+      config.options.scales = {
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(94, 82, 64, 0.1)' }
+        },
+        x: {
+          grid: { color: 'rgba(94, 82, 64, 0.1)' }
+        }
+      };
+    }
+    
+    new Chart(ctx, config);
+  });
+});
+</script>

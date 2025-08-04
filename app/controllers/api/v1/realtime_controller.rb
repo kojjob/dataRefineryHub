@@ -1,6 +1,8 @@
 class Api::V1::RealtimeController < Api::V1::BaseController
   include ActionController::Live
 
+
+
   # GET /api/v1/realtime/metrics_stream
   def metrics_stream
     response.headers["Content-Type"] = "text/event-stream"
@@ -92,6 +94,8 @@ class Api::V1::RealtimeController < Api::V1::BaseController
       response.stream.close
     end
   end
+
+
 
   private
 
@@ -367,4 +371,6 @@ class Api::V1::RealtimeController < Api::V1::BaseController
       organization_id: @current_organization.id
     }
   end
+
+
 end

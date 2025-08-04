@@ -7,6 +7,7 @@ class Analytics::CustomersController < Analytics::BaseController
     @customer_metrics = calculate_customer_analytics
     @acquisition_insights = calculate_acquisition_insights
     @customer_segments = calculate_top_segments
+    @customer_growth_data = calculate_customer_growth_data
   end
 
   def acquisition
@@ -412,6 +413,48 @@ class Analytics::CustomersController < Analytics::BaseController
       "$500 - $1000" => clv_values.count { |v| v >= 500 && v < 1000 },
       "$1000 - $2000" => clv_values.count { |v| v >= 1000 && v < 2000 },
       "Over $2000" => clv_values.count { |v| v >= 2000 }
+    }
+  end
+
+  def calculate_customer_growth_data
+    customer_records = customer_records_scope
+    
+    # Initialize daily data
+    daily_data = {}
+    (@start_date..@end_date).each do |date|
+      daily_data[date.to_s] = { new_customers: 0, total_customers: 0 }
+    end
+    
+    # Count new customers per day
+    customer_records.find_each do |record|
+      created_at = record.raw_data["created_at"] rescue nil
+      next unless created_at
+      
+      customer_date = Time.parse(created_at).to_date
+      date_str = customer_date.to_s
+      
+      # Count new customers for dates in range
+      if daily_data[date_str]
+        daily_data[date_str][:new_customers] += 1
+      end
+    end
+    
+    # Calculate cumulative totals
+    running_total = @customer_metrics[:total_customers] - @customer_metrics[:new_customers]
+    daily_data.keys.sort.each do |date|
+      running_total += daily_data[date][:new_customers]
+      daily_data[date][:total_customers] = running_total
+    end
+    
+    # Convert to arrays for chart
+    dates = daily_data.keys.sort
+    new_customers = dates.map { |date| daily_data[date][:new_customers] }
+    total_customers = dates.map { |date| daily_data[date][:total_customers] }
+    
+    {
+      labels: dates.map { |d| Date.parse(d).strftime("%b %d") },
+      new_customers: new_customers,
+      total_customers: total_customers
     }
   end
 end

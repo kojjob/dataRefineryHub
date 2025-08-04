@@ -76,7 +76,7 @@ export default class extends Controller {
     // Try to connect to real-time metrics endpoint
     if (typeof EventSource !== 'undefined') {
       try {
-        this.eventSource = new EventSource('/api/v1/realtime/metrics_stream')
+        this.eventSource = new EventSource('/api/v1/public/metrics_stream')
 
         this.eventSource.onmessage = (event) => {
           try {

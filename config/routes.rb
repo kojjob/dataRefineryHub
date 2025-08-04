@@ -487,11 +487,18 @@ Rails.application.routes.draw do
         end
       end
 
-      # Real-time data endpoints
+      # Real-time data endpoints (authenticated)
       namespace :realtime do
         get :metrics_stream
         get :job_status_stream
         get :notifications_stream
+      end
+
+      # Public demo endpoints (no authentication required)
+      namespace :public do
+        get :hero_stats
+        get :demo_metrics
+        get :metrics_stream
       end
 
       # Webhook endpoints for external integrations

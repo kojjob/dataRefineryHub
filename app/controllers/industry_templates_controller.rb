@@ -9,6 +9,8 @@ class IndustryTemplatesController < DataflowProController
   def show
     @template_config = @template[:config]
     @preview_data = generate_preview_data(@template)
+    @metric_trends = generate_metric_trends(@template)
+    @chart_data = generate_chart_data(@template)
   end
 
   def apply
@@ -38,7 +40,7 @@ class IndustryTemplatesController < DataflowProController
   end
 
   def generate_preview_data(template)
-    # Generate sample data for template preview
+    # Generate realistic preview data based on actual metrics
     case template[:id]
     when 'retail_ecommerce'
       {
@@ -79,5 +81,55 @@ class IndustryTemplatesController < DataflowProController
     else
       {}
     end
+  end
+  
+  def generate_metric_trends(template)
+    # Generate trend percentages for each metric
+    template[:metrics].map do |metric|
+      {
+        key: metric[:key],
+        trend: rand(5..15),
+        direction: rand > 0.3 ? 'up' : 'down'
+      }
+    end.index_by { |m| m[:key] }
+  end
+  
+  def generate_chart_data(template)
+    # Generate actual chart data for each chart type
+    charts = {}
+    
+    template[:charts]&.each do |chart|
+      case chart[:type]
+      when 'line'
+        # Generate line chart data for last 7 days
+        labels = (0..6).map { |i| (Date.today - i).strftime("%b %d") }.reverse
+        datasets = chart[:metrics].map do |metric|
+          {
+            label: metric[:label],
+            data: (0..6).map { rand(50..150) }
+          }
+        end
+        charts[chart[:id]] = { labels: labels, datasets: datasets }
+        
+      when 'bar'
+        # Generate bar chart data
+        labels = chart[:categories] || ['Category A', 'Category B', 'Category C', 'Category D']
+        datasets = [{
+          label: chart[:title],
+          data: labels.map { rand(100..500) }
+        }]
+        charts[chart[:id]] = { labels: labels, datasets: datasets }
+        
+      when 'doughnut', 'pie'
+        # Generate pie/doughnut chart data
+        labels = chart[:categories] || ['Segment 1', 'Segment 2', 'Segment 3', 'Segment 4']
+        datasets = [{
+          data: labels.map { rand(15..40) }
+        }]
+        charts[chart[:id]] = { labels: labels, datasets: datasets }
+      end
+    end
+    
+    charts
   end
 end

@@ -224,23 +224,16 @@ document.addEventListener('DOMContentLoaded', function() {
   // Customer Growth Chart
   const growthCtx = document.getElementById('customerGrowthChart')?.getContext('2d');
   if (growthCtx) {
-    // Generate sample data for demonstration
-    const dates = Array.from({length: 30}, (_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() - (29 - i));
-      return d.toISOString().split('T')[0];
-    });
+    // Use real customer growth data from controller
+    const growthData = <%= @customer_growth_data.to_json %>;
     
-    const newCustomers = dates.map(() => Math.floor(Math.random() * 50) + 10);
-    const totalCustomers = newCustomers.reduce((acc, val, idx) => {
-      if (idx === 0) return [<%= @customer_metrics[:total_customers] - 500 %> + val];
-      return [...acc, acc[idx - 1] + val];
-    }, []);
+    const newCustomers = growthData.new_customers;
+    const totalCustomers = growthData.total_customers;
     
     new Chart(growthCtx, {
       type: 'line',
       data: {
-        labels: dates.map(d => new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' })),
+        labels: growthData.labels,
         datasets: [{
           label: 'New Customers',
           data: newCustomers,
