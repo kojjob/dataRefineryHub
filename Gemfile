@@ -66,6 +66,12 @@ gem "paper_trail"
 gem "validate_url"
 gem "chronic"
 
+# Monitoring and Observability
+gem "opentelemetry-sdk"
+gem "opentelemetry-exporter-otlp"
+gem "opentelemetry-instrumentation-all"
+gem "request_store"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

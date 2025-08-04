@@ -1,0 +1,159 @@
+<% content_for :page_title, "Industry Templates" %>
+<% content_for :page_subtitle, "Pre-built analytics solutions tailored to your industry's unique requirements" %>
+
+<div class="dashboard-content">
+  <section class="content-section active">
+
+    <!-- Header Section -->
+    <div class="section-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-32);">
+      <div>
+        <h1 class="section-title" style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-text); margin: 0 0 var(--space-8) 0; line-height: var(--line-height-tight);">Industry-Specific Dashboard Templates</h1>
+        <p class="section-subtitle" style="font-size: var(--font-size-base); color: var(--color-text-secondary); margin: 0;">Pre-built analytics solutions tailored to your industry's unique requirements</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: var(--space-12);">
+        <%= link_to dashboard_path, class: "btn btn--outline btn--sm" do %>
+          <svg style="width: var(--space-16); height: var(--space-16); margin-right: var(--space-8);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          Back to Dashboard
+        <% end %>
+
+        <% if current_user.dashboard_template.present? %>
+          <%= form_with url: reset_industry_templates_path, method: :post, local: true, style: "display: inline;" do |form| %>
+            <%= form.submit "Reset to Default", class: "btn btn--outline btn--sm",
+                confirm: "Are you sure you want to reset your dashboard to the default layout?" %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Current Template Status -->
+    <% if current_user.dashboard_template.present? %>
+      <div class="insight-card" style="background-color: var(--color-surface); border: 1px solid var(--color-card-border); border-radius: var(--radius-lg); padding: var(--space-20); margin-bottom: var(--space-32); border-left: 4px solid var(--color-primary);">
+        <div style="display: flex; align-items: center; gap: var(--space-12);">
+          <svg style="width: var(--space-20); height: var(--space-20); color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <div>
+            <p style="font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-primary); margin: 0 0 var(--space-4) 0;">
+              Current Template: <%= IndustryTemplate.find_template(current_user.dashboard_template)&.dig(:name) || current_user.dashboard_template.humanize %>
+            </p>
+            <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin: 0;">Your dashboard is currently using this industry template</p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Templates Grid -->
+    <div class="cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--space-24);">
+      <% @templates.each do |template| %>
+        <div class="chart-card template-card" style="background-color: var(--color-surface); border: 1px solid var(--color-card-border); border-radius: var(--radius-lg); overflow: hidden; transition: all var(--duration-normal) var(--ease-standard);">
+
+          <!-- Template Preview -->
+          <div class="template-preview" style="height: var(--space-200); background: linear-gradient(135deg, var(--color-primary-light), var(--color-surface)); position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); width: 100%; max-width: 300px; padding: 0 var(--space-16);">
+                <!-- Mock metric cards -->
+                <div style="height: var(--space-64); border-radius: var(--radius-md); background-color: var(--color-surface); border: 1px solid var(--color-card-border); opacity: 0.9;"></div>
+                <div style="height: var(--space-64); border-radius: var(--radius-md); background-color: var(--color-surface); border: 1px solid var(--color-card-border); opacity: 0.9;"></div>
+                <div style="height: var(--space-64); border-radius: var(--radius-md); background-color: var(--color-surface); border: 1px solid var(--color-card-border); opacity: 0.9;"></div>
+                <div style="height: var(--space-64); border-radius: var(--radius-md); background-color: var(--color-surface); border: 1px solid var(--color-card-border); opacity: 0.9;"></div>
+              </div>
+            </div>
+
+            <!-- Template Icon -->
+            <div style="position: absolute; top: var(--space-16); right: var(--space-16); width: var(--space-48); height: var(--space-48); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; background-color: var(--color-primary); color: var(--color-primary-contrast);">
+              <svg style="width: var(--space-24); height: var(--space-24);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <% case template.icon %>
+                <% when 'shopping-cart' %>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.1 5.4M7 13v6a2 2 0 002 2h6a2 2 0 002-2v-6m-9 0h9"/>
+                <% when 'settings' %>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <% when 'briefcase' %>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0H8m8 0v2a2 2 0 002 2h2a2 2 0 002-2V8a2 2 0 00-2-2h-2zm-8 0V8a2 2 0 00-2 2H4a2 2 0 00-2 2v8a2 2 0 002 2h16a2 2 0 002-2V10a2 2 0 00-2-2h-2z"/>
+                <% when 'heart' %>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                <% else %>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                <% end %>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Template Content -->
+          <div style="padding: var(--space-24);">
+            <div style="margin-bottom: var(--space-20);">
+              <h3 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text); margin: 0 0 var(--space-8) 0; line-height: var(--line-height-tight);"><%= template.name %></h3>
+              <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin: 0; line-height: var(--line-height-relaxed);"><%= template.description %></p>
+            </div>
+
+            <!-- Template Features -->
+            <div style="margin-bottom: var(--space-24);">
+              <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-text); margin: 0 0 var(--space-12) 0;">Key Metrics:</h4>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8);">
+                <% template.metrics.first(4).each do |metric| %>
+                  <div style="display: flex; align-items: center; gap: var(--space-8); font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                    <div style="width: var(--space-8); height: var(--space-8); border-radius: 50%; background-color: var(--color-primary);"></div>
+                    <%= metric[:label] %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Template Actions -->
+            <div style="display: flex; align-items: center; gap: var(--space-12);">
+              <%= link_to industry_template_path(template.id), class: "btn btn--outline btn--sm", style: "flex: 1;" do %>
+                <svg style="width: var(--space-16); height: var(--space-16); margin-right: var(--space-8);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                Preview
+              <% end %>
+
+              <%= form_with url: apply_industry_template_path(template.id), method: :post, local: true, style: "flex: 1;" do |form| %>
+                <%= form.submit "Apply Template", class: "btn btn--primary btn--sm",
+                    style: "width: 100%;", confirm: "Apply #{template.name} template to your dashboard?" %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Help Section -->
+    <div class="chart-container" style="background-color: var(--color-surface); border: 1px solid var(--color-card-border); border-radius: var(--radius-lg); padding: var(--space-24); margin-top: var(--space-48);">
+      <h3 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text); margin: 0 0 var(--space-24) 0;">How Industry Templates Work</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-24);">
+        <div style="text-align: center;">
+          <div style="width: var(--space-48); height: var(--space-48); margin: 0 auto var(--space-12); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; background-color: var(--color-primary-light);">
+            <svg style="width: var(--space-24); height: var(--space-24); color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <h4 style="font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-text); margin: 0 0 var(--space-8) 0;">1. Preview Template</h4>
+          <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin: 0; line-height: var(--line-height-relaxed);">Explore the template layout and see which metrics and insights are included</p>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: var(--space-48); height: var(--space-48); margin: 0 auto var(--space-12); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; background-color: var(--color-primary-light);">
+            <svg style="width: var(--space-24); height: var(--space-24); color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h4 style="font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-text); margin: 0 0 var(--space-8) 0;">2. Apply Template</h4>
+          <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin: 0; line-height: var(--line-height-relaxed);">Apply the template to configure your dashboard with industry-specific metrics</p>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: var(--space-48); height: var(--space-48); margin: 0 auto var(--space-12); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; background-color: var(--color-primary-light);">
+            <svg style="width: var(--space-24); height: var(--space-24); color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"/>
+            </svg>
+          </div>
+          <h4 style="font-size: var(--font-size-base); font-weight: var(--font-weight-medium); color: var(--color-text); margin: 0 0 var(--space-8) 0;">3. Customize Further</h4>
+          <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin: 0; line-height: var(--line-height-relaxed);">Fine-tune the template by adding your own data sources and custom metrics</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</div>

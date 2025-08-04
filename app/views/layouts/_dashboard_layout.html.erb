@@ -11,8 +11,8 @@
     </div>
   </div>
   
-  <!-- Premium Desktop Sidebar with Glassmorphism -->
-  <%= render 'shared/premium_navigation' %>
+  <!-- Unified Desktop Sidebar Navigation -->
+  <%= render 'shared/unified_navigation' %>
   
   <!-- Main Content Area -->
   <div class="lg:pl-72">
@@ -33,4 +33,9 @@
     <!-- Footer -->
     <%= render 'shared/footer' %>
   </div>
+  
+  <!-- AI Chat Widget -->
+  <% if user_signed_in? && current_organization %>
+    <%= render 'ai/chat/chat_widget' %>
+  <% end %>
 </div>

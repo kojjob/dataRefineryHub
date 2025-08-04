@@ -5,21 +5,25 @@ class ExtractionJob < ApplicationRecord
 
   STATUSES = %w[queued running completed failed cancelled retrying].freeze
   PRIORITIES = %w[low normal high critical].freeze
+  JOB_TYPES = %w[manual_sync api_sync scheduled_sync webhook_sync].freeze
 
   validates :job_id, presence: true, uniqueness: true
   validates :status, inclusion: { in: STATUSES }
   validates :priority, inclusion: { in: PRIORITIES }
+  validates :job_type, inclusion: { in: JOB_TYPES }, allow_nil: true
   validates :retry_count, numericality: { greater_than_or_equal_to: 0 }
   validates :max_retries, numericality: { greater_than_or_equal_to: 0 }
 
   scope :by_status, ->(status) { where(status: status) }
   scope :by_priority, ->(priority) { where(priority: priority) }
+  scope :by_job_type, ->(job_type) { where(job_type: job_type) }
   scope :needs_retry, -> { where(status: "failed").where("next_retry_at <= ?", Time.current) }
   scope :running, -> { where(status: "running") }
   scope :completed, -> { where(status: "completed") }
   scope :successful, -> { where(status: "completed") }
   scope :failed, -> { where(status: "failed") }
   scope :recent, -> { order(created_at: :desc) }
+  scope :api_syncs, -> { where(job_type: ["api_sync", "manual_sync"]) }
 
   before_validation :generate_job_id, on: :create
   before_validation :set_defaults, on: :create
@@ -193,6 +197,7 @@ class ExtractionJob < ApplicationRecord
   def set_defaults
     self.status ||= "queued"
     self.priority ||= "normal"
+    self.job_type ||= "manual_sync"
     self.retry_count ||= 0
     self.max_retries ||= 3
     self.records_processed ||= 0

@@ -1,0 +1,98 @@
+<!-- DataFlow Pro Layout -->
+<div class="dataflow-pro" data-controller="dataflow-navigation theme-toggle">
+  
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar" data-dataflow-navigation-target="sidebar">
+    <div class="sidebar-header">
+      <h2>Data ReFlow</h2>
+      <button class="sidebar-toggle" data-action="click->dataflow-navigation#toggleSidebar">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <ul class="nav-menu">
+      <% if @dataflow_sections.nil? %>
+        <!-- Debug: @dataflow_sections is nil -->
+      <% end %>
+      <% (@dataflow_sections || []).each do |section| %>
+        <%= link_to section[:path], class: "nav-item #{@active_section == section[:id] ? 'active' : ''}", data: { section: section[:id] } do %>
+          <span class="nav-icon"><%= section[:icon] %></span>
+          <span class="nav-text"><%= section[:text] %></span>
+        <% end %>
+      <% end %>
+    </ul>
+  </nav>
+  
+  <!-- Main Content Area -->
+  <main class="main-content" id="mainContent">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1 id="pageTitle" data-dataflow-navigation-target="pageTitle"><%= content_for?(:page_title) ? yield(:page_title) : 'Dashboard' %></h1>
+        <p id="pageSubtitle" data-dataflow-navigation-target="pageSubtitle"><%= content_for?(:page_subtitle) ? yield(:page_subtitle) : 'Your fully managed, no-code data warehouse delivering instant insights' %></p>
+      </div>
+      <div class="header-right">
+        <button class="btn btn--secondary" data-controller="ai-assistant" data-action="click->ai-assistant#open">
+          <span style="margin-right: var(--space-8);">🤖</span> AI Assistant
+        </button>
+        <button class="btn btn--outline" data-action="click->theme-toggle#toggle">
+          <span data-theme-toggle-target="icon">🌙</span>
+        </button>
+        <div class="user-profile" data-controller="dropdown">
+          <button data-action="click->dropdown#toggle" class="user-avatar">
+            <% if current_user.avatar.attached? %>
+              <%= image_tag current_user.avatar, alt: current_user.full_name, class: "user-avatar" %>
+            <% else %>
+              <div class="user-avatar" style="background-color: var(--color-primary); display: flex; align-items: center; justify-content: center; color: var(--color-btn-primary-text); font-weight: var(--font-weight-semibold);">
+                <%= current_user.initials %>
+              </div>
+            <% end %>
+          </button>
+          <div data-dropdown-target="menu" class="dropdown-menu">
+            <%= link_to "Profile", edit_user_registration_path, class: "dropdown-item" %>
+            <%= link_to "Organization", edit_organization_path, class: "dropdown-item" %>
+            <div class="dropdown-divider"></div>
+            <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Flash Messages -->
+    <%= render 'shared/flash_messages' %>
+    
+    <!-- Content Sections -->
+    <div data-dataflow-navigation-target="content">
+      <%= yield %>
+    </div>
+  </main>
+  
+  <!-- AI Assistant Modal -->
+  <div class="modal" data-ai-assistant-target="modal" data-action="click->ai-assistant#backdropClick">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>
+          <span style="margin-right: var(--space-8);">🤖</span> AI Assistant
+        </h3>
+        <button class="modal-close" data-action="click->ai-assistant#close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="chat-container" data-ai-assistant-target="chatContainer">
+          <div class="chat-message ai">
+            <p>Hello! I'm your AI assistant. I can help you analyze data, create reports, and optimize your business operations. What would you like to know?</p>
+          </div>
+        </div>
+        <div class="chat-input">
+          <input type="text" 
+                 class="form-control" 
+                 placeholder="Ask me anything about your data..." 
+                 data-ai-assistant-target="input"
+                 data-action="keypress->ai-assistant#handleKeypress">
+          <button class="btn btn--primary" data-action="click->ai-assistant#sendMessage">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

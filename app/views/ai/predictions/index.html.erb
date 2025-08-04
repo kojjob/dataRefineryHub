@@ -1,0 +1,294 @@
+<% content_for :page_title, @page_title %>
+<% content_for :page_subtitle, @page_subtitle %>
+
+<div class="dashboard-content">
+  <!-- Predictive Analytics Section -->
+  <section class="content-section active" id="predictive">
+  <!-- Prediction Cards Grid -->
+  <div class="predictive-grid">
+    <!-- Demand Forecasting -->
+    <div class="prediction-card">
+      <div class="prediction-header">
+        <h3>Demand Forecasting</h3>
+        <span class="model-badge"><%= @predictions[:demand_forecast][:model] %></span>
+      </div>
+      <div class="prediction-visual">
+        <div class="trend-indicator trend-<%= @predictions[:demand_forecast][:trend] %>">
+          <svg viewBox="0 0 100 50" class="trend-chart">
+            <polyline points="10,40 30,35 50,20 70,15 90,10" 
+                      fill="none" 
+                      stroke="var(--color-success)" 
+                      stroke-width="2"/>
+            <polyline points="10,40 30,35 50,20 70,15 90,10 90,50 10,50" 
+                      fill="url(#gradient-up)" 
+                      opacity="0.3"/>
+            <defs>
+              <linearGradient id="gradient-up" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:var(--color-success);stop-opacity:0.5"/>
+                <stop offset="100%" style="stop-color:var(--color-success);stop-opacity:0"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="prediction-details">
+          <p class="prediction-value"><%= @predictions[:demand_forecast][:value] %></p>
+          <p class="prediction-text"><%= @predictions[:demand_forecast][:text] %></p>
+        </div>
+      </div>
+      <div class="prediction-metrics">
+        <div class="metric-item">
+          <span class="metric-label">Accuracy</span>
+          <span class="metric-value"><%= @predictions[:demand_forecast][:accuracy] %>%</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Confidence</span>
+          <span class="metric-value confidence-<%= @predictions[:demand_forecast][:confidence].downcase %>">
+            <%= @predictions[:demand_forecast][:confidence] %>
+          </span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Updated</span>
+          <span class="metric-value">2h ago</span>
+        </div>
+      </div>
+      <button class="btn btn--sm btn--outline">View Details</button>
+    </div>
+
+    <!-- Customer Behavior -->
+    <div class="prediction-card">
+      <div class="prediction-header">
+        <h3>Customer Behavior</h3>
+        <span class="model-badge"><%= @predictions[:customer_behavior][:model] %></span>
+      </div>
+      <div class="prediction-visual">
+        <div class="trend-indicator trend-<%= @predictions[:customer_behavior][:trend] %>">
+          <svg viewBox="0 0 100 50" class="trend-chart">
+            <polyline points="10,25 30,23 50,24 70,22 90,20" 
+                      fill="none" 
+                      stroke="var(--color-primary)" 
+                      stroke-width="2"/>
+            <circle cx="90" cy="20" r="3" fill="var(--color-primary)"/>
+          </svg>
+        </div>
+        <div class="prediction-details">
+          <p class="prediction-value"><%= @predictions[:customer_behavior][:value] %></p>
+          <p class="prediction-text"><%= @predictions[:customer_behavior][:text] %></p>
+        </div>
+      </div>
+      <div class="prediction-metrics">
+        <div class="metric-item">
+          <span class="metric-label">Accuracy</span>
+          <span class="metric-value"><%= @predictions[:customer_behavior][:accuracy] %>%</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Confidence</span>
+          <span class="metric-value confidence-<%= @predictions[:customer_behavior][:confidence].downcase %>">
+            <%= @predictions[:customer_behavior][:confidence] %>
+          </span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Segments</span>
+          <span class="metric-value">4</span>
+        </div>
+      </div>
+      <button class="btn btn--sm btn--outline">Analyze Segments</button>
+    </div>
+
+    <!-- Market Trends -->
+    <div class="prediction-card">
+      <div class="prediction-header">
+        <h3>Market Trends</h3>
+        <span class="model-badge"><%= @predictions[:market_trends][:model] %></span>
+      </div>
+      <div class="prediction-visual">
+        <div class="trend-indicator trend-<%= @predictions[:market_trends][:trend] %>">
+          <svg viewBox="0 0 100 50" class="trend-chart">
+            <polyline points="10,20 30,25 50,30 70,35 90,40" 
+                      fill="none" 
+                      stroke="var(--color-warning)" 
+                      stroke-width="2"/>
+            <polyline points="10,20 30,25 50,30 70,35 90,40 90,50 10,50" 
+                      fill="url(#gradient-down)" 
+                      opacity="0.3"/>
+            <defs>
+              <linearGradient id="gradient-down" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:var(--color-warning);stop-opacity:0.5"/>
+                <stop offset="100%" style="stop-color:var(--color-warning);stop-opacity:0"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="prediction-details">
+          <p class="prediction-value"><%= @predictions[:market_trends][:value] %></p>
+          <p class="prediction-text"><%= @predictions[:market_trends][:text] %></p>
+        </div>
+      </div>
+      <div class="prediction-metrics">
+        <div class="metric-item">
+          <span class="metric-label">Accuracy</span>
+          <span class="metric-value"><%= @predictions[:market_trends][:accuracy] %>%</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Confidence</span>
+          <span class="metric-value confidence-<%= @predictions[:market_trends][:confidence].downcase %>">
+            <%= @predictions[:market_trends][:confidence] %>
+          </span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Factors</span>
+          <span class="metric-value">12</span>
+        </div>
+      </div>
+      <button class="btn btn--sm btn--outline">Mitigation Strategies</button>
+    </div>
+
+    <!-- Revenue Prediction -->
+    <div class="prediction-card">
+      <div class="prediction-header">
+        <h3>Revenue Forecast</h3>
+        <span class="model-badge"><%= @predictions[:revenue_forecast][:model] %></span>
+      </div>
+      <div class="prediction-visual">
+        <div class="trend-indicator trend-<%= @predictions[:revenue_forecast][:trend] %>">
+          <svg viewBox="0 0 100 50" class="trend-chart">
+            <polyline points="10,35 25,30 40,32 55,25 70,20 85,15 95,10" 
+                      fill="none" 
+                      stroke="var(--color-success)" 
+                      stroke-width="2"
+                      stroke-dasharray="5,5"/>
+            <polyline points="10,35 25,30 40,32 55,25 70,20" 
+                      fill="none" 
+                      stroke="var(--color-success)" 
+                      stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="prediction-details">
+          <p class="prediction-value"><%= @predictions[:revenue_forecast][:value] %></p>
+          <p class="prediction-text"><%= @predictions[:revenue_forecast][:text] %></p>
+        </div>
+      </div>
+      <div class="prediction-metrics">
+        <div class="metric-item">
+          <span class="metric-label">Accuracy</span>
+          <span class="metric-value"><%= @predictions[:revenue_forecast][:accuracy] %>%</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Range</span>
+          <span class="metric-value"><%= @predictions[:revenue_forecast][:range] %></span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Goal</span>
+          <span class="metric-value"><%= @predictions[:revenue_forecast][:goal] %></span>
+        </div>
+      </div>
+      <button class="btn btn--sm btn--primary">Run Scenarios</button>
+    </div>
+  </div>
+
+  <!-- Forecast Models -->
+  <div class="forecast-section">
+    <h3 class="forecast-title">📊 Active Forecast Models</h3>
+    <div class="models-grid">
+      <% @forecast_models.each do |model| %>
+        <div class="model-card">
+          <div class="model-header">
+            <span class="model-icon"><%= model[:icon] %></span>
+            <h4><%= model[:name] %></h4>
+            <span class="model-status <%= model[:status] %>"><%= model[:status].capitalize %></span>
+          </div>
+          <div class="model-stats">
+            <% if model[:status] == 'active' %>
+              <% if model[:mape] %>
+                <div class="stat">
+                  <span class="stat-label">Last Run</span>
+                  <span class="stat-value"><%= model[:last_run] %></span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">MAPE</span>
+                  <span class="stat-value"><%= model[:mape] %></span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">R²</span>
+                  <span class="stat-value"><%= model[:r_squared] %></span>
+                </div>
+              <% else %>
+                <div class="stat">
+                  <span class="stat-label">Precision</span>
+                  <span class="stat-value"><%= model[:precision] %></span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Recall</span>
+                  <span class="stat-value"><%= model[:recall] %></span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">F1 Score</span>
+                  <span class="stat-value"><%= model[:f1_score] %></span>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="stat">
+                <span class="stat-label">Progress</span>
+                <span class="stat-value"><%= model[:progress] %>%</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">ETA</span>
+                <span class="stat-value"><%= model[:eta] %></span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Epochs</span>
+                <span class="stat-value"><%= model[:epochs] %></span>
+              </div>
+            <% end %>
+          </div>
+          <% if model[:status] == 'training' %>
+            <div class="model-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: <%= model[:progress] %>%"></div>
+              </div>
+            </div>
+          <% end %>
+          <div class="model-actions">
+            <% if model[:status] == 'active' %>
+              <button class="btn btn--sm btn--secondary">Retrain</button>
+              <button class="btn btn--sm btn--outline">Details</button>
+            <% else %>
+              <button class="btn btn--sm btn--secondary">Pause</button>
+              <button class="btn btn--sm btn--outline">Monitor</button>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Scenario Planning -->
+  <div class="scenario-section">
+    <h3 class="scenario-title">🎲 Scenario Planning</h3>
+    <div class="scenarios-grid">
+      <% @scenarios.each do |scenario_type, data| %>
+        <div class="scenario-card <%= scenario_type.to_s.gsub('_', '-') %>">
+          <h4><%= scenario_type.to_s.split('_').map(&:capitalize).join(' ') %> Scenario</h4>
+          <div class="scenario-metrics">
+            <div class="scenario-metric">
+              <span class="metric-icon"><%= scenario_type == :best_case ? '📈' : scenario_type == :worst_case ? '📉' : '📊' %></span>
+              <span class="metric-label">Revenue</span>
+              <span class="metric-value"><%= data[:revenue] %></span>
+            </div>
+            <div class="scenario-metric">
+              <span class="metric-icon">👥</span>
+              <span class="metric-label">Customers</span>
+              <span class="metric-value"><%= data[:customers] %></span>
+            </div>
+            <div class="scenario-metric">
+              <span class="metric-icon">💵</span>
+              <span class="metric-label">Profit</span>
+              <span class="metric-value"><%= data[:profit] %></span>
+            </div>
+          </div>
+          <p class="scenario-probability">Probability: <%= data[:probability] %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+</div>

@@ -1,0 +1,307 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* DataFlow Pro Design Tokens */
+    --color-background: theme('colors.df-background');
+    --color-surface: theme('colors.df-surface');
+    --color-text: theme('colors.df-text');
+    --color-text-secondary: theme('colors.df-text-secondary');
+    --color-primary: theme('colors.df-primary');
+    --color-primary-hover: theme('colors.df-primary-hover');
+    --color-primary-active: theme('colors.df-primary-active');
+    --color-secondary: theme('colors.df-secondary');
+    --color-secondary-hover: theme('colors.df-secondary-hover');
+    --color-secondary-active: theme('colors.df-secondary-active');
+    --color-border: theme('colors.df-border');
+    --color-card-border: theme('colors.df-card-border');
+    --color-error: theme('colors.df-error');
+    --color-success: theme('colors.df-success');
+    --color-warning: theme('colors.df-warning');
+    --color-info: theme('colors.df-info');
+    --color-focus-ring: theme('colors.df-focus-ring');
+  }
+
+  .dark {
+    --color-background: #1a1a1a;
+    --color-surface: #242424;
+    --color-text: #f5f5f5;
+    --color-text-secondary: #a0a0a0;
+    --color-primary: #3fb8cd;
+    --color-primary-hover: #36a0b3;
+    --color-primary-active: #2d899a;
+    --color-secondary: rgba(255, 255, 255, 0.08);
+    --color-secondary-hover: rgba(255, 255, 255, 0.12);
+    --color-secondary-active: rgba(255, 255, 255, 0.16);
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-card-border: rgba(255, 255, 255, 0.08);
+  }
+
+  body {
+    @apply bg-df-background text-df-text font-sans text-df-base;
+  }
+}
+
+@layer components {
+  /* Sidebar Navigation */
+  .sidebar {
+    @apply fixed left-0 top-0 h-full w-64 bg-df-surface border-r border-df-border
+           flex flex-col transition-transform duration-300 ease-df-standard z-50;
+  }
+
+  .sidebar-header {
+    @apply flex items-center justify-between px-df-20 py-df-16 border-b border-df-border;
+  }
+
+  .sidebar-header h2 {
+    @apply text-df-xl font-semibold text-df-primary;
+  }
+
+  .sidebar-toggle {
+    @apply lg:hidden text-df-text hover:bg-df-secondary p-df-8 rounded-df-sm;
+  }
+
+  .nav-menu {
+    @apply flex-1 overflow-y-auto py-df-16;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-df-12 px-df-20 py-df-12 text-df-text-secondary
+           hover:bg-df-secondary hover:text-df-text cursor-pointer
+           transition-all duration-200 ease-df-standard;
+  }
+
+  .nav-item.active {
+    @apply bg-df-primary text-white hover:bg-df-primary-hover;
+  }
+
+  .nav-icon {
+    @apply text-df-lg flex-shrink-0;
+  }
+
+  .nav-text {
+    @apply text-df-base font-medium;
+  }
+
+  /* Main Content Area */
+  .main-content {
+    @apply ml-64 min-h-screen bg-df-background;
+  }
+
+  /* Header */
+  .header {
+    @apply flex items-center justify-between px-df-32 py-df-20 bg-df-surface
+           border-b border-df-border sticky top-0 z-40;
+  }
+
+  .header-left h1 {
+    @apply text-df-3xl font-semibold text-df-text mb-df-4;
+  }
+
+  .header-left p {
+    @apply text-df-base text-df-text-secondary;
+  }
+
+  .header-right {
+    @apply flex items-center gap-df-16;
+  }
+
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center px-df-20 py-df-10
+           text-df-base font-medium rounded-df-md
+           transition-all duration-200 ease-df-standard
+           focus:outline-none focus:ring-2 focus:ring-df-focus-ring;
+  }
+
+  .btn--primary {
+    @apply bg-df-primary text-white hover:bg-df-primary-hover active:bg-df-primary-active;
+  }
+
+  .btn--secondary {
+    @apply bg-df-secondary text-df-text hover:bg-df-secondary-hover active:bg-df-secondary-active;
+  }
+
+  .btn--outline {
+    @apply border border-df-border text-df-text hover:bg-df-secondary;
+  }
+
+  .btn--sm {
+    @apply px-df-12 py-df-6 text-df-sm;
+  }
+
+  .btn--full-width {
+    @apply w-full;
+  }
+
+  /* Cards */
+  .metric-card {
+    @apply bg-df-surface rounded-df-lg p-df-24 border border-df-card-border
+           hover:shadow-df-md transition-shadow duration-200;
+  }
+
+  .metric-icon {
+    @apply text-3xl mb-df-16;
+  }
+
+  .metric-content h3 {
+    @apply text-df-base text-df-text-secondary mb-df-8;
+  }
+
+  .metric-value {
+    @apply text-df-3xl font-semibold text-df-text mb-df-4;
+  }
+
+  .metric-change {
+    @apply text-df-sm;
+  }
+
+  .metric-change.positive {
+    @apply text-df-success;
+  }
+
+  .metric-change.negative {
+    @apply text-df-error;
+  }
+
+  /* Insights */
+  .insight-card {
+    @apply bg-df-surface rounded-df-lg p-df-20 border border-df-card-border;
+  }
+
+  .insight-card.critical {
+    @apply border-l-4 border-l-df-error;
+  }
+
+  .insight-card.high {
+    @apply border-l-4 border-l-df-warning;
+  }
+
+  .insight-card.medium {
+    @apply border-l-4 border-l-df-info;
+  }
+
+  .insight-header {
+    @apply flex items-center justify-between mb-df-12;
+  }
+
+  .insight-type {
+    @apply text-df-sm font-medium text-df-text-secondary;
+  }
+
+  .confidence-score {
+    @apply text-df-xs text-df-text-secondary;
+  }
+
+  /* Charts */
+  .chart-container {
+    @apply bg-df-surface rounded-df-lg p-df-24 border border-df-card-border;
+  }
+
+  .chart-header {
+    @apply flex items-center justify-between mb-df-20;
+  }
+
+  .chart-header h3 {
+    @apply text-df-lg font-semibold text-df-text;
+  }
+
+  .chart-wrapper {
+    @apply relative h-64;
+  }
+
+  /* Form Elements */
+  .form-control {
+    @apply w-full px-df-12 py-df-8 bg-df-surface border border-df-border
+           rounded-df-md text-df-base text-df-text
+           focus:outline-none focus:ring-2 focus:ring-df-focus-ring
+           transition-all duration-200;
+  }
+
+  /* Content Sections */
+  .content-section {
+    @apply hidden px-df-32 py-df-24;
+  }
+
+  .content-section.active {
+    @apply block;
+  }
+
+  /* Grids */
+  .metrics-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-df-20 mb-df-32;
+  }
+
+  .insights-grid {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-df-20 mb-df-32;
+  }
+
+  .charts-section {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-df-20;
+  }
+
+  /* Modal */
+  .modal {
+    @apply fixed inset-0 bg-black bg-opacity-50 z-50 hidden;
+  }
+
+  .modal.show {
+    @apply flex items-center justify-center;
+  }
+
+  .modal-content {
+    @apply bg-df-surface rounded-df-lg w-full max-w-2xl mx-df-20
+           shadow-df-lg max-h-[90vh] flex flex-col;
+  }
+
+  .modal-header {
+    @apply flex items-center justify-between px-df-24 py-df-16
+           border-b border-df-border;
+  }
+
+  .modal-close {
+    @apply text-df-text-secondary hover:text-df-text text-2xl
+           leading-none p-df-4;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .sidebar {
+      @apply -translate-x-full;
+    }
+
+    .sidebar.open {
+      @apply translate-x-0;
+    }
+
+    .main-content {
+      @apply ml-0;
+    }
+
+    .metrics-grid {
+      @apply grid-cols-1;
+    }
+
+    .charts-section {
+      @apply grid-cols-1;
+    }
+  }
+
+  /* Theme Transition */
+  .theme-transition * {
+    @apply transition-colors duration-200;
+  }
+}
+
+@layer utilities {
+  /* Utility classes for DataFlow Pro */
+  .df-loading {
+    @apply opacity-50 pointer-events-none;
+  }
+
+  .df-dragover {
+    @apply bg-df-secondary border-2 border-dashed border-df-primary;
+  }
+}

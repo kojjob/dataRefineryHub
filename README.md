@@ -347,6 +347,7 @@ docker run -p 3000:3000 \
 |----------|-------------|----------|
 | **[CLAUDE.md](./CLAUDE.md)** | Development guidelines and project setup | Developers |
 | **[TODO.md](./TODO.md)** | Development roadmap and progress tracking | Project managers |
+| **[Design System](./docs/design-system/)** | DataFlow Pro design system and component library | Developers & Designers |
 | **[API Documentation](./docs/api/)** | RESTful API reference with examples | Integration developers |
 | **[Architecture Guide](./docs/architecture/)** | System design and data flow diagrams | Technical architects |
 | **[Security Handbook](./docs/security/)** | Security controls and compliance procedures | Security teams |

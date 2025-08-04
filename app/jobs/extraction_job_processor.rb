@@ -5,8 +5,13 @@ class ExtractionJobProcessor < ApplicationJob
 
   # Enhanced retry configuration with circuit breaker integration
   retry_on StandardError, wait: :exponentially_longer, attempts: 3 do |job, error|
-    # Log retry attempt with enhanced context
-    Rails.logger.warn "Retrying extraction job #{job.job_id}: #{error.class.name} - #{error.message}"
+    # Log retry attempt with structured logging
+    structured_logger.warn "Retrying extraction job",
+      job_id: job.job_id,
+      error_class: error.class.name,
+      error_message: error.message,
+      attempt: job.executions,
+      data_source_id: job.arguments.first
 
     # Update circuit breaker metrics
     data_source_id = job.arguments.first
@@ -90,7 +95,8 @@ class ExtractionJobProcessor < ApplicationJob
           { extraction_stats: extraction_stats }
         )
       else
-        Rails.logger.info "No data extracted for data source #{data_source_id}, skipping transformation"
+        structured_logger.info "No data extracted, skipping transformation",
+          data_source_id: data_source_id
       end
 
     rescue CircuitBreakerService::CircuitBreakerOpenError => error
@@ -113,7 +119,14 @@ class ExtractionJobProcessor < ApplicationJob
       )
 
       # Don't re-raise circuit breaker errors immediately - let retry mechanism handle it
-      Rails.logger.warn "Circuit breaker open for data source #{data_source_id}: #{error.message}"
+      structured_logger.warn "Circuit breaker open",
+        data_source_id: data_source_id,
+        error_message: error.message
+
+      # Track circuit breaker metrics
+      MetricsService.increment("pipeline.circuit_breaker.open", tags: {
+        source_type: data_source.source_type
+      })
       raise error
 
     rescue => error
@@ -137,7 +150,15 @@ class ExtractionJobProcessor < ApplicationJob
       )
 
       # Log error with context for monitoring
-      Rails.logger.error "Extraction failed for data source #{data_source_id}: #{error.class.name} - #{error.message}"
+      structured_logger.error "Extraction failed", error,
+        data_source_id: data_source_id,
+        attempts: executions
+
+      # Track failure metrics
+      MetricsService.increment("pipeline.executions.failed", tags: {
+        source_type: data_source.source_type,
+        error_class: error.class.name
+      })
 
       # Re-raise the error to trigger retry mechanism
       raise error
@@ -170,6 +191,6 @@ class ExtractionJobProcessor < ApplicationJob
     )
   rescue => error
     # Don't fail the job if audit logging fails
-    Rails.logger.error "Failed to create audit log: #{error.message}"
+    structured_logger.error "Failed to create audit log", error
   end
 end

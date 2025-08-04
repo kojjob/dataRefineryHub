@@ -1,39 +1,49 @@
-<% content_for :title, "Edit Organization" %>
+<% content_for :page_title, "Edit Organization" %>
+<% content_for :page_subtitle, "Update your organization details and settings" %>
 
-<div class="px-4 sm:px-6 lg:px-8">
-  <div class="sm:flex sm:items-center">
-    <div class="sm:flex-auto">
-      <h1 class="text-2xl font-semibold leading-6 text-gray-900">Edit Organization</h1>
-      <p class="mt-2 text-sm text-gray-700">Update your organization details and settings.</p>
-    </div>
-    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-      <%= link_to organization_path, class: "block rounded-md bg-gray-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" do %>
+<div class="dashboard-content">
+  <section class="content-section active" id="edit-organization">
+
+    <!-- Header with Back Button -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold mb-2" style="color: var(--color-text);">Edit Organization</h1>
+        <p style="color: var(--color-text-secondary);">Update your organization details and settings</p>
+      </div>
+      <%= link_to organization_path, class: "btn btn--outline btn--sm" do %>
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
         Cancel
       <% end %>
     </div>
-  </div>
 
-  <div class="mt-8">
-    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <h3 class="text-base font-semibold leading-6 text-gray-900">Organization Information</h3>
+    <!-- Organization Form -->
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3 class="flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+          </svg>
+          Organization Information
+        </h3>
       </div>
       
       <%= form_with model: @organization, local: true, class: "space-y-6" do |form| %>
         <div class="px-6 py-6">
           <% if @organization.errors.any? %>
-            <div class="mb-6 rounded-md bg-red-50 p-4">
+            <div class="mb-6 p-4" style="background-color: var(--color-error-light); border: 1px solid var(--color-error); border-radius: var(--radius-lg);">
               <div class="flex">
                 <div class="flex-shrink-0">
-                  <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" style="color: var(--color-error);">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
                   </svg>
                 </div>
                 <div class="ml-3">
-                  <h3 class="text-sm font-medium text-red-800">
+                  <h3 class="text-sm font-medium" style="color: var(--color-error);">
                     There were errors with your submission:
                   </h3>
-                  <div class="mt-2 text-sm text-red-700">
+                  <div class="mt-2 text-sm" style="color: var(--color-error);">
                     <ul role="list" class="list-disc space-y-1 pl-5">
                       <% @organization.errors.full_messages.each do |message| %>
                         <li><%= message %></li>
@@ -45,61 +55,64 @@
             </div>
           <% end %>
 
-          <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
-            
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
             <!-- Organization Name -->
-            <div class="sm:col-span-4">
-              <%= form.label :name, class: "block text-sm font-medium leading-6 text-gray-900" %>
-              <div class="mt-2">
-                <%= form.text_field :name, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", placeholder: "Enter organization name" %>
-              </div>
-              <p class="mt-2 text-sm text-gray-500">This is the display name for your organization.</p>
+            <div class="sm:col-span-2 lg:col-span-4">
+              <%= form.label :name, class: "block text-sm font-medium mb-2", style: "color: var(--color-text-secondary);" %>
+              <%= form.text_field :name,
+                  class: "w-full px-3 py-2 text-sm border-0 focus:ring-2 focus:ring-offset-0",
+                  style: "background-color: var(--color-surface); border: 1px solid var(--color-card-border); border-radius: var(--radius-lg); color: var(--color-text); focus:ring-color: var(--color-primary);",
+                  placeholder: "Enter organization name" %>
+              <p class="mt-2 text-sm" style="color: var(--color-text-secondary);">This is the display name for your organization.</p>
             </div>
 
             <!-- Phone -->
-            <div class="sm:col-span-3">
-              <%= form.label :phone, class: "block text-sm font-medium leading-6 text-gray-900" %>
-              <div class="mt-2">
-                <%= form.telephone_field :phone, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", placeholder: "+1 (555) 123-4567" %>
-              </div>
+            <div class="sm:col-span-1 lg:col-span-2">
+              <%= form.label :phone, class: "block text-sm font-medium mb-2", style: "color: var(--color-text-secondary);" %>
+              <%= form.telephone_field :phone,
+                  class: "w-full px-3 py-2 text-sm border-0 focus:ring-2 focus:ring-offset-0",
+                  style: "background-color: var(--color-surface); border: 1px solid var(--color-card-border); border-radius: var(--radius-lg); color: var(--color-text); focus:ring-color: var(--color-primary);",
+                  placeholder: "+1 (555) 123-4567" %>
             </div>
 
             <!-- Timezone -->
-            <div class="sm:col-span-3">
-              <%= form.label :timezone, class: "block text-sm font-medium leading-6 text-gray-900" %>
-              <div class="mt-2">
-                <%= form.select :timezone, 
-                    options_for_select([
-                      ['Eastern Time (US & Canada)', 'America/New_York'],
-                      ['Central Time (US & Canada)', 'America/Chicago'],
-                      ['Mountain Time (US & Canada)', 'America/Denver'],
-                      ['Pacific Time (US & Canada)', 'America/Los_Angeles'],
-                      ['UTC', 'UTC']
-                    ], @organization.timezone),
-                    { prompt: 'Select timezone' },
-                    { class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" } %>
-              </div>
+            <div class="sm:col-span-1 lg:col-span-2">
+              <%= form.label :timezone, class: "block text-sm font-medium mb-2", style: "color: var(--color-text-secondary);" %>
+              <%= form.select :timezone,
+                  options_for_select([
+                    ['Eastern Time (US & Canada)', 'America/New_York'],
+                    ['Central Time (US & Canada)', 'America/Chicago'],
+                    ['Mountain Time (US & Canada)', 'America/Denver'],
+                    ['Pacific Time (US & Canada)', 'America/Los_Angeles'],
+                    ['UTC', 'UTC']
+                  ], @organization.timezone),
+                  { prompt: 'Select timezone' },
+                  { class: "w-full px-3 py-2 text-sm border-0 focus:ring-2 focus:ring-offset-0",
+                    style: "background-color: var(--color-surface); border: 1px solid var(--color-card-border); border-radius: var(--radius-lg); color: var(--color-text); focus:ring-color: var(--color-primary);" } %>
             </div>
 
             <!-- Address -->
-            <div class="sm:col-span-6">
-              <%= form.label :address, class: "block text-sm font-medium leading-6 text-gray-900" %>
-              <div class="mt-2">
-                <%= form.text_area :address, rows: 3, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", placeholder: "Enter business address (optional)" %>
-              </div>
-              <p class="mt-2 text-sm text-gray-500">Your organization's business address for billing and invoicing purposes.</p>
+            <div class="sm:col-span-2 lg:col-span-4">
+              <%= form.label :address, class: "block text-sm font-medium mb-2", style: "color: var(--color-text-secondary);" %>
+              <%= form.text_area :address,
+                  rows: 3,
+                  class: "w-full px-3 py-2 text-sm border-0 focus:ring-2 focus:ring-offset-0",
+                  style: "background-color: var(--color-surface); border: 1px solid var(--color-card-border); border-radius: var(--radius-lg); color: var(--color-text); focus:ring-color: var(--color-primary);",
+                  placeholder: "Enter business address (optional)" %>
+              <p class="mt-2 text-sm" style="color: var(--color-text-secondary);">Your organization's business address for billing and invoicing purposes.</p>
             </div>
 
           </div>
         </div>
 
-        <div class="flex items-center justify-end gap-x-6 px-6 py-4 border-t border-gray-200">
-          <%= link_to organization_path, class: "text-sm font-semibold leading-6 text-gray-900 hover:text-gray-700" do %>
+        <div class="flex items-center justify-end gap-4 px-6 py-4" style="border-top: 1px solid var(--color-card-border);">
+          <%= link_to organization_path, class: "btn btn--outline btn--sm" do %>
             Cancel
           <% end %>
-          <%= form.submit "Save Changes", class: "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
+          <%= form.submit "Save Changes", class: "btn btn--primary btn--sm" %>
         </div>
       <% end %>
     </div>
-  </div>
+  </section>
 </div>

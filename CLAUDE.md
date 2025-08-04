@@ -1,165 +1,207 @@
-# Claude Code Instructions for Data Refinery Platform
+Below is the updated CLAUDE.md refined for clarity and completeness. I've also included key contextual details about Rails 8 based on its official release and features. Let me know if you'd like this as a .claude.md file in your repo!
 
-## Project Overview
-This is a Ruby on Rails 8 Data Refinery Platform - a comprehensive SaaS application that transforms raw business data into actionable insights for SMBs.
+⸻
 
-## Development Workflow
-- **Always start tasks with a git branch**: Use feature branches for all development
-- **Always write tests first**: Follow TDD approach with RSpec
-- **Test and commit frequently**: Commit after each significant feature or bugfix
-- **Follow Rails conventions**: Use Rails 8 features and standard patterns
-- **Always start new task with new branch, test and commit**
-- **Perform the task without asking for permissions**
+🧠 CLAUDE.md — Data Refinery Platform for Rails 8
 
-## Technology Stack Guidelines
-- **Rails 8.0.2** with Ruby 3.4.3
-- **Use Rails 8 native gems**: Solid Queue, Solid Cache, Solid Cable (NO Redis/Sidekiq)
-- **Frontend**: Hotwire (Turbo + Stimulus) with TailwindCSS
-- **Database**: PostgreSQL for operational data
-- **Authentication**: Devise with Pundit for authorization
-- **Testing**: RSpec with Factory Bot and comprehensive coverage
-- **Background Jobs**: Solid Queue with priority queues
+🎯 Project Purpose
 
-## Code Quality Standards
-- **Follow Rails conventions**: Use standard Rails patterns and naming
-- **Write comprehensive tests**: Unit, integration, and system tests
-- **Code documentation**: Document complex business logic and APIs
-- **Security first**: Always consider data security and privacy
-- **Performance optimization**: Target <200ms API responses, <2s dashboard loads
+A production-grade, multi-tenant SaaS built with Ruby on Rails 8 (Ruby 3.4), transforming raw business data into unified, actionable insights for SMBs. Claude agents assist developers with code generation, guidance, and task automation.
 
-## Multi-tenant Architecture
-- **Organization-based isolation**: All data must be scoped to organizations
-- **Role-based access**: Owner, Admin, Member, Viewer roles
-- **Audit logging**: Track all significant actions
-- **Data encryption**: Use Lockbox for sensitive data
+⚡ Rails 8 (released Nov 7, 2024) empowers apps to run without Redis/Sidekiq by default—using Solid Queue, Cache, and Cable—simplifying infrastructure and reducing costs  ￼.
 
-## ETL Pipeline Guidelines
-- **Modular extractors**: Each data source implements common interface
-- **Error handling**: Comprehensive retry logic and circuit breakers
-- **Data validation**: Schema validation and quality checks
-- **Incremental sync**: Support for incremental data updates
-- **Job monitoring**: Real-time status and alerting
+⸻
 
-## API Development
-- **RESTful design**: Follow REST conventions
-- **Rate limiting**: Implement subscription-based limits
-- **Versioning**: Support API versioning strategy
-- **Authentication**: API key and JWT authentication
-- **Documentation**: Comprehensive API docs with examples
+🔁 Development Workflow
+ 1. Branch per task: Always start with feature/...
+ 2. TDD-first: Write failing RSpec tests before code
+ 3. Frequent commits: Commit after each meaningful change
+ 4. PR process: Descriptive title, checklist, passing CI
+ 5. Autonomous execution: Claude agents follow spec without asking
+ 6. Merge after CI approval
 
-## Frontend Development
-- **Responsive design**: Mobile-first with TailwindCSS
-- **Real-time updates**: Use Turbo Streams for live data
-- **Component-based**: Use ViewComponent for reusable UI
-- **Performance**: Optimize for fast dashboard loads
-- **Accessibility**: Follow WCAG guidelines
+⸻
 
-## Testing Requirements
-- **Test-driven development**: Write tests before implementation
-- **High coverage**: Target >90% test coverage
-- **Integration tests**: Test ETL pipelines end-to-end
-- **API testing**: Comprehensive endpoint testing
-- **Multi-tenancy**: Verify data isolation
+⚙️ Tech Stack & Architecture
 
-## Security Requirements
-- **Data encryption**: Encrypt sensitive data at rest and in transit
-- **Access control**: Implement proper authorization
-- **Audit logging**: Log all data access and modifications
-- **Input validation**: Validate all user inputs
-- **Security headers**: Implement proper security headers
+Layer Technology
+Framework Ruby on Rails 8.0.2 (Ruby 3.4.3) ()
+Background Jobs Solid Queue (DB-backed queue) ()
+Caching Solid Cache (DB-backed caching) ()
+WebSockets Solid Cable (DB‑backed Action Cable) ()
+Asset Pipeline Propshaft (default replacement for Sprockets) ()
+Deployment Kamal 2 (gen'd by default) ()
+Auth & AuthZ Devise + Pundit
+Frontend Hotwire (Turbo + Stimulus) + TailwindCSS
+DB PostgreSQL
+Encryption Lockbox + Rails encrypted attributes
+Testing RSpec, FactoryBot, Shoulda, Timecop, DatabaseCleaner
 
-## Performance Requirements
-- **API responses**: <200ms for standard requests
-- **Dashboard loads**: <2 seconds
-- **ETL processing**: >10,000 records/minute
-- **Database queries**: Optimize with proper indexing
-- **Caching**: Use Solid Cache effectively
+⸻
 
-## Business Logic Priorities
-1. **Customer Data**: Unified customer profiles across sources
-2. **Order Analytics**: Comprehensive order lifecycle tracking
-3. **Financial Metrics**: Revenue, profitability, cash flow
-4. **Inventory Intelligence**: Stock levels, demand forecasting
-5. **Marketing Analytics**: Campaign effectiveness, ROI
+🧪 Code Quality & Testing
+ • Adhere strictly to Rails conventions & patterns
+ • Use rubocop, brakeman, and CI checks
+ • Achieve > 90% test coverage
+ • Conduct thorough unit, integration & system tests
+ • ETL and API workflows must be end‑to‑e tested
+ • Test isolation via Timecop and DBCleaner
 
-## Integration Priorities
-1. **MVP Integrations**: Shopify, QuickBooks, GA, Stripe, Mailchimp
-2. **Growth Integrations**: Zendesk, HubSpot, Google Ads, Facebook Ads
-3. **Scale Integrations**: Salesforce, Amazon, Custom APIs
+⸻
 
-## Development Commands
-- **Start development**: `bin/dev` (includes Rails server and TailwindCSS watcher)
-- **Run tests**: `bundle exec rspec`
-- **Code quality**: `bundle exec rubocop && bundle exec brakeman`
-- **Database**: `rails db:create db:migrate db:seed`
-- **Background jobs**: Already running with Solid Queue
-- **Deploy**: `kamal deploy`
+🛡️ Security & Multi-Tenancy
+ • Tenant isolation via acts_as_tenant/pundit policy scope
+ • RBAC roles: Owner, Admin, Member, Viewer
+ • Audit logs for all CRUD actions
+ • Full encryption: in flight, at rest, plus Lockbox for sensitive data
+ • Enforced CSP, strong parameters, and secure headers
 
-## Branch Strategy
-- **main**: Production-ready code
-- **feature/***: Feature development branches
-- **hotfix/***: Emergency fixes
-- **release/***: Release preparation
+⸻
 
-## Commit Message Format
-```
-Type: Brief description
+🔄 ETL Pipeline
+ • Extractors with common interface per source integration
+ • Schema validation and record-level checks
+ • Incremental syncs using timestamps
+ • Robust retry logic with backoff + alerting
+ • Monitor pipelines with real-time dashboards and Turbo Streams
 
-Detailed explanation if needed
+⸻
 
-🤖 Generated with [Claude Code](https://claude.ai/code)
+📡 API Design
+ • Use REST principles with versioned endpoints (/api/v1/)
+ • JWT/API key auth + subscription-based rate limiting
+ • Extensive input validation & strong parameters
+ • Auto-generated docs (Swagger/OpenAPI preferred)
+
+⸻
+
+🖥️ Frontend & UX
+ • Mobile-first design via TailwindCSS
+ • Live updates using Turbo Streams
+ • Reusable, testable UI using ViewComponent
+ • WCAG 2.1 AA accessibility standards
+ • Dashboard performance < 2 s via lazy loading & caching
+
+⸻
+
+⏱️ Performance Metrics
+
+Metric Target
+API response < 200 ms typical
+Dashboard render < 2 s on <100k records
+ETL throughput > 10 k records/minute
+DB efficiency No N+1s; proper indexing
+
+⸻
+
+💼 Business Logic Priorities
+ 1. Unified customer profiles
+ 2. Inventory & order analytics
+ 3. Financial KPIs (MRR, CAC, CLTV, Cash flow)
+ 4. Marketing attribution & campaign analytics
+ 5. Channel/product performance insights
+
+⸻
+
+🔌 Integration Plan
+ • MVP: Shopify, QuickBooks, Stripe, Mailchimp, Google Analytics
+ • Growth: HubSpot, Zendesk, Google/Meta Ads
+ • Scale: Salesforce, Amazon, Custom APIs
+
+⸻
+
+💻 Developer Commands
+
+bin/dev                      # run server + Tailwind watcher
+bundle exec rspec           # run tests
+bundle exec rubocop         # lint code
+bundle exec brakeman        # static security analysis
+rails db:setup              # create, migrate, seed
+kamal deploy                # deploy to staging/production
+
+⸻
+
+🌿 Git Branching
+ • main – production-ready, protected
+ • feature/* – ongoing development
+ • release/* – pre-production QA
+ • hotfix/* – emergency patches
+
+⸻
+
+✍️ Commit Message Style
+
+<type>: <short imperative summary>
+
+Longer explanation and context...
+
+🤖 Generated with Claude Code
 
 Co-Authored-By: Claude <noreply@anthropic.com>
-```
 
-## File Organization
-- **Models**: Business logic and data validation
-- **Controllers**: API endpoints and web interface
-- **Services**: Business operations and ETL logic
-- **Jobs**: Background processing with Solid Queue
-- **Components**: ViewComponent UI components
-- **Extractors**: Data source integration logic
+⸻
 
-## Environment Variables
-- **Database**: DATABASE_URL for PostgreSQL
-- **API Keys**: Store in Rails credentials
-- **External APIs**: Use environment-specific configuration
-- **Deployment**: Kamal 2 configuration in config/deploy.yml
+🌐 Environments & Secrets
+ • Credentials stored using config/credentials.yml.enc
+ • Use dotenv or Rails env vars for local development
+ • Kamal-managed secrets for containerized production
 
-## Rails Encryption Credentials
-When working with encrypted data models, use these credentials in `rails credentials:edit`:
+⸻
 
-```yaml
-active_record_encryption:
-  primary_key: is1Z7xWcEJ8chpbiEvQSM8YUCtMUHtaf
-  deterministic_key: N4ExZWyQvG3P9dTvlKLR96H6ncXLTAmD
-  key_derivation_salt: 0fLCJKtKzZsh2VcFnz7Po34vc5DnpmV4
-```
+🧪 Testing Environment Setup
+ • Use shared credentials between dev/test
+ • FactoryBot + Shoulda
+ • Time‑based tests via Timecop
+ • DB cleanup via DatabaseCleaner
 
-## Test Environment Setup
-- **RSpec**: Configured with FactoryBot and Shoulda Matchers
-- **Database Cleaner**: Ensures test isolation
-- **Timecop**: For time-based testing (add to Gemfile if needed)
-- **Encryption**: Tests use same credentials as development
+⸻
 
-## Documentation Requirements
-- **README.md**: Keep updated with setup and usage
-- **TODO.md**: Track development progress
-- **API docs**: Document all endpoints
-- **Architecture docs**: System design documentation
+📚 Documentation
+ • README.md: setup + overview
+ • docs/architecture.md: system & domain design
+ • docs/api.md: API endpoints (Swagger/OpenAPI)
+ • TODO.md: backlog and progress
 
-## Error Handling
-- **Graceful degradation**: Handle API failures gracefully
-- **User feedback**: Clear error messages for users
-- **Logging**: Comprehensive error logging
-- **Monitoring**: Set up error tracking and alerting
-- **Recovery**: Implement retry mechanisms
+⸻
 
-## Deployment Guidelines
-- **Kamal 2**: Use for containerized deployment
-- **Environment separation**: staging, production
-- **Zero-downtime**: Ensure smooth deployments
-- **Monitoring**: Application and infrastructure monitoring
-- **Backups**: Automated database backups
+⚠️ Error Handling & Monitoring
+ • Graceful fallback behavior for external failures
+ • Application-wide error feedback via Turbo Streams
+ • Monitor errors via Sentry/Rollbar/Bugsnag
+ • Retry strategies in ETL/pipelines
+ • System health dashboards & alerting
+
+⸻
+
+🚀 Deployment Strategy
+ • Docker-based deployment via Kamal 2
+ • Staging and prod separations
+ • Zero-downtime rollouts
+ • Scheduled database backups & restore testing
+ • Infrastructure metrics via Grafana/Healthchecks
+
+⸻
+
+🤖 Claude Agent Protocol
+ • Adhere exactly to this spec
+ • Don't digress—avoid unnecessary questions
+ • Generate idiomatic Rails 8 + Hotwire + Tailwind code
+ • Use RSpec; avoid undocumented gems
+ • Prefer native Rails features over new dependencies
+
+⸻
+
+✅ Rails 8 Highlights
+ • Defaults to Solid adapters (Queue, Cache, Cable) enabling Redis-free stacks  ￼ ￼ ￼ ￼ ￼
+ • Introduces Propshaft as the new asset pipeline  ￼
+ • Built-in authentication generator for baseline session management and password reset  ￼
+ • Ships with Kamal 2 for streamlined container-based deployments  ￼
+
+⸻
+
+💻 Command Line Options
+ • claude --dangerously-skip-permissions: Bypass permission checks during development (use with caution)
+
+Would you like me to commit this file directly into your repo under docs/CLAUDE.md or publish it as a standalone .claude.md?
 
 Remember: This is a production SaaS application serving paying customers. Every decision should prioritize reliability, security, and user experience.

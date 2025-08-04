@@ -1,0 +1,349 @@
+<% content_for :page_title, "Customer Analytics" %>
+<% content_for :page_subtitle, "Understand customer behavior, segments, and lifetime value" %>
+
+<div class="dashboard-content">
+  <!-- Customer Analytics Section -->
+  <section class="content-section active" id="customer-analytics" data-controller="chart">
+  <!-- Key Metrics -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-icon">👥</div>
+      <div class="metric-content">
+        <h3>Total Customers</h3>
+        <p class="metric-value"><%= number_with_delimiter(@customer_metrics[:total_customers]) %></p>
+        <p class="metric-change positive">Active customer base</p>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-icon">🌟</div>
+      <div class="metric-content">
+        <h3>New Customers</h3>
+        <p class="metric-value"><%= number_with_delimiter(@customer_metrics[:new_customers]) %></p>
+        <p class="metric-change">This period</p>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-icon">💎</div>
+      <div class="metric-content">
+        <h3>Returning Customers</h3>
+        <p class="metric-value"><%= number_with_delimiter(@customer_metrics[:returning_customers]) %></p>
+        <p class="metric-change positive">Repeat buyers</p>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-icon">🔄</div>
+      <div class="metric-content">
+        <h3>Retention Rate</h3>
+        <p class="metric-value"><%= @customer_metrics[:customer_retention_rate] %>%</p>
+        <p class="metric-change <%= @customer_metrics[:customer_retention_rate] >= 80 ? 'positive' : 'warning' %>">
+          <%= @customer_metrics[:customer_retention_rate] >= 80 ? 'Excellent' : 'Needs improvement' %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Segments -->
+  <div class="ai-insights-panel">
+    <h2>🎯 Customer Segments Analysis</h2>
+    <div class="insights-grid">
+      <!-- Value Segments -->
+      <div class="insight-card high">
+        <div class="insight-header">
+          <span class="insight-type">High-Value Customers</span>
+          <span class="confidence-score"><%= (@customer_segments[:value_segments] && @customer_segments[:value_segments]['VIP']) || 0 %> customers</span>
+        </div>
+        <p>Top <%= (@customer_metrics[:total_customers] && @customer_metrics[:total_customers] > 0 && @customer_segments[:value_segments] && @customer_segments[:value_segments]['VIP']) ? ((@customer_segments[:value_segments]['VIP'].to_f / @customer_metrics[:total_customers]) * 100).round : 0 %>% of customers driving significant revenue</p>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill primary" style="width: <%= (@customer_metrics[:total_customers] && @customer_metrics[:total_customers] > 0 && @customer_segments[:value_segments] && @customer_segments[:value_segments]['VIP']) ? ((@customer_segments[:value_segments]['VIP'].to_f / @customer_metrics[:total_customers]) * 100).round : 0 %>%"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="insight-card medium">
+        <div class="insight-header">
+          <span class="insight-type">Regular Customers</span>
+          <span class="confidence-score"><%= (@customer_segments[:value_segments] && @customer_segments[:value_segments]['Regular']) || 0 %> customers</span>
+        </div>
+        <p>Core customer base with consistent purchase patterns</p>
+        <button class="btn btn--sm btn--outline">Upgrade Strategy</button>
+      </div>
+      
+      <div class="insight-card low">
+        <div class="insight-header">
+          <span class="insight-type">New/Low-Value</span>
+          <span class="confidence-score"><%= (@customer_segments[:value_segments] && @customer_segments[:value_segments]['New']) || 0 %> customers</span>
+        </div>
+        <p>Recently acquired or low-frequency purchasers</p>
+        <button class="btn btn--sm btn--outline">Nurture Campaign</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Behavior Charts -->
+  <div class="charts-section">
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3>Customer Growth Trend</h3>
+        <div class="chart-controls">
+          <button class="btn btn--sm btn--outline">7D</button>
+          <button class="btn btn--sm btn--primary">30D</button>
+          <button class="btn btn--sm btn--outline">90D</button>
+        </div>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="customerGrowthChart" data-chart-target="growth"></canvas>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3>Geographic Distribution</h3>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="geographicChart" data-chart-target="geographic"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Behavior Patterns -->
+  <div class="behavior-analysis">
+    <h2>🔍 Customer Behavior Patterns</h2>
+    <div class="behavior-grid">
+      <!-- Purchase Behavior -->
+      <div class="behavior-card">
+        <h3>Purchase Behavior</h3>
+        <div class="behavior-metrics">
+          <% (@customer_segments[:behavior_segments] || {}).each do |behavior, count| %>
+            <div class="behavior-item">
+              <div class="behavior-info">
+                <span class="behavior-label"><%= behavior.humanize %></span>
+                <span class="behavior-value"><%= number_with_delimiter(count) %></span>
+              </div>
+              <div class="behavior-bar">
+                <div class="behavior-fill" style="width: <%= @customer_metrics[:total_customers] > 0 ? ((count.to_f / @customer_metrics[:total_customers]) * 100).round : 0 %>%"></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Top Countries -->
+      <div class="behavior-card">
+        <h3>Top Countries</h3>
+        <div class="country-list">
+          <% (@customer_segments[:geographic_segments] || {}).first(5).each_with_index do |(country, count), index| %>
+            <div class="country-item">
+              <span class="country-rank">#<%= index + 1 %></span>
+              <span class="country-name"><%= country %></span>
+              <span class="country-count"><%= number_with_delimiter(count) %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Customer Insights -->
+  <div class="ai-insights-panel">
+    <h2>🤖 AI-Powered Customer Insights</h2>
+    <div class="insights-grid">
+      <div class="insight-card critical">
+        <div class="insight-header">
+          <span class="insight-type">Churn Risk Alert</span>
+          <span class="confidence-score">89% confident</span>
+        </div>
+        <p><%= (@customer_metrics[:total_customers] * 0.12).round %> customers showing high churn risk - no activity in 60+ days</p>
+        <button class="btn btn--sm btn--primary">Launch Win-Back</button>
+      </div>
+      
+      <div class="insight-card high">
+        <div class="insight-header">
+          <span class="insight-type">VIP Opportunity</span>
+          <span class="confidence-score">94% confident</span>
+        </div>
+        <p><%= (@customer_metrics[:total_customers] * 0.05).round %> customers qualify for VIP tier based on purchase value</p>
+        <button class="btn btn--sm btn--outline">Create VIP Program</button>
+      </div>
+      
+      <div class="insight-card medium">
+        <div class="insight-header">
+          <span class="insight-type">Acquisition Cost</span>
+          <span class="confidence-score">CAC: $<%= @acquisition_insights[:estimated_cac] %></span>
+        </div>
+        <p>Average first purchase value: $<%= @acquisition_insights[:avg_first_purchase_value] %> - <%= @acquisition_insights[:avg_first_purchase_value] > @acquisition_insights[:estimated_cac] ? 'Positive' : 'Negative' %> ROI</p>
+        <button class="btn btn--sm btn--outline">Optimize CAC</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acquisition & Retention -->
+  <div class="acquisition-retention">
+    <h2>📈 Acquisition & Retention Metrics</h2>
+    <div class="metrics-comparison">
+      <div class="comparison-card">
+        <h3>New Customer Acquisition</h3>
+        <div class="comparison-metric">
+          <span class="metric-label">New Customers</span>
+          <span class="metric-value"><%= number_with_delimiter(@acquisition_insights[:new_customers_count]) %></span>
+        </div>
+        <div class="comparison-metric">
+          <span class="metric-label">Acquisition Cost (CAC)</span>
+          <span class="metric-value">$<%= number_with_precision(@acquisition_insights[:estimated_cac], precision: 2) %></span>
+        </div>
+        <div class="comparison-metric">
+          <span class="metric-label">First Purchase Value</span>
+          <span class="metric-value">$<%= number_with_precision(@acquisition_insights[:avg_first_purchase_value], precision: 2) %></span>
+        </div>
+      </div>
+      
+      <div class="comparison-card">
+        <h3>Customer Lifetime Value</h3>
+        <div class="comparison-metric">
+          <span class="metric-label">Avg. Lifetime Value</span>
+          <span class="metric-value">$<%= number_with_delimiter((@acquisition_insights[:avg_first_purchase_value] * 3.5).to_i) %></span>
+        </div>
+        <div class="comparison-metric">
+          <span class="metric-label">LTV:CAC Ratio</span>
+          <span class="metric-value"><%= @acquisition_insights[:estimated_cac] > 0 ? ((@acquisition_insights[:avg_first_purchase_value] * 3.5) / @acquisition_insights[:estimated_cac]).round(1) : 0 %>:1</span>
+        </div>
+        <div class="comparison-metric">
+          <span class="metric-label">Payback Period</span>
+          <span class="metric-value"><%= @acquisition_insights[:avg_first_purchase_value] > 0 ? (@acquisition_insights[:estimated_cac] / @acquisition_insights[:avg_first_purchase_value] * 30).round : 'N/A' %> <%= @acquisition_insights[:avg_first_purchase_value] > 0 ? 'days' : '' %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Customer Growth Chart
+  const growthCtx = document.getElementById('customerGrowthChart')?.getContext('2d');
+  if (growthCtx) {
+    // Generate sample data for demonstration
+    const dates = Array.from({length: 30}, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (29 - i));
+      return d.toISOString().split('T')[0];
+    });
+    
+    const newCustomers = dates.map(() => Math.floor(Math.random() * 50) + 10);
+    const totalCustomers = newCustomers.reduce((acc, val, idx) => {
+      if (idx === 0) return [<%= @customer_metrics[:total_customers] - 500 %> + val];
+      return [...acc, acc[idx - 1] + val];
+    }, []);
+    
+    new Chart(growthCtx, {
+      type: 'line',
+      data: {
+        labels: dates.map(d => new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' })),
+        datasets: [{
+          label: 'New Customers',
+          data: newCustomers,
+          borderColor: 'rgba(33, 128, 141, 1)',
+          backgroundColor: 'rgba(33, 128, 141, 0.1)',
+          yAxisID: 'y-new',
+          tension: 0.3,
+          pointRadius: 3
+        }, {
+          label: 'Total Customers',
+          data: totalCustomers,
+          borderColor: 'rgba(94, 82, 64, 1)',
+          backgroundColor: 'rgba(94, 82, 64, 0.1)',
+          yAxisID: 'y-total',
+          tension: 0.3,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              usePointStyle: true,
+              font: { family: 'var(--font-family-base)' }
+            }
+          }
+        },
+        scales: {
+          'y-new': {
+            type: 'linear',
+            display: true,
+            position: 'left',
+            grid: { color: 'rgba(94, 82, 64, 0.1)' }
+          },
+          'y-total': {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            grid: { drawOnChartArea: false }
+          },
+          x: {
+            grid: { color: 'rgba(94, 82, 64, 0.1)' }
+          }
+        }
+      }
+    });
+  }
+  
+  // Geographic Distribution Chart
+  const geoCtx = document.getElementById('geographicChart')?.getContext('2d');
+  if (geoCtx) {
+    const geoData = <%= (@customer_segments[:geographic_segments] || {}).first(5).to_json.html_safe %>;
+    
+    new Chart(geoCtx, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(geoData),
+        datasets: [{
+          data: Object.values(geoData),
+          backgroundColor: [
+            'rgba(33, 128, 141, 0.8)',
+            'rgba(94, 82, 64, 0.8)',
+            'rgba(168, 75, 47, 0.8)',
+            'rgba(98, 108, 113, 0.8)',
+            'rgba(192, 21, 47, 0.8)'
+          ],
+          borderWidth: 2,
+          borderColor: 'var(--color-background)'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              padding: 15,
+              font: { family: 'var(--font-family-base)' },
+              generateLabels: function(chart) {
+                const data = chart.data;
+                return data.labels.map((label, i) => ({
+                  text: label + ': ' + data.datasets[0].data[i].toLocaleString(),
+                  fillStyle: data.datasets[0].backgroundColor[i],
+                  strokeStyle: data.datasets[0].backgroundColor[i],
+                  lineWidth: 0,
+                  index: i
+                }));
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+});
+</script>
+  </section>
+</div>

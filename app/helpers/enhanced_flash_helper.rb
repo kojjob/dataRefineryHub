@@ -14,7 +14,7 @@ module EnhancedFlashHelper
       action_text: options[:action_text],
       action_url: options[:action_url],
       persistent: options[:persistent] || false,
-      auto_dismiss: options[:auto_dismiss] || 5000
+      auto_dismiss: options[:auto_dismiss] || 12000
     }
 
     flash[type] = flash_data

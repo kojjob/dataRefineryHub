@@ -1,4 +1,4 @@
-class Analytics::BaseController < ApplicationController
+class Analytics::BaseController < DataflowProController
   before_action :authenticate_user!
   before_action :ensure_organization_member
 

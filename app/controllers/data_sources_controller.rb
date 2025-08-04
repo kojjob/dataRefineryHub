@@ -1,4 +1,4 @@
-class DataSourcesController < ApplicationController
+class DataSourcesController < DataflowProController
   before_action :set_data_source, only: [ :show, :edit, :update, :destroy, :sync_now, :process_files, :preview_file, :analyze_file, :enhanced_preview ]
 
   def index

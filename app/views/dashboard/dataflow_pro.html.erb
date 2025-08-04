@@ -1,0 +1,417 @@
+<div class="dashboard-content">
+  <!-- Key Messaging Banner -->
+  <div class="info-banner gradient-primary">
+    <div class="info-banner-content">
+      <div class="info-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+      </div>
+      <div class="info-text">
+        <h3>Welcome to Your Fully Managed Data Warehouse</h3>
+        <p>No code required • Instant insights • All your data sources connected in one place</p>
+      </div>
+      <button class="info-close" data-action="click->dataflow-navigation#closeBanner">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Dashboard Section -->
+  <section class="content-section active" id="dashboard" data-controller="chart">
+  <!-- Key Metrics -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-icon">📈</div>
+      <div class="metric-content">
+        <h3>Monthly Active Users</h3>
+        <p class="metric-value"><%= number_with_delimiter(@stats[:monthly_active_users] || 1847) %></p>
+        <p class="metric-change positive">+12% vs last month</p>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-icon">🔗</div>
+      <div class="metric-content">
+        <h3>Connected Sources</h3>
+        <p class="metric-value"><%= @stats[:connected_sources] || 247 %></p>
+        <p class="metric-change positive">+5 new this week</p>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-icon">⚡</div>
+      <div class="metric-content">
+        <h3>Records Processed</h3>
+        <p class="metric-value"><%= number_to_human(@stats[:total_records] || 3200000, precision: 1, format: "%n%u") %></p>
+        <p class="metric-change positive">+18% this month</p>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-icon">💎</div>
+      <div class="metric-content">
+        <h3>Data Quality Score</h3>
+        <p class="metric-value"><%= @stats[:data_quality_score] || 96 %>%</p>
+        <p class="metric-change positive">+2% improvement</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Insights Panel -->
+  <div class="ai-insights-panel">
+    <h2>🤖 AI-Powered Insights</h2>
+    <div class="insights-grid">
+      <div class="insight-card critical">
+        <div class="insight-header">
+          <span class="insight-type">Anomaly Detection</span>
+          <span class="confidence-score">94% confident</span>
+        </div>
+        <p>Unusual spike in customer churn detected in enterprise segment - requires immediate attention</p>
+        <button class="btn btn--sm btn--primary">Investigate</button>
+      </div>
+      
+      <div class="insight-card high">
+        <div class="insight-header">
+          <span class="insight-type">Prediction</span>
+          <span class="confidence-score">87% confident</span>
+        </div>
+        <p>Sales forecast indicates 18% growth next quarter based on current trends and seasonal patterns</p>
+        <button class="btn btn--sm btn--outline">View Details</button>
+      </div>
+      
+      <div class="insight-card medium">
+        <div class="insight-header">
+          <span class="insight-type">Optimization</span>
+          <span class="confidence-score">91% confident</span>
+        </div>
+        <p>Marketing spend optimization suggests reallocating 25% budget from Channel A to Channel C for better ROI</p>
+        <button class="btn btn--sm btn--outline">Apply Suggestion</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3>Revenue Growth & Prediction</h3>
+        <div class="chart-controls">
+          <button class="btn btn--sm btn--outline">6M</button>
+          <button class="btn btn--sm btn--primary">1Y</button>
+          <button class="btn btn--sm btn--outline">All</button>
+        </div>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="revenueChart" data-chart-target="revenue"></canvas>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3>Customer Acquisition</h3>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="customerChart" data-chart-target="customer"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Predictive Analytics Section -->
+<section class="content-section" id="predictive">
+  <h2>🔮 Predictive Analytics Engine</h2>
+  <p>Get instant predictions and insights from your fully managed data warehouse</p>
+  
+  <div class="prediction-grid">
+    <div class="prediction-card">
+      <h3>Demand Forecasting</h3>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 75%"></div>
+        </div>
+        <p>Product demand expected to increase by 23% in Q3</p>
+      </div>
+      <div class="prediction-meta">
+        <span>Accuracy: 89%</span>
+        <span>Confidence: High</span>
+      </div>
+    </div>
+    
+    <div class="prediction-card">
+      <h3>Customer Behavior</h3>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill primary" style="width: 65%"></div>
+        </div>
+        <p>Customer lifetime value trending upward with 15% increase</p>
+      </div>
+      <div class="prediction-meta">
+        <span>Accuracy: 92%</span>
+        <span>Confidence: High</span>
+      </div>
+    </div>
+    
+    <div class="prediction-card">
+      <h3>Market Trends</h3>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill warning" style="width: 45%"></div>
+        </div>
+        <p>Competitive pressure may impact margins by 8% next quarter</p>
+      </div>
+      <div class="prediction-meta">
+        <span>Accuracy: 76%</span>
+        <span>Confidence: Medium</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Analytics Builder Section -->
+<section class="content-section" id="builder">
+  <h2>🛠️ No-Code Analytics Builder</h2>
+  <p>Build custom dashboards instantly with our no-code drag and drop interface</p>
+  
+  <div class="builder-grid">
+    <div class="builder-panel">
+      <h3>Components</h3>
+      <div class="component-list">
+        <div class="draggable-component" draggable="true">📊 Bar Chart</div>
+        <div class="draggable-component" draggable="true">📈 Line Chart</div>
+        <div class="draggable-component" draggable="true">🍩 Donut Chart</div>
+        <div class="draggable-component" draggable="true">📋 Data Table</div>
+        <div class="draggable-component" draggable="true">🎯 KPI Card</div>
+        <div class="draggable-component" draggable="true">📊 Heat Map</div>
+      </div>
+    </div>
+    
+    <div class="builder-canvas">
+      <h3>Dashboard Canvas</h3>
+      <div class="canvas-drop-zone">
+        <p>Drag components here to build your dashboard</p>
+      </div>
+    </div>
+    
+    <div class="builder-panel">
+      <h3>Properties</h3>
+      <div class="properties-form">
+        <div class="form-group">
+          <label>Chart Type:</label>
+          <select class="form-control">
+            <option>Bar Chart</option>
+            <option>Line Chart</option>
+            <option>Pie Chart</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data Source:</label>
+          <select class="form-control">
+            <option>Sales Data</option>
+            <option>Customer Data</option>
+            <option>Marketing Data</option>
+          </select>
+        </div>
+        <button class="btn btn--primary btn--full-width">Apply Changes</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ETL Pipeline Section -->
+<section class="content-section" id="etl" data-controller="etl-pipeline">
+  <div class="etl-header">
+    <h2>ETL Pipeline Builder</h2>
+    <p>Visual workflow designer with 200+ data connectors</p>
+  </div>
+  
+  <!-- Pipeline Stats -->
+  <div class="pipeline-stats">
+    <div class="stat-item">
+      <span class="stat-value"><%= @stats[:active_pipelines] || 18 %></span>
+      <span class="stat-label">Active Pipelines</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value"><%= number_to_human(@stats[:total_records] || 3200000, precision: 1, format: "%n%u") %></span>
+      <span class="stat-label">Records Processed</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">99.8%</span>
+      <span class="stat-label">Success Rate</span>
+    </div>
+  </div>
+  
+  <!-- Visual Pipeline Builder -->
+  <div class="pipeline-canvas">
+    <div class="pipeline-flow">
+      <!-- Source Node -->
+      <div class="flow-node source" data-etl-pipeline-target="node" data-node-type="source" data-action="click->etl-pipeline#selectNode">
+        <div class="node-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7m0 0c0 2.21-3.582 4-8 4S4 9.21 4 7m0 0c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+          </svg>
+        </div>
+        <div class="node-label">Data Source</div>
+        <div class="node-detail">Salesforce CRM</div>
+      </div>
+      
+      <!-- Arrow -->
+      <div class="flow-arrow">
+        <svg width="60" height="2" viewBox="0 0 60 2">
+          <defs>
+            <linearGradient id="arrow-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:var(--color-primary);stop-opacity:0.3" />
+              <stop offset="100%" style="stop-color:var(--color-primary);stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="1" x2="50" y2="1" stroke="url(#arrow-gradient)" stroke-width="2"/>
+          <polygon points="50,1 46,0 46,2" fill="var(--color-primary)"/>
+        </svg>
+      </div>
+      
+      <!-- Transform Node -->
+      <div class="flow-node transform" data-etl-pipeline-target="node" data-node-type="transform" data-action="click->etl-pipeline#selectNode">
+        <div class="node-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+          </svg>
+        </div>
+        <div class="node-label">Transform</div>
+        <div class="node-detail">Clean & Normalize</div>
+      </div>
+      
+      <!-- Arrow -->
+      <div class="flow-arrow">
+        <svg width="60" height="2" viewBox="0 0 60 2">
+          <line x1="0" y1="1" x2="50" y2="1" stroke="url(#arrow-gradient)" stroke-width="2"/>
+          <polygon points="50,1 46,0 46,2" fill="var(--color-primary)"/>
+        </svg>
+      </div>
+      
+      <!-- Destination Node -->
+      <div class="flow-node destination" data-etl-pipeline-target="node" data-node-type="destination" data-action="click->etl-pipeline#selectNode">
+        <div class="node-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+        <div class="node-label">Destination</div>
+        <div class="node-detail">Data Warehouse</div>
+      </div>
+    </div>
+    
+    <!-- Pipeline Actions -->
+    <div class="pipeline-actions">
+      <button class="btn btn--primary">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Create New Pipeline
+      </button>
+      <button class="btn btn--outline">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+        </svg>
+        View All Pipelines
+      </button>
+    </div>
+  </div>
+  
+  <!-- Active Pipelines List -->
+  <div class="active-pipelines">
+    <h3>Active Pipelines</h3>
+    <div class="pipeline-list">
+      <% [
+        { name: "Sales Data Sync", source: "Salesforce", destination: "BigQuery", status: "running", records: "12.5K/hour" },
+        { name: "Customer Analytics", source: "Shopify", destination: "Snowflake", status: "running", records: "8.2K/hour" },
+        { name: "Financial Reports", source: "QuickBooks", destination: "PostgreSQL", status: "paused", records: "5.1K/hour" }
+      ].each do |pipeline| %>
+        <div class="pipeline-item">
+          <div class="pipeline-info">
+            <h4><%= pipeline[:name] %></h4>
+            <p><%= pipeline[:source] %> → <%= pipeline[:destination] %></p>
+          </div>
+          <div class="pipeline-stats">
+            <span class="pipeline-rate"><%= pipeline[:records] %></span>
+            <span class="pipeline-status <%= pipeline[:status] %>">
+              <span class="status-dot"></span>
+              <%= pipeline[:status].capitalize %>
+            </span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- Industry Templates Section -->
+<section class="content-section" id="templates">
+  <div class="mb-df-32">
+    <h2 class="text-df-3xl font-semibold mb-df-8 flex items-center">
+      <span class="mr-3">📋</span> Industry Templates Library
+    </h2>
+    <p class="text-df-lg text-df-text-secondary">Pre-built analytics templates for your industry</p>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-df-20">
+    <% [
+      { icon: "🛍️", title: "Retail & E-commerce Analytics", description: "Complete dashboard for online and offline retail operations", features: ["Sales tracking", "Inventory management", "Customer analytics"] },
+      { icon: "🏭", title: "Manufacturing Operations", description: "Production efficiency and supply chain optimization", features: ["Production monitoring", "Quality control", "Supply chain analytics"] },
+      { icon: "💼", title: "Professional Services", description: "Project profitability and resource utilization tracking", features: ["Project tracking", "Resource planning", "Client analytics"] },
+      { icon: "🏥", title: "Healthcare Analytics", description: "Patient outcomes and operational efficiency dashboard", features: ["Patient analytics", "Resource optimization", "Compliance tracking"] },
+    ].each do |template| %>
+      <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border hover:shadow-df-md transition-shadow">
+        <div class="text-4xl mb-df-16"><%= template[:icon] %></div>
+        <h3 class="text-df-xl font-semibold mb-df-8"><%= template[:title] %></h3>
+        <p class="text-df-base text-df-text-secondary mb-df-16"><%= template[:description] %></p>
+        <div class="flex flex-wrap gap-df-8 mb-df-20">
+          <% template[:features].each do |feature| %>
+            <span class="px-df-12 py-df-4 bg-df-secondary rounded-df-sm text-df-sm"><%= feature %></span>
+          <% end %>
+        </div>
+        <button class="btn btn--primary btn--full-width">Use Template</button>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<!-- Marketplace Section -->
+<section class="content-section" id="marketplace">
+  <div class="mb-df-32">
+    <h2 class="text-df-3xl font-semibold mb-df-8 flex items-center">
+      <span class="mr-3">🛍️</span> Integration Marketplace
+    </h2>
+    <p class="text-df-lg text-df-text-secondary">Connect with 200+ business tools and data sources</p>
+  </div>
+  
+  <div class="mb-df-24">
+    <div class="flex gap-df-8">
+      <input type="text" class="form-control flex-1" placeholder="Search integrations...">
+      <button class="btn btn--primary">Search</button>
+    </div>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-df-20">
+    <% [
+      { title: "CRM & Sales", count: 45, connectors: ["Salesforce", "HubSpot", "Pipedrive", "Zoho CRM"] },
+      { title: "Marketing & Analytics", count: 38, connectors: ["Google Analytics", "Facebook Ads", "Mailchimp", "Klaviyo"] },
+      { title: "Accounting & Finance", count: 32, connectors: ["QuickBooks", "Xero", "Stripe", "PayPal"] },
+    ].each do |category| %>
+      <div class="bg-df-surface rounded-df-lg p-df-24 border border-df-card-border">
+        <h3 class="text-df-xl font-semibold mb-df-4"><%= category[:title] %></h3>
+        <p class="text-df-sm text-df-text-secondary mb-df-16"><%= category[:count] %> connectors</p>
+        <div class="flex flex-wrap gap-df-8">
+          <% category[:connectors].each do |connector| %>
+            <span class="px-df-12 py-df-6 bg-df-primary text-white rounded-df-sm text-df-sm cursor-pointer hover:bg-df-primary-hover transition-colors"><%= connector %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
+</div>
+
+<!-- Other sections would follow the same pattern... -->
+

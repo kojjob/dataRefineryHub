@@ -164,7 +164,7 @@ class Api::V1::BaseController < ActionController::API
     # Validate that date_field is a safe column name to prevent SQL injection
     allowed_date_fields = %i[created_at updated_at published_at scheduled_at executed_at]
     date_field = date_field.to_sym unless date_field.is_a?(Symbol)
-    
+
     unless allowed_date_fields.include?(date_field)
       raise ArgumentError, "Invalid date field: #{date_field}"
     end

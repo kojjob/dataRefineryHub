@@ -1,0 +1,8 @@
+<div class="insight-card <%= severity_class %>">
+  <div class="insight-header">
+    <span class="insight-type"><%= type %></span>
+    <span class="confidence-score"><%= confidence %>% confident</span>
+  </div>
+  <p><%= message %></p>
+  <button class="btn btn--sm <%= button_class %>"><%= action_text %></button>
+</div>

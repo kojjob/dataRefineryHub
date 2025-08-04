@@ -1,14 +1,16 @@
 # PipelineDashboardController
 # Provides comprehensive pipeline monitoring and management interface
-class PipelineDashboardController < ApplicationController
+class PipelineDashboardController < DataflowProController
   before_action :authenticate_user!
   before_action :set_pipeline_execution, only: [ :show ]
 
   def index
+    # Get running pipelines for the active monitor
     @pipeline_executions = current_organization.pipeline_executions
                                               .includes(:data_source, :user, :tasks)
+                                              .where(status: ['running', 'processing', 'queued'])
                                               .recent
-                                              .page(params[:page])
+                                              .limit(6)
 
     # Pipeline statistics
     @statistics = {

@@ -9,11 +9,28 @@ Rails.application.routes.draw do
 
   # Debug routes (remove in production)
   get "debug/session_info", to: "debug#session_info" unless Rails.env.production?
+  get "debug/test_flash", to: "debug#test_flash" unless Rails.env.production?
+
+  # Monitoring endpoints
+  get "health", to: "monitoring#health"
+  get "metrics", to: "monitoring#metrics"
+  get "ready", to: "monitoring#ready"
+  get "alive", to: "monitoring#alive"
 
   # Dashboard routes
   get "dashboard", to: "dashboard#index"
   get "dashboard/analytics", to: "dashboard#analytics"
   get "dashboard/reports", to: "dashboard#reports"
+
+  # Industry Templates
+  resources :industry_templates, only: [:index, :show] do
+    member do
+      post :apply
+    end
+    collection do
+      post :reset
+    end
+  end
 
   # Include data quality monitoring routes
   load Rails.root.join("config", "routes", "data_quality_routes.rb")
@@ -63,39 +80,39 @@ Rails.application.routes.draw do
 
   # Analytics - Legacy route for backward compatibility
   get "analytics", to: "analytics/dashboard#index"
-  
+
   # New modular analytics routes
   namespace :analytics do
     root to: "dashboard#index"
-    
-    resource :dashboard, only: [:show], controller: "dashboard" do
+
+    resource :dashboard, only: [ :show ], controller: "dashboard" do
       get :index, on: :collection, action: :index
     end
-    
-    resources :revenue, only: [:index] do
+
+    resources :revenue, only: [ :index ] do
       collection do
         get :trends
         get :breakdown
       end
     end
-    
-    resources :customers, only: [:index] do
+
+    resources :customers, only: [ :index ] do
       collection do
         get :acquisition
         get :segments
         get :lifetime_value
       end
     end
-    
-    resources :products, only: [:index] do
+
+    resources :products, only: [ :index ] do
       collection do
         get :performance
         get :inventory
         get :recommendations
       end
     end
-    
-    resources :risks, only: [:index] do
+
+    resources :risks, only: [ :index ] do
       collection do
         get :indicators
         get :opportunities
@@ -105,6 +122,20 @@ Rails.application.routes.draw do
 
   # AI-powered features
   namespace :ai do
+    # Redirect old predictive_analytics path to new predictions path
+    get 'predictive_analytics', to: redirect('/ai/predictions')
+    
+    resources :predictions, only: [:index] do
+      collection do
+        get :forecasts
+        get :models
+        get :scenarios
+        post :run_prediction
+        post :train_model
+        post :configure_model
+      end
+    end
+
     resources :presentations do
       member do
         get :download
@@ -160,6 +191,33 @@ Rails.application.routes.draw do
         get :learning_status
         post :feedback
         get :export_insights
+      end
+    end
+
+    # Natural Language Chat Interface
+    resources :chat, only: [] do
+      collection do
+        post :create
+        post :voice
+        get :suggestions
+        get :history
+        post :feedback
+        post :execute_action
+      end
+    end
+    
+    # Automated Actions
+    resources :automated_actions, only: [:index, :show] do
+      member do
+        post :approve
+        post :reject
+        post :execute
+        get :preview
+      end
+      collection do
+        get :pending
+        get :history
+        post :configure
       end
     end
 

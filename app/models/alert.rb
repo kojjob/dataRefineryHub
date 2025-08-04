@@ -42,17 +42,17 @@ class Alert < ApplicationRecord
   validates :message, presence: true, length: { maximum: 2000 }
 
   # Scopes
-  scope :active, -> { where(status: 'active') }
-  scope :resolved, -> { where(status: 'resolved') }
-  scope :acknowledged, -> { where(status: 'acknowledged') }
-  scope :dismissed, -> { where(status: 'dismissed') }
-  scope :unresolved, -> { where.not(status: ['resolved', 'dismissed']) }
-  
+  scope :active, -> { where(status: "active") }
+  scope :resolved, -> { where(status: "resolved") }
+  scope :acknowledged, -> { where(status: "acknowledged") }
+  scope :dismissed, -> { where(status: "dismissed") }
+  scope :unresolved, -> { where.not(status: [ "resolved", "dismissed" ]) }
+
   scope :by_type, ->(type) { where(alert_type: type) }
   scope :by_severity, ->(severity) { where(severity: severity) }
-  scope :critical, -> { where(severity: 'critical') }
-  scope :high_priority, -> { where(severity: ['critical', 'high']) }
-  
+  scope :critical, -> { where(severity: "critical") }
+  scope :high_priority, -> { where(severity: [ "critical", "high" ]) }
+
   scope :recent, -> { order(created_at: :desc) }
   scope :oldest_first, -> { order(created_at: :asc) }
 
@@ -62,23 +62,23 @@ class Alert < ApplicationRecord
 
   # Instance methods
   def resolved?
-    status == 'resolved'
+    status == "resolved"
   end
 
   def acknowledged?
-    status == 'acknowledged'
+    status == "acknowledged"
   end
 
   def active?
-    status == 'active'
+    status == "active"
   end
 
   def dismissed?
-    status == 'dismissed'
+    status == "dismissed"
   end
 
   def critical?
-    severity == 'critical'
+    severity == "critical"
   end
 
   def high_priority?
@@ -87,7 +87,7 @@ class Alert < ApplicationRecord
 
   def resolve!(resolved_by_user = nil)
     update!(
-      status: 'resolved',
+      status: "resolved",
       resolved_at: Time.current,
       resolved_by: resolved_by_user
     )
@@ -95,7 +95,7 @@ class Alert < ApplicationRecord
 
   def acknowledge!(acknowledged_by_user = nil)
     update!(
-      status: 'acknowledged',
+      status: "acknowledged",
       acknowledged_at: Time.current,
       acknowledged_by: acknowledged_by_user
     )
@@ -103,7 +103,7 @@ class Alert < ApplicationRecord
 
   def dismiss!(dismissed_by_user = nil)
     update!(
-      status: 'dismissed',
+      status: "dismissed",
       dismissed_at: Time.current,
       dismissed_by: dismissed_by_user
     )
@@ -111,56 +111,56 @@ class Alert < ApplicationRecord
 
   def severity_color
     case severity
-    when 'critical'
-      'red'
-    when 'high'
-      'orange'
-    when 'medium'
-      'yellow'
-    when 'low'
-      'blue'
+    when "critical"
+      "red"
+    when "high"
+      "orange"
+    when "medium"
+      "yellow"
+    when "low"
+      "blue"
     else
-      'gray'
+      "gray"
     end
   end
 
   def severity_icon
     case severity
-    when 'critical'
-      'exclamation-triangle'
-    when 'high'
-      'exclamation-circle'
-    when 'medium'
-      'information-circle'
-    when 'low'
-      'check-circle'
+    when "critical"
+      "exclamation-triangle"
+    when "high"
+      "exclamation-circle"
+    when "medium"
+      "information-circle"
+    when "low"
+      "check-circle"
     else
-      'bell'
+      "bell"
     end
   end
 
   def type_icon
     case alert_type
-    when 'pipeline'
-      'cog'
-    when 'data_quality'
-      'shield-check'
-    when 'system'
-      'server'
-    when 'security'
-      'lock-closed'
-    when 'performance'
-      'chart-bar'
-    when 'integration'
-      'link'
-    when 'ai_processing'
-      'cpu-chip'
-    when 'storage'
-      'circle-stack'
-    when 'user_activity'
-      'user'
+    when "pipeline"
+      "cog"
+    when "data_quality"
+      "shield-check"
+    when "system"
+      "server"
+    when "security"
+      "lock-closed"
+    when "performance"
+      "chart-bar"
+    when "integration"
+      "link"
+    when "ai_processing"
+      "cpu-chip"
+    when "storage"
+      "circle-stack"
+    when "user_activity"
+      "user"
     else
-      'bell'
+      "bell"
     end
   end
 
@@ -176,8 +176,8 @@ class Alert < ApplicationRecord
   private
 
   def set_defaults
-    self.status ||= 'active'
-    self.severity ||= 'medium'
+    self.status ||= "active"
+    self.severity ||= "medium"
   end
 
   def should_notify?

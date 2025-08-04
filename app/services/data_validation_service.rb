@@ -8,8 +8,14 @@ class DataValidationService
   end
 
   def validate
-    begin
-      Rails.logger.info "Starting data validation for data source #{data_source.id}"
+    logger = structured_logger.with_context(
+      data_source_id: data_source.id,
+      organization_id: data_source.organization_id,
+      user_id: user&.id
+    )
+
+    logger.measure("Data validation") do
+      logger.info "Starting data validation"
 
       # Get data to validate (use processed data if available, otherwise raw data)
       data_records = data_source.processed_data_records.any? ?
@@ -38,7 +44,10 @@ class DataValidationService
             error_count: 0,
             warning_count: 0
           }
-          Rails.logger.error "Validation rule #{index + 1} failed: #{e.message}"
+          logger.error "Validation rule failed", e,
+            rule_index: index + 1,
+            rule_name: rule[:name],
+            rule_type: rule[:type]
         end
       end
 
@@ -53,10 +62,10 @@ class DataValidationService
         validation_results: validation_results,
         summary: generate_validation_summary(validation_results, data_records.count)
       }
-    rescue => e
-      Rails.logger.error "Data validation failed: #{e.message}"
-      { success: false, error: e.message }
-    end
+    end # End of measure block
+  rescue => e
+    logger.error "Data validation failed", e
+    { success: false, error: e.message }
   end
 
   private

@@ -30,6 +30,8 @@ module ApplicationHelper
       end
     when "data_sources"
       "data_sources"
+    when "industry_templates"
+      "industry_templates"
     when "extraction_jobs", "transformation_jobs"
       "pipelines"
     when "pipeline_dashboard"

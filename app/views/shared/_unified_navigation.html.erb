@@ -1,0 +1,162 @@
+<!-- Unified Professional Sidebar Navigation with DataFlow Pro Styling -->
+<div class="sidebar" id="unified-sidebar" data-controller="dataflow-navigation" data-dataflow-navigation-target="sidebar">
+  <div class="sidebar-content">
+    
+    <!-- Logo Section -->
+    <div class="sidebar-header">
+      <h2>Data ReFlow</h2>
+      <button class="sidebar-toggle lg:hidden" data-action="click->dataflow-navigation#toggleSidebar">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-container">
+      <ul class="nav-menu">
+        
+        <!-- Overview Section -->
+        <li class="nav-section">
+          <div class="nav-section-title">Overview</div>
+          <ul class="nav-section-items">
+            <%= link_to dashboard_path, class: "nav-item #{controller_name == 'dashboard' ? 'active' : ''}" do %>
+              <span class="nav-icon">📊</span>
+              <span class="nav-text">Dashboard</span>
+            <% end %>
+            
+            <%= link_to analytics_path, class: "nav-item #{controller_name == 'analytics' ? 'active' : ''}" do %>
+              <span class="nav-icon">📈</span>
+              <span class="nav-text">Analytics Dashboard</span>
+            <% end %>
+            
+            <%= link_to data_sources_path, class: "nav-item #{controller_name == 'data_sources' ? 'active' : ''}" do %>
+              <span class="nav-icon">🛠️</span>
+              <span class="nav-text">Integration Marketplace</span>
+            <% end %>
+
+            <%= link_to industry_templates_path, class: "nav-item #{controller_name == 'industry_templates' ? 'active' : ''}" do %>
+              <span class="nav-icon">📋</span>
+              <span class="nav-text">Industry Templates</span>
+            <% end %>
+
+            <%= link_to pipeline_dashboard_index_path, class: "nav-item #{controller_name == 'pipeline_dashboard' ? 'active' : ''}" do %>
+              <span class="nav-icon">🔄</span>
+              <span class="nav-text">ETL Pipelines</span>
+            <% end %>
+          </ul>
+        </li>
+
+        <!-- Data Management Section -->
+        <li class="nav-section">
+          <div class="nav-section-title">Data Management</div>
+          <ul class="nav-section-items">
+            <%= link_to analytics_revenue_index_path, class: "nav-item #{controller_name == 'revenue' ? 'active' : ''}" do %>
+              <span class="nav-icon">💰</span>
+              <span class="nav-text">Revenue Analytics</span>
+            <% end %>
+            
+            <%= link_to analytics_customers_path, class: "nav-item #{controller_name == 'customers' ? 'active' : ''}" do %>
+              <span class="nav-icon">👥</span>
+              <span class="nav-text">Customer Analytics</span>
+            <% end %>
+
+            <%= link_to analytics_products_path, class: "nav-item #{controller_name == 'products' ? 'active' : ''}" do %>
+              <span class="nav-icon">📦</span>
+              <span class="nav-text">Product Analytics</span>
+            <% end %>
+          </ul>
+        </li>
+
+        <!-- AI & Intelligence Section -->
+        <li class="nav-section">
+          <div class="nav-section-title">AI & Intelligence</div>
+          <ul class="nav-section-items">
+            <%= link_to dashboard_ai_bi_agent_index_path, class: "nav-item #{controller_path == 'ai/bi_agent' ? 'active' : ''}" do %>
+              <span class="nav-icon">🤖</span>
+              <span class="nav-text">BI Agent</span>
+              <span class="nav-badge">NEW</span>
+            <% end %>
+            
+            <%= link_to history_ai_chat_index_path, class: "nav-item #{controller_path == 'ai/chat' ? 'active' : ''}" do %>
+              <span class="nav-icon">💬</span>
+              <span class="nav-text">AI Chat</span>
+            <% end %>
+            
+            <%= link_to ai_automated_actions_path, class: "nav-item #{controller_path == 'ai/automated_actions' ? 'active' : ''}" do %>
+              <span class="nav-icon">⚡</span>
+              <span class="nav-text">Automated Actions</span>
+            <% end %>
+            
+            <%= link_to ai_predictions_path, class: "nav-item #{controller_path == 'ai/predictions' ? 'active' : ''}" do %>
+              <span class="nav-icon">🔮</span>
+              <span class="nav-text">Predictive Analytics</span>
+            <% end %>
+          </ul>
+        </li>
+
+        <!-- Additional Features -->
+        <li class="nav-section">
+          <div class="nav-section-title">Features</div>
+          <ul class="nav-section-items">
+            <%= link_to analytics_risks_path, class: "nav-item #{controller_name == 'risks' ? 'active' : ''}" do %>
+              <span class="nav-icon">⚠️</span>
+              <span class="nav-text">Risk Analysis</span>
+            <% end %>
+            <%= link_to '#', class: "nav-item" do %>
+              <span class="nav-icon">🤝</span>
+              <span class="nav-text">Team Collaboration</span>
+            <% end %>
+            <%= link_to '#', class: "nav-item" do %>
+              <span class="nav-icon">📱</span>
+              <span class="nav-text">Mobile Dashboard</span>
+            <% end %>
+          </ul>
+        </li>
+        
+        <!-- Management Section -->
+        <li class="nav-section">
+          <div class="nav-section-title">Management</div>
+          <ul class="nav-section-items">
+            <%= link_to organization_path, class: "nav-item #{controller_name == 'organizations' && action_name == 'show' ? 'active' : ''}" do %>
+              <span class="nav-icon">🏢</span>
+              <span class="nav-text">Partner Portal</span>
+            <% end %>
+            
+            <%= link_to billing_organization_path, class: "nav-item #{controller_name == 'organizations' && action_name == 'billing' ? 'active' : ''}" do %>
+              <span class="nav-icon">💸</span>
+              <span class="nav-text">Cost Optimization</span>
+            <% end %>
+
+            <%= link_to audit_logs_organization_path, class: "nav-item #{controller_name == 'organizations' && action_name == 'audit_logs' ? 'active' : ''}" do %>
+              <span class="nav-icon">🔒</span>
+              <span class="nav-text">Security & Compliance</span>
+            <% end %>
+          </ul>
+        </li>
+
+        <!-- User Profile Section -->
+        <li class="nav-user-profile">
+          <div class="user-profile-card">
+            <% if current_user&.avatar&.attached? %>
+              <%= image_tag current_user.avatar, class: "user-avatar" %>
+            <% else %>
+              <div class="user-avatar">
+                <span><%= current_user&.first_name&.first || 'U' %></span>
+              </div>
+            <% end %>
+            <div class="user-info">
+              <p class="user-name"><%= current_user&.full_name || 'User' %></p>
+              <p class="user-email"><%= current_user&.email %></p>
+            </div>
+            <%= link_to destroy_user_session_path, method: :delete, class: "logout-btn", title: "Sign out" do %>
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+              </svg>
+            <% end %>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

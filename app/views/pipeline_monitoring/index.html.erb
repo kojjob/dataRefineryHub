@@ -1,35 +1,34 @@
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-  <!-- Enhanced Header with Glassmorphism -->
-  <div class="relative bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-xl">
-    <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10"></div>
-    <div class="relative px-4 sm:px-6 lg:px-8 py-8">
+<div class="min-h-screen bg-gray-50">
+  <!-- Professional Header -->
+  <div class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="px-4 sm:px-6 lg:px-8 py-6">
       <div class="flex items-center justify-between">
-        <div class="space-y-2">
+        <div>
           <div class="flex items-center space-x-3">
-            <div class="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+            <div class="p-2 bg-indigo-600 rounded-lg shadow-sm">
               <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+            <h1 class="text-2xl font-semibold text-gray-900">
               Pipeline Monitoring
             </h1>
           </div>
-          <p class="text-slate-600 font-medium">Real-time monitoring and analytics for your data pipelines</p>
+          <p class="mt-1 text-sm text-gray-600">Real-time monitoring and analytics for your data pipelines</p>
         </div>
-        <div class="flex items-center space-x-4">
-          <div class="flex items-center space-x-2 px-4 py-2 bg-green-100/80 backdrop-blur-sm rounded-full border border-green-200/50">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-green-700 text-sm font-semibold">Live</span>
+        <div class="flex items-center space-x-3">
+          <div class="flex items-center space-x-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-200">
+            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span class="text-green-700 text-sm font-medium">Live</span>
           </div>
-          <%= link_to system_health_pipeline_monitoring_index_path, class: "group inline-flex items-center px-6 py-3 border border-slate-300/50 rounded-xl shadow-lg text-sm font-semibold text-slate-700 bg-white/70 backdrop-blur-sm hover:bg-white/90 hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5" do %>
-            <svg class="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <%= link_to system_health_pipeline_monitoring_index_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 shadow-sm transition-colors duration-200" do %>
+            <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             System Health
           <% end %>
-          <%= link_to alerts_pipeline_monitoring_index_path, class: "group inline-flex items-center px-6 py-3 border border-slate-300/50 rounded-xl shadow-lg text-sm font-semibold text-slate-700 bg-white/70 backdrop-blur-sm hover:bg-white/90 hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5" do %>
-            <svg class="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <%= link_to alerts_pipeline_monitoring_index_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 shadow-sm transition-colors duration-200" do %>
+            <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
             Alerts

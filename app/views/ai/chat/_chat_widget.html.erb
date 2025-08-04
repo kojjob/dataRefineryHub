@@ -1,0 +1,226 @@
+<!-- AI Chat Widget -->
+<div id="ai-chat-widget" 
+     class="fixed bottom-6 right-6 z-50"
+     data-controller="ai-chat"
+     data-ai-chat-organization-id-value="<%= current_organization.id %>"
+     data-ai-chat-user-id-value="<%= current_user.id %>">
+  
+  <!-- Chat Toggle Button -->
+  <button data-action="click->ai-chat#toggleChat"
+          data-ai-chat-target="toggleButton"
+          class="bg-df-primary hover:bg-df-primary-hover text-white rounded-full p-4 shadow-df-lg transition-all duration-250 flex items-center gap-2">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4z" />
+    </svg>
+    <span class="hidden lg:inline">Ask AI Assistant</span>
+  </button>
+  
+  <!-- Chat Window -->
+  <div data-ai-chat-target="chatWindow"
+       class="hidden absolute bottom-20 right-0 w-96 bg-df-surface rounded-xl shadow-2xl border border-df-border overflow-hidden">
+    
+    <!-- Chat Header -->
+    <div class="bg-gradient-to-r from-df-primary to-df-primary-hover p-4 text-white">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold">AI Business Assistant</h3>
+            <p class="text-xs opacity-90">Ask anything about your data</p>
+          </div>
+        </div>
+        <button data-action="click->ai-chat#toggleChat"
+                class="hover:bg-white/20 rounded-lg p-1 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Chat Messages -->
+    <div data-ai-chat-target="messagesContainer"
+         class="h-96 overflow-y-auto p-4 space-y-4 bg-df-background">
+      
+      <!-- Welcome Message -->
+      <div class="flex gap-3">
+        <div class="w-8 h-8 bg-df-primary rounded-full flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div class="bg-df-surface rounded-lg p-3 max-w-[80%]">
+          <p class="text-sm text-df-text">
+            Hi! I'm your AI assistant. I can help you understand your data, find insights, and take actions. Try asking:
+          </p>
+          <div class="mt-2 space-y-1">
+            <button data-action="click->ai-chat#sendSuggestion"
+                    data-suggestion="What's my revenue this month?"
+                    class="block w-full text-left text-xs text-df-primary hover:text-df-primary-hover py-1">
+              → "What's my revenue this month?"
+            </button>
+            <button data-action="click->ai-chat#sendSuggestion"
+                    data-suggestion="Show me customers at risk of churning"
+                    class="block w-full text-left text-xs text-df-primary hover:text-df-primary-hover py-1">
+              → "Show me customers at risk of churning"
+            </button>
+            <button data-action="click->ai-chat#sendSuggestion"
+                    data-suggestion="Why did sales drop last week?"
+                    class="block w-full text-left text-xs text-df-primary hover:text-df-primary-hover py-1">
+              → "Why did sales drop last week?"
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Messages will be appended here -->
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="border-t border-df-border p-3 bg-df-surface">
+      <div class="flex gap-2 mb-3">
+        <button data-action="click->ai-chat#quickAction"
+                data-action-type="revenue"
+                class="flex-1 text-xs bg-df-secondary hover:bg-df-secondary-hover rounded-lg py-2 px-3 transition-colors">
+          📊 Revenue
+        </button>
+        <button data-action="click->ai-chat#quickAction"
+                data-action-type="customers"
+                class="flex-1 text-xs bg-df-secondary hover:bg-df-secondary-hover rounded-lg py-2 px-3 transition-colors">
+          👥 Customers
+        </button>
+        <button data-action="click->ai-chat#quickAction"
+                data-action-type="forecast"
+                class="flex-1 text-xs bg-df-secondary hover:bg-df-secondary-hover rounded-lg py-2 px-3 transition-colors">
+          📈 Forecast
+        </button>
+        <button data-action="click->ai-chat#quickAction"
+                data-action-type="alerts"
+                class="flex-1 text-xs bg-df-secondary hover:bg-df-secondary-hover rounded-lg py-2 px-3 transition-colors">
+          🚨 Alerts
+        </button>
+      </div>
+    </div>
+    
+    <!-- Chat Input -->
+    <form data-action="submit->ai-chat#sendMessage" 
+          class="border-t border-df-border p-4 bg-df-surface">
+      <div class="flex gap-2">
+        <input type="text"
+               data-ai-chat-target="messageInput"
+               data-action="input->ai-chat#handleInput"
+               placeholder="Ask me anything..."
+               class="flex-1 px-3 py-2 bg-df-background border border-df-border rounded-lg text-sm
+                      focus:outline-none focus:ring-2 focus:ring-df-primary focus:border-transparent"
+               autocomplete="off">
+        
+        <!-- Voice Input Button -->
+        <button type="button"
+                data-action="click->ai-chat#toggleVoice"
+                data-ai-chat-target="voiceButton"
+                class="p-2 hover:bg-df-secondary rounded-lg transition-colors">
+          <svg class="w-5 h-5 text-df-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          </svg>
+        </button>
+        
+        <!-- Send Button -->
+        <button type="submit"
+                data-ai-chat-target="sendButton"
+                class="px-4 py-2 bg-df-primary hover:bg-df-primary-hover text-white rounded-lg transition-colors flex items-center gap-2">
+          <span class="text-sm">Send</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Autocomplete Suggestions -->
+      <div data-ai-chat-target="suggestions"
+           class="hidden absolute bottom-full left-0 right-0 bg-df-surface border border-df-border rounded-lg shadow-lg mb-2 max-h-40 overflow-y-auto">
+        <!-- Suggestions will be populated here -->
+      </div>
+    </form>
+    
+    <!-- Loading Indicator -->
+    <div data-ai-chat-target="loadingIndicator"
+         class="hidden absolute inset-0 bg-df-surface/90 flex items-center justify-center">
+      <div class="flex flex-col items-center gap-3">
+        <div class="animate-spin rounded-full h-8 w-8 border-2 border-df-primary border-t-transparent"></div>
+        <p class="text-sm text-df-text-secondary">AI is thinking...</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Voice Recording Indicator -->
+  <div data-ai-chat-target="voiceIndicator"
+       class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+    <div class="bg-df-surface rounded-xl p-8 text-center">
+      <div class="relative w-32 h-32 mx-auto mb-4">
+        <div class="absolute inset-0 bg-df-error/20 rounded-full animate-ping"></div>
+        <div class="relative w-full h-full bg-df-error rounded-full flex items-center justify-center">
+          <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          </svg>
+        </div>
+      </div>
+      <p class="text-lg font-semibold text-df-text mb-2">Listening...</p>
+      <p class="text-sm text-df-text-secondary mb-4">Speak your question</p>
+      <button data-action="click->ai-chat#stopVoiceRecording"
+              class="px-6 py-2 bg-df-secondary hover:bg-df-secondary-hover rounded-lg transition-colors">
+        Stop Recording
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Message Templates -->
+<template id="user-message-template">
+  <div class="flex gap-3 justify-end">
+    <div class="bg-df-primary text-white rounded-lg p-3 max-w-[80%]">
+      <p class="text-sm message-content"></p>
+      <p class="text-xs opacity-70 mt-1 message-time"></p>
+    </div>
+    <div class="w-8 h-8 bg-df-secondary rounded-full flex items-center justify-center flex-shrink-0">
+      <span class="text-xs font-semibold text-df-text user-initials"></span>
+    </div>
+  </div>
+</template>
+
+<template id="ai-message-template">
+  <div class="flex gap-3">
+    <div class="w-8 h-8 bg-df-primary rounded-full flex items-center justify-center flex-shrink-0">
+      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    </div>
+    <div class="bg-df-surface rounded-lg p-3 max-w-[80%]">
+      <div class="text-sm text-df-text message-content"></div>
+      <div class="visualizations-container mt-3"></div>
+      <div class="actions-container mt-3"></div>
+      <p class="text-xs text-df-text-secondary mt-1 message-time"></p>
+    </div>
+  </div>
+</template>
+
+<template id="action-button-template">
+  <button class="flex items-center gap-2 px-3 py-2 bg-df-primary/10 hover:bg-df-primary/20 
+                 text-df-primary rounded-lg transition-colors text-sm">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+    </svg>
+    <span class="action-text"></span>
+  </button>
+</template>

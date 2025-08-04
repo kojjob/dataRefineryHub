@@ -43,26 +43,38 @@ class Analytics::CustomersController < Analytics::BaseController
 
     # Basic customer metrics
     total_customers = customer_records.count
-    new_customers = customer_records.where("raw_data->>'created_at' >= ?", @start_date).count
+    
+    # Since raw_data is encrypted, we need to process in Ruby
+    new_customers = customer_records.select do |record|
+      created_at = record.raw_data["created_at"] rescue nil
+      created_at && Time.parse(created_at) >= @start_date
+    end.count
 
     # Calculate repeat customers from orders
-    repeat_customers = order_records
-      .group("raw_data->'customer'->>'email'")
-      .having("COUNT(*) > 1")
-      .count
-      .keys
-      .length
+    customer_emails = {}
+    order_records.find_each do |order|
+      email = order.raw_data.dig("customer", "email") rescue nil
+      next unless email
+      customer_emails[email] = (customer_emails[email] || 0) + 1
+    end
+    repeat_customers = customer_emails.select { |_email, count| count > 1 }.length
 
     # Customer geography analysis
-    geography_data = customer_records
-      .where("raw_data->'default_address'->>'country' IS NOT NULL")
-      .group("raw_data->'default_address'->>'country'")
-      .count
+    geography_data = {}
+    customer_records.find_each do |record|
+      country = record.raw_data.dig("default_address", "country") rescue nil
+      next unless country
+      geography_data[country] = (geography_data[country] || 0) + 1
+    end
 
     # Customer acquisition trends
-    monthly_acquisitions = customer_records
-      .group("DATE_TRUNC('month', CAST(raw_data->>'created_at' AS TIMESTAMP))")
-      .count
+    monthly_acquisitions = {}
+    customer_records.find_each do |record|
+      created_at = record.raw_data["created_at"] rescue nil
+      next unless created_at
+      month_key = Time.parse(created_at).strftime("%Y-%m")
+      monthly_acquisitions[month_key] = (monthly_acquisitions[month_key] || 0) + 1
+    end
 
     {
       total_customers: total_customers,
@@ -81,26 +93,39 @@ class Analytics::CustomersController < Analytics::BaseController
 
     # Calculate Customer Acquisition Cost (CAC) proxy
     # This would ideally include marketing spend data
-    total_marketing_records = RawDataRecord.joins(:data_source)
+    marketing_cost = 0
+    RawDataRecord.joins(:data_source)
       .where(data_sources: { organization_id: current_organization.id, source_type: [ "google_ads", "facebook_ads", "mailchimp" ] })
       .where(created_at: @start_date..@end_date)
-      .sum("CAST(raw_data->>'cost' AS DECIMAL)")
+      .find_each do |record|
+        cost = record.raw_data["cost"] rescue nil
+        marketing_cost += cost.to_f if cost
+      end
 
-    new_customers_count = customer_records.where("raw_data->>'created_at' >= ?", @start_date).count
-    estimated_cac = new_customers_count > 0 ? (total_marketing_records / new_customers_count).round(2) : 0
+    new_customers_count = customer_records.select do |record|
+      created_at = record.raw_data["created_at"] rescue nil
+      created_at && Time.parse(created_at) >= @start_date
+    end.count
+    estimated_cac = new_customers_count > 0 ? (marketing_cost / new_customers_count).round(2) : 0
 
     # Customer sources analysis
-    acquisition_sources = customer_records
-      .where("raw_data->>'marketing'->>'utm_source' IS NOT NULL")
-      .group("raw_data->'marketing'->>'utm_source'")
-      .count
+    acquisition_sources = {}
+    customer_records.find_each do |record|
+      utm_source = record.raw_data.dig("marketing", "utm_source") rescue nil
+      next unless utm_source
+      acquisition_sources[utm_source] = (acquisition_sources[utm_source] || 0) + 1
+    end
 
     # First purchase analysis
-    first_purchase_values = order_records
-      .select("DISTINCT ON (raw_data->'customer'->>'email') raw_data->'customer'->>'email', CAST(raw_data->>'total_price' AS DECIMAL) as first_purchase")
-      .order("raw_data->'customer'->>'email', created_at")
+    first_purchases = {}
+    order_records.order(:created_at).find_each do |order|
+      email = order.raw_data.dig("customer", "email") rescue nil
+      total_price = order.raw_data["total_price"] rescue nil
+      next unless email && total_price
+      first_purchases[email] ||= total_price.to_f
+    end
 
-    avg_first_purchase = first_purchase_values.average("first_purchase") || 0
+    avg_first_purchase = first_purchases.any? ? (first_purchases.values.sum / first_purchases.size) : 0
 
     {
       new_customers_count: new_customers_count,
@@ -133,17 +158,24 @@ class Analytics::CustomersController < Analytics::BaseController
 
     # Geographic segments
     customer_records = customer_records_scope
-    geographic_segments = customer_records
-      .where("raw_data->'default_address'->>'country' IS NOT NULL")
-      .group("raw_data->'default_address'->>'country'")
-      .count
-      .sort_by { |_k, v| -v }
-      .first(10)
-      .to_h
+    geographic_segments = {}
+    customer_records.find_each do |record|
+      country = record.raw_data.dig("default_address", "country") rescue nil
+      next unless country
+      geographic_segments[country] = (geographic_segments[country] || 0) + 1
+    end
+    geographic_segments = geographic_segments.sort_by { |_k, v| -v }.first(10).to_h
 
     # Behavior segments based on order frequency
     order_frequency = {}
-    order_records.group("raw_data->'customer'->>'email'").count.each do |email, count|
+    customer_order_counts = {}
+    order_records.find_each do |order|
+      email = order.raw_data.dig("customer", "email") rescue nil
+      next unless email
+      customer_order_counts[email] = (customer_order_counts[email] || 0) + 1
+    end
+    
+    customer_order_counts.each do |email, count|
       case count
       when 1
         order_frequency["One-time Buyers"] = (order_frequency["One-time Buyers"] || 0) + 1
@@ -339,7 +371,14 @@ class Analytics::CustomersController < Analytics::BaseController
   end
 
   def calculate_avg_lifetime_orders(order_records)
-    customer_orders = order_records.group("raw_data->'customer'->>'email'").count
+    customer_orders = {}
+    order_records.find_each do |order|
+      email = order.raw_data.dig("customer", "email") rescue nil
+      next unless email
+      customer_orders[email] = (customer_orders[email] || 0) + 1
+    end
+    
+    return 0 if customer_orders.empty?
     customer_orders.values.sum.to_f / customer_orders.length
   end
 
@@ -352,10 +391,16 @@ class Analytics::CustomersController < Analytics::BaseController
   def calculate_monthly_acquisition_trend
     customer_records = customer_records_scope
 
-    customer_records
-      .group("DATE_TRUNC('month', CAST(raw_data->>'created_at' AS TIMESTAMP))")
-      .count
-      .transform_keys { |k| k&.strftime("%Y-%m") }
+    monthly_trend = {}
+    customer_records.find_each do |record|
+      created_at = record.raw_data["created_at"] rescue nil
+      next unless created_at
+      
+      month_key = Time.parse(created_at).strftime("%Y-%m")
+      monthly_trend[month_key] = (monthly_trend[month_key] || 0) + 1
+    end
+    
+    monthly_trend
   end
 
   def calculate_clv_distribution(ltv_metrics)

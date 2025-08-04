@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_09_112000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,43 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "ai_agent_configurations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "agent_type", null: false
+    t.boolean "enabled", default: true
+    t.json "settings"
+    t.json "learning_data"
+    t.float "performance_score"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agent_type"], name: "index_ai_agent_configurations_on_agent_type"
+    t.index ["organization_id", "agent_type"], name: "idx_on_organization_id_agent_type_587471fea7", unique: true
+    t.index ["organization_id"], name: "index_ai_agent_configurations_on_organization_id"
+  end
+
+  create_table "ai_automated_actions", force: :cascade do |t|
+    t.bigint "insight_id"
+    t.bigint "organization_id", null: false
+    t.string "action_type", null: false
+    t.json "parameters"
+    t.integer "status", default: 0
+    t.datetime "executed_at"
+    t.datetime "approved_at"
+    t.datetime "completed_at"
+    t.bigint "approved_by_id"
+    t.json "result"
+    t.string "suggested_by", default: "bi_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action_type"], name: "index_ai_automated_actions_on_action_type"
+    t.index ["approved_by_id"], name: "index_ai_automated_actions_on_approved_by_id"
+    t.index ["executed_at"], name: "index_ai_automated_actions_on_executed_at"
+    t.index ["insight_id"], name: "index_ai_automated_actions_on_insight_id"
+    t.index ["organization_id", "status"], name: "index_ai_automated_actions_on_organization_id_and_status"
+    t.index ["organization_id"], name: "index_ai_automated_actions_on_organization_id"
+    t.index ["status"], name: "index_ai_automated_actions_on_status"
+  end
+
   create_table "ai_insights", force: :cascade do |t|
     t.bigint "organization_id", null: false
     t.bigint "user_id"
@@ -64,7 +101,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["acknowledged_at"], name: "index_ai_insights_on_acknowledged_at"
-    t.index ["acknowledged_by"], name: "idx_ai_insights_acknowledged_by"
     t.index ["actionable", "impact_level"], name: "index_ai_insights_on_actionable_and_impact_level"
     t.index ["actionable"], name: "index_ai_insights_on_actionable"
     t.index ["confidence_score"], name: "index_ai_insights_on_confidence_score", where: "(confidence_score > 0.7)"
@@ -78,7 +114,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
     t.index ["organization_id"], name: "index_ai_insights_on_organization_id"
     t.index ["presentation_id"], name: "index_ai_insights_on_presentation_id"
     t.index ["read_at"], name: "index_ai_insights_on_read_at"
-    t.index ["read_by"], name: "idx_ai_insights_read_by"
     t.index ["user_id"], name: "index_ai_insights_on_user_id"
   end
 
@@ -102,7 +137,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
     t.datetime "updated_at", null: false
     t.index ["interaction_type"], name: "index_ai_presentation_interactions_on_interaction_type"
     t.index ["organization_id", "created_at"], name: "idx_on_organization_id_created_at_9ffea752e8"
-    t.index ["organization_id", "timestamp"], name: "idx_ai_presentation_interactions_org_timestamp"
     t.index ["organization_id"], name: "index_ai_presentation_interactions_on_organization_id"
     t.index ["presentation_id", "created_at"], name: "idx_on_presentation_id_created_at_00cdb8309d"
     t.index ["presentation_id"], name: "index_ai_presentation_interactions_on_presentation_id"
@@ -136,13 +170,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
     t.datetime "updated_at", null: false
     t.index ["completed"], name: "index_ai_presentation_views_on_completed"
     t.index ["organization_id", "created_at"], name: "index_ai_presentation_views_on_organization_id_and_created_at"
-    t.index ["organization_id", "started_at"], name: "idx_ai_presentation_views_org_started"
     t.index ["organization_id"], name: "index_ai_presentation_views_on_organization_id"
     t.index ["presentation_id", "created_at"], name: "index_ai_presentation_views_on_presentation_id_and_created_at"
     t.index ["presentation_id"], name: "index_ai_presentation_views_on_presentation_id"
     t.index ["session_id"], name: "index_ai_presentation_views_on_session_id"
     t.index ["user_id", "created_at"], name: "index_ai_presentation_views_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_ai_presentation_views_on_user_id"
+  end
+
+  create_table "ai_queries", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "user_id", null: false
+    t.text "query", null: false
+    t.text "response"
+    t.json "context"
+    t.json "entities"
+    t.string "intent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_ai_queries_on_created_at"
+    t.index ["intent"], name: "index_ai_queries_on_intent"
+    t.index ["organization_id", "user_id", "created_at"], name: "index_ai_queries_on_organization_id_and_user_id_and_created_at"
+    t.index ["organization_id"], name: "index_ai_queries_on_organization_id"
+    t.index ["user_id"], name: "index_ai_queries_on_user_id"
   end
 
   create_table "alerts", force: :cascade do |t|
@@ -294,6 +344,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
     t.json "extraction_metadata", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "job_type", default: "manual_sync"
     t.index ["created_at"], name: "idx_extraction_jobs_active", where: "((status)::text = ANY ((ARRAY['running'::character varying, 'queued'::character varying])::text[]))"
     t.index ["data_source_id", "status", "updated_at"], name: "idx_extraction_jobs_source_status_updated"
     t.index ["data_source_id", "status"], name: "index_extraction_jobs_on_data_source_id_and_status"
@@ -430,7 +481,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
     t.index ["execution_mode", "status"], name: "index_pipeline_executions_on_execution_mode_and_status"
     t.index ["execution_mode"], name: "index_pipeline_executions_on_execution_mode"
     t.index ["manual_intervention_required"], name: "index_pipeline_executions_on_manual_intervention_required"
-    t.index ["organization_id", "started_at"], name: "idx_pipeline_executions_running", where: "((status)::text = 'running'::text)"
     t.index ["organization_id"], name: "index_pipeline_executions_on_organization_id"
     t.index ["pipeline_name", "status"], name: "index_pipeline_executions_on_pipeline_name_and_status"
     t.index ["pipeline_name"], name: "index_pipeline_executions_on_pipeline_name"
@@ -490,6 +540,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
     t.json "validation_errors", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "data"
     t.index ["data_source_id", "external_id", "checksum"], name: "index_raw_data_records_on_source_id_checksum", unique: true
     t.index ["data_source_id"], name: "index_raw_data_records_on_data_source_id"
     t.index ["extraction_job_id", "processing_status"], name: "idx_on_extraction_job_id_processing_status_8bea689c27"
@@ -741,6 +792,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
     t.string "confirmation_token"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
+    t.string "dashboard_template"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["confirmed_at"], name: "index_users_on_confirmed_at"
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
@@ -775,6 +827,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "ai_agent_configurations", "organizations"
+  add_foreign_key "ai_automated_actions", "ai_insights", column: "insight_id"
+  add_foreign_key "ai_automated_actions", "organizations"
+  add_foreign_key "ai_automated_actions", "users", column: "approved_by_id"
   add_foreign_key "ai_insights", "data_sources"
   add_foreign_key "ai_insights", "organizations"
   add_foreign_key "ai_insights", "presentations"
@@ -785,6 +841,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_000001) do
   add_foreign_key "ai_presentation_views", "organizations"
   add_foreign_key "ai_presentation_views", "presentations"
   add_foreign_key "ai_presentation_views", "users"
+  add_foreign_key "ai_queries", "organizations"
+  add_foreign_key "ai_queries", "users"
   add_foreign_key "alerts", "data_sources"
   add_foreign_key "alerts", "organizations"
   add_foreign_key "alerts", "pipeline_executions"

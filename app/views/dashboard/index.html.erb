@@ -1,402 +1,370 @@
-<% content_for :page_title, "Dashboard" %>
+<% content_for :page_title, "Data Refinery Dashboard" %>
+<% content_for :page_subtitle, "Real-time data processing insights and AI-powered analytics" %>
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-  <!-- Premium Header -->
-  <div class="relative bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-xl">
-    <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10"></div>
-    <div class="relative px-4 sm:px-6 lg:px-8 py-8">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div class="space-y-2">
-          <div class="flex items-center space-x-3">
-            <div class="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
-              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
-            </div>
-            <div>
-              <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
-                Welcome back, <%= current_user.first_name %>
-              </h1>
-              <p class="text-slate-600 font-medium">Here's an overview of your data pipeline</p>
-            </div>
+<div class="dashboard-content">
+  <!-- Executive Dashboard Header -->
+  <section class="content-section active" id="dashboard-overview">
+
+    <!-- Dashboard Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold mb-2" style="color: var(--color-text);">Data Refinery Dashboard</h1>
+        <p style="color: var(--color-text-secondary);">Real-time data processing insights and AI-powered analytics</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- Industry Templates Button -->
+        <%= link_to industry_templates_path, class: "btn btn--outline btn--sm inline-flex items-center gap-2" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
+          </svg>
+          Industry Templates
+        <% end %>
+
+        <!-- AI Assistant Button -->
+        <button class="btn btn--outline btn--sm inline-flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+          </svg>
+          AI Assistant
+        </button>
+
+        <!-- Theme Toggle -->
+        <button class="btn btn--outline btn--sm" data-controller="theme-toggle" data-action="click->theme-toggle#toggle">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
+
+        <!-- User Profile -->
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: var(--color-primary);">
+            <span class="text-sm font-semibold" style="color: var(--color-primary-contrast);">
+              <%= current_user.first_name&.first || 'U' %>
+            </span>
           </div>
         </div>
-        <div class="mt-4 sm:mt-0 flex items-center space-x-4">
-          <!-- Live Status Indicator -->
-          <div class="flex items-center space-x-2 px-4 py-2 bg-green-100/80 backdrop-blur-sm rounded-full border border-green-200/50">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-green-700 text-sm font-semibold">System Online</span>
-          </div>
-          <!-- Add Data Source Button with Magnetic Effect -->
-          <%= link_to new_data_source_path, 
-              class: "group inline-flex items-center px-6 py-3 border border-slate-300/50 rounded-xl shadow-lg text-sm font-semibold text-slate-700 bg-white/70 backdrop-blur-sm hover:bg-white/90 hover:shadow-xl transition-all duration-300",
-              data: { 
-                controller: "magnetic-button ripple-effect",
-                action: "mousemove->magnetic-button#mouseMove mouseleave->magnetic-button#mouseLeave click->ripple-effect#click"
-              } do %>
-            <svg class="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </div>
+    </div>
+
+    <!-- Template Status Indicator -->
+    <% if current_user.dashboard_template.present? %>
+      <div class="mb-8 p-4 rounded-lg" style="background-color: var(--color-primary-light); border: 1px solid var(--color-primary); border-left: 4px solid var(--color-primary);">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-primary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
             </svg>
-            Add Data Source
+            <div>
+              <p class="font-medium" style="color: var(--color-primary);">
+                Active Template: <%= IndustryTemplate.find_template(current_user.dashboard_template)&.dig(:name) || current_user.dashboard_template.humanize %>
+              </p>
+              <p class="text-sm" style="color: var(--color-text-secondary);">Your dashboard is configured with industry-specific metrics and insights</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <%= link_to industry_templates_path, class: "btn btn--outline btn--sm" do %>
+              Change Template
+            <% end %>
+            <%= form_with url: reset_industry_templates_path, method: :post, local: true, class: "inline" do |form| %>
+              <%= form.submit "Reset", class: "btn btn--outline btn--sm",
+                  confirm: "Reset dashboard to default layout?" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Data Refinery KPI Metrics Grid -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3 style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-text-secondary, #6b7280) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 0 var(--space-8, 8px) 0 !important; line-height: 1.2 !important;">Data Sources</h3>
+          <p class="metric-value" style="font-size: var(--font-size-3xl, 24px) !important; font-weight: var(--font-weight-bold, 600) !important; color: var(--color-text, #111827) !important; margin: 0 0 var(--space-4, 4px) 0 !important; line-height: 1.1 !important; font-variant-numeric: tabular-nums;"><%= @stats[:total_data_sources] %></p>
+          <p class="metric-change positive" style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-success, #10b981) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 !important; line-height: 1.2 !important;">
+            <%= @stats[:connected_sources] %> connected
+          </p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3 style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-text-secondary, #6b7280) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 0 var(--space-8, 8px) 0 !important; line-height: 1.2 !important;">Records Processed</h3>
+          <p class="metric-value" style="font-size: var(--font-size-3xl, 24px) !important; font-weight: var(--font-weight-bold, 600) !important; color: var(--color-text, #111827) !important; margin: 0 0 var(--space-4, 4px) 0 !important; line-height: 1.1 !important; font-variant-numeric: tabular-nums;"><%= number_with_delimiter(@stats[:total_records]) %></p>
+          <p class="metric-change positive" style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-success, #10b981) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 !important; line-height: 1.2 !important;">↑ 8.2% vs last month</p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3 style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-text-secondary, #6b7280) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 0 var(--space-8, 8px) 0 !important; line-height: 1.2 !important;">Data Quality Score</h3>
+          <p class="metric-value" style="font-size: var(--font-size-3xl, 24px) !important; font-weight: var(--font-weight-bold, 600) !important; color: var(--color-text, #111827) !important; margin: 0 0 var(--space-4, 4px) 0 !important; line-height: 1.1 !important; font-variant-numeric: tabular-nums;"><%= @stats[:data_quality_score] || 0 %>%</p>
+          <p class="metric-change <%= (@stats[:data_quality_score] || 0) >= 90 ? 'positive' : 'neutral' %>" style="font-size: var(--font-size-sm, 12px) !important; color: <%= (@stats[:data_quality_score] || 0) >= 90 ? 'var(--color-success, #10b981)' : 'var(--color-text-secondary, #6b7280)' %> !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 !important; line-height: 1.2 !important;">
+            <%= (@stats[:data_quality_score] || 0) >= 90 ? 'Excellent' : 'Good' %>
+          </p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3 style="font-size: var(--font-size-sm, 12px) !important; color: var(--color-text-secondary, #6b7280) !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 0 var(--space-8, 8px) 0 !important; line-height: 1.2 !important;">Active Pipelines</h3>
+          <p class="metric-value" style="font-size: var(--font-size-3xl, 24px) !important; font-weight: var(--font-weight-bold, 600) !important; color: var(--color-text, #111827) !important; margin: 0 0 var(--space-4, 4px) 0 !important; line-height: 1.1 !important; font-variant-numeric: tabular-nums;"><%= @stats[:active_pipelines] || 0 %></p>
+          <p class="metric-change <%= @stats[:active_pipelines] && @stats[:active_pipelines] > 0 ? 'positive' : 'neutral' %>" style="font-size: var(--font-size-sm, 12px) !important; color: <%= @stats[:active_pipelines] && @stats[:active_pipelines] > 0 ? 'var(--color-success, #10b981)' : 'var(--color-text-secondary, #6b7280)' %> !important; font-weight: var(--font-weight-medium, 500) !important; margin: 0 !important; line-height: 1.2 !important;">
+            <%= @stats[:active_pipelines] && @stats[:active_pipelines] > 0 ? 'Running' : 'Idle' %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI-Powered Data Insights Panel -->
+    <div class="ai-insights-panel mb-8">
+      <h2 class="flex items-center gap-2 mb-6">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+        AI-Powered Data Insights
+      </h2>
+
+      <div class="insights-grid">
+        <div class="insight-card critical">
+          <div class="insight-header">
+            <span class="insight-type">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-error);">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+              </svg>
+              Critical Data Quality Issue
+            </span>
+            <span class="confidence-score">95% confidence</span>
+          </div>
+          <p>Data completeness has dropped to 78% in your Shopify integration. Missing product descriptions and customer addresses may impact analytics accuracy.</p>
+          <button class="btn btn--primary btn--sm">Investigate</button>
+        </div>
+
+        <div class="insight-card high">
+          <div class="insight-header">
+            <span class="insight-type">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-warning);">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              Pipeline Optimization
+            </span>
+            <span class="confidence-score">88% confidence</span>
+          </div>
+          <p>Your data processing pipeline could be 40% faster by adjusting sync frequency for low-priority data sources during peak hours.</p>
+          <button class="btn btn--outline btn--sm">Optimize</button>
+        </div>
+
+        <div class="insight-card medium">
+          <div class="insight-header">
+            <span class="insight-type">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-primary);">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+              Data Pattern Analysis
+            </span>
+            <span class="confidence-score">92% confidence</span>
+          </div>
+          <p>Customer transaction patterns show 15% increase in weekend activity. Consider adjusting data processing schedules for better resource utilization.</p>
+          <button class="btn btn--outline btn--sm">Learn More</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Processing Charts Section -->
+    <div class="charts-section">
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Data Processing Volume
+          </h3>
+          <div class="chart-controls">
+            <button class="btn btn--outline btn--sm">Daily</button>
+            <button class="btn btn--outline btn--sm">Weekly</button>
+            <button class="btn btn--primary btn--sm">Monthly</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="processingChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Data Quality Trends
+          </h3>
+          <div class="chart-controls">
+            <button class="btn btn--outline btn--sm">Export</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="qualityChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connected Data Sources Section -->
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3 class="flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+          </svg>
+          Connected Data Sources
+        </h3>
+        <div class="flex items-center gap-2">
+          <%= link_to new_data_source_path, class: "btn btn--primary btn--sm" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Source
           <% end %>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Key Metrics - Simplified -->
-  <div class="px-4 sm:px-6 lg:px-8 py-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Data Sources -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-              </svg>
-            </div>
-            <div class="text-right">
-              <div class="text-2xl font-bold text-slate-900"><%= @stats[:total_data_sources] %></div>
-              <div class="text-xs text-slate-500">sources</div>
-            </div>
-          </div>
-          <div>
-            <h3 class="text-sm font-semibold text-slate-600 uppercase tracking-wider">Data Sources</h3>
-            <div class="mt-2 flex items-center space-x-2">
-              <div class="flex-1 bg-slate-200 rounded-full h-2">
-                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-1000" style="width: <%= @stats[:total_data_sources] > 0 ? (@stats[:connected_sources].to_f / @stats[:total_data_sources] * 100).round : 0 %>%"></div>
+      <% if @data_sources.any? %>
+        <div class="space-y-4">
+          <% @data_sources.first(5).each do |data_source| %>
+            <div class="flex items-center p-4 border border-gray-200 rounded-lg transition-all duration-200 hover:shadow-md" style="border-color: var(--color-card-border); background-color: var(--color-surface);">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center font-semibold mr-4" style="background-color: var(--color-primary-light); color: var(--color-primary);">
+                <%= data_source.source_type.first(2).upcase %>
               </div>
-              <span class="text-xs text-slate-500"><%= @stats[:connected_sources] %> active</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Total Records -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-green-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-lg group-hover:shadow-emerald-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-            </div>
-            <div class="text-right">
-              <div class="text-2xl font-bold text-slate-900"><%= number_with_delimiter(@stats[:total_records], delimiter: ",") %></div>
-              <div class="text-xs text-slate-500">records</div>
-            </div>
-          </div>
-          <div>
-            <h3 class="text-sm font-semibold text-slate-600 uppercase tracking-wider">Records Processed</h3>
-            <div class="mt-2 flex items-center space-x-2">
-              <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-              <span class="text-xs text-slate-500">+8.2% this month</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pipeline Health -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-indigo-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div class="text-right">
-              <div class="text-2xl font-bold text-slate-900">98%</div>
-              <div class="text-xs text-slate-500">health</div>
-            </div>
-          </div>
-          <div>
-            <h3 class="text-sm font-semibold text-slate-600 uppercase tracking-wider">Pipeline Health</h3>
-            <div class="mt-2 flex items-center space-x-2">
-              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span class="text-xs text-green-600 font-medium">Excellent</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Last Sync -->
-      <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-        <div class="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-red-500/5 rounded-2xl"></div>
-        <div class="relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl shadow-lg group-hover:shadow-orange-500/25 transition-all duration-300">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-            <div class="text-right">
-              <div class="text-xl font-bold text-slate-900">
-                <%= @stats[:last_sync] ? time_ago_in_words(@stats[:last_sync]) : "Never" %>
+              <div class="flex-1">
+                <p class="font-medium mb-1" style="color: var(--color-text);"><%= data_source.name %></p>
+                <p class="text-sm" style="color: var(--color-text-secondary);"><%= data_source.source_type.humanize %></p>
               </div>
-              <div class="text-xs text-slate-500">ago</div>
-            </div>
-          </div>
-          <div>
-            <h3 class="text-sm font-semibold text-slate-600 uppercase tracking-wider">Last Sync</h3>
-            <div class="mt-2 flex items-center space-x-2">
-              <div class="w-2 h-2 <%= @stats[:last_sync] ? 'bg-green-500' : 'bg-gray-400' %> rounded-full <%= @stats[:last_sync] ? 'animate-pulse' : '' %>"></div>
-              <span class="text-xs <%= @stats[:last_sync] ? 'text-green-600' : 'text-gray-500' %> font-medium">
-                <%= @stats[:last_sync] ? 'Active' : 'Inactive' %>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Content - Two Column Layout -->
-  <div class="px-4 sm:px-6 lg:px-8 pb-8">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Data Sources - Takes 2/3 width -->
-      <div class="lg:col-span-2">
-        <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden hover:shadow-2xl transition-all duration-500">
-          <div class="absolute inset-0 bg-gradient-to-br from-slate-500/5 to-gray-500/5"></div>
-          <div class="relative">
-            <div class="px-6 py-5 border-b border-slate-200/50 bg-gradient-to-r from-slate-50/50 to-gray-50/50">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                  <div class="p-2 bg-gradient-to-br from-slate-600 to-gray-700 rounded-lg shadow-lg">
-                    <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="text-lg font-bold text-slate-900">Data Sources</h3>
-                    <p class="text-sm text-slate-600">Your connected integrations</p>
-                  </div>
-                </div>
-                <div class="flex items-center space-x-3">
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100/80 text-blue-800">
-                    <%= @data_sources.count %> Active
-                  </span>
-                  <%= link_to data_sources_path, class: "text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition-colors" do %>
-                    View all →
-                  <% end %>
-                </div>
-              </div>
-            </div>
-            <div class="p-6">
-              <% if @data_sources.any? %>
-                <div class="space-y-4">
-                  <% @data_sources.first(4).each do |data_source| %>
-                    <div class="group flex items-center justify-between p-4 bg-gradient-to-r from-slate-50/50 to-white/50 rounded-xl border border-slate-200/50 hover:shadow-md transition-all duration-300">
-                      <div class="flex items-center space-x-4">
-                        <div class="relative">
-                          <div class="h-12 w-12 rounded-xl <%= case data_source.source_type
-                            when 'shopify' then 'bg-green-100 text-green-600'
-                            when 'stripe' then 'bg-purple-100 text-purple-600'
-                            when 'google_analytics' then 'bg-orange-100 text-orange-600'
-                            when 'quickbooks' then 'bg-blue-100 text-blue-600'
-                            when 'mailchimp' then 'bg-yellow-100 text-yellow-600'
-                            else 'bg-gray-100 text-gray-600'
-                            end %> flex items-center justify-center font-semibold shadow-lg">
-                            <%= data_source.source_type.first(2).upcase %>
-                          </div>
-                          <% if data_source.status == 'connected' %>
-                            <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
-                              <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
-                            </div>
-                          <% end %>
-                        </div>
-                        <div>
-                          <h4 class="text-sm font-semibold text-slate-900"><%= data_source.name %></h4>
-                          <p class="text-sm text-slate-500"><%= data_source.source_type.humanize %></p>
-                        </div>
-                      </div>
-                      <div class="flex items-center space-x-3">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <%= case data_source.status
-                          when 'connected' then 'bg-green-100 text-green-800'
-                          when 'syncing' then 'bg-blue-100 text-blue-800'
-                          when 'error' then 'bg-red-100 text-red-800'
-                          else 'bg-gray-100 text-gray-800'
-                          end %>">
-                          <%= data_source.status.humanize %>
-                        </span>
-                        <%= link_to data_source_path(data_source), class: "group/link p-2 text-indigo-600 hover:text-indigo-800 bg-indigo-50/50 hover:bg-indigo-100/80 rounded-lg transition-all duration-300 hover:shadow-md" do %>
-                          <svg class="h-4 w-4 group-hover/link:translate-x-0.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                          </svg>
-                        <% end %>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
-              <% else %>
-                <div class="text-center py-12">
-                  <div class="mx-auto w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mb-4">
-                    <svg class="h-8 w-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-                    </svg>
-                  </div>
-                  <h3 class="text-lg font-semibold text-slate-900 mb-2">No Data Sources</h3>
-                  <p class="text-slate-500 mb-6">Connect your first data source to get started</p>
-                  <%= link_to new_data_source_path, class: "inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5" do %>
-                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    Add Data Source
-                  <% end %>
-                </div>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Actions & Activity - Takes 1/3 width -->
-      <div class="space-y-8">
-        <!-- Quick Actions -->
-        <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden hover:shadow-2xl transition-all duration-500">
-          <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5"></div>
-          <div class="relative">
-            <div class="px-6 py-5 border-b border-slate-200/50 bg-gradient-to-r from-indigo-50/50 to-purple-50/50">
-              <div class="flex items-center space-x-3">
-                <div class="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg shadow-lg">
-                  <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="text-lg font-bold text-slate-900">Quick Actions</h3>
-                  <p class="text-sm text-slate-600">Common tasks</p>
-                </div>
-              </div>
-            </div>
-            <div class="p-6">
-              <div class="space-y-3">
-                <%= link_to new_data_source_path, class: "group flex items-center justify-between p-3 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 rounded-xl hover:shadow-md transition-all duration-300" do %>
-                  <div class="flex items-center space-x-3">
-                    <div class="p-2 bg-blue-100 rounded-lg">
-                      <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                      </svg>
-                    </div>
-                    <span class="text-sm font-medium text-slate-900">Add Data Source</span>
-                  </div>
-                  <svg class="h-4 w-4 text-slate-400 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                  </svg>
-                <% end %>
-
-                <%= link_to analytics_path, class: "group flex items-center justify-between p-3 bg-gradient-to-r from-emerald-50/50 to-green-50/50 rounded-xl hover:shadow-md transition-all duration-300" do %>
-                  <div class="flex items-center space-x-3">
-                    <div class="p-2 bg-emerald-100 rounded-lg">
-                      <svg class="h-4 w-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                      </svg>
-                    </div>
-                    <span class="text-sm font-medium text-slate-900">View Analytics</span>
-                  </div>
-                  <svg class="h-4 w-4 text-slate-400 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                  </svg>
-                <% end %>
-
-                <%= link_to pipeline_monitoring_index_path, class: "group flex items-center justify-between p-3 bg-gradient-to-r from-purple-50/50 to-indigo-50/50 rounded-xl hover:shadow-md transition-all duration-300" do %>
-                  <div class="flex items-center space-x-3">
-                    <div class="p-2 bg-purple-100 rounded-lg">
-                      <svg class="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                      </svg>
-                    </div>
-                    <span class="text-sm font-medium text-slate-900">Monitor Pipelines</span>
-                  </div>
-                  <svg class="h-4 w-4 text-slate-400 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded-full text-xs font-medium" style="<%= case data_source.status
+                  when 'connected' then 'background-color: var(--color-success-light); color: var(--color-success);'
+                  when 'syncing' then 'background-color: var(--color-primary-light); color: var(--color-primary);'
+                  when 'error' then 'background-color: var(--color-error-light); color: var(--color-error);'
+                  else 'background-color: var(--color-surface); color: var(--color-text-secondary);'
+                  end %>">
+                  <%= data_source.status.humanize %>
+                </span>
+                <%= link_to data_source_path(data_source), style: "color: var(--color-text-secondary); text-decoration: none;" do %>
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
                   </svg>
                 <% end %>
               </div>
             </div>
-          </div>
+          <% end %>
         </div>
 
-        <!-- Recent Activity -->
-        <div class="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden hover:shadow-2xl transition-all duration-500">
-          <div class="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-red-500/5"></div>
-          <div class="relative">
-            <div class="px-6 py-5 border-b border-slate-200/50 bg-gradient-to-r from-orange-50/50 to-red-50/50">
-              <div class="flex items-center space-x-3">
-                <div class="p-2 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg shadow-lg">
-                  <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="text-lg font-bold text-slate-900">Activity</h3>
-                  <p class="text-sm text-slate-600">Recent updates</p>
-                </div>
-              </div>
-            </div>
-            <div class="p-6">
-              <% if @recent_activity.any? %>
-                <div class="space-y-4">
-                  <% @recent_activity.first(4).each do |activity| %>
-                    <div class="flex items-start space-x-3">
-                      <div class="w-2 h-2 bg-<%= activity[:icon_color] %>-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm text-slate-900 font-medium"><%= activity[:title] %></p>
-                        <% if activity[:description].present? %>
-                          <p class="text-xs text-slate-600 mt-1"><%= activity[:description] %></p>
-                        <% end %>
-                        <p class="text-xs text-slate-500 mt-1"><%= activity[:time] %></p>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
-              <% else %>
-                <div class="text-center py-8">
-                  <div class="mx-auto w-12 h-12 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mb-3">
-                    <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                  </div>
-                  <p class="text-sm text-slate-500">No recent activity</p>
-                </div>
-              <% end %>
-            </div>
-          </div>
+        <div class="text-center mt-6">
+          <%= link_to "View All Data Sources", data_sources_path, class: "btn btn--outline btn--sm" %>
         </div>
-      </div>
+      <% else %>
+        <div class="text-center py-12">
+          <div class="w-12 h-12 mx-auto mb-4 rounded-lg flex items-center justify-center" style="background-color: var(--color-surface); border: 1px solid var(--color-card-border);">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="color: var(--color-text-secondary);">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2" style="color: var(--color-text);">No data sources connected</h3>
+          <p class="mb-6" style="color: var(--color-text-secondary);">Get started by connecting your first data source to unlock powerful insights.</p>
+          <%= link_to "Add Data Source", new_data_source_path, class: "btn btn--primary btn--sm" %>
+        </div>
+      <% end %>
     </div>
-  </div>
+  </section>
 </div>
 
-<!-- Enhanced JavaScript for Premium UX -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  // Add smooth scroll behavior
-  document.documentElement.style.scrollBehavior = 'smooth';
+  // Initialize data refinery charts when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    // Data Processing Volume Chart
+    const processingCtx = document.getElementById('processingChart');
+    if (processingCtx) {
+      new Chart(processingCtx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Records Processed',
+            data: [125000, 142000, 138000, 156000, 168000, 175000],
+            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary'),
+            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary') + '20',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return (value / 1000) + 'k';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
 
-  // Add intersection observer for card animations
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  };
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }
-    });
-  }, observerOptions);
-
-  // Observe all cards for animation
-  document.querySelectorAll('.group').forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-    observer.observe(card);
+    // Data Quality Trends Chart
+    const qualityCtx = document.getElementById('qualityChart');
+    if (qualityCtx) {
+      new Chart(qualityCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Excellent', 'Good', 'Fair', 'Poor'],
+          datasets: [{
+            data: [65, 25, 8, 2],
+            backgroundColor: [
+              getComputedStyle(document.documentElement).getPropertyValue('--color-success'),
+              getComputedStyle(document.documentElement).getPropertyValue('--color-primary'),
+              getComputedStyle(document.documentElement).getPropertyValue('--color-warning'),
+              getComputedStyle(document.documentElement).getPropertyValue('--color-error')
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    }
   });
 </script>

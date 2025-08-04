@@ -1,200 +1,231 @@
-<!-- Flash Messages Container -->
-<div id="flash-messages-container" class="fixed top-4 right-4 z-50 space-y-3 max-w-md w-full">
-  <% flash.each do |type, message_data| %>
-    <% 
-      # Handle both simple string messages and complex hash messages
-      if message_data.is_a?(Hash)
-        message = message_data['message'] || message_data[:message]
-        title = message_data['title'] || message_data[:title]
-        action_text = message_data['action_text'] || message_data[:action_text]
-        action_url = message_data['action_url'] || message_data[:action_url]
-        persistent = message_data['persistent'] || message_data[:persistent] || false
-        auto_dismiss = message_data['auto_dismiss'] || message_data[:auto_dismiss] || 5000
-      else
-        message = message_data
-        title = nil
-        action_text = nil
-        action_url = nil
-        persistent = false
-        auto_dismiss = 5000
-      end
+<!-- DataFlow Pro Flash Messages -->
+<% if flash.any? %>
+  <div class="flash-messages">
+    <% flash.each do |type, message_data| %>
+      <%
+        # Handle both simple string messages and complex hash messages
+        if message_data.is_a?(Hash)
+          message = message_data['message'] || message_data[:message]
+          title = message_data['title'] || message_data[:title]
+          action_text = message_data['action_text'] || message_data[:action_text]
+          action_url = message_data['action_url'] || message_data[:action_url]
+          persistent = message_data['persistent'] || message_data[:persistent]
+          auto_dismiss = message_data['auto_dismiss'] || message_data[:auto_dismiss]
+        else
+          message = message_data
+          title = nil
+          action_text = nil
+          action_url = nil
+          persistent = false
+          auto_dismiss = nil
+        end
+        
+        # Set type based on flash type
+        alert_type = case type.to_s
+        when 'notice', 'success'
+          'success'
+        when 'alert', 'error'
+          'error'
+        when 'warning'
+          'warning'
+        when 'info'
+          'info'
+        else
+          'info'
+        end
+        
+        # Icon mapping
+        icon = case alert_type
+        when 'success'
+          '✅'
+        when 'error'
+          '❌'
+        when 'warning'
+          '⚠️'
+        else
+          'ℹ️'
+        end
+      %>
       
-      # Set theme colors and icons based on type
-      theme_config = case type.to_s
-      when 'notice', 'success'
-        {
-          bg: 'bg-gradient-to-r from-green-50 to-emerald-50',
-          border: 'border-green-200',
-          icon_bg: 'bg-green-100',
-          icon_color: 'text-green-600',
-          text_color: 'text-green-800',
-          title_color: 'text-green-900',
-          button_color: 'text-green-500 hover:bg-green-100',
-          focus_ring: 'focus:ring-green-500',
-          progress_color: 'bg-green-500',
-          icon_path: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
-        }
-      when 'alert', 'error'
-        {
-          bg: 'bg-gradient-to-r from-red-50 to-rose-50',
-          border: 'border-red-200',
-          icon_bg: 'bg-red-100',
-          icon_color: 'text-red-600',
-          text_color: 'text-red-800',
-          title_color: 'text-red-900',
-          button_color: 'text-red-500 hover:bg-red-100',
-          focus_ring: 'focus:ring-red-500',
-          progress_color: 'bg-red-500',
-          icon_path: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
-        }
-      when 'warning'
-        {
-          bg: 'bg-gradient-to-r from-yellow-50 to-amber-50',
-          border: 'border-yellow-200',
-          icon_bg: 'bg-yellow-100',
-          icon_color: 'text-yellow-600',
-          text_color: 'text-yellow-800',
-          title_color: 'text-yellow-900',
-          button_color: 'text-yellow-500 hover:bg-yellow-100',
-          focus_ring: 'focus:ring-yellow-500',
-          progress_color: 'bg-yellow-500',
-          icon_path: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
-        }
-      when 'info'
-        {
-          bg: 'bg-gradient-to-r from-blue-50 to-indigo-50',
-          border: 'border-blue-200',
-          icon_bg: 'bg-blue-100',
-          icon_color: 'text-blue-600',
-          text_color: 'text-blue-800',
-          title_color: 'text-blue-900',
-          button_color: 'text-blue-500 hover:bg-blue-100',
-          focus_ring: 'focus:ring-blue-500',
-          progress_color: 'bg-blue-500',
-          icon_path: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-        }
-      else
-        {
-          bg: 'bg-gradient-to-r from-gray-50 to-slate-50',
-          border: 'border-gray-200',
-          icon_bg: 'bg-gray-100',
-          icon_color: 'text-gray-600',
-          text_color: 'text-gray-800',
-          title_color: 'text-gray-900',
-          button_color: 'text-gray-500 hover:bg-gray-100',
-          focus_ring: 'focus:ring-gray-500',
-          progress_color: 'bg-gray-500',
-          icon_path: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-        }
-      end
-    %>
-    
-    <div class="flash-message <%= theme_config[:bg] %> border <%= theme_config[:border] %> rounded-xl shadow-lg backdrop-blur-sm transform transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-[1.02] relative overflow-hidden"
-         data-controller="enhanced-flash-message"
-         data-enhanced-flash-message-auto-dismiss-value="<%= auto_dismiss unless persistent %>"
-         data-enhanced-flash-message-persistent-value="<%= persistent %>"
-         data-action="mouseenter->enhanced-flash-message#pauseTimer mouseleave->enhanced-flash-message#resumeTimer">
-      
-      <!-- Progress Bar (for auto-dismiss) -->
-      <% unless persistent %>
-        <div class="absolute bottom-0 left-0 h-1 <%= theme_config[:progress_color] %> transition-all duration-100 ease-linear"
-             data-enhanced-flash-message-target="progressBar"></div>
-      <% end %>
-      
-      <div class="p-4">
-        <div class="flex items-start space-x-3">
-          <!-- Icon -->
-          <div class="flex-shrink-0">
-            <div class="<%= theme_config[:icon_bg] %> rounded-full p-2 shadow-sm">
-              <svg class="h-5 w-5 <%= theme_config[:icon_color] %>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= theme_config[:icon_path] %>"></path>
-              </svg>
-            </div>
-          </div>
-          
-          <!-- Content -->
-          <div class="flex-1 min-w-0">
-            <% if title.present? %>
-              <h4 class="text-sm font-semibold <%= theme_config[:title_color] %> mb-1">
-                <%= title %>
-              </h4>
-            <% end %>
-            
-            <p class="text-sm <%= theme_config[:text_color] %> leading-relaxed">
-              <%= message %>
-            </p>
-            
-            <!-- Action Button -->
-            <% if action_text.present? && action_url.present? %>
-              <div class="mt-3">
-                <%= link_to action_url, 
-                    class: "inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md #{theme_config[:button_color]} border border-transparent hover:shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 #{theme_config[:focus_ring]}",
-                    data: { action: "click->enhanced-flash-message#handleAction" } do %>
-                  <%= action_text %>
-                  <svg class="ml-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                  </svg>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
-          
-          <!-- Dismiss Button -->
-          <div class="flex-shrink-0">
-            <button type="button" 
-                    class="inline-flex rounded-full p-1.5 <%= theme_config[:button_color] %> transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 <%= theme_config[:focus_ring] %> hover:scale-110"
-                    data-action="click->enhanced-flash-message#dismiss"
-                    data-enhanced-flash-message-target="dismissButton">
-              <span class="sr-only">Dismiss notification</span>
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
+      <div class="alert alert--<%= alert_type %>"
+           data-controller="flash"
+           data-action="animationend->flash#remove"
+           <% if persistent %>data-flash-persistent-value="true"<% end %>
+           <% if auto_dismiss %>data-flash-auto-dismiss-value="<%= auto_dismiss %>"<% end %>
+           <% if action_url %>data-flash-action-url-value="<%= action_url %>"<% end %>
+           <% if action_text %>data-flash-action-text-value="<%= action_text %>"<% end %>
+           role="alert"
+           aria-live="polite"
+           tabindex="-1">
+        <span class="alert__icon" aria-hidden="true"><%= icon %></span>
+        <div class="alert__content">
+          <% if title.present? %>
+            <strong><%= title %></strong><br>
+          <% end %>
+          <%= message %>
         </div>
-      </div>
-    </div>
-  <% end %>
-</div>
+        <button type="button"
+                class="alert__close"
+                data-action="click->flash#dismiss"
+                data-flash-target="dismissButton"
+                aria-label="Dismiss notification"
+                title="Dismiss (or press Escape)">
+          &times;
+        </button>
 
-<!-- Toast Notification Styles -->
+        <% if action_text && action_url %>
+          <a href="<%= action_url %>"
+             class="alert__action"
+             data-flash-target="actionButton">
+            <%= action_text %>
+          </a>
+        <% end %>
+
+        <!-- Progress bar to show remaining time (only for non-persistent messages) -->
+        <% unless persistent %>
+          <div class="alert__progress"
+               data-flash-target="progressBar"
+               aria-hidden="true"
+               title="Auto-dismiss progress"></div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
 <style>
-  .flash-message {
-    animation: slideInRight 0.3s ease-out;
+  .flash-messages {
+    position: fixed;
+    top: var(--space-24);
+    right: var(--space-24);
+    z-index: 1000;
+    max-width: 400px;
+    width: 100%;
   }
   
-  .flash-message.dismissing {
-    animation: slideOutRight 0.3s ease-in forwards;
+  .alert {
+    animation: slideIn 0.3s ease-out;
+    margin-bottom: var(--space-12);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .alert:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .alert:hover::after {
+    content: "Hover to pause • Press Esc to dismiss";
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0;
+    animation: fadeInTooltip 0.3s ease forwards;
+    pointer-events: none;
+    z-index: 1001;
+  }
+
+  @keyframes fadeInTooltip {
+    to { opacity: 1; }
   }
   
-  @keyframes slideInRight {
+  .alert.dismissing {
+    animation: slideOut 0.3s ease-in forwards;
+  }
+  
+  @keyframes slideIn {
     from {
-      transform: translateX(100%) scale(0.95);
+      transform: translateX(100%);
       opacity: 0;
     }
     to {
-      transform: translateX(0) scale(1);
+      transform: translateX(0);
       opacity: 1;
     }
   }
   
-  @keyframes slideOutRight {
+  @keyframes slideOut {
     from {
-      transform: translateX(0) scale(1);
+      transform: translateX(0);
       opacity: 1;
     }
     to {
-      transform: translateX(100%) scale(0.95);
+      transform: translateX(100%);
       opacity: 0;
     }
   }
   
-  @media (max-width: 640px) {
-    #flash-messages-container {
-      top: 1rem;
-      right: 1rem;
-      left: 1rem;
-      max-width: none;
+  /* Progress bar styles */
+  .alert__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    transform-origin: left;
+    transition: transform linear;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  }
+
+  .alert--success .alert__progress {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  .alert--error .alert__progress {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  .alert--warning .alert__progress {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  .alert--info .alert__progress {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Action button styles */
+  .alert__action {
+    display: inline-block;
+    margin-left: var(--space-12);
+    padding: var(--space-6) var(--space-12);
+    background: rgba(255, 255, 255, 0.2);
+    color: inherit;
+    text-decoration: none;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .alert__action:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .alert__action:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 768px) {
+    .flash-messages {
+      left: var(--space-16);
+      right: var(--space-16);
+      top: var(--space-16);
     }
   }
 </style>
