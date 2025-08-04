@@ -24,7 +24,7 @@ class PipelineMonitoringController < ApplicationController
 
   def show
     @execution = current_organization.pipeline_executions.find(params[:id])
-    @pipeline_config = current_organization.pipeline_configurations
+    @pipeline_config = current_organization.pipelines
                                          .find_by(name: @execution.pipeline_name)
 
     @tasks = @execution.tasks.includes(:assignee, :task_template).order(:position)

@@ -255,7 +255,7 @@ class SampleDataGeneratorService
   def create_ecommerce_pipeline
     user = organization.users.first
 
-    PipelineConfiguration.create!(
+    Pipeline.create!(
       organization: organization,
       created_by: user,
       name: "E-commerce Analytics Pipeline",
@@ -348,7 +348,7 @@ class SampleDataGeneratorService
   def create_customer_360_pipeline
     user = organization.users.first
 
-    PipelineConfiguration.create!(
+    Pipeline.create!(
       organization: organization,
       created_by: user,
       name: "Customer 360 View Pipeline",
@@ -443,7 +443,7 @@ class SampleDataGeneratorService
   def create_financial_pipeline
     user = organization.users.first
 
-    PipelineConfiguration.create!(
+    Pipeline.create!(
       organization: organization,
       created_by: user,
       name: "Financial Reporting Pipeline",
@@ -528,7 +528,7 @@ class SampleDataGeneratorService
   def create_realtime_pipeline
     user = organization.users.first
 
-    PipelineConfiguration.create!(
+    Pipeline.create!(
       organization: organization,
       created_by: user,
       name: "Real-time Customer Events",

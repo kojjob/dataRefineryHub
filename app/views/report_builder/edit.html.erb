@@ -1,0 +1,447 @@
+<div class="report-builder-container" 
+     data-controller="report-builder" 
+     data-report-builder-template-id-value="<%= @report_template.id %>">
+  <!-- Top Bar -->
+  <div class="builder-topbar">
+    <div class="topbar-left">
+      <%= link_to report_builder_index_path, class: "btn btn--ghost btn--sm", title: "Back to reports" do %>
+        <svg style="width: 20px; height: 20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      <% end %>
+      
+      <div contenteditable="true" 
+           class="report-title-editable" 
+           data-report-id="<%= @report_template.id %>"
+           data-field="name"><%= @report_template.name %></div>
+      
+      <span class="save-status" id="save-status">Saved</span>
+    </div>
+    
+    <div class="topbar-actions">
+      <%= link_to preview_report_builder_path(@report_template), 
+          class: "btn btn--secondary btn--sm", 
+          target: "_blank" do %>
+        <svg class="btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+        Preview
+      <% end %>
+      
+      <button class="btn btn--primary btn--sm" id="save-report">
+        <svg class="btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+        </svg>
+        Save
+      </button>
+    </div>
+  </div>
+
+  <div class="builder-main">
+    <!-- Left Sidebar - Components -->
+      <!-- Component Library Sidebar -->
+  <div class="builder-sidebar" data-report-builder-target="componentLibrary">
+      <h3 class="sidebar-title">Components</h3>
+      
+      <!-- Charts -->
+      <div class="component-section">
+        <h4 class="section-title">Charts</h4>
+        <div class="component-grid">
+          <% @available_components[:charts].each do |key, chart| %>
+            <div class="component-item draggable" 
+                 draggable="true" 
+                 data-component-type="chart"
+                 data-chart-type="<%= key %>"
+                 data-component-name="<%= chart[:name] %>">
+              <div class="component-icon"><%= chart[:icon] %></div>
+              <div class="component-name"><%= chart[:name] %></div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      
+      <!-- Widgets -->
+      <div class="component-section">
+        <h4 class="section-title">Widgets</h4>
+        <div class="component-grid">
+          <% @available_components[:widgets].each do |key, widget| %>
+            <div class="component-item draggable" 
+                 draggable="true" 
+                 data-component-type="<%= key %>"
+                 data-component-name="<%= widget[:name] %>">
+              <div class="component-icon"><%= widget[:icon] %></div>
+              <div class="component-name"><%= widget[:name] %></div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Canvas Area -->
+    <div class="builder-canvas-container">
+      <div class="canvas-toolbar">
+        <div class="toolbar-group">
+          <button class="toolbar-btn" id="undo-btn" title="Undo">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+            </svg>
+          </button>
+          <button class="toolbar-btn" id="redo-btn" title="Redo">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="toolbar-group">
+          <button class="toolbar-btn" id="grid-toggle" title="Toggle grid">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+            </svg>
+          </button>
+          <button class="toolbar-btn" id="snap-toggle" title="Toggle snap to grid">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="toolbar-group">
+          <select class="toolbar-select" id="canvas-zoom">
+            <option value="50">50%</option>
+            <option value="75">75%</option>
+            <option value="100" selected>100%</option>
+            <option value="125">125%</option>
+            <option value="150">150%</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="builder-canvas" id="report-canvas" data-report-id="<%= @report_template.id %>" data-report-builder-target="canvas">
+        <div data-report-builder-target="canvasContent">
+        <% if @components.empty? %>
+          <div class="canvas-empty-state">
+            <div class="empty-icon">🎨</div>
+            <h3>Start Building Your Report</h3>
+            <p>Drag and drop components from the left sidebar to get started</p>
+          </div>
+        <% else %>
+          <% @components.each do |component| %>
+            <div class="canvas-component" 
+                 data-component-id="<%= component.id %>"
+                 data-component-type="<%= component.component_type %>"
+                 style="grid-column: span <%= component.width %>; grid-row: span <%= component.height %>; order: <%= component.z_index %>;">
+              <div class="component-header">
+                <span class="component-title"><%= component.properties['title'] || component.component_type.humanize %></span>
+                <div class="component-actions">
+                  <button class="component-action" data-action="edit" title="Edit">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button class="component-action" data-action="delete" title="Delete">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="component-content">
+                <%= render "report_builder/components/#{component.component_type}", component: component %>
+              </div>
+              <div class="component-resize-handle"></div>
+            </div>
+          <% end %>
+        <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Sidebar - Properties -->
+    <div class="builder-properties" id="properties-panel" data-report-builder-target="sidebar propertiesPanel" style="display: none;">
+      <h3 class="sidebar-title">Properties</h3>
+      <div id="properties-content">
+        <!-- Dynamic properties will be loaded here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Component Edit Modal -->
+<div class="modal" id="component-modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">Edit Component</h2>
+      <button class="modal-close" onclick="closeComponentModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body">
+      <!-- Dynamic content -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn--outline" onclick="closeComponentModal()">Cancel</button>
+      <button class="btn btn--primary" onclick="saveComponent()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.report-builder-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+}
+
+.builder-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-16) var(--space-24);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.report-title-editable {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-md);
+  transition: background-color var(--duration-fast);
+}
+
+.report-title-editable:hover {
+  background: var(--color-background);
+}
+
+.report-title-editable:focus {
+  outline: 2px solid var(--color-primary);
+  background: var(--color-background);
+}
+
+.save-status {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.builder-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.builder-sidebar {
+  width: 280px;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  padding: var(--space-24);
+  overflow-y: auto;
+}
+
+.sidebar-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-16);
+}
+
+.component-section {
+  margin-bottom: var(--space-24);
+}
+
+.section-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-12);
+}
+
+.component-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+}
+
+.component-item {
+  padding: var(--space-12);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+  cursor: grab;
+  transition: all var(--duration-fast);
+}
+
+.component-item:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.component-item.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.component-icon {
+  font-size: 1.5rem;
+  margin-bottom: var(--space-4);
+}
+
+.component-name {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.builder-canvas-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+}
+
+.canvas-toolbar {
+  display: flex;
+  gap: var(--space-16);
+  padding: var(--space-12) var(--space-16);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.toolbar-group {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.toolbar-btn {
+  padding: var(--space-8);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: white;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+
+.toolbar-btn:hover {
+  background: var(--color-background);
+}
+
+.toolbar-btn.active {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+.builder-canvas {
+  flex: 1;
+  padding: var(--space-24);
+  overflow: auto;
+  position: relative;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.canvas-empty-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-16);
+}
+
+.canvas-component {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-16);
+  position: relative;
+  cursor: move;
+  transition: all var(--duration-fast);
+}
+
+.canvas-component:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.canvas-component.selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.component-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-12);
+}
+
+.component-actions {
+  display: flex;
+  gap: var(--space-4);
+  opacity: 0;
+  transition: opacity var(--duration-fast);
+}
+
+.canvas-component:hover .component-actions {
+  opacity: 1;
+}
+
+.component-action {
+  padding: var(--space-4);
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color var(--duration-fast);
+}
+
+.component-action:hover {
+  color: var(--color-text);
+}
+
+.component-resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  cursor: se-resize;
+  opacity: 0;
+  transition: opacity var(--duration-fast);
+}
+
+.canvas-component:hover .component-resize-handle {
+  opacity: 1;
+}
+
+.component-resize-handle::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 10px 10px;
+  border-color: transparent transparent var(--color-text-muted) transparent;
+}
+
+.builder-properties {
+  width: 320px;
+  background: var(--color-surface);
+  border-left: 1px solid var(--color-border);
+  padding: var(--space-24);
+  overflow-y: auto;
+}
+</style>

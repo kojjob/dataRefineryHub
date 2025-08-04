@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= @landing_page.title || @landing_page.name %></title>
+  <meta name="description" content="<%= @landing_page.meta_description || @landing_page.description %>">
+  
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+  
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      line-height: 1.6;
+      color: #333;
+    }
+    
+    .preview-banner {
+      background: #3b82f6;
+      color: white;
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 14px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .preview-content {
+      margin-top: 48px;
+    }
+    
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 100px 20px;
+      text-align: center;
+    }
+    
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      background: #f59e0b;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: transform 0.2s;
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-2px);
+    }
+    
+    .features {
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      margin-top: 60px;
+    }
+    
+    .feature {
+      text-align: center;
+      padding: 30px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+    
+    .feature h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: #1f2937;
+    }
+    
+    .feature p {
+      color: #6b7280;
+      line-height: 1.6;
+    }
+    
+    .social-proof {
+      background: #f8fafc;
+      padding: 80px 20px;
+      text-align: center;
+    }
+    
+    .testimonial {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .testimonial-quote {
+      font-size: 1.25rem;
+      font-style: italic;
+      margin-bottom: 20px;
+      color: #374151;
+    }
+    
+    .testimonial-author {
+      font-weight: 600;
+      color: #1f2937;
+    }
+    
+    .testimonial-company {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 1rem;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="preview-banner">
+    📖 Landing Page Preview Mode - <strong><%= @landing_page.name %></strong>
+    <%= link_to "Edit", edit_project_landing_page_path(@project, @landing_page), 
+        style: "color: white; margin-left: 20px; text-decoration: underline;" %>
+  </div>
+  
+  <div class="preview-content">
+    <% if @landing_page.content.present? %>
+      <% content_data = @landing_page.content_json %>
+      
+      <!-- Hero Section -->
+      <% if content_data['hero'] %>
+        <section class="hero">
+          <h1><%= content_data['hero']['title'] || 'Welcome to Our Platform' %></h1>
+          <p><%= content_data['hero']['subtitle'] || 'Transform your business with our powerful solution' %></p>
+          <a href="#" class="cta-button"><%= content_data['hero']['cta_text'] || 'Get Started' %></a>
+        </section>
+      <% end %>
+      
+      <!-- Features Section -->
+      <% if content_data['features'] %>
+        <section class="features">
+          <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; color: #1f2937;">Features</h2>
+          <div class="features-grid">
+            <% content_data['features'].each do |feature| %>
+              <div class="feature">
+                <div class="feature-icon"><%= feature['icon'] %></div>
+                <h3><%= feature['title'] %></h3>
+                <p><%= feature['description'] %></p>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+      
+      <!-- Social Proof Section -->
+      <% if content_data['social_proof'] %>
+        <section class="social-proof">
+          <h2 style="font-size: 2.5rem; margin-bottom: 60px; color: #1f2937;">
+            <%= content_data['social_proof']['title'] || 'What Our Customers Say' %>
+          </h2>
+          <% if content_data['social_proof']['testimonials'] %>
+            <% content_data['social_proof']['testimonials'].each do |testimonial| %>
+              <div class="testimonial">
+                <div class="testimonial-quote">"<%= testimonial['quote'] %>"</div>
+                <div class="testimonial-author"><%= testimonial['author'] %></div>
+                <div class="testimonial-company"><%= testimonial['company'] %></div>
+              </div>
+            <% end %>
+          <% end %>
+        </section>
+      <% end %>
+    <% else %>
+      <!-- Default content when no content is set -->
+      <section class="hero">
+        <h1><%= @landing_page.title || @landing_page.name %></h1>
+        <p><%= @landing_page.description || 'This landing page is currently being built.' %></p>
+        <a href="#" class="cta-button">Get Started</a>
+      </section>
+      
+      <section class="features">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #1f2937;">
+          Coming Soon
+        </h2>
+        <p style="text-align: center; color: #6b7280; font-size: 1.1rem;">
+          Content for this landing page is still being developed.
+        </p>
+      </section>
+    <% end %>
+  </div>
+</body>
+</html>

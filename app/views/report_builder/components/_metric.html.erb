@@ -1,0 +1,56 @@
+<div class="metric-widget">
+  <div class="metric-label">
+    <%= component.properties['title'] || 'Metric' %>
+  </div>
+  <div class="metric-value">
+    <%= component.properties['sample_value'] || '0' %>
+  </div>
+  <% if component.properties['show_trend'] %>
+    <div class="metric-trend <%= component.properties['trend_direction'] || 'neutral' %>">
+      <% if component.properties['trend_direction'] == 'up' %>
+        ↗ +<%= component.properties['trend_value'] || '0' %>%
+      <% elsif component.properties['trend_direction'] == 'down' %>
+        ↘ -<%= component.properties['trend_value'] || '0' %>%
+      <% else %>
+        → 0%
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<style>
+.metric-widget {
+  text-align: center;
+  padding: var(--space-16);
+}
+
+.metric-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-8);
+}
+
+.metric-value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-8);
+}
+
+.metric-trend {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.metric-trend.up {
+  color: var(--color-success);
+}
+
+.metric-trend.down {
+  color: var(--color-error);
+}
+
+.metric-trend.neutral {
+  color: var(--color-text-muted);
+}
+</style>

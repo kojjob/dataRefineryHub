@@ -1,0 +1,17 @@
+<svg class="w-20 h-20 transform -rotate-90">
+  <circle cx="40" cy="40" r="36" 
+          stroke="var(--color-card-border)" 
+          stroke-width="8" 
+          fill="none"></circle>
+  <circle cx="40" cy="40" r="36"
+          stroke="<%= percentage >= 80 ? 'var(--color-success)' : (percentage >= 60 ? 'var(--color-warning)' : 'var(--color-error)') %>" 
+          stroke-width="8" 
+          fill="none"
+          stroke-dasharray="226" 
+          stroke-dashoffset="<%= 226 - (226 * percentage / 100) %>"
+          stroke-linecap="round"
+          class="transition-all duration-500"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+  <span class="text-2xl font-bold" style="color: var(--color-text);"><%= percentage %>%</span>
+</div>

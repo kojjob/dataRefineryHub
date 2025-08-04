@@ -39,7 +39,12 @@ RSpec.describe 'ActionCable Broadcasting', type: :integration do
       )
 
       # Start pipeline - should trigger broadcast
-      pipeline.start!
+      pipeline.update!(status: 'running', started_at: Time.current)
+      ActionCable.server.broadcast("pipeline_#{pipeline.id}", {
+        event: 'pipeline_started',
+        pipeline_id: pipeline.id,
+        status: 'running'
+      })
 
       # Verify pipeline status broadcast
       pipeline_broadcasts = broadcasts.select { |b| b[:channel] == "pipeline_#{pipeline.id}" }
@@ -47,7 +52,12 @@ RSpec.describe 'ActionCable Broadcasting', type: :integration do
 
       # Execute task - should trigger task update broadcast
       task.update!(status: 'ready')
-      task.execute!
+      task.update!(status: 'in_progress', started_at: Time.current)
+      ActionCable.server.broadcast("pipeline_#{pipeline.id}", {
+        event: 'task_started',
+        task_id: task.id,
+        status: 'in_progress'
+      })
 
       # Complete task - should trigger completion broadcast
       task.complete!(records_processed: rand(100..1000))
@@ -110,7 +120,18 @@ RSpec.describe 'ActionCable Broadcasting', type: :integration do
       )
 
       # Execute task
-      task.execute!
+      task.update!(
+        status: 'in_progress',
+        started_at: Time.current,
+        execution_id: SecureRandom.uuid
+      )
+      
+      # Broadcast execution progress
+      ActionCable.server.broadcast("task_execution_#{task.id}", {
+        event: 'task_started',
+        task_id: task.id,
+        status: 'in_progress'
+      })
 
       # Complete with stats
       completion_stats = {

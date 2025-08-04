@@ -4,9 +4,12 @@
     
     <!-- Logo Section -->
     <div class="sidebar-header">
-      <h2>Data ReFlow</h2>
-      <button class="sidebar-toggle lg:hidden" data-action="click->dataflow-navigation#toggleSidebar">
-        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="sidebar-logo">
+        <h2 class="sidebar-title">DataFlow Pro</h2>
+        <span class="sidebar-subtitle">Data Refinery Platform</span>
+      </div>
+      <button class="sidebar-toggle" data-action="click->dataflow-navigation#toggleSidebar" aria-label="Toggle navigation">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
       </button>
@@ -33,6 +36,12 @@
             <%= link_to data_sources_path, class: "nav-item #{controller_name == 'data_sources' ? 'active' : ''}" do %>
               <span class="nav-icon">🛠️</span>
               <span class="nav-text">Integration Marketplace</span>
+            <% end %>
+
+            <%= link_to business_templates_path, class: "nav-item #{controller_name == 'business_templates' ? 'active' : ''}" do %>
+              <span class="nav-icon">🚀</span>
+              <span class="nav-text">Quick Start Templates</span>
+              <span class="nav-badge">NEW</span>
             <% end %>
 
             <%= link_to industry_templates_path, class: "nav-item #{controller_name == 'industry_templates' ? 'active' : ''}" do %>
@@ -103,6 +112,16 @@
               <span class="nav-icon">⚠️</span>
               <span class="nav-text">Risk Analysis</span>
             <% end %>
+            <%= link_to delivery_preferences_path, class: "nav-item #{controller_name == 'delivery_preferences' ? 'active' : ''}" do %>
+              <span class="nav-icon">📬</span>
+              <span class="nav-text">Delivery Preferences</span>
+              <span class="nav-badge">NEW</span>
+            <% end %>
+            <%= link_to report_builder_index_path, class: "nav-item #{controller_name == 'report_builder' ? 'active' : ''}" do %>
+              <span class="nav-icon">📊</span>
+              <span class="nav-text">Report Builder</span>
+              <span class="nav-badge">NEW</span>
+            <% end %>
             <%= link_to '#', class: "nav-item" do %>
               <span class="nav-icon">🤝</span>
               <span class="nav-text">Team Collaboration</span>
@@ -131,6 +150,11 @@
             <%= link_to audit_logs_organization_path, class: "nav-item #{controller_name == 'organizations' && action_name == 'audit_logs' ? 'active' : ''}" do %>
               <span class="nav-icon">🔒</span>
               <span class="nav-text">Security & Compliance</span>
+            <% end %>
+            
+            <%= link_to monitoring_path, class: "nav-item #{controller_name == 'monitoring' && action_name == 'dashboard' ? 'active' : ''}" do %>
+              <span class="nav-icon">📡</span>
+              <span class="nav-text">System Monitoring</span>
             <% end %>
           </ul>
         </li>

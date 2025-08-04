@@ -1,0 +1,30 @@
+<%
+  alert_class = alert_item_class(alert.severity)
+  icon = case alert.severity
+         when 'critical' then 'alert-triangle'
+         when 'high', 'medium' then 'alert-circle'
+         else 'info'
+         end
+  color_class = alert_severity_text_color(alert.severity)
+%>
+
+<div class="rounded-lg p-3 transition-all duration-200 hover:translate-x-1 <%= alert_class %>" 
+     style="border-left: 4px solid <%= alert.severity == 'critical' ? 'var(--color-error)' : (alert.severity == 'high' || alert.severity == 'medium' ? 'var(--color-warning)' : 'var(--color-info)') %>;">
+  <div class="flex items-start gap-3">
+    <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" 
+         style="color: <%= alert.severity == 'critical' ? 'var(--color-error)' : (alert.severity == 'high' || alert.severity == 'medium' ? 'var(--color-warning)' : 'var(--color-info)') %>;">
+      <% if icon == 'alert-triangle' %>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+      <% elsif icon == 'alert-circle' %>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      <% else %>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      <% end %>
+    </svg>
+    <div class="flex-1">
+      <p class="text-sm font-medium" style="color: var(--color-text);"><%= alert.title %></p>
+      <p class="text-xs mt-1" style="color: var(--color-text-secondary);"><%= truncate(alert.message, length: 80) %></p>
+      <p class="text-xs mt-2" style="color: var(--color-text-tertiary);"><%= time_ago_in_words(alert.created_at) %> ago</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,84 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center sm:justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Delivery Preferences</h1>
+      <p class="mt-1 text-sm text-gray-600">
+        Configure how and when you receive your business reports
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <%= link_to new_delivery_preference_path, class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Add Preference
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Channel Legend -->
+  <div class="bg-gray-50 rounded-lg p-4 mb-6">
+    <h3 class="text-sm font-medium text-gray-700 mb-2">Available Channels</h3>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl">📧</span>
+        <span class="text-sm text-gray-600">Email</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl">💬</span>
+        <span class="text-sm text-gray-600">WhatsApp</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl">📱</span>
+        <span class="text-sm text-gray-600">SMS</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl">📄</span>
+        <span class="text-sm text-gray-600">PDF</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl">📊</span>
+        <span class="text-sm text-gray-600">Slides</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preferences by Report Type -->
+  <% if @grouped_preferences.any? %>
+    <div class="space-y-8">
+      <% @grouped_preferences.each do |report_type, preferences| %>
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+          <div class="bg-gray-50 px-6 py-3">
+            <h2 class="text-lg font-medium text-gray-900">
+              <%= report_type.humanize %>
+            </h2>
+          </div>
+          
+          <div class="divide-y divide-gray-200">
+            <% preferences.each do |preference| %>
+              <%= render 'delivery_preference', delivery_preference: preference %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <!-- Empty State -->
+    <div class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No delivery preferences</h3>
+      <p class="mt-1 text-sm text-gray-500">Get started by creating your first delivery preference.</p>
+      <div class="mt-6">
+        <%= link_to new_delivery_preference_path, class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+          <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Create Preference
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

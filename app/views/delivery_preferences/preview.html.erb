@@ -1,0 +1,124 @@
+<turbo-frame id="preview_modal">
+  <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+      <!-- Background overlay -->
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+      <!-- Modal panel -->
+      <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+              <h3 class="text-lg font-semibold leading-6 text-gray-900" id="modal-title">
+                <%= @delivery_preference.report_type.humanize %> Preview
+                <span class="text-sm text-gray-500">
+                  (<%= @delivery_preference.channel.capitalize %> - <%= @delivery_preference.format.upcase %>)
+                </span>
+              </h3>
+              
+              <div class="mt-4">
+                <% case @delivery_preference.format %>
+                <% when 'text' %>
+                  <div class="bg-gray-100 rounded-lg p-4 font-mono text-sm whitespace-pre-wrap overflow-x-auto max-h-96 overflow-y-auto">
+                    <%= @preview_content %>
+                  </div>
+                  
+                <% when 'html' %>
+                  <div class="border rounded-lg p-4 bg-white overflow-x-auto max-h-96 overflow-y-auto">
+                    <%= @preview_content.html_safe %>
+                  </div>
+                  
+                <% when 'pdf' %>
+                  <div class="bg-gray-100 rounded-lg p-8 text-center">
+                    <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    <p class="mt-2 text-sm text-gray-600">
+                      PDF Preview<br>
+                      <span class="text-xs">A professional PDF report will be generated with charts and tables</span>
+                    </p>
+                  </div>
+                  
+                <% when 'pptx' %>
+                  <div class="bg-gray-100 rounded-lg p-4">
+                    <div class="text-center mb-4">
+                      <svg class="mx-auto h-16 w-16 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 2a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6H6zm8 6h4.5L14 3.5V8zM10 12h4v2h-4v-2zm0 4h4v2h-4v-2z"/>
+                      </svg>
+                      <p class="mt-2 text-sm font-medium text-gray-900">
+                        PowerPoint Presentation Preview
+                      </p>
+                    </div>
+                    
+                    <% if @preview_content.is_a?(Hash) %>
+                      <div class="space-y-2">
+                        <p class="text-sm text-gray-600">
+                          <strong>Slides:</strong> <%= @preview_content[:slides_count] || 'N/A' %>
+                        </p>
+                        
+                        <% if @preview_content[:titles].present? %>
+                          <div>
+                            <p class="text-sm font-medium text-gray-700 mb-1">Slide Titles:</p>
+                            <ol class="list-decimal list-inside space-y-1 text-sm text-gray-600 ml-4">
+                              <% @preview_content[:titles].each do |title| %>
+                                <li><%= title %></li>
+                              <% end %>
+                            </ol>
+                          </div>
+                        <% end %>
+                      </div>
+                    <% else %>
+                      <p class="text-sm text-gray-600 text-center">
+                        A professional presentation will be generated
+                      </p>
+                    <% end %>
+                  </div>
+                  
+                <% else %>
+                  <div class="bg-gray-100 rounded-lg p-4">
+                    <pre class="text-sm"><%= @preview_content.to_json %></pre>
+                  </div>
+                <% end %>
+                
+                <!-- Channel-specific preview notes -->
+                <div class="mt-4 rounded-md bg-blue-50 p-4">
+                  <div class="flex">
+                    <div class="flex-shrink-0">
+                      <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                    <div class="ml-3">
+                      <p class="text-sm text-blue-700">
+                        <% case @delivery_preference.channel %>
+                        <% when 'email' %>
+                          This report will be delivered to your email address with professional formatting.
+                        <% when 'whatsapp' %>
+                          This report will be sent to your WhatsApp with emojis and easy-to-read formatting.
+                        <% when 'sms' %>
+                          This report will be sent as a concise SMS message to your phone.
+                        <% when 'pdf' %>
+                          A professional PDF document will be generated and made available for download.
+                        <% when 'slides' %>
+                          A PowerPoint presentation will be created and delivered via your preferred method.
+                        <% end %>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button type="button" 
+                  onclick="document.getElementById('preview_modal').innerHTML = ''"
+                  class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</turbo-frame>

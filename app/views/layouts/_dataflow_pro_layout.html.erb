@@ -1,29 +1,8 @@
 <!-- DataFlow Pro Layout -->
 <div class="dataflow-pro" data-controller="dataflow-navigation theme-toggle">
-  
-  <!-- Sidebar Navigation -->
-  <nav class="sidebar" id="sidebar" data-dataflow-navigation-target="sidebar">
-    <div class="sidebar-header">
-      <h2>Data ReFlow</h2>
-      <button class="sidebar-toggle" data-action="click->dataflow-navigation#toggleSidebar">
-        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </button>
-    </div>
-    
-    <ul class="nav-menu">
-      <% if @dataflow_sections.nil? %>
-        <!-- Debug: @dataflow_sections is nil -->
-      <% end %>
-      <% (@dataflow_sections || []).each do |section| %>
-        <%= link_to section[:path], class: "nav-item #{@active_section == section[:id] ? 'active' : ''}", data: { section: section[:id] } do %>
-          <span class="nav-icon"><%= section[:icon] %></span>
-          <span class="nav-text"><%= section[:text] %></span>
-        <% end %>
-      <% end %>
-    </ul>
-  </nav>
+
+  <!-- Unified Sidebar Navigation -->
+  <%= render 'shared/unified_navigation' %>
   
   <!-- Main Content Area -->
   <main class="main-content" id="mainContent">

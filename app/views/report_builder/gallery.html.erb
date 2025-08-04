@@ -1,0 +1,369 @@
+<% content_for :page_title, "Template Gallery" %>
+<% content_for :page_subtitle, "Browse and select from our collection of pre-built report templates" %>
+
+<style>
+  :root {
+    --brand-teal: #14b8a6;
+    --brand-teal-light: #5eead4;
+    --brand-teal-dark: #0f766e;
+    --brand-teal-bg: #f0fdfa;
+  }
+  
+  .template-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(20, 184, 166, 0.15);
+    border-color: var(--brand-teal-light);
+  }
+  
+  .template-card:hover .hover-overlay {
+    opacity: 0.05;
+  }
+  
+  .template-card:hover .template-icon {
+    transform: scale(1.1);
+  }
+  
+  .template-card .template-icon {
+    transition: transform 0.3s ease;
+  }
+  
+  .btn-preview:hover {
+    background: var(--brand-teal-bg);
+    border-color: var(--brand-teal-light);
+    color: var(--color-text);
+  }
+  
+  .btn-use:hover {
+    background: var(--brand-teal-dark);
+    transform: translateY(-1px);
+  }
+  
+  .category-badge {
+    transition: all 0.2s ease;
+  }
+  
+  .template-card:hover .category-badge {
+    background: var(--brand-teal);
+    color: white;
+  }
+  
+  .custom-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(20, 184, 166, 0.2);
+  }
+  
+  .custom-btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.5);
+  }
+  
+  .custom-cta-card {
+    position: relative;
+    z-index: 10;
+    margin-top: 4rem !important;
+    clear: both;
+    isolation: isolate;
+  }
+  
+  .template-card {
+    position: relative;
+    z-index: 1;
+  }
+  
+  @media (max-width: 768px) {
+    .template-card {
+      height: auto !important;
+    }
+    
+    .grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+
+<div class="dashboard-content">
+  <section class="content-section active" id="template-gallery">
+    <!-- Dashboard Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold mb-2" style="color: var(--color-text);">Template Gallery</h1>
+        <p style="color: var(--color-text-secondary);">Browse and select from our collection of pre-built report templates</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <%= link_to report_builder_index_path, class: "btn btn--outline btn--sm inline-flex items-center gap-2" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          Back to Reports
+        <% end %>
+        <%= link_to new_report_builder_path, class: "btn btn--primary btn--sm inline-flex items-center gap-2" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Create Custom Report
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Categories Filter -->
+    <% if @categories.present? %>
+      <div class="mb-8 p-4 rounded-lg" style="background-color: var(--color-surface); border: 1px solid var(--color-border);">
+        <h3 class="flex items-center gap-2 mb-4">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z"/>
+          </svg>
+          Browse by Category
+        </h3>
+        <div class="flex flex-wrap gap-3">
+          <% @categories.keys.each do |category| %>
+            <button class="btn btn--outline btn--sm inline-flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z"/>
+              </svg>
+              <%= category %>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Featured Templates Section -->
+    <% if @featured_templates.any? %>
+      <div class="mb-8">
+        <h2 class="flex items-center gap-2 mb-6">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+          </svg>
+          Featured Templates
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% @featured_templates.each do |template| %>
+            <div class="metric-card">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="metric-icon">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                  </div>
+                  <div class="metric-content">
+                    <h3 style="font-size: var(--font-size-base) !important; color: var(--color-text) !important; font-weight: var(--font-weight-semibold) !important; margin: 0 0 var(--space-4) 0 !important;"><%= template.name %></h3>
+                    <p style="font-size: var(--font-size-sm) !important; color: var(--color-text-secondary) !important; margin: 0 !important;">Featured Template</p>
+                  </div>
+                </div>
+                <span class="px-2 py-1 text-xs font-medium rounded" style="background-color: var(--color-primary-light); color: var(--color-primary);">Featured</span>
+              </div>
+              
+              <p class="text-sm mb-4" style="color: var(--color-text-secondary);"><%= template.description || "Professional report template ready to use with your data" %></p>
+              
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4 text-sm" style="color: var(--color-text-secondary);">
+                  <span class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <%= template.usage_count || 0 %> uses
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                    </svg>
+                    <%= template.report_components.count %> components
+                  </span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <%= link_to preview_report_builder_path(template), class: "btn btn--outline btn--sm" do %>
+                    Preview
+                  <% end %>
+                  <%= button_to duplicate_report_builder_path(template), method: :post, class: "btn btn--primary btn--sm" do %>
+                    Use Template
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- All Templates Section -->
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3 class="flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
+          Browse by Category
+        </h3>
+        <div class="chart-controls">
+          <button class="btn btn--outline btn--sm">Filter</button>
+          <button class="btn btn--outline btn--sm">Sort</button>
+        </div>
+      </div>
+      
+      <% @categories.each do |category_name, template_types| %>
+        <div style="margin-bottom: var(--space-48);">
+          <div class="category-header">
+            <h4 style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-text); margin-bottom: var(--space-24); padding-bottom: var(--space-12); border-bottom: 2px solid var(--brand-teal); position: relative; display: inline-block;">
+              <%= category_name %>
+              <span style="position: absolute; bottom: -2px; left: 0; width: 60%; height: 2px; background: var(--brand-teal); border-radius: 1px;"></span>
+            </h4>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            <% template_types.each do |template_type| %>
+              <div class="template-card" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: var(--space-24); position: relative; overflow: hidden; transition: all 0.3s ease; cursor: pointer; height: 280px; display: flex; flex-direction: column;">
+                <!-- Card Header -->
+                <div class="card-header" style="display: flex; align-items: center; gap: var(--space-16); margin-bottom: var(--space-20);">
+                  <div class="template-icon" style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--brand-teal-light), var(--brand-teal)); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: white;">
+                      <% case template_type %>
+                      <% when 'sales_dashboard', 'revenue_analysis', 'sales_pipeline' %>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                      <% when 'customer_overview', 'retention_analysis', 'segmentation' %>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                      <% when 'inventory_status', 'supply_chain', 'efficiency_metrics' %>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                      <% when 'campaign_performance', 'channel_analysis', 'roi_tracking' %>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                      <% when 'financial_overview', 'cash_flow', 'expense_analysis' %>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                      <% else %>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                      <% end %>
+                    </svg>
+                  </div>
+                  <div class="template-info" style="flex: 1; min-width: 0;">
+                    <h3 style="font-size: var(--font-size-lg); color: var(--color-text); font-weight: var(--font-weight-semibold); margin: 0 0 var(--space-4) 0; line-height: 1.3;"><%= template_type.humanize.titleize %></h3>
+                    <span class="category-badge" style="background: var(--brand-teal-bg); color: var(--brand-teal); padding: var(--space-2) var(--space-8); border-radius: 20px; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: 0.5px;"><%= category_name %></span>
+                  </div>
+                </div>
+                
+                <!-- Card Content -->
+                <div class="card-content" style="flex: 1; margin-bottom: var(--space-20);">
+                  <p style="color: var(--color-text-secondary); line-height: 1.6; font-size: var(--font-size-sm); margin: 0;">
+                    <% case template_type %>
+                    <% when 'sales_dashboard' %>
+                      Track sales performance, revenue trends, and team metrics in one comprehensive dashboard with real-time insights.
+                    <% when 'revenue_analysis' %>
+                      Analyze revenue streams, growth patterns, and financial performance with advanced forecasting capabilities.
+                    <% when 'sales_pipeline' %>
+                      Monitor your sales funnel, conversion rates, and deal progression with actionable insights.
+                    <% when 'customer_overview' %>
+                      Get deep insights into customer behavior, demographics, and engagement patterns across all touchpoints.
+                    <% when 'retention_analysis' %>
+                      Track customer retention rates, churn analysis, and lifetime value with predictive analytics.
+                    <% when 'segmentation' %>
+                      Segment customers by behavior, value, and characteristics for highly targeted marketing strategies.
+                    <% when 'inventory_status' %>
+                      Monitor stock levels, turnover rates, and inventory optimization with automated alerts.
+                    <% when 'supply_chain' %>
+                      Track supply chain performance, vendor metrics, and logistics efficiency in real-time.
+                    <% when 'efficiency_metrics' %>
+                      Measure operational efficiency, productivity, and process optimization across departments.
+                    <% when 'campaign_performance' %>
+                      Analyze marketing campaign effectiveness, ROI, and engagement with multi-channel insights.
+                    <% when 'channel_analysis' %>
+                      Compare performance across different marketing channels and customer touchpoints.
+                    <% when 'roi_tracking' %>
+                      Track return on investment for marketing activities with detailed attribution analysis.
+                    <% when 'financial_overview' %>
+                      Comprehensive financial dashboard with key metrics, KPIs, and performance indicators.
+                    <% when 'cash_flow' %>
+                      Monitor cash flow patterns, forecasts, and liquidity management with trend analysis.
+                    <% when 'expense_analysis' %>
+                      Track and analyze expenses by category, department, and time period with budget comparisons.
+                    <% else %>
+                      Professional template designed for <%= category_name.downcase %> reporting and comprehensive analysis.
+                    <% end %>
+                  </p>
+                </div>
+                
+                <!-- Card Actions -->
+                <div class="card-actions" style="display: flex; gap: var(--space-12); margin-top: auto;">
+                  <%= link_to new_report_builder_path(template_type: template_type), class: "btn-preview", style: "flex: 1; padding: var(--space-10) var(--space-16); border: 1px solid var(--color-border); border-radius: 8px; text-align: center; color: var(--color-text-secondary); text-decoration: none; font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: var(--space-8);" do %>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    Preview
+                  <% end %>
+                  <%= link_to new_report_builder_path(template_type: template_type), class: "btn-use", style: "flex: 1; padding: var(--space-10) var(--space-16); background: var(--brand-teal); color: white; border-radius: 8px; text-align: center; text-decoration: none; font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: var(--space-8);" do %>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Use Template
+                  <% end %>
+                </div>
+
+                <!-- Hover Overlay -->
+                <div class="hover-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, var(--brand-teal-light) 0%, var(--brand-teal) 100%); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; border-radius: 12px;"></div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Enhanced Call to Action -->
+    <div class="custom-cta-card" style="background: linear-gradient(135deg, var(--brand-teal) 0%, var(--brand-teal-dark) 100%); border-radius: 16px; padding: var(--space-48); margin-top: var(--space-64); text-align: center; position: relative; overflow: hidden; color: white; z-index: 10; clear: both;">
+      <!-- Background Pattern -->
+      <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 1px, transparent 1px), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 30px 30px; opacity: 0.3;"></div>
+      
+      <div style="position: relative; z-index: 1;">
+        <div style="background: rgba(255,255,255,0.1); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-24) auto; backdrop-filter: blur(10px);">
+          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+          </svg>
+        </div>
+        
+        <h2 style="font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-16); line-height: 1.2;">
+          Need Something Custom?
+        </h2>
+        <p style="font-size: var(--font-size-lg); margin-bottom: var(--space-32); max-width: 640px; margin-left: auto; margin-right: auto; opacity: 0.9; line-height: 1.6;">
+          Create your own report from scratch with our intuitive drag-and-drop builder. Build exactly what you need with unlimited customization options.
+        </p>
+        
+        <div style="display: flex; gap: var(--space-16); justify-content: center; align-items: center; flex-wrap: wrap;">
+          <%= link_to new_report_builder_path, class: "custom-btn-primary", style: "background: white; color: var(--brand-teal); padding: var(--space-16) var(--space-32); border-radius: 12px; text-decoration: none; font-weight: var(--font-weight-semibold); font-size: var(--font-size-base); display: inline-flex; align-items: center; gap: var(--space-8); transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(0,0,0,0.1);" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Start Building Custom Report
+          <% end %>
+          
+          <%= link_to "#", class: "custom-btn-secondary", style: "border: 2px solid rgba(255,255,255,0.3); color: white; padding: var(--space-14) var(--space-24); border-radius: 12px; text-decoration: none; font-weight: var(--font-weight-medium); font-size: var(--font-size-base); display: inline-flex; align-items: center; gap: var(--space-8); transition: all 0.3s ease; backdrop-filter: blur(10px);" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            Watch Demo
+          <% end %>
+        </div>
+        
+        <!-- Feature highlights -->
+        <div style="display: flex; justify-content: center; gap: var(--space-32); margin-top: var(--space-32); flex-wrap: wrap; opacity: 0.8;">
+          <div style="display: flex; align-items: center; gap: var(--space-8); font-size: var(--font-size-sm);">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            Drag & Drop Builder
+          </div>
+          <div style="display: flex; align-items: center; gap: var(--space-8); font-size: var(--font-size-sm);">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            Real-time Preview
+          </div>
+          <div style="display: flex; align-items: center; gap: var(--space-8); font-size: var(--font-size-sm);">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            Unlimited Customization
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

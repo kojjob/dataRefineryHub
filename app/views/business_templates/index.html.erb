@@ -1,0 +1,157 @@
+<div class="dashboard-content">
+  <!-- Premium Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-main">
+        <div class="header-title-group">
+          <div class="header-icon-wrapper">
+            <div class="header-icon-gradient">
+              <svg class="header-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+            </div>
+          </div>
+          <div class="header-text">
+            <h1 class="header-title">Industry Templates</h1>
+            <p class="header-subtitle">Get started in minutes with pre-configured dashboards, integrations, and reports designed specifically for your business type</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @applied_template.present? %>
+    <!-- Applied Template Notice -->
+    <div class="glass-card" style="margin-bottom: var(--space-32); padding: var(--space-24); background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);">
+      <div style="display: flex; align-items: flex-start; gap: var(--space-16);">
+        <div style="flex-shrink: 0;">
+          <svg style="width: 20px; height: 20px; color: var(--color-success);" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div style="flex: 1;">
+          <h3 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-success); margin-bottom: var(--space-8);">
+            <%= @applied_template.humanize %> template is active
+          </h3>
+          <div style="margin-bottom: var(--space-16);">
+            <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">Your organization is using the <%= @applied_template.humanize %> business template.</p>
+          </div>
+          <div>
+            <%= link_to "Go to Dashboard", dashboard_path, class: "btn btn--outline btn--sm" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+    <!-- Templates Grid -->
+  <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: var(--space-24); margin-bottom: var(--space-32);">
+    <% @templates.each do |template| %>
+      <div class="glass-card hover-lift" style="<%= 'opacity: 0.75;' if @applied_template.present? %> transition: all var(--duration-normal) var(--ease-standard);">
+        <!-- Template Header -->
+        <div style="background: var(--gradient-primary); padding: var(--space-24); color: var(--color-white); border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
+          <div style="font-size: 3rem; margin-bottom: var(--space-12);"><%= template[:icon] %></div>
+          <h2 style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-8); color: var(--color-white);"><%= template[:name] %></h2>
+          <p style="color: rgba(255, 255, 255, 0.9); line-height: 1.5;"><%= template[:description] %></p>
+        </div>
+
+        <!-- Features -->
+        <div style="padding: var(--space-24);">
+          <h3 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-12);">
+            Key Features
+          </h3>
+          <ul style="margin-bottom: var(--space-24);">
+            <% template[:features].first(4).each do |feature| %>
+              <li style="display: flex; align-items: flex-start; margin-bottom: var(--space-8);">
+                <svg style="width: 20px; height: 20px; color: var(--color-success); margin-top: 2px; margin-right: var(--space-8); flex-shrink: 0;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span style="font-size: var(--font-size-sm); color: var(--color-text-secondary);"><%= feature %></span>
+              </li>
+            <% end %>
+          </ul>
+
+          <!-- Data Sources -->
+          <h3 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-12);">
+            Integrations
+          </h3>
+          <div style="display: flex; flex-wrap: wrap; gap: var(--space-8); margin-bottom: var(--space-24);">
+            <% template[:data_sources].each do |source| %>
+              <span style="display: inline-flex; align-items: center; padding: var(--space-4) var(--space-12); border-radius: var(--radius-full); font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); background-color: var(--color-primary-light); color: var(--color-primary-dark);">
+                <%= source %>
+              </span>
+            <% end %>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; flex-direction: column; gap: var(--space-12);">
+            <%= link_to business_template_path(template[:id]), class: "btn btn--outline btn--full-width" do %>
+              View Details
+            <% end %>
+
+            <% if @applied_template.blank? && (current_user.organization_admin? || current_user.organization_owner?) %>
+              <%= button_to apply_business_template_path(template[:id]),
+                  method: :post,
+                  params: { include_sample_data: true },
+                  data: {
+                    turbo_confirm: "This will set up #{template[:name]} template with all integrations and dashboards. Continue?"
+                  },
+                  class: "btn btn--primary btn--full-width" do %>
+                Apply Template
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Benefits Section -->
+  <div class="ai-insights-panel" style="margin-top: var(--space-48);">
+    <h2 style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-text); text-align: center; margin-bottom: var(--space-32);">
+      Why Use Industry Templates?
+    </h2>
+
+    <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-32);">
+      <div style="text-align: center;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: var(--color-primary-light); border-radius: var(--radius-full); margin-bottom: var(--space-16);">
+          <svg style="width: 32px; height: 32px; color: var(--color-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <h3 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text); margin-bottom: var(--space-8);">Instant Setup</h3>
+        <p style="color: var(--color-text-secondary); line-height: 1.6;">Pre-configured dashboards and reports ready in minutes, not weeks</p>
+      </div>
+
+      <div style="text-align: center;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: var(--color-primary-light); border-radius: var(--radius-full); margin-bottom: var(--space-16);">
+          <svg style="width: 32px; height: 32px; color: var(--color-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text); margin-bottom: var(--space-8);">Industry Best Practices</h3>
+        <p style="color: var(--color-text-secondary); line-height: 1.6;">Metrics and KPIs that matter most for your specific business type</p>
+      </div>
+
+      <div style="text-align: center;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: var(--color-primary-light); border-radius: var(--radius-full); margin-bottom: var(--space-16);">
+          <svg style="width: 32px; height: 32px; color: var(--color-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-text); margin-bottom: var(--space-8);">Proven ROI</h3>
+        <p style="color: var(--color-text-secondary); line-height: 1.6;">Start seeing insights that drive revenue from day one</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Section -->
+  <% if @applied_template.blank? %>
+    <div style="margin-top: var(--space-48); text-align: center;">
+      <p style="color: var(--color-text-secondary); margin-bottom: var(--space-16); font-size: var(--font-size-base);">
+        Not sure which template to choose? Our team can help you select the perfect fit.
+      </p>
+      <%= link_to "Contact Support", "#", class: "btn btn--secondary" %>
+    </div>
+  <% end %>
+</div>

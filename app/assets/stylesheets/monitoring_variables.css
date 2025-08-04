@@ -1,0 +1,43 @@
+/* CSS Variables for Monitoring Dashboard */
+/* Add these to your application.css or create a separate theme file */
+
+:root {
+  /* Colors - matching the design screenshots */
+  --monitoring-bg: #f5f5f0;
+  --monitoring-card-bg: #ffffff;
+  --monitoring-text-primary: #1a1a1a;
+  --monitoring-text-secondary: #666666;
+  --monitoring-text-tertiary: #9ca3af;
+  
+  /* Status Colors */
+  --monitoring-success: #10b981;
+  --monitoring-warning: #f59e0b;
+  --monitoring-error: #ef4444;
+  --monitoring-info: #3b82f6;
+  
+  /* Chart Colors */
+  --monitoring-purple: #8b5cf6;
+  --monitoring-orange: #f97316;
+  --monitoring-red: #ef4444;
+  
+  /* Shadows and Borders */
+  --monitoring-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --monitoring-border: rgba(0, 0, 0, 0.04);
+  
+  /* Spacing */
+  --monitoring-card-padding: 24px;
+  --monitoring-section-gap: 24px;
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --monitoring-bg: #1a1a1a;
+    --monitoring-card-bg: #2d2d2d;
+    --monitoring-text-primary: #ffffff;
+    --monitoring-text-secondary: #a0a0a0;
+    --monitoring-text-tertiary: #6b7280;
+    --monitoring-border: rgba(255, 255, 255, 0.1);
+    --monitoring-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+}

@@ -1,0 +1,5 @@
+<div class="log-line">
+  <span class="log-timestamp"><%= log[:timestamp].strftime('%H:%M:%S') %></span>
+  <span class="log-level <%= log[:level].downcase %>"><%= log[:level] %></span>
+  <span class="log-message"><%= truncate(log[:message], length: 100) %></span>
+</div>

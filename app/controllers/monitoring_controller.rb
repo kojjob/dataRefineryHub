@@ -2,8 +2,8 @@
 
 # Controller for monitoring and health check endpoints
 class MonitoringController < ApplicationController
-  skip_before_action :authenticate_user!
-  skip_before_action :verify_authenticity_token
+  skip_before_action :authenticate_user!, except: [:dashboard]
+  skip_before_action :verify_authenticity_token, except: [:dashboard]
 
   # Health check endpoint
   def health
@@ -37,6 +37,64 @@ class MonitoringController < ApplicationController
   # Liveness probe for k8s
   def alive
     render json: { status: "alive", timestamp: Time.current }, status: :ok
+  end
+
+  # Comprehensive monitoring dashboard
+  def dashboard
+    @system_health = perform_health_checks
+    
+    # System metrics
+    latest_metric = SystemMetric.where(organization_id: current_organization.id)
+                               .order(recorded_at: :desc)
+                               .first
+    @current_metrics = latest_metric&.to_percentage_hash || {
+      cpu_usage: 0,
+      memory_usage: 0,
+      storage_usage: 0
+    }
+    
+    # Pipeline metrics
+    @active_pipelines = current_organization.pipeline_executions
+                                          .where(status: ["running", "pending"])
+                                          .includes(:data_source)
+                                          .order(started_at: :desc)
+    
+    @pipeline_metrics = PipelineMetric.joins(:pipeline_execution)
+                                     .where(pipeline_executions: { organization_id: current_organization.id })
+                                     .where("recorded_at > ?", 1.hour.ago)
+                                     .order(recorded_at: :desc)
+                                     .limit(60)
+    
+    # Recent alerts
+    @recent_alerts = current_organization.alerts
+                                       .where(status: "active")
+                                       .order(created_at: :desc)
+                                       .limit(10)
+    
+    # Event timeline
+    @timeline_events = current_organization.event_timelines
+                                         .includes(:organization)
+                                         .order(occurred_at: :desc)
+                                         .limit(20)
+    
+    # Resource usage over time
+    @resource_metrics = SystemMetric.where(organization_id: current_organization.id)
+                                   .where("recorded_at > ?", 24.hours.ago)
+                                   .order(recorded_at: :asc)
+    
+    # Health check history
+    @health_checks = SystemHealthCheck.where(organization_id: current_organization.id)
+                                     .where("checked_at > ?", 1.hour.ago)
+                                     .group(:check_type)
+                                     .order("MAX(checked_at) DESC")
+
+    # Pipeline performance statistics for charts
+    @pipeline_performance = current_organization.pipeline_executions
+                                              .where(created_at: 30.days.ago..Time.current)
+                                              .joins(:data_source)
+                                              .group('data_sources.name')
+                                              .group(:status)
+                                              .count
   end
 
   private
@@ -157,7 +215,7 @@ class MonitoringController < ApplicationController
 
     critical_sources.each do |source_type|
       circuit_breaker = CircuitBreakerService.for("extractor_#{source_type}")
-      if circuit_breaker.open?
+      if circuit_breaker.state == CircuitBreakerService::OPEN
         unhealthy_sources << source_type
       end
     end

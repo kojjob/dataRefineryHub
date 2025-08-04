@@ -90,7 +90,7 @@ class Api::V1::AuthenticationController < Api::V1::BaseController
         plan: current_organization.plan,
         usage: {
           data_sources: current_organization.data_sources.count,
-          pipelines: current_organization.pipeline_configurations.count,
+          pipelines: current_organization.pipelines.count,
           api_requests_today: current_user.api_requests_today
         }
       } : nil,

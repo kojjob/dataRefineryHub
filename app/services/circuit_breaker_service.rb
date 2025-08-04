@@ -22,9 +22,11 @@ class CircuitBreakerService
     @state = CLOSED
     @failure_count = 0
     @success_count = 0
+    @consecutive_timeouts = 0
     @last_failure_time = nil
     @last_success_time = nil
     @metrics = CircuitBreakerMetrics.new
+    @logger = Rails.logger
   end
 
   # Execute block with circuit breaker protection

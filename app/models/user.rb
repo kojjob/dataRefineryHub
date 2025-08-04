@@ -250,6 +250,23 @@ class User < ApplicationRecord
     role_hierarchy_level > target_user.role_hierarchy_level
   end
 
+  def organization_admin?
+    admin?
+  end
+
+  def organization_owner?
+    owner?
+  end
+
+  def timezone
+    # This could be stored as a user preference
+    # For now, return a default
+    'Eastern Time (US & Canada)'
+  end
+
+  # Delivery preferences
+  has_many :delivery_preferences, dependent: :destroy
+
   private
 
   def password_required?

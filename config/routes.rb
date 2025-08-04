@@ -7,6 +7,23 @@ Rails.application.routes.draw do
 
   root "landing#index"
 
+  # Projects and Landing Pages
+  resources :projects, param: :slug do
+    resources :landing_pages, param: :slug do
+      member do
+        get :preview
+        get :edit
+        patch :update
+        post :publish
+        delete :destroy
+      end
+      collection do
+        get :new
+        post :create
+      end
+    end
+  end
+
   # Debug routes (remove in production)
   get "debug/session_info", to: "debug#session_info" unless Rails.env.production?
   get "debug/test_flash", to: "debug#test_flash" unless Rails.env.production?
@@ -16,11 +33,35 @@ Rails.application.routes.draw do
   get "metrics", to: "monitoring#metrics"
   get "ready", to: "monitoring#ready"
   get "alive", to: "monitoring#alive"
+  get "monitoring", to: "monitoring#dashboard"
 
   # Dashboard routes
   get "dashboard", to: "dashboard#index"
   get "dashboard/analytics", to: "dashboard#analytics"
   get "dashboard/reports", to: "dashboard#reports"
+
+  # Business Templates
+  resources :business_templates, only: [:index, :show] do
+    member do
+      post :apply
+    end
+  end
+
+  # Report Builder
+  resources :report_builder do
+    member do
+      get :preview
+      post :duplicate
+      post :add_component
+      patch :update_component
+      delete 'components/:component_id', to: 'report_builder#delete_component', as: :delete_component
+      patch 'components/:component_id/move', to: 'report_builder#move_component', as: :move_component
+      patch 'components/:component_id/resize', to: 'report_builder#resize_component', as: :resize_component
+    end
+    collection do
+      get :gallery
+    end
+  end
 
   # Industry Templates
   resources :industry_templates, only: [:index, :show] do
@@ -285,6 +326,15 @@ Rails.application.routes.draw do
     member do
       patch :change_role
       delete :remove_avatar
+    end
+  end
+
+  # Delivery Preferences
+  resources :delivery_preferences do
+    member do
+      patch :toggle
+      get :preview
+      post :test_delivery
     end
   end
 

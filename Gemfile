@@ -44,7 +44,6 @@ gem "chartkick"
 # File Processing
 gem "roo"           # Excel and CSV parsing
 gem "roo-xls"       # Legacy Excel support
-gem "creek"         # Streaming Excel parsing for large files
 gem "smarter_csv"   # Advanced CSV parsing
 
 # External API Integrations
@@ -55,16 +54,11 @@ gem "mailchimp_api_v3"
 
 # Encryption and Security
 gem "lockbox"
-gem "blind_index"
-gem "rbnacl"
 
 # Utilities
 gem "money-rails"
 gem "friendly_id"
-gem "paranoia"
-gem "paper_trail"
-gem "validate_url"
-gem "chronic"
+gem "fugit"  # For cron expression parsing
 
 # Monitoring and Observability
 gem "opentelemetry-sdk"
@@ -116,16 +110,11 @@ end
 group :development do
   # Development tools
   gem "annotate"
-  gem "letter_opener"
   gem "listen"
-  gem "spring"
-  gem "spring-watcher-listen"
 
   # Performance and profiling
   gem "bullet"
   gem "rack-mini-profiler"
-  gem "memory_profiler"
-  gem "stackprof"
 end
 
 group :test do

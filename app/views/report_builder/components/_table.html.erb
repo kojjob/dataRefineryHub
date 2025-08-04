@@ -1,0 +1,73 @@
+<div class="table-placeholder">
+  <div class="placeholder-header">
+    <div class="placeholder-icon">📋</div>
+    <div class="placeholder-title"><%= component.properties['title'] || 'Data Table' %></div>
+  </div>
+  <div class="table-mock">
+    <div class="table-header">
+      <div class="table-cell">Column 1</div>
+      <div class="table-cell">Column 2</div>
+      <div class="table-cell">Column 3</div>
+    </div>
+    <div class="table-row">
+      <div class="table-cell">Sample Data</div>
+      <div class="table-cell">$1,234</div>
+      <div class="table-cell">+5.2%</div>
+    </div>
+    <div class="table-row">
+      <div class="table-cell">Sample Data</div>
+      <div class="table-cell">$2,456</div>
+      <div class="table-cell">-2.1%</div>
+    </div>
+  </div>
+  <div class="placeholder-subtitle">
+    Click edit to configure data source
+  </div>
+</div>
+
+<style>
+.table-placeholder {
+  height: 100%;
+  border: 2px dashed #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.placeholder-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-mock {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.table-header, .table-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.table-header .table-cell {
+  font-weight: 600;
+  color: #374151;
+  padding: 8px;
+  background: #f3f4f6;
+  border-radius: 4px;
+}
+
+.table-row .table-cell {
+  padding: 8px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 14px;
+}
+</style>

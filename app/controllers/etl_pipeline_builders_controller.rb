@@ -6,7 +6,7 @@ class EtlPipelineBuildersController < ApplicationController
   before_action :authorize_pipeline
 
   def index
-    @pipelines = current_organization.pipeline_configurations
+    @pipelines = current_organization.pipelines
                                    .includes(:created_by, :last_executed_by)
                                    .order(created_at: :desc)
                                    .page(params[:page])
@@ -16,14 +16,14 @@ class EtlPipelineBuildersController < ApplicationController
   end
 
   def new
-    @pipeline = current_organization.pipeline_configurations.build
+    @pipeline = current_organization.pipelines.build
     @data_sources = current_organization.data_sources
     @warehouses = available_warehouses
     @transformation_functions = TransformationRulesEngine.instance.get_available_functions
   end
 
   def create
-    @pipeline = current_organization.pipeline_configurations.build(pipeline_params)
+    @pipeline = current_organization.pipelines.build(pipeline_params)
     @pipeline.created_by = current_user
 
     if @pipeline.save
@@ -178,7 +178,7 @@ class EtlPipelineBuildersController < ApplicationController
 
     begin
       config = parse_pipeline_file(file)
-      @pipeline = current_organization.pipeline_configurations.build
+      @pipeline = current_organization.pipelines.build
       @pipeline.import_config(config)
 
       if @pipeline.save
@@ -194,15 +194,15 @@ class EtlPipelineBuildersController < ApplicationController
   private
 
   def set_pipeline
-    @pipeline = current_organization.pipeline_configurations.find(params[:id])
+    @pipeline = current_organization.pipelines.find(params[:id])
   end
 
   def authorize_pipeline
-    authorize(@pipeline || PipelineConfiguration)
+    authorize(@pipeline || Pipeline)
   end
 
   def pipeline_params
-    params.require(:pipeline_configuration).permit(
+    params.require(:pipeline).permit(
       :name, :description, :pipeline_type, :schedule_config,
       :error_handling_strategy, :retry_policy, :notification_settings,
       source_config: {},

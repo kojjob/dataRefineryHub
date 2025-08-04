@@ -1,0 +1,18 @@
+<% logs = [
+  { time: '14:45:23', level: 'INFO', message: 'Pipeline "Sales Data ETL" completed successfully' },
+  { time: '14:45:22', level: 'INFO', message: 'Writing 45,230 records to BigQuery table "analytics.orders"' },
+  { time: '14:43:15', level: 'INFO', message: 'Processing batch 450/450 (100%)' },
+  { time: '14:30:45', level: 'ERROR', message: 'Failed to connect to WooCommerce API: Connection timeout' },
+  { time: '14:30:40', level: 'WARN', message: 'Retry attempt 3/3 for pipeline "Inventory Sync"' },
+  { time: '14:25:32', level: 'WARN', message: 'Memory usage at 85% for process PID 12345' },
+  { time: '14:00:00', level: 'INFO', message: 'Starting scheduled pipeline "Customer Analytics"' },
+  { time: '13:00:00', level: 'INFO', message: 'System update completed: v2.4.1 deployed successfully' }
+] %>
+
+<% logs.each do |log| %>
+  <div class="log-entry <%= log[:level].downcase %>">
+    <span class="log-time"><%= log[:time] %></span>
+    <span class="log-level"><%= log[:level] %></span>
+    <span class="log-message"><%= log[:message] %></span>
+  </div>
+<% end %>
