@@ -45,7 +45,8 @@ class PresentationConfig
     config_file = Rails.root.join("config", "presentation_defaults.yml")
 
     if File.exist?(config_file)
-      yaml_config = YAML.load_file(config_file)
+      yaml_content = File.read(config_file)
+      yaml_config = Psych.safe_load(yaml_content, aliases: true, permitted_classes: [Symbol])
       environment_config = yaml_config[Rails.env] || yaml_config["default"] || {}
 
       # Allow environment variable overrides

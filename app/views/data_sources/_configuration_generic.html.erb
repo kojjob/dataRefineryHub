@@ -1,0 +1,253 @@
+<div class="configuration-section">
+  <% case data_source.source_type %>
+  <% when 'quickbooks' %>
+    <div class="form-group">
+      <%= form.label :company_id, "QuickBooks Company ID", class: "form-label" %>
+      <%= form.text_field :company_id, 
+          value: data_source.credentials&.dig('company_id'),
+          class: "form-control",
+          placeholder: "Enter your QuickBooks Company ID" %>
+      <p class="form-hint">Found in your QuickBooks account settings</p>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :client_id, "Client ID", class: "form-label" %>
+      <%= form.text_field :client_id,
+          value: data_source.credentials&.dig('client_id'),
+          class: "form-control",
+          placeholder: "QuickBooks App Client ID" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :client_secret, "Client Secret", class: "form-label" %>
+      <%= form.password_field :client_secret,
+          value: data_source.credentials&.dig('client_secret'),
+          class: "form-control",
+          placeholder: "QuickBooks App Client Secret" %>
+    </div>
+
+  <% when 'google_analytics' %>
+    <div class="form-group">
+      <%= form.label :property_id, "Google Analytics Property ID", class: "form-label" %>
+      <%= form.text_field :property_id,
+          value: data_source.credentials&.dig('property_id'),
+          class: "form-control",
+          placeholder: "e.g., 123456789" %>
+      <p class="form-hint">Found in Google Analytics Admin > Property Settings</p>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :service_account_json, "Service Account JSON", class: "form-label" %>
+      <%= form.text_area :service_account_json,
+          value: data_source.credentials&.dig('service_account_json'),
+          class: "form-control",
+          rows: 6,
+          placeholder: "Paste your service account JSON here" %>
+      <p class="form-hint">Download from Google Cloud Console</p>
+    </div>
+
+  <% when 'stripe' %>
+    <div class="form-group">
+      <%= form.label :api_key, "Stripe API Key", class: "form-label" %>
+      <%= form.password_field :api_key,
+          value: data_source.credentials&.dig('api_key'),
+          class: "form-control",
+          placeholder: "sk_live_..." %>
+      <p class="form-hint">Use restricted keys with read-only permissions</p>
+    </div>
+
+  <% when 'mailchimp' %>
+    <div class="form-group">
+      <%= form.label :api_key, "Mailchimp API Key", class: "form-label" %>
+      <%= form.password_field :api_key,
+          value: data_source.credentials&.dig('api_key'),
+          class: "form-control",
+          placeholder: "xxxxxxxx-us1" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :server_prefix, "Server Prefix", class: "form-label" %>
+      <%= form.text_field :server_prefix,
+          value: data_source.credentials&.dig('server_prefix'),
+          class: "form-control",
+          placeholder: "e.g., us1" %>
+      <p class="form-hint">The part after the dash in your API key</p>
+    </div>
+
+  <% when 'zendesk' %>
+    <div class="form-group">
+      <%= form.label :subdomain, "Zendesk Subdomain", class: "form-label" %>
+      <%= form.text_field :subdomain,
+          value: data_source.credentials&.dig('subdomain'),
+          class: "form-control",
+          placeholder: "yourcompany" %>
+      <p class="form-hint">From yourcompany.zendesk.com</p>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :email, "Email/Username", class: "form-label" %>
+      <%= form.email_field :email,
+          value: data_source.credentials&.dig('email'),
+          class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :api_token, "API Token", class: "form-label" %>
+      <%= form.password_field :api_token,
+          value: data_source.credentials&.dig('api_token'),
+          class: "form-control" %>
+    </div>
+
+  <% when 'hubspot' %>
+    <div class="form-group">
+      <%= form.label :api_key, "HubSpot API Key", class: "form-label" %>
+      <%= form.password_field :api_key,
+          value: data_source.credentials&.dig('api_key'),
+          class: "form-control",
+          placeholder: "Enter your HubSpot API key" %>
+      <p class="form-hint">Found in Settings > Integrations > API Key</p>
+    </div>
+
+  <% when 'google_ads' %>
+    <div class="form-group">
+      <%= form.label :customer_id, "Google Ads Customer ID", class: "form-label" %>
+      <%= form.text_field :customer_id,
+          value: data_source.credentials&.dig('customer_id'),
+          class: "form-control",
+          placeholder: "123-456-7890" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :developer_token, "Developer Token", class: "form-label" %>
+      <%= form.password_field :developer_token,
+          value: data_source.credentials&.dig('developer_token'),
+          class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :refresh_token, "OAuth Refresh Token", class: "form-label" %>
+      <%= form.password_field :refresh_token,
+          value: data_source.credentials&.dig('refresh_token'),
+          class: "form-control" %>
+    </div>
+
+  <% when 'facebook_ads' %>
+    <div class="form-group">
+      <%= form.label :access_token, "Facebook Access Token", class: "form-label" %>
+      <%= form.password_field :access_token,
+          value: data_source.credentials&.dig('access_token'),
+          class: "form-control",
+          placeholder: "Long-lived access token" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :ad_account_id, "Ad Account ID", class: "form-label" %>
+      <%= form.text_field :ad_account_id,
+          value: data_source.credentials&.dig('ad_account_id'),
+          class: "form-control",
+          placeholder: "act_123456789" %>
+    </div>
+
+  <% when 'salesforce' %>
+    <div class="form-group">
+      <%= form.label :instance_url, "Salesforce Instance URL", class: "form-label" %>
+      <%= form.text_field :instance_url,
+          value: data_source.credentials&.dig('instance_url'),
+          class: "form-control",
+          placeholder: "https://yourcompany.my.salesforce.com" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :client_id, "Connected App Client ID", class: "form-label" %>
+      <%= form.text_field :client_id,
+          value: data_source.credentials&.dig('client_id'),
+          class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :client_secret, "Connected App Client Secret", class: "form-label" %>
+      <%= form.password_field :client_secret,
+          value: data_source.credentials&.dig('client_secret'),
+          class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :refresh_token, "OAuth Refresh Token", class: "form-label" %>
+      <%= form.password_field :refresh_token,
+          value: data_source.credentials&.dig('refresh_token'),
+          class: "form-control" %>
+    </div>
+
+  <% when 'amazon_seller_central' %>
+    <div class="form-group">
+      <%= form.label :marketplace_id, "Marketplace ID", class: "form-label" %>
+      <%= form.text_field :marketplace_id,
+          value: data_source.credentials&.dig('marketplace_id'),
+          class: "form-control",
+          placeholder: "e.g., ATVPDKIKX0DER for US" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :seller_id, "Seller ID", class: "form-label" %>
+      <%= form.text_field :seller_id,
+          value: data_source.credentials&.dig('seller_id'),
+          class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :mws_auth_token, "MWS Auth Token", class: "form-label" %>
+      <%= form.password_field :mws_auth_token,
+          value: data_source.credentials&.dig('mws_auth_token'),
+          class: "form-control" %>
+    </div>
+
+  <% when 'custom_api' %>
+    <div class="form-group">
+      <%= form.label :api_endpoint, "API Endpoint URL", class: "form-label" %>
+      <%= form.text_field :api_endpoint,
+          value: data_source.credentials&.dig('api_endpoint'),
+          class: "form-control",
+          placeholder: "https://api.example.com/v1" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :auth_type, "Authentication Type", class: "form-label" %>
+      <%= form.select :auth_type,
+          options_for_select([
+            ['API Key', 'api_key'],
+            ['Bearer Token', 'bearer'],
+            ['Basic Auth', 'basic'],
+            ['OAuth 2.0', 'oauth2']
+          ], data_source.credentials&.dig('auth_type')),
+          { prompt: 'Select authentication type' },
+          class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :auth_value, "Authentication Value", class: "form-label" %>
+      <%= form.password_field :auth_value,
+          value: data_source.credentials&.dig('auth_value'),
+          class: "form-control",
+          placeholder: "API key, token, or credentials" %>
+    </div>
+
+  <% when 'file_upload' %>
+    <div class="form-group">
+      <p class="form-hint">File upload sources are configured through the upload interface.</p>
+    </div>
+
+  <% else %>
+    <div class="alert alert-info">
+      <p>Configuration for <%= data_source.source_type.humanize %> is coming soon.</p>
+    </div>
+  <% end %>
+
+  <!-- Common fields for all sources -->
+  <div class="form-group">
+    <%= form.label :sync_frequency, "Sync Frequency", class: "form-label" %>
+    <%= form.select :sync_frequency,
+        options_for_select(DataSource::SYNC_FREQUENCIES.map { |f| [f.humanize, f] }, data_source.sync_frequency),
+        { prompt: 'Select sync frequency' },
+        class: "form-control" %>
+  </div>
+</div>

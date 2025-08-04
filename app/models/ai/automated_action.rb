@@ -12,7 +12,7 @@ module Ai
     validates :parameters, presence: true
     
     # Action status workflow
-    enum status: {
+    enum :status, {
       pending: 0,
       approved: 1,
       executing: 2,
@@ -20,10 +20,10 @@ module Ai
       failed: 4,
       rejected: 5,
       cancelled: 6
-    }, _prefix: true
+    }, prefix: true
     
     # Action types with risk levels
-    enum action_type: {
+    enum :action_type, {
       # Low risk - can auto-execute
       send_notification: 0,
       generate_report: 1,
@@ -48,7 +48,7 @@ module Ai
       delete_data: 31,
       change_permissions: 32,
       modify_integration: 33
-    }, _prefix: true
+    }, prefix: true
     
     # Risk levels for approval routing
     RISK_LEVELS = {

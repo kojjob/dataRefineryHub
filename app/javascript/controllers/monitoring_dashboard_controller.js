@@ -7,6 +7,9 @@ export default class extends Controller {
     metricsData: Array,
     metricsLabels: Array,
     currentMetrics: Object,
+    pipelineStats: Object,
+    networkIo: { type: Number, default: 0 },
+    queueDepth: { type: Number, default: 0 },
     refreshInterval: { type: Number, default: 30000 }
   }
 
@@ -63,12 +66,19 @@ export default class extends Controller {
     if (!this.hasPipelineChartTarget) return
 
     const ctx = this.pipelineChartTarget.getContext('2d')
+    const stats = this.pipelineStatsValue || { completed: 0, running: 0, failed: 0, queued: 0 }
+    
     this.pipelineChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
         labels: ['Completed', 'Running', 'Failed', 'Queued'],
         datasets: [{
-          data: [65, 20, 10, 5], // TODO: Replace with actual data
+          data: [
+            stats.completed || 0,
+            stats.running || 0,
+            stats.failed || 0,
+            stats.queued || 0
+          ],
           backgroundColor: ['#10B981', '#14B8A6', '#EF4444', '#6B7280']
         }]
       },
@@ -88,7 +98,7 @@ export default class extends Controller {
     if (!this.hasResourceChartTarget) return
 
     const ctx = this.resourceChartTarget.getContext('2d')
-    const metrics = this.currentMetricsValue
+    const metrics = this.currentMetricsValue || {}
     
     this.resourceChart = new Chart(ctx, {
       type: 'radar',
@@ -100,8 +110,8 @@ export default class extends Controller {
             metrics.cpu_usage || 0,
             metrics.memory_usage || 0,
             metrics.storage_usage || 0,
-            45, // TODO: Replace with actual network I/O
-            30  // TODO: Replace with actual queue depth
+            this.networkIoValue || 0,
+            this.queueDepthValue || 0
           ],
           borderColor: '#8B5CF6',
           backgroundColor: 'rgba(139, 92, 246, 0.2)'

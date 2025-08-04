@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require_relative '../../../../app/domain/pipeline_management/value_objects/pipeline_status'
 
 RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
   describe '#initialize' do

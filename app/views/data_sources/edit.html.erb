@@ -131,7 +131,12 @@
         </div>
         <div class="px-6 py-6">
           <div id="configuration-fields">
-            <%= render partial: "configuration_#{@data_source.source_type}", locals: { form: form, data_source: @data_source } %>
+            <% partial_name = "configuration_#{@data_source.source_type}" %>
+            <% if lookup_context.exists?(partial_name, ["data_sources"], true) %>
+              <%= render partial: partial_name, locals: { form: form, data_source: @data_source } %>
+            <% else %>
+              <%= render partial: "configuration_generic", locals: { form: form, data_source: @data_source } %>
+            <% end %>
           </div>
         </div>
       </div>

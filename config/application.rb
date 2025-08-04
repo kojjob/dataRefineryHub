@@ -33,6 +33,11 @@ module DataRefineryPlatform
       #{config.root}/app/application
     ]
 
+    # Also add to eager load paths for proper constant resolution
+    config.eager_load_paths += %W[
+      #{config.root}/app/domain
+    ]
+
     # Full-stack application with API capabilities
     # Enable sessions, flash, cookies, and views for dashboard functionality
     config.api_only = false

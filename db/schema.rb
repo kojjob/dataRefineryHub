@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_03_200004) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_03_223631) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -525,11 +525,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_200004) do
     t.text "address"
     t.string "applied_template"
     t.datetime "template_applied_at"
+    t.string "subscription_tier", default: "free", null: false
     t.index ["created_at"], name: "idx_organizations_created"
     t.index ["plan"], name: "index_organizations_on_plan"
     t.index ["slug"], name: "index_organizations_on_slug", unique: true
     t.index ["status"], name: "index_organizations_on_status"
     t.index ["stripe_customer_id"], name: "index_organizations_on_stripe_customer_id", unique: true
+    t.index ["subscription_tier"], name: "index_organizations_on_subscription_tier"
   end
 
   create_table "pipeline_executions", force: :cascade do |t|

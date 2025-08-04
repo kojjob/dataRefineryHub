@@ -8,7 +8,7 @@ class ApiRateLimiter
     # Public endpoints (no auth required)
     public: {
       requests_per_minute: 60,
-      requests_per_hour: 500,
+      requests_per_hour: 1000,
       burst_size: 10
     },
 
@@ -119,6 +119,10 @@ class ApiRateLimiter
     request.path == "/health" ||
     request.path == "/metrics" ||
     request.path.start_with?("/rails/") ||
+    # Skip for public landing page demo endpoints
+    request.path.start_with?("/api/v1/public/") ||
+    # Skip for landing page itself
+    request.path == "/" ||
     Rails.env.test?
   end
 

@@ -325,17 +325,24 @@ module Ai
     end
 
     def get_recent_integrations
-      current_organization.data_sources
-                         .order(created_at: :desc)
-                         .limit(5)
-                         .map do |source|
+      sources = current_organization.data_sources
+                                   .order(created_at: :desc)
+                                   .limit(5)
+      
+      # Get counts in a single query
+      source_ids = sources.pluck(:id)
+      counts = RawDataRecord.where(data_source_id: source_ids)
+                           .group(:data_source_id)
+                           .count
+      
+      sources.map do |source|
         {
           id: source.id,
           name: source.name,
           source_type: source.source_type,
           status: source.status,
           created_at: source.created_at.iso8601,
-          records_count: source.raw_data_records.count,
+          records_count: counts[source.id] || 0,
           last_sync: source.last_sync_at&.iso8601
         }
       end

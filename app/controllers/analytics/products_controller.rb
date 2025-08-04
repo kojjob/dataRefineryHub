@@ -6,6 +6,8 @@ class Analytics::ProductsController < Analytics::BaseController
 
     @product_metrics = calculate_product_analytics
     @inventory_metrics = calculate_inventory_analytics
+    @sales_trend_data = calculate_sales_trend_data
+    @category_distribution = calculate_category_distribution
   end
 
   def performance
@@ -413,5 +415,65 @@ class Analytics::ProductsController < Analytics::BaseController
 
     normalized_score = ((total_score - min_possible_score) / (max_possible_score - min_possible_score).to_f * 100).round(1)
     [ 0, [ 100, normalized_score ].min ].max
+  end
+
+  def calculate_sales_trend_data
+    # Get daily sales data for the date range
+    order_records = order_records_scope
+    daily_sales = {}
+    
+    # Initialize all days in range
+    (@start_date..@end_date).each do |date|
+      daily_sales[date.to_s] = { units: 0, revenue: 0 }
+    end
+    
+    # Aggregate sales by day
+    order_records.find_each do |order|
+      next unless order.raw_data["line_items"]
+      
+      order_date = order.fetched_at.to_date.to_s
+      next unless daily_sales[order_date]
+      
+      order.raw_data["line_items"].each do |item|
+        quantity = item["quantity"].to_i
+        price = item["price"].to_f
+        revenue = quantity * price
+        
+        daily_sales[order_date][:units] += quantity
+        daily_sales[order_date][:revenue] += revenue
+      end
+    end
+    
+    # Convert to arrays for chart
+    dates = daily_sales.keys.sort
+    units_data = dates.map { |date| daily_sales[date][:units] }
+    revenue_data = dates.map { |date| daily_sales[date][:revenue].round(2) }
+    
+    {
+      labels: dates.map { |d| Date.parse(d).strftime("%b %d") },
+      units: units_data,
+      revenue: revenue_data
+    }
+  end
+
+  def calculate_category_distribution
+    product_records = product_records_scope
+    categories = Hash.new(0)
+    
+    product_records.find_each do |product|
+      category = product.raw_data["product_type"] || "Uncategorized"
+      categories[category] += 1
+    end
+    
+    # Limit to top 5 categories plus "Other"
+    sorted_categories = categories.sort_by { |_, count| -count }
+    top_categories = sorted_categories.first(5).to_h
+    
+    if sorted_categories.length > 5
+      other_count = sorted_categories[5..-1].sum { |_, count| count }
+      top_categories["Other"] = other_count if other_count > 0
+    end
+    
+    top_categories
   end
 end

@@ -237,30 +237,23 @@ document.addEventListener('DOMContentLoaded', function() {
   // Product Sales Trend Chart
   const salesCtx = document.getElementById('productSalesChart')?.getContext('2d');
   if (salesCtx) {
-    // Generate sample data
-    const dates = Array.from({length: 30}, (_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() - (29 - i));
-      return d.toISOString().split('T')[0];
-    });
-    
-    const salesData = dates.map(() => Math.floor(Math.random() * 500) + 100);
-    const revenueData = salesData.map(s => s * (Math.random() * 50 + 30));
+    // Use real sales trend data from controller
+    const salesTrendData = <%= @sales_trend_data.to_json %>;
     
     new Chart(salesCtx, {
       type: 'line',
       data: {
-        labels: dates.map(d => new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' })),
+        labels: salesTrendData.labels,
         datasets: [{
           label: 'Units Sold',
-          data: salesData,
+          data: salesTrendData.units,
           borderColor: 'rgba(33, 128, 141, 1)',
           backgroundColor: 'rgba(33, 128, 141, 0.1)',
           yAxisID: 'y-units',
           tension: 0.3
         }, {
           label: 'Revenue',
-          data: revenueData,
+          data: salesTrendData.revenue,
           borderColor: 'rgba(94, 82, 64, 1)',
           backgroundColor: 'rgba(94, 82, 64, 0.1)',
           yAxisID: 'y-revenue',
@@ -308,14 +301,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Category Distribution Chart
   const categoryCtx = document.getElementById('categoryChart')?.getContext('2d');
   if (categoryCtx) {
-    // Sample category data
-    const categories = {
-      'Electronics': <%= (@product_metrics[:total_products] * 0.3).round %>,
-      'Clothing': <%= (@product_metrics[:total_products] * 0.25).round %>,
-      'Home & Garden': <%= (@product_metrics[:total_products] * 0.2).round %>,
-      'Sports': <%= (@product_metrics[:total_products] * 0.15).round %>,
-      'Other': <%= (@product_metrics[:total_products] * 0.1).round %>
-    };
+    // Use real category data from controller
+    const categories = <%= @category_distribution.to_json %>;
     
     new Chart(categoryCtx, {
       type: 'doughnut',
