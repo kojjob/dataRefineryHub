@@ -379,24 +379,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_223631) do
     t.index ["user_id"], name: "index_delivery_preferences_on_user_id"
   end
 
-  create_table "domain_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "event_id", null: false
-    t.string "event_type", null: false
-    t.string "aggregate_type", null: false
-    t.uuid "aggregate_id", null: false
-    t.jsonb "data", default: {}
-    t.jsonb "metadata", default: {}
-    t.datetime "occurred_at", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["aggregate_id", "aggregate_type"], name: "index_domain_events_on_aggregate_id_and_aggregate_type"
-    t.index ["aggregate_type", "aggregate_id"], name: "index_domain_events_on_aggregate"
-    t.index ["created_at"], name: "index_domain_events_on_created_at"
-    t.index ["event_id"], name: "index_domain_events_on_event_id", unique: true
-    t.index ["event_type"], name: "index_domain_events_on_event_type"
-    t.index ["occurred_at"], name: "index_domain_events_on_occurred_at"
-  end
-
   create_table "event_timelines", force: :cascade do |t|
     t.bigint "organization_id", null: false
     t.string "event_type", null: false
@@ -619,11 +601,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_223631) do
     t.datetime "last_executed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.jsonb "tags", default: []
-    t.integer "aggregate_version", default: 0
     t.string "schedule_type"
     t.string "schedule_expression"
     t.string "schedule_timezone", default: "UTC"
+    t.jsonb "tags", default: []
+    t.integer "aggregate_version", default: 0
     t.integer "retry_max_attempts"
     t.string "retry_backoff_strategy"
     t.integer "retry_initial_delay"

@@ -3593,6 +3593,61 @@ img:not([src]) {
   flex-shrink: 0;
 }
 
+/* Password Edit Page Specific Styles */
+.auth-page__password-icon--success {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.08));
+  border: 2px solid rgba(34, 197, 94, 0.2);
+}
+
+.auth-page__password-icon--success svg {
+  color: var(--color-success);
+}
+
+.auth-page__password-requirements {
+  background: rgba(var(--color-primary-rgb, 33, 128, 141), 0.05);
+  border: 1px solid rgba(var(--color-primary-rgb, 33, 128, 141), 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-16);
+}
+
+.auth-page__requirements-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-8);
+}
+
+.auth-page__requirements-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.auth-page__requirement {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.auth-page__requirement svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.auth-page__requirement.password-requirement--valid svg {
+  color: var(--color-success);
+}
+
+.auth-page__requirement.password-requirement--valid {
+  color: var(--color-text);
+}
+
 /* Authentication Page Responsive Styles */
 @media (max-width: 1024px) {
   .auth-page__content {
