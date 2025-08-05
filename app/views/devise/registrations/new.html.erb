@@ -141,114 +141,111 @@
             </div>
 
             <!-- Email Field -->
-            <div>
-              <%= f.label :email, "Work email", class: "block text-sm font-medium text-gray-700 mb-2" %>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="auth-page__field">
+              <%= f.label :email, "Work email", class: "auth-page__label" %>
+              <div class="auth-page__input-wrapper">
+                <div class="auth-page__input-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                   </svg>
                 </div>
-                <%= f.email_field :email, 
-                    autofocus: true, 
+                <%= f.email_field :email,
+                    autofocus: true,
                     autocomplete: "email",
-                    class: "block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors",
+                    class: "auth-page__input",
                     placeholder: "john@company.com" %>
               </div>
             </div>
 
             <!-- Password Field -->
-            <div>
-              <%= f.label :password, class: "block text-sm font-medium text-gray-700 mb-2" do %>
+            <div class="auth-page__field">
+              <%= f.label :password, class: "auth-page__label" do %>
                 Password
-                <span class="text-xs text-gray-500 ml-1">(<%= @minimum_password_length || 6 %> characters minimum)</span>
+                <span class="auth-page__label-hint">(<%= @minimum_password_length || 6 %> characters minimum)</span>
               <% end %>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="auth-page__input-wrapper">
+                <div class="auth-page__input-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                   </svg>
                 </div>
-                <%= f.password_field :password, 
+                <%= f.password_field :password,
                     autocomplete: "new-password",
-                    class: "block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors",
+                    class: "auth-page__input",
                     placeholder: "Create a strong password" %>
               </div>
               <!-- Password strength indicator -->
-              <div class="mt-2 h-1 w-full bg-gray-200 rounded-full overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-red-500 to-green-500 transition-all duration-300" style="width: 0%"></div>
+              <div class="auth-page__password-strength">
+                <div class="auth-page__password-strength-bar"></div>
               </div>
             </div>
 
             <!-- Password Confirmation -->
-            <div>
-              <%= f.label :password_confirmation, "Confirm password", class: "block text-sm font-medium text-gray-700 mb-2" %>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="auth-page__field">
+              <%= f.label :password_confirmation, "Confirm password", class: "auth-page__label" %>
+              <div class="auth-page__input-wrapper">
+                <div class="auth-page__input-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
-                <%= f.password_field :password_confirmation, 
+                <%= f.password_field :password_confirmation,
                     autocomplete: "new-password",
-                    class: "block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors",
+                    class: "auth-page__input",
                     placeholder: "Confirm your password" %>
               </div>
             </div>
 
             <!-- Terms & Conditions -->
-            <div class="space-y-3">
-              <div class="flex items-start">
-                <input type="checkbox" id="terms" required
-                       class="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 mt-1">
-                <label for="terms" class="ml-2 text-sm text-gray-600">
-                  I agree to the 
-                  <%= link_to "Terms of Service", "#", class: "font-medium text-purple-600 hover:text-purple-700" %>
-                  and 
-                  <%= link_to "Privacy Policy", "#", class: "font-medium text-purple-600 hover:text-purple-700" %>
+            <div class="auth-page__terms">
+              <div class="auth-page__checkbox">
+                <input type="checkbox" id="terms" required class="auth-page__checkbox-input">
+                <label for="terms" class="auth-page__checkbox-label">
+                  I agree to the
+                  <%= link_to "Terms of Service", "#", class: "auth-page__form-link" %>
+                  and
+                  <%= link_to "Privacy Policy", "#", class: "auth-page__form-link" %>
                 </label>
               </div>
-              
-              <div class="flex items-start">
-                <input type="checkbox" id="marketing" 
-                       class="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 mt-1">
-                <label for="marketing" class="ml-2 text-sm text-gray-600">
-                  Send me tips and best practices to get the most out of DataReflow
+
+              <div class="auth-page__checkbox">
+                <input type="checkbox" id="marketing" class="auth-page__checkbox-input">
+                <label for="marketing" class="auth-page__checkbox-label">
+                  Send me tips and best practices to get the most out of Data Reflow
                 </label>
               </div>
             </div>
 
             <!-- Submit Button -->
-            <div>
-              <%= f.submit "Create account", 
-                  class: "w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:from-purple-700 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 transform hover:-translate-y-0.5" %>
+            <div class="auth-page__submit">
+              <%= f.submit "Create account", class: "btn btn--primary btn--lg auth-page__submit-btn" %>
             </div>
           <% end %>
 
           <!-- Features Summary -->
-          <div class="mt-8 pt-8 border-t border-gray-200">
-            <p class="text-sm font-medium text-gray-900 mb-4">Your free trial includes:</p>
-            <div class="grid grid-cols-2 gap-3">
-              <div class="flex items-center text-sm text-gray-600">
-                <svg class="h-4 w-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="auth-page__features-summary">
+            <p class="auth-page__features-title">Your free trial includes:</p>
+            <div class="auth-page__features-grid">
+              <div class="auth-page__feature-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 All integrations
               </div>
-              <div class="flex items-center text-sm text-gray-600">
-                <svg class="h-4 w-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="auth-page__feature-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 Unlimited users
               </div>
-              <div class="flex items-center text-sm text-gray-600">
-                <svg class="h-4 w-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="auth-page__feature-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 Real-time analytics
               </div>
-              <div class="flex items-center text-sm text-gray-600">
-                <svg class="h-4 w-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="auth-page__feature-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 24/7 support
