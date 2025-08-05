@@ -421,7 +421,7 @@ class Analytics::CustomersController < Analytics::BaseController
     
     # Initialize daily data
     daily_data = {}
-    (@start_date..@end_date).each do |date|
+    (@start_date.to_date..@end_date.to_date).each do |date|
       daily_data[date.to_s] = { new_customers: 0, total_customers: 0 }
     end
     

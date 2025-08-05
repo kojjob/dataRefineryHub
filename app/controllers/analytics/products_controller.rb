@@ -423,7 +423,7 @@ class Analytics::ProductsController < Analytics::BaseController
     daily_sales = {}
     
     # Initialize all days in range
-    (@start_date..@end_date).each do |date|
+    (@start_date.to_date..@end_date.to_date).each do |date|
       daily_sales[date.to_s] = { units: 0, revenue: 0 }
     end
     
