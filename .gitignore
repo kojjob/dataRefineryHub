@@ -37,3 +37,11 @@
 # Ignore node_modules
 /node_modules
 /analysis/node_modules
+
+# Ignore all .md files except README.md
+*.md
+!README.md
+
+# Design system files (keep local only)
+app/assets/stylesheets/data-reflow-design-system.css
+app/assets/stylesheets/design-tokens.css
