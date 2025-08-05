@@ -5,8 +5,9 @@ Rails.application.routes.draw do
     sessions: "users/sessions"
   }
 
-  root "landing#index"
-  get "about", to: "landing#about"
+  root "root#index"
+  get "landing", to: "landing#index"
+  get "about", to: "about#index"
 
   # Projects and Landing Pages
   resources :projects, param: :slug do
