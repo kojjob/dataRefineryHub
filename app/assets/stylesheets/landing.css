@@ -3527,6 +3527,14 @@ img:not([src]) {
   width: 0%;
 }
 
+.auth-page__password-strength-text {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-top: var(--space-4);
+  text-align: right;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
 .auth-page__terms {
   display: flex;
   flex-direction: column;
