@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   }
 
   root "landing#index"
+  get "about", to: "landing#about"
 
   # Projects and Landing Pages
   resources :projects, param: :slug do

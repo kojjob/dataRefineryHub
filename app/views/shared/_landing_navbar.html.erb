@@ -1,38 +1,38 @@
-<nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200/50 transition-all duration-300" data-controller="landing-navbar">
-  <div class="max-w-7xl mx-auto px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
+<nav class="navbar" data-controller="landing-navbar">
+  <div class="container">
+    <div class="navbar__content">
       <!-- Logo and Brand -->
-      <%= link_to root_path, class: "flex items-center space-x-3 group" do %>
-        <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 shadow-lg group-hover:scale-105 transition-transform duration-300">
-          <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <%= link_to root_path, class: "navbar__brand" do %>
+        <div class="navbar__logo">
+          <svg class="navbar__logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
         </div>
-        <span class="text-xl font-bold text-gray-900">DataReflow</span>
+        <span class="navbar__title">Data Reflow</span>
       <% end %>
 
       <!-- Desktop Navigation -->
-      <div class="hidden md:flex items-center space-x-8">
-        <a href="#features" class="text-gray-600 hover:text-gray-900 transition-colors duration-300 font-medium">Features</a>
-        <a href="#integrations" class="text-gray-600 hover:text-gray-900 transition-colors duration-300 font-medium">Integrations</a>
-        <a href="#testimonials" class="text-gray-600 hover:text-gray-900 transition-colors duration-300 font-medium">Testimonials</a>
-        <a href="#pricing" class="text-gray-600 hover:text-gray-900 transition-colors duration-300 font-medium">Pricing</a>
-        
-        <div class="flex items-center space-x-4 ml-8">
+      <div class="navbar__menu">
+        <a href="#features" class="navbar__link">Features</a>
+        <a href="#roi" class="navbar__link">ROI</a>
+        <a href="#testimonials" class="navbar__link">Testimonials</a>
+        <%= link_to about_path, class: "navbar__link" do %>About<% end %>
+
+        <div class="navbar__actions">
           <% if user_signed_in? %>
-            <%= link_to dashboard_path, class: "text-gray-600 hover:text-gray-900 transition-colors duration-300 font-medium" do %>
+            <%= link_to dashboard_path, class: "navbar__link" do %>
               Dashboard
             <% end %>
-            
-            <%= link_to destroy_user_session_path, method: :delete, class: "px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-300" do %>
+
+            <%= link_to destroy_user_session_path, method: :delete, class: "btn btn--secondary" do %>
               Sign Out
             <% end %>
           <% else %>
-            <%= link_to new_user_session_path, class: "text-gray-600 hover:text-gray-900 transition-colors duration-300 font-medium" do %>
+            <%= link_to new_user_session_path, class: "navbar__link" do %>
               Sign In
             <% end %>
-            
-            <%= link_to new_user_registration_path, class: "px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-300" do %>
+
+            <%= link_to new_user_registration_path, class: "btn btn--primary" do %>
               Start Free Trial
             <% end %>
           <% end %>
@@ -40,37 +40,37 @@
       </div>
 
       <!-- Mobile Menu Button -->
-      <button class="md:hidden relative w-8 h-8 flex items-center justify-center" data-action="click->landing-navbar#toggleMobile">
-        <div class="w-6 h-0.5 bg-gray-600 rounded-full transition-all duration-300 absolute" data-landing-navbar-target="hamburgerTop"></div>
-        <div class="w-6 h-0.5 bg-gray-600 rounded-full transition-all duration-300 absolute" data-landing-navbar-target="hamburgerMiddle"></div>
-        <div class="w-6 h-0.5 bg-gray-600 rounded-full transition-all duration-300 absolute" data-landing-navbar-target="hamburgerBottom"></div>
+      <button class="navbar__toggle" data-action="click->landing-navbar#toggleMobile">
+        <span class="navbar__toggle-bar" data-landing-navbar-target="hamburgerTop"></span>
+        <span class="navbar__toggle-bar" data-landing-navbar-target="hamburgerMiddle"></span>
+        <span class="navbar__toggle-bar" data-landing-navbar-target="hamburgerBottom"></span>
       </button>
     </div>
   </div>
 
   <!-- Mobile Menu -->
-  <div class="md:hidden fixed inset-0 top-16 bg-white/95 backdrop-blur-sm border-t border-gray-200/50 transform translate-x-full transition-transform duration-300" data-landing-navbar-target="mobileMenu">
-    <div class="flex flex-col items-center justify-center h-full space-y-8 px-8">
-      <a href="#features" class="text-2xl text-gray-700 hover:text-gray-900 transition-colors duration-300 font-medium" data-action="click->landing-navbar#closeMobile">Features</a>
-      <a href="#integrations" class="text-2xl text-gray-700 hover:text-gray-900 transition-colors duration-300 font-medium" data-action="click->landing-navbar#closeMobile">Integrations</a>
-      <a href="#testimonials" class="text-2xl text-gray-700 hover:text-gray-900 transition-colors duration-300 font-medium" data-action="click->landing-navbar#closeMobile">Testimonials</a>
-      <a href="#pricing" class="text-2xl text-gray-700 hover:text-gray-900 transition-colors duration-300 font-medium" data-action="click->landing-navbar#closeMobile">Pricing</a>
-      
-      <div class="flex flex-col items-center space-y-4 pt-8">
+  <div class="navbar__mobile-menu" data-landing-navbar-target="mobileMenu">
+    <div class="navbar__mobile-content">
+      <a href="#features" class="navbar__mobile-link" data-action="click->landing-navbar#closeMobile">Features</a>
+      <a href="#roi" class="navbar__mobile-link" data-action="click->landing-navbar#closeMobile">ROI</a>
+      <a href="#testimonials" class="navbar__mobile-link" data-action="click->landing-navbar#closeMobile">Testimonials</a>
+      <%= link_to about_path, class: "navbar__mobile-link", data: { action: "click->landing-navbar#closeMobile" } do %>About<% end %>
+
+      <div class="navbar__mobile-actions">
         <% if user_signed_in? %>
-          <%= link_to dashboard_path, class: "text-xl text-gray-700 hover:text-gray-900 transition-colors duration-300 font-medium", data: { action: "click->landing-navbar#closeMobile" } do %>
+          <%= link_to dashboard_path, class: "navbar__mobile-link", data: { action: "click->landing-navbar#closeMobile" } do %>
             Dashboard
           <% end %>
-          
-          <%= link_to destroy_user_session_path, method: :delete, class: "px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-300" do %>
+
+          <%= link_to destroy_user_session_path, method: :delete, class: "btn btn--secondary btn--lg" do %>
             Sign Out
           <% end %>
         <% else %>
-          <%= link_to new_user_session_path, class: "text-xl text-gray-700 hover:text-gray-900 transition-colors duration-300 font-medium" do %>
+          <%= link_to new_user_session_path, class: "navbar__mobile-link" do %>
             Sign In
           <% end %>
-          
-          <%= link_to new_user_registration_path, class: "px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-300" do %>
+
+          <%= link_to new_user_registration_path, class: "btn btn--primary btn--lg" do %>
             Start Free Trial
           <% end %>
         <% end %>
