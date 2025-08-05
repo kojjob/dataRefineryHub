@@ -2,37 +2,8 @@
 
 <div class="landing-page" data-controller="landing-animation video-modal professional-landing">
 
-<!-- Header -->
-<header class="header">
-  <nav class="nav container">
-    <div class="nav__brand">
-      <h1 class="nav__logo">Data Reflow</h1>
-    </div>
-    <button class="nav__toggle" aria-label="Toggle navigation" data-action="click->professional-landing#toggleMobileMenu">
-      <span class="nav__toggle-bar"></span>
-      <span class="nav__toggle-bar"></span>
-      <span class="nav__toggle-bar"></span>
-    </button>
-    <ul class="nav__menu">
-      <li><a href="#features" class="nav__link">Features</a></li>
-      <li><a href="#pricing" class="nav__link">Pricing</a></li>
-      <li><a href="#testimonials" class="nav__link">Testimonials</a></li>
-      <li><a href="#about" class="nav__link">About</a></li>
-    </ul>
-    <div class="nav__actions">
-      <button data-controller="video-modal"
-              data-action="click->video-modal#open"
-              data-video-url="https://player.vimeo.com/video/ai-dashboard-demo"
-              class="btn btn--outline nav__demo">Watch Demo</button>
-      <%= link_to new_user_registration_path, class: "btn btn--primary nav__trial" do %>
-        Start Free Trial
-      <% end %>
-    </div>
-  </nav>
-</header>
-
 <!-- Hero Section -->
-<section class="hero">
+<section class="hero" id="hero">
   <div class="container">
     <div class="hero__content">
       <div class="hero__text">
@@ -155,23 +126,36 @@
 </section>
 
 <!-- ROI Infographic -->
-<section class="roi-section">
+<section class="roi-section" id="roi">
   <div class="container">
     <div class="roi__content">
       <div class="roi__text">
         <h2 class="roi__title">Proven ROI Within 90 Days</h2>
         <p class="roi__description">Our platform delivers measurable results that impact your bottom line immediately.</p>
         <div class="roi__stats">
-          <div class="roi__stat">
-            <div class="roi__number">700+</div>
+          <div class="roi__stat"
+               data-controller="counter"
+               data-counter-end-value="700"
+               data-counter-suffix-value="+"
+               data-counter-separator-value=","
+               data-counter-duration-value="2800">
+            <div class="roi__number" data-counter-target="number">0+</div>
             <div class="roi__label">Hours Saved Annually</div>
           </div>
-          <div class="roi__stat">
-            <div class="roi__number">40%</div>
+          <div class="roi__stat"
+               data-controller="counter"
+               data-counter-end-value="40"
+               data-counter-suffix-value="%"
+               data-counter-duration-value="2200">
+            <div class="roi__number" data-counter-target="number">0%</div>
             <div class="roi__label">Efficiency Improvement</div>
           </div>
-          <div class="roi__stat">
-            <div class="roi__number">96%</div>
+          <div class="roi__stat"
+               data-controller="counter"
+               data-counter-end-value="96"
+               data-counter-suffix-value="%"
+               data-counter-duration-value="2400">
+            <div class="roi__number" data-counter-target="number">0%</div>
             <div class="roi__label">Prediction Accuracy</div>
           </div>
         </div>
@@ -466,16 +450,29 @@
           helping them achieve an average ROI of 340% within the first year.
         </p>
         <div class="about__stats">
-          <div class="about__stat">
-            <div class="about__stat-number">2,500+</div>
+          <div class="about__stat"
+               data-controller="counter"
+               data-counter-end-value="2500"
+               data-counter-suffix-value="+"
+               data-counter-separator-value=","
+               data-counter-duration-value="3000">
+            <div class="about__stat-number" data-counter-target="number">0+</div>
             <div class="about__stat-label">Happy Customers</div>
           </div>
-          <div class="about__stat">
-            <div class="about__stat-number">340%</div>
+          <div class="about__stat"
+               data-controller="counter"
+               data-counter-end-value="340"
+               data-counter-suffix-value="%"
+               data-counter-duration-value="2600">
+            <div class="about__stat-number" data-counter-target="number">0%</div>
             <div class="about__stat-label">Average ROI</div>
           </div>
-          <div class="about__stat">
-            <div class="about__stat-number">99.9%</div>
+          <div class="about__stat"
+               data-controller="counter"
+               data-counter-end-value="99.9"
+               data-counter-suffix-value="%"
+               data-counter-duration-value="2400">
+            <div class="about__stat-number" data-counter-target="number">0%</div>
             <div class="about__stat-label">Uptime SLA</div>
           </div>
         </div>

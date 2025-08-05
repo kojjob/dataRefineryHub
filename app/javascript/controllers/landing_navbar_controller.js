@@ -18,13 +18,11 @@ export default class extends Controller {
   handleScroll() {
     const scrolled = window.scrollY > 50
     const navbar = this.element
-    
+
     if (scrolled) {
-      navbar.classList.add('bg-white/10', 'backdrop-blur-lg', 'border-b', 'border-white/20')
-      navbar.classList.remove('bg-transparent')
+      navbar.classList.add('navbar--scrolled')
     } else {
-      navbar.classList.remove('bg-white/10', 'backdrop-blur-lg', 'border-b', 'border-white/20')
-      navbar.classList.add('bg-transparent')
+      navbar.classList.remove('navbar--scrolled')
     }
   }
 
@@ -63,24 +61,16 @@ export default class extends Controller {
 
   openMobile() {
     this.mobileMenuOpen = true
-    this.mobileMenuTarget.classList.remove('translate-x-full')
+    this.mobileMenuTarget.classList.add('navbar__mobile-menu--open')
+    this.element.querySelector('.navbar__toggle').classList.add('navbar__toggle--open')
     document.body.classList.add('overflow-hidden')
-    
-    // Animate hamburger to X
-    this.hamburgerTopTarget.style.transform = 'rotate(45deg) translateY(6px)'
-    this.hamburgerMiddleTarget.style.opacity = '0'
-    this.hamburgerBottomTarget.style.transform = 'rotate(-45deg) translateY(-6px)'
   }
 
   closeMobile() {
     this.mobileMenuOpen = false
-    this.mobileMenuTarget.classList.add('translate-x-full')
+    this.mobileMenuTarget.classList.remove('navbar__mobile-menu--open')
+    this.element.querySelector('.navbar__toggle').classList.remove('navbar__toggle--open')
     document.body.classList.remove('overflow-hidden')
-    
-    // Animate X back to hamburger
-    this.hamburgerTopTarget.style.transform = 'translateY(-4px)'
-    this.hamburgerMiddleTarget.style.opacity = '1'
-    this.hamburgerBottomTarget.style.transform = 'translateY(4px)'
   }
 
   disconnect() {

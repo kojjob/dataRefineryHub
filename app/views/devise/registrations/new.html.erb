@@ -1,271 +1,251 @@
-<% content_for :title, "Start Your Free Trial - DataReflow" %>
+<% content_for :title, "Start Your Free Trial - Data Reflow" %>
 
-<div class="min-h-screen flex items-center justify-center relative bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-  <!-- Subtle Background Pattern -->
-  <div class="absolute inset-0">
-    <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-  </div>
-  
-  <!-- Professional Accent Elements -->
-  <div class="absolute top-0 left-0 w-[40rem] h-[40rem] bg-gradient-to-br from-purple-100/20 to-indigo-100/20 rounded-full blur-3xl"></div>
-  <div class="absolute bottom-0 right-0 w-[40rem] h-[40rem] bg-gradient-to-tr from-blue-100/20 to-purple-100/20 rounded-full blur-3xl"></div>
+<div class="auth-page">
+  <!-- Premium Background -->
+  <div class="auth-page__background"></div>
 
-  <!-- Main Container -->
-  <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-    <div class="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20">
-      
+
+  <!-- Main Content -->
+  <div class="auth-page__container">
+    <div class="auth-page__content">
+
       <!-- Left Side - Value Proposition -->
-      <div class="w-full lg:w-1/2 max-w-xl text-center lg:text-left">
+      <div class="auth-page__branding">
         <!-- Logo -->
-        <div class="flex items-center justify-center lg:justify-start mb-8">
-          <div class="h-16 w-16 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-lg">
-            <svg class="h-9 w-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <div class="auth-page__logo">
+          <div class="auth-page__logo-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
             </svg>
           </div>
-          <div class="ml-4">
-            <h1 class="text-3xl font-bold text-gray-900">DataReflow</h1>
-            <p class="text-sm text-gray-600">Enterprise Data Platform</p>
+          <div class="auth-page__logo-text">
+            <h1 class="auth-page__brand-name">Data Reflow</h1>
+            <p class="auth-page__brand-tagline">Enterprise Data Platform</p>
           </div>
         </div>
 
         <!-- Welcome Message -->
-        <div class="mb-10">
-          <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+        <div class="auth-page__welcome">
+          <h2 class="auth-page__welcome-title">
             Start transforming your
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">
-              business data
-            </span>
+            <span class="auth-page__welcome-highlight">business data</span>
           </h2>
-          <p class="text-xl text-gray-600 leading-relaxed">
-            Join thousands of companies using DataReflow to make data-driven decisions with confidence.
+          <p class="auth-page__welcome-subtitle">
+            Join thousands of companies using Data Reflow to make data-driven decisions with confidence.
           </p>
         </div>
 
         <!-- Benefits -->
-        <div class="space-y-4 mb-8">
-          <div class="flex items-start text-gray-700">
-            <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-              <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="auth-page__features">
+          <div class="auth-page__feature">
+            <div class="auth-page__feature-icon auth-page__feature-icon--success">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
             </div>
-            <div>
-              <div class="font-semibold">14-day free trial</div>
-              <div class="text-sm text-gray-600">No credit card required. Full access to all features.</div>
+            <div class="auth-page__feature-content">
+              <div class="auth-page__feature-title">14-day free trial</div>
+              <div class="auth-page__feature-description">No credit card required. Full access to all features.</div>
             </div>
           </div>
 
-          <div class="flex items-start text-gray-700">
-            <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-              <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="auth-page__feature">
+            <div class="auth-page__feature-icon auth-page__feature-icon--primary">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
               </svg>
             </div>
-            <div>
-              <div class="font-semibold">Quick setup</div>
-              <div class="text-sm text-gray-600">Connect your tools in minutes, see insights instantly.</div>
+            <div class="auth-page__feature-content">
+              <div class="auth-page__feature-title">Quick setup</div>
+              <div class="auth-page__feature-description">Connect your tools in minutes, see insights instantly.</div>
             </div>
           </div>
 
-          <div class="flex items-start text-gray-700">
-            <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-              <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="auth-page__feature">
+            <div class="auth-page__feature-icon auth-page__feature-icon--secondary">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
               </svg>
             </div>
-            <div>
-              <div class="font-semibold">24/7 Support</div>
-              <div class="text-sm text-gray-600">Get help whenever you need it from our expert team.</div>
+            <div class="auth-page__feature-content">
+              <div class="auth-page__feature-title">24/7 Support</div>
+              <div class="auth-page__feature-description">Get help whenever you need it from our expert team.</div>
             </div>
           </div>
         </div>
 
-        <!-- Customer Logos -->
-        <div class="pt-8 border-t border-gray-200">
-          <p class="text-sm text-gray-600 mb-4">Trusted by industry leaders</p>
-          <div class="flex items-center justify-center lg:justify-start space-x-8 opacity-60">
-            <div class="h-8 w-20 bg-gray-200 rounded"></div>
-            <div class="h-8 w-20 bg-gray-200 rounded"></div>
-            <div class="h-8 w-20 bg-gray-200 rounded"></div>
-            <div class="h-8 w-20 bg-gray-200 rounded"></div>
+        <!-- Stats -->
+        <div class="auth-page__stats">
+          <div class="auth-page__stat">
+            <div class="auth-page__stat-number">10K+</div>
+            <div class="auth-page__stat-label">Companies</div>
+          </div>
+          <div class="auth-page__stat">
+            <div class="auth-page__stat-number">340%</div>
+            <div class="auth-page__stat-label">Avg ROI</div>
+          </div>
+          <div class="auth-page__stat">
+            <div class="auth-page__stat-number">99.9%</div>
+            <div class="auth-page__stat-label">Uptime</div>
           </div>
         </div>
       </div>
 
       <!-- Right Side - Sign Up Form -->
-      <div class="w-full lg:w-1/2 max-w-lg">
-        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-gray-200/50 p-8 lg:p-10">
+      <div class="auth-page__form-container">
+        <div class="auth-page__form-card">
           <!-- Form Header -->
-          <div class="text-center mb-8">
-            <h3 class="text-2xl font-bold text-gray-900 mb-2">Create your account</h3>
-            <p class="text-gray-600">
+          <div class="auth-page__form-header">
+            <h3 class="auth-page__form-title">Create your account</h3>
+            <p class="auth-page__form-subtitle">
               Already have an account?
-              <%= link_to "Sign in", new_user_session_path, 
-                  class: "font-medium text-purple-600 hover:text-purple-700" %>
+              <%= link_to "Sign in", new_user_session_path,
+                  class: "auth-page__form-link" %>
             </p>
           </div>
 
-          <!-- Progress Steps -->
-          <div class="flex items-center justify-center mb-8">
-            <div class="flex items-center space-x-4">
-              <div class="flex items-center">
-                <div class="h-8 w-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</div>
-                <span class="ml-2 text-sm font-medium text-gray-900">Account</span>
-              </div>
-              <div class="w-16 h-[2px] bg-gray-300"></div>
-              <div class="flex items-center">
-                <div class="h-8 w-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold">2</div>
-                <span class="ml-2 text-sm font-medium text-gray-500">Setup</span>
-              </div>
-            </div>
-          </div>
-
           <!-- Form -->
-          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), local: true, html: { class: "space-y-6" }) do |f| %>
+          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), local: true, html: { class: "auth-page__form" }) do |f| %>
             <%= render "devise/shared/error_messages", resource: resource %>
             
             <!-- Organization Name -->
-            <div>
-              <%= label_tag :organization_name, "Company name", class: "block text-sm font-medium text-gray-700 mb-2" %>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="auth-page__field">
+              <%= label_tag :organization_name, "Company name", class: "auth-page__label" %>
+              <div class="auth-page__input-wrapper">
+                <div class="auth-page__input-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                   </svg>
                 </div>
                 <%= text_field_tag :organization_name, params[:organization_name],
-                    class: "block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors",
+                    class: "auth-page__input",
                     placeholder: "Acme Inc." %>
               </div>
             </div>
 
             <!-- Name Fields -->
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <%= f.label :first_name, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <div class="auth-page__field-group">
+              <div class="auth-page__field">
+                <%= f.label :first_name, "First name", class: "auth-page__label" %>
                 <%= f.text_field :first_name,
-                    class: "block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors",
+                    class: "auth-page__input auth-page__input--no-icon",
                     placeholder: "John" %>
               </div>
-              
-              <div>
-                <%= f.label :last_name, class: "block text-sm font-medium text-gray-700 mb-2" %>
+
+              <div class="auth-page__field">
+                <%= f.label :last_name, "Last name", class: "auth-page__label" %>
                 <%= f.text_field :last_name,
-                    class: "block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors",
+                    class: "auth-page__input auth-page__input--no-icon",
                     placeholder: "Doe" %>
               </div>
             </div>
 
             <!-- Email Field -->
-            <div>
-              <%= f.label :email, "Work email", class: "block text-sm font-medium text-gray-700 mb-2" %>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="auth-page__field">
+              <%= f.label :email, "Work email", class: "auth-page__label" %>
+              <div class="auth-page__input-wrapper">
+                <div class="auth-page__input-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                   </svg>
                 </div>
-                <%= f.email_field :email, 
-                    autofocus: true, 
+                <%= f.email_field :email,
+                    autofocus: true,
                     autocomplete: "email",
-                    class: "block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors",
+                    class: "auth-page__input",
                     placeholder: "john@company.com" %>
               </div>
             </div>
 
             <!-- Password Field -->
-            <div>
-              <%= f.label :password, class: "block text-sm font-medium text-gray-700 mb-2" do %>
+            <div class="auth-page__field">
+              <%= f.label :password, class: "auth-page__label" do %>
                 Password
-                <span class="text-xs text-gray-500 ml-1">(<%= @minimum_password_length || 6 %> characters minimum)</span>
+                <span class="auth-page__label-hint">(<%= @minimum_password_length || 6 %> characters minimum)</span>
               <% end %>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="auth-page__input-wrapper">
+                <div class="auth-page__input-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                   </svg>
                 </div>
-                <%= f.password_field :password, 
+                <%= f.password_field :password,
                     autocomplete: "new-password",
-                    class: "block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors",
+                    class: "auth-page__input",
                     placeholder: "Create a strong password" %>
               </div>
               <!-- Password strength indicator -->
-              <div class="mt-2 h-1 w-full bg-gray-200 rounded-full overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-red-500 to-green-500 transition-all duration-300" style="width: 0%"></div>
+              <div class="auth-page__password-strength">
+                <div class="auth-page__password-strength-bar"></div>
               </div>
             </div>
 
             <!-- Password Confirmation -->
-            <div>
-              <%= f.label :password_confirmation, "Confirm password", class: "block text-sm font-medium text-gray-700 mb-2" %>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="auth-page__field">
+              <%= f.label :password_confirmation, "Confirm password", class: "auth-page__label" %>
+              <div class="auth-page__input-wrapper">
+                <div class="auth-page__input-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
-                <%= f.password_field :password_confirmation, 
+                <%= f.password_field :password_confirmation,
                     autocomplete: "new-password",
-                    class: "block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors",
+                    class: "auth-page__input",
                     placeholder: "Confirm your password" %>
               </div>
             </div>
 
             <!-- Terms & Conditions -->
-            <div class="space-y-3">
-              <div class="flex items-start">
-                <input type="checkbox" id="terms" required
-                       class="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 mt-1">
-                <label for="terms" class="ml-2 text-sm text-gray-600">
-                  I agree to the 
-                  <%= link_to "Terms of Service", "#", class: "font-medium text-purple-600 hover:text-purple-700" %>
-                  and 
-                  <%= link_to "Privacy Policy", "#", class: "font-medium text-purple-600 hover:text-purple-700" %>
+            <div class="auth-page__terms">
+              <div class="auth-page__checkbox">
+                <input type="checkbox" id="terms" required class="auth-page__checkbox-input">
+                <label for="terms" class="auth-page__checkbox-label">
+                  I agree to the
+                  <%= link_to "Terms of Service", "#", class: "auth-page__form-link" %>
+                  and
+                  <%= link_to "Privacy Policy", "#", class: "auth-page__form-link" %>
                 </label>
               </div>
-              
-              <div class="flex items-start">
-                <input type="checkbox" id="marketing" 
-                       class="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 mt-1">
-                <label for="marketing" class="ml-2 text-sm text-gray-600">
-                  Send me tips and best practices to get the most out of DataReflow
+
+              <div class="auth-page__checkbox">
+                <input type="checkbox" id="marketing" class="auth-page__checkbox-input">
+                <label for="marketing" class="auth-page__checkbox-label">
+                  Send me tips and best practices to get the most out of Data Reflow
                 </label>
               </div>
             </div>
 
             <!-- Submit Button -->
-            <div>
-              <%= f.submit "Create account", 
-                  class: "w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:from-purple-700 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 transform hover:-translate-y-0.5" %>
+            <div class="auth-page__submit">
+              <%= f.submit "Create account", class: "btn btn--primary btn--lg auth-page__submit-btn" %>
             </div>
           <% end %>
 
           <!-- Features Summary -->
-          <div class="mt-8 pt-8 border-t border-gray-200">
-            <p class="text-sm font-medium text-gray-900 mb-4">Your free trial includes:</p>
-            <div class="grid grid-cols-2 gap-3">
-              <div class="flex items-center text-sm text-gray-600">
-                <svg class="h-4 w-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="auth-page__features-summary">
+            <p class="auth-page__features-title">Your free trial includes:</p>
+            <div class="auth-page__features-grid">
+              <div class="auth-page__feature-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 All integrations
               </div>
-              <div class="flex items-center text-sm text-gray-600">
-                <svg class="h-4 w-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="auth-page__feature-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 Unlimited users
               </div>
-              <div class="flex items-center text-sm text-gray-600">
-                <svg class="h-4 w-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="auth-page__feature-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 Real-time analytics
               </div>
-              <div class="flex items-center text-sm text-gray-600">
-                <svg class="h-4 w-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="auth-page__feature-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 24/7 support
