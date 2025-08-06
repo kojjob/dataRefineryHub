@@ -584,6 +584,9 @@ export default class extends Controller {
 
     console.log('Files selected:', files.length)
     
+    // Update the upload area to show files are being processed
+    this.updateUploadAreaForProcessing(event.target, files.length)
+    
     // Show progress indicator
     this.showUploadProgress()
     
@@ -592,6 +595,43 @@ export default class extends Controller {
       console.log(`Processing file ${index + 1}:`, file.name, file.size, file.type)
       this.processFile(file, index, files.length)
     })
+  }
+
+  updateUploadAreaForProcessing(input, fileCount) {
+    const uploadArea = input.closest('div[style*="border: 2px dashed"]')
+    if (!uploadArea) return
+    
+    // Update border and background to show processing state
+    uploadArea.style.borderColor = 'rgba(245, 158, 11, 0.6)'
+    uploadArea.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%)'
+    
+    // Find and update the content
+    const header = uploadArea.querySelector('h4')
+    const description = uploadArea.querySelector('p')
+    
+    if (header) {
+      header.textContent = `Processing ${fileCount} file${fileCount !== 1 ? 's' : ''}...`
+    }
+    
+    if (description) {
+      description.textContent = 'Files are being validated and processed'
+    }
+    
+    // Add a subtle animation
+    uploadArea.style.animation = 'pulse 2s infinite'
+    
+    // Add pulse animation style if it doesn't exist
+    if (!document.getElementById('upload-animation-styles')) {
+      const style = document.createElement('style')
+      style.id = 'upload-animation-styles'
+      style.textContent = `
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.8; }
+        }
+      `
+      document.head.appendChild(style)
+    }
   }
 
   processFile(file, index, totalFiles) {
@@ -879,5 +919,280 @@ export default class extends Controller {
     const sizes = ['Bytes', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  // Transformation Methods
+  showTransformationSelector(event) {
+    console.log('Show transformation selector clicked')
+    event.preventDefault()
+    
+    const selector = document.getElementById('transformation-selector')
+    const emptyState = document.getElementById('empty-transformations')
+    
+    if (selector) {
+      selector.classList.remove('hidden')
+      console.log('Transformation selector shown')
+    }
+    
+    if (emptyState) {
+      emptyState.style.display = 'none'
+      console.log('Empty transformations state hidden')
+    }
+  }
+
+  hideTransformationSelector(event) {
+    console.log('Hide transformation selector clicked')
+    event.preventDefault()
+    
+    const selector = document.getElementById('transformation-selector')
+    const emptyState = document.getElementById('empty-transformations')
+    
+    if (selector) {
+      selector.classList.add('hidden')
+      console.log('Transformation selector hidden')
+    }
+    
+    if (emptyState) {
+      emptyState.style.display = 'block'
+      console.log('Empty transformations state shown')
+    }
+  }
+
+  selectTransformationType(event) {
+    console.log('Transformation type selected')
+    event.preventDefault()
+    
+    const transformType = event.currentTarget.dataset.transformType
+    console.log('Selected transformation type:', transformType)
+    
+    // Hide selector and show configuration form
+    this.hideTransformationSelector(event)
+    
+    // Load transformation configuration form
+    this.loadTransformationConfigForm(transformType)
+  }
+
+  loadTransformationConfigForm(transformType) {
+    console.log('Loading transformation config form for:', transformType)
+    
+    const configForm = document.getElementById('transformation-config-form')
+    if (!configForm) {
+      console.warn('Transformation config form container not found')
+      return
+    }
+    
+    // Show basic configuration form based on type
+    let formHtml = this.generateTransformationForm(transformType)
+    configForm.innerHTML = formHtml
+    configForm.classList.remove('hidden')
+  }
+
+  generateTransformationForm(transformType) {
+    const formConfigs = {
+      'rename_field': {
+        title: 'Rename Field',
+        fields: [
+          { name: 'from_field', label: 'Current Field Name', type: 'text', placeholder: 'customer_name' },
+          { name: 'to_field', label: 'New Field Name', type: 'text', placeholder: 'customer_full_name' }
+        ]
+      },
+      'type_conversion': {
+        title: 'Data Type Conversion',
+        fields: [
+          { name: 'field_name', label: 'Field Name', type: 'text', placeholder: 'amount' },
+          { name: 'from_type', label: 'From Type', type: 'select', options: ['text', 'number', 'date', 'boolean'] },
+          { name: 'to_type', label: 'To Type', type: 'select', options: ['text', 'number', 'date', 'boolean'] }
+        ]
+      },
+      'calculated_field': {
+        title: 'Calculated Field',
+        fields: [
+          { name: 'field_name', label: 'New Field Name', type: 'text', placeholder: 'total_with_tax' },
+          { name: 'formula', label: 'Formula', type: 'text', placeholder: 'amount * 1.08' }
+        ]
+      },
+      'filter': {
+        title: 'Filter Rows',
+        fields: [
+          { name: 'field_name', label: 'Field Name', type: 'text', placeholder: 'status' },
+          { name: 'operator', label: 'Operator', type: 'select', options: ['equals', 'not_equals', 'contains', 'greater_than', 'less_than'] },
+          { name: 'value', label: 'Value', type: 'text', placeholder: 'active' }
+        ]
+      }
+    }
+
+    const config = formConfigs[transformType] || formConfigs['rename_field']
+    
+    let html = `
+      <div style="
+        background: rgba(var(--color-surface-rgb), 0.9);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-lg);
+        padding: var(--space-24);
+        backdrop-filter: blur(10px);
+      ">
+        <h4 style="
+          font-size: var(--font-size-md);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text);
+          margin: 0 0 var(--space-16) 0;
+        ">${config.title}</h4>
+        
+        <div style="display: flex; flex-direction: column; gap: var(--space-16);">
+    `
+    
+    config.fields.forEach(field => {
+      if (field.type === 'select') {
+        html += `
+          <div>
+            <label style="
+              display: block;
+              font-size: var(--font-size-sm);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-text);
+              margin-bottom: var(--space-8);
+            ">${field.label}:</label>
+            <select name="transform_config[${field.name}]" style="
+              width: 100%;
+              padding: var(--space-12);
+              background: rgba(var(--color-surface-rgb), 0.8);
+              border: 1px solid rgba(var(--color-border-rgb), 0.3);
+              border-radius: var(--radius-md);
+              color: var(--color-text);
+              font-size: var(--font-size-sm);
+            ">
+              ${field.options.map(option => `<option value="${option}">${option.charAt(0).toUpperCase() + option.slice(1)}</option>`).join('')}
+            </select>
+          </div>
+        `
+      } else {
+        html += `
+          <div>
+            <label style="
+              display: block;
+              font-size: var(--font-size-sm);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-text);
+              margin-bottom: var(--space-8);
+            ">${field.label}:</label>
+            <input type="${field.type}" 
+                   name="transform_config[${field.name}]" 
+                   placeholder="${field.placeholder || ''}"
+                   style="
+                     width: 100%;
+                     padding: var(--space-12);
+                     background: rgba(var(--color-surface-rgb), 0.8);
+                     border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                     border-radius: var(--radius-md);
+                     color: var(--color-text);
+                     font-size: var(--font-size-sm);
+                   ">
+          </div>
+        `
+      }
+    })
+    
+    html += `
+        </div>
+        
+        <div style="
+          display: flex;
+          justify-content: flex-end;
+          gap: var(--space-12);
+          margin-top: var(--space-24);
+        ">
+          <button type="button" 
+                  data-action="click->pipeline-builder#cancelTransformationConfig"
+                  style="
+                    padding: var(--space-8) var(--space-16);
+                    background: rgba(var(--color-surface-rgb), 0.8);
+                    border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                    border-radius: var(--radius-md);
+                    color: var(--color-text-secondary);
+                    font-size: var(--font-size-sm);
+                    cursor: pointer;
+                  ">Cancel</button>
+          <button type="button" 
+                  data-action="click->pipeline-builder#saveTransformationConfig"
+                  style="
+                    padding: var(--space-8) var(--space-16);
+                    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+                    border: none;
+                    border-radius: var(--radius-md);
+                    color: white;
+                    font-size: var(--font-size-sm);
+                    font-weight: var(--font-weight-medium);
+                    cursor: pointer;
+                  ">Add Transformation</button>
+        </div>
+      </div>
+    `
+    
+    return html
+  }
+
+  cancelTransformationConfig(event) {
+    console.log('Cancel transformation config')
+    event.preventDefault()
+    
+    const configForm = document.getElementById('transformation-config-form')
+    if (configForm) {
+      configForm.classList.add('hidden')
+      configForm.innerHTML = ''
+    }
+    
+    const emptyState = document.getElementById('empty-transformations')
+    if (emptyState) {
+      emptyState.style.display = 'block'
+    }
+  }
+
+  saveTransformationConfig(event) {
+    console.log('Save transformation config')
+    event.preventDefault()
+    
+    // TODO: Collect form data and add to transformation pipeline
+    // For now, just hide the form and show success
+    
+    const configForm = document.getElementById('transformation-config-form')
+    if (configForm) {
+      configForm.classList.add('hidden')
+      configForm.innerHTML = ''
+    }
+    
+    // Show transformation added to pipeline
+    this.addTransformationToPipeline('Sample Transformation')
+  }
+
+  addTransformationToPipeline(transformationName) {
+    console.log('Adding transformation to pipeline:', transformationName)
+    
+    const emptyState = document.getElementById('empty-transformations')
+    const pipelineFlow = document.getElementById('transformation-pipeline')
+    
+    if (emptyState) {
+      emptyState.style.display = 'none'
+    }
+    
+    if (pipelineFlow) {
+      pipelineFlow.classList.remove('hidden')
+      
+      // Add transformation to the flow
+      const transformationsList = pipelineFlow.querySelector('[data-pipeline-builder-target="transformationsList"]')
+      if (transformationsList) {
+        const transformationElement = document.createElement('div')
+        transformationElement.style.cssText = `
+          background: rgba(var(--color-surface-rgb), 0.9);
+          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+          border-radius: var(--radius-lg);
+          padding: var(--space-12);
+          font-size: var(--font-size-sm);
+          color: var(--color-text);
+        `
+        transformationElement.textContent = transformationName
+        
+        transformationsList.appendChild(transformationElement)
+      }
+    }
   }
 }
