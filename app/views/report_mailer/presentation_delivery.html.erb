@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= @organization.name %> - Presentation Delivery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .content {
+      padding: 20px 0;
+    }
+    .attachment-notice {
+      background: #f0f8ff;
+      border: 1px solid #c7e3ff;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><%= @organization.name %></h1>
+    <p>Presentation Delivery</p>
+  </div>
+
+  <div class="content">
+    <p>Hello <%= @user.first_name || @user.email %>,</p>
+    
+    <p><%= simple_format(@body) %></p>
+    
+    <div class="attachment-notice">
+      <h3>🎁 Presentation Delivered</h3>
+      <p>Your presentation file has been attached to this email. Please download the attachment to access your presentation materials.</p>
+      <p><strong>Note:</strong> This file has been securely validated and is safe to download.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p><strong>Delivered:</strong> <%= Time.current.strftime('%B %d, %Y at %I:%M %p %Z') %></p>
+    <p>This presentation was delivered by the Data Refinery Platform.</p>
+    <p>If you have any questions or issues accessing the presentation, please contact your system administrator.</p>
+    
+    <hr>
+    <p style="font-size: 12px; color: #999;">
+      <%= @organization.name %> | Data Refinery Platform<br>
+      You received this email because you requested this presentation delivery.
+    </p>
+  </div>
+</body>
+</html>

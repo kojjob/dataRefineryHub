@@ -1,0 +1,22 @@
+<%= @organization.name %> - Presentation Delivery
+==========================================
+
+Hello <%= @user.first_name || @user.email %>,
+
+<%= @body %>
+
+PRESENTATION DELIVERED
+----------------------
+Your presentation file has been attached to this email. 
+Please download the attachment to access your presentation materials.
+
+Note: This file has been securely validated and is safe to download.
+
+Delivered: <%= Time.current.strftime('%B %d, %Y at %I:%M %p %Z') %>
+
+---
+This presentation was delivered by the Data Refinery Platform.
+If you have any questions or issues accessing the presentation, please contact your system administrator.
+
+<%= @organization.name %> | Data Refinery Platform
+You received this email because you requested this presentation delivery.
