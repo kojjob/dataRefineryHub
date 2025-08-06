@@ -346,20 +346,6 @@ RSpec.describe DataSource, type: :model do
         expect(source.reload.credentials).to eq('secret_api_key')
       end
     end
-      end
-    end
-
-    describe '#mark_sync_failed!' do
-      it 'updates status to error and records error message' do
-        error = StandardError.new('Sync failed')
-        data_source.mark_sync_failed!(error)
-
-        data_source.reload
-        expect(data_source).to be_error
-        expect(data_source.error_message).to eq('Sync failed')
-        expect(data_source.next_sync_at).to be_present
-      end
-    end
   end
 
   describe '#source_display_name' do

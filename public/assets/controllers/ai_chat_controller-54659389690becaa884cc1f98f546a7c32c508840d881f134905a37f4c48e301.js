@@ -136,7 +136,7 @@ export default class extends Controller {
       const context = this.getCurrentContext()
       
       // Send to backend
-      const response = await fetch('/ai/chat', {
+      const response = await fetch('/ai/chat/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -671,4 +671,4 @@ export default class extends Controller {
     
     return icons[actionType] || icons.generate_report
   }
-}
+};

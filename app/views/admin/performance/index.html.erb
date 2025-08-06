@@ -1,0 +1,66 @@
+<div class="p-6">
+  <h1 class="text-3xl font-bold mb-6">Performance Dashboard</h1>
+
+  <!-- Key Metrics -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Health Status -->
+    <div class="bg-white rounded-lg shadow p-6 text-center">
+      <h2 class="text-lg font-semibold text-gray-600">System Health</h2>
+      <p class="text-4xl font-bold mt-2 text-green-500"><%= @health_status.capitalize %></p>
+    </div>
+    
+    <!-- Avg Response Time -->
+    <div class="bg-white rounded-lg shadow p-6 text-center">
+      <h2 class="text-lg font-semibold text-gray-600">Avg Response Time</h2>
+      <p class="text-4xl font-bold mt-2"><%= number_with_precision(@metrics[:average_response_time], precision: 2) %> ms</p>
+    </div>
+    
+    <!-- Cache Hit Rate -->
+    <div class="bg-white rounded-lg shadow p-6 text-center">
+      <h2 class="text-lg font-semibold text-gray-600">Cache Hit Rate</h2>
+      <p class="text-4xl font-bold mt-2"><%= number_to_percentage(@cache_stats[:metrics][:hit_rate], precision: 2) %></p>
+    </div>
+
+    <!-- Error Rate -->
+    <div class="bg-white rounded-lg shadow p-6 text-center">
+      <h2 class="text-lg font-semibold text-gray-600">Error Rate</h2>
+      <p class="text-4xl font-bold mt-2 text-red-500"><%= number_to_percentage(@metrics[:error_rate], precision: 2) %></p>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="mb-6">
+    <%= link_to "Queries", admin_performance_queries_path, class: "btn btn-primary" %>
+    <%= link_to "Cache", admin_performance_cache_path, class: "btn btn-secondary" %>
+    <%= link_to "Circuit Breakers", admin_performance_circuit_breakers_path, class: "btn btn-secondary" %>
+    <%= link_to "Database", admin_performance_database_path, class: "btn btn-secondary" %>
+    <%= link_to "Job Queue", admin_performance_job_queue_path, class: "btn btn-secondary" %>
+  </div>
+
+  <!-- Query Analyzer Report -->
+  <% if @query_report %>
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+      <h2 class="text-2xl font-bold mb-4">Query Analyzer Summary</h2>
+      <div class="grid grid-cols-2 gap-4">
+        <div><strong>Total Queries:</strong> <%= @query_report[:total_queries] %></div>
+        <div><strong>Slow Queries:</strong> <%= @query_report[:slow_queries] %></div>
+        <div><strong>N+1 Detected:</strong> <%= @query_report[:n_plus_one_detected] %></div>
+        <div><strong>Avg Time:</strong> <%= number_with_precision(@query_report[:average_time], precision: 2) %> ms</div>
+      </div>
+      <h3 class="text-xl font-semibold mt-4 mb-2">Recommendations</h3>
+      <ul class="list-disc list-inside">
+        <% @query_report[:recommendations].each do |rec| %>
+          <li class="mb-2">
+            <span class="font-bold"><%= rec[:severity].upcase %>:</span> <%= rec[:message] %>
+            <ul class="list-disc list-inside ml-4">
+              <% rec[:details].each do |detail| %>
+                <li><%= detail %></li>
+              <% end %>
+            </ul>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>
+

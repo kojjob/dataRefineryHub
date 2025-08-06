@@ -30,11 +30,16 @@ Rails.application.routes.draw do
   get "debug/session_info", to: "debug#session_info" unless Rails.env.production?
   get "debug/test_flash", to: "debug#test_flash" unless Rails.env.production?
 
-  # Monitoring endpoints
-  get "health", to: "monitoring#health"
+  # Health check endpoints (for Kubernetes/Docker health probes)
+  get "health/live", to: "health#live"
+  get "health/ready", to: "health#ready"
+  get "health/detailed", to: "health#detailed"
+  
+  # Legacy monitoring endpoints (kept for backward compatibility)
+  get "health", to: "health#live"
   get "metrics", to: "monitoring#metrics"
-  get "ready", to: "monitoring#ready"
-  get "alive", to: "monitoring#alive"
+  get "ready", to: "health#ready"
+  get "alive", to: "health#live"
   get "monitoring", to: "monitoring#dashboard"
 
   # Dashboard routes

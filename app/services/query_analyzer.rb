@@ -102,12 +102,16 @@ class QueryAnalyzer
     end
 
     def normalize_sql(sql)
+      # Safely normalize SQL for pattern matching
       # Remove specific values to group similar queries
-      sql.gsub(/\b\d+\b/, '?')                    # Replace numbers with ?
-         .gsub(/'[^']*'/, '?')                    # Replace string literals with ?
-         .gsub(/\s+/, ' ')                        # Normalize whitespace
-         .strip
-         .downcase
+      sanitized = sql.dup
+      sanitized.gsub!(/\b\d+\b/, '?')           # Replace numbers with ?
+      sanitized.gsub!(/'(?:[^']|'')*'/, '?')     # Replace string literals with ? (handle escaped quotes)
+      sanitized.gsub!(/"(?:[^"]|"")*"/, '?') # Replace double-quoted identifiers
+      sanitized.gsub!(/\s+/, ' ')                # Normalize whitespace
+      sanitized.strip!
+      sanitized.downcase!
+      sanitized
     end
 
     def record_slow_query(sql, duration, name, event)
@@ -128,21 +132,36 @@ class QueryAnalyzer
     end
 
     def detect_n_plus_one(sql, normalized_sql, event)
-      # Simple N+1 detection based on repeated similar queries
-      if query_stats[:query_counts][normalized_sql] > 10
-        # Check if this looks like an N+1 pattern
-        if sql.match?(/SELECT .* FROM .* WHERE .* = \?/i) && 
-           !sql.match?(/LIMIT [2-9]|LIMIT \d{2,}/i) # Not a batch query
-          
-          unless query_stats[:n_plus_one_queries].any? { |q| q[:pattern] == normalized_sql }
-            query_stats[:n_plus_one_queries] << {
-              pattern: normalized_sql,
-              count: query_stats[:query_counts][normalized_sql],
-              example: sql,
-              timestamp: Time.current,
-              backtrace: filtered_backtrace
-            }
-          end
+      # N+1 detection with improved pattern matching
+      threshold = 10
+      query_count = query_stats[:query_counts][normalized_sql]
+      
+      return unless query_count > threshold
+      
+      # Improved N+1 pattern detection
+      n_plus_one_patterns = [
+        /\ASELECT\s+.+\s+FROM\s+\S+\s+WHERE\s+\S+\.\w+\s*=\s*\?/i,
+        /\ASELECT\s+.+\s+FROM\s+\S+\s+WHERE\s+\w+\s*=\s*\?/i
+      ]
+      
+      is_n_plus_one = n_plus_one_patterns.any? { |pattern| sql.match?(pattern) }
+      is_batch_query = sql.match?(/LIMIT\s+[2-9]|LIMIT\s+\d{2,}|IN\s*\([^)]+,[^)]+\)/i)
+      
+      if is_n_plus_one && !is_batch_query
+        existing = query_stats[:n_plus_one_queries].find { |q| q[:pattern] == normalized_sql }
+        
+        if existing
+          existing[:count] = query_count
+          existing[:last_seen] = Time.current
+        else
+          query_stats[:n_plus_one_queries] << {
+            pattern: normalized_sql,
+            count: query_count,
+            example: sql.truncate(500), # Limit example size
+            timestamp: Time.current,
+            last_seen: Time.current,
+            backtrace: filtered_backtrace
+          }
         end
       end
     end
@@ -158,22 +177,23 @@ class QueryAnalyzer
     def extract_table_names(sql)
       tables = []
       
-      # Match FROM clause
-      if match = sql.match(/FROM\s+["`]?(\w+)["`]?/i)
-        tables << match[1]
+      # Safely extract table names using more robust regex
+      # Match FROM clause (handle schema.table format)
+      sql.scan(/FROM\s+["`]?(?:(\w+)\.)?([\w]+)["`]?/i) do |schema, table|
+        tables << (table || schema)
       end
       
-      # Match JOIN clauses
-      sql.scan(/JOIN\s+["`]?(\w+)["`]?/i) do |match|
-        tables << match[0]
+      # Match JOIN clauses (handle schema.table format)
+      sql.scan(/JOIN\s+["`]?(?:(\w+)\.)?([\w]+)["`]?/i) do |schema, table|
+        tables << (table || schema)
       end
       
-      # Match UPDATE/INSERT/DELETE
-      if match = sql.match(/(?:UPDATE|INSERT INTO|DELETE FROM)\s+["`]?(\w+)["`]?/i)
-        tables << match[1]
+      # Match UPDATE/INSERT/DELETE (handle schema.table format)
+      sql.scan(/(?:UPDATE|INSERT\s+INTO|DELETE\s+FROM)\s+["`]?(?:(\w+)\.)?([\w]+)["`]?/i) do |schema, table|
+        tables << (table || schema)
       end
       
-      tables.uniq
+      tables.compact.uniq
     end
 
     def filtered_backtrace
