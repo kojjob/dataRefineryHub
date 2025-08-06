@@ -25,9 +25,9 @@ class SystemMetric < ApplicationRecord
   end
 
   def resource_status
-    return 'critical' if critical?
-    return 'warning' if warning?
-    'healthy'
+    return "critical" if critical?
+    return "warning" if warning?
+    "healthy"
   end
 
   def to_percentage_hash

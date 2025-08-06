@@ -43,7 +43,7 @@ Rails.application.routes.draw do
   get "dashboard/reports", to: "dashboard#reports"
 
   # Business Templates
-  resources :business_templates, only: [:index, :show] do
+  resources :business_templates, only: [ :index, :show ] do
     member do
       post :apply
     end
@@ -56,9 +56,9 @@ Rails.application.routes.draw do
       post :duplicate
       post :add_component
       patch :update_component
-      delete 'components/:component_id', to: 'report_builder#delete_component', as: :delete_component
-      patch 'components/:component_id/move', to: 'report_builder#move_component', as: :move_component
-      patch 'components/:component_id/resize', to: 'report_builder#resize_component', as: :resize_component
+      delete "components/:component_id", to: "report_builder#delete_component", as: :delete_component
+      patch "components/:component_id/move", to: "report_builder#move_component", as: :move_component
+      patch "components/:component_id/resize", to: "report_builder#resize_component", as: :resize_component
     end
     collection do
       get :gallery
@@ -66,7 +66,7 @@ Rails.application.routes.draw do
   end
 
   # Industry Templates
-  resources :industry_templates, only: [:index, :show] do
+  resources :industry_templates, only: [ :index, :show ] do
     member do
       post :apply
     end
@@ -170,9 +170,9 @@ Rails.application.routes.draw do
   # AI-powered features
   namespace :ai do
     # Redirect old predictive_analytics path to new predictions path
-    get 'predictive_analytics', to: redirect('/ai/predictions')
-    
-    resources :predictions, only: [:index] do
+    get "predictive_analytics", to: redirect("/ai/predictions")
+
+    resources :predictions, only: [ :index ] do
       collection do
         get :forecasts
         get :models
@@ -252,9 +252,9 @@ Rails.application.routes.draw do
         post :execute_action
       end
     end
-    
+
     # Automated Actions
-    resources :automated_actions, only: [:index, :show] do
+    resources :automated_actions, only: [ :index, :show ] do
       member do
         post :approve
         post :reject

@@ -13,6 +13,6 @@ class CreateAiQueries < ActiveRecord::Migration[8.0]
 
     add_index :ai_queries, :created_at
     add_index :ai_queries, :intent
-    add_index :ai_queries, [:organization_id, :user_id, :created_at]
+    add_index :ai_queries, [ :organization_id, :user_id, :created_at ]
   end
 end

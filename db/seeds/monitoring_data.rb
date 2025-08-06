@@ -23,7 +23,7 @@ def create_monitoring_sample_data(organization)
   3.times do |i|
     data_source = organization.data_sources.sample || organization.data_sources.create!(
       name: "Sample Data Source #{i + 1}",
-      source_type: ['shopify', 'quickbooks', 'stripe', 'google_analytics'].sample,
+      source_type: [ 'shopify', 'quickbooks', 'stripe', 'google_analytics' ].sample,
       status: 'connected',
       connection_config: { api_key: 'sample_key' }
     )
@@ -31,7 +31,7 @@ def create_monitoring_sample_data(organization)
     execution = PipelineExecution.create!(
       organization: organization,
       data_source: data_source,
-      status: ['running', 'pending', 'failed'].sample,
+      status: [ 'running', 'pending', 'failed' ].sample,
       started_at: rand(1..4).hours.ago,
       total_records: rand(10000..100000),
       records_processed: rand(5000..50000),
@@ -98,8 +98,8 @@ def create_monitoring_sample_data(organization)
   end
 
   # Create system health checks
-  check_types = ['database', 'cache', 'job_queue', 'storage', 'api_connections']
-  
+  check_types = [ 'database', 'cache', 'job_queue', 'storage', 'api_connections' ]
+
   check_types.each do |check_type|
     SystemHealthCheck.create!(
       organization: organization,

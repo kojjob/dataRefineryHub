@@ -55,7 +55,7 @@ RSpec.configure do |config|
 
   # Include Factory Bot syntax methods
   config.include FactoryBot::Syntax::Methods
-  
+
   # Include ActionCable test helpers for channel specs
   config.include ActionCable::TestHelper, type: :channel
 

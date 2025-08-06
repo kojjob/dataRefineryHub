@@ -27,7 +27,7 @@ class EtlPipelineBuildersController < ApplicationController
     @pipeline.created_by = current_user
 
     # Set default values for draft pipeline
-    @pipeline.status = 'draft'
+    @pipeline.status = "draft"
     @pipeline.source_config ||= {}
     @pipeline.destination_config ||= {}
     @pipeline.transformation_rules ||= []
@@ -53,7 +53,7 @@ class EtlPipelineBuildersController < ApplicationController
             success: true,
             message: "Pipeline created successfully",
             redirect_url: etl_pipeline_builder_path(@pipeline),
-            pipeline: @pipeline.as_json(only: [:id, :name, :pipeline_type])
+            pipeline: @pipeline.as_json(only: [ :id, :name, :pipeline_type ])
           }, status: :created
         }
       else
@@ -185,10 +185,10 @@ class EtlPipelineBuildersController < ApplicationController
 
   def validate_transformation
     transformation_config = params[:transformation]
-    
+
     validator = TransformationValidator.new(transformation_config)
     validation_result = validator.validate
-    
+
     render json: {
       valid: validation_result[:valid],
       errors: validation_result[:errors] || [],
@@ -196,9 +196,9 @@ class EtlPipelineBuildersController < ApplicationController
       suggestions: validation_result[:suggestions] || []
     }
   rescue => e
-    render json: { 
-      valid: false, 
-      errors: [e.message],
+    render json: {
+      valid: false,
+      errors: [ e.message ],
       warnings: [],
       suggestions: []
     }, status: :unprocessable_entity
@@ -252,17 +252,17 @@ class EtlPipelineBuildersController < ApplicationController
     }
 
     Rails.cache.write(draft_key, draft_data, expires_in: 7.days)
-    
-    render json: { 
-      success: true, 
-      message: 'Draft saved successfully',
+
+    render json: {
+      success: true,
+      message: "Draft saved successfully",
       timestamp: draft_data[:timestamp]
     }
   rescue => e
-    render json: { 
-      success: false, 
-      error: 'Failed to save draft',
-      details: e.message 
+    render json: {
+      success: false,
+      error: "Failed to save draft",
+      details: e.message
     }, status: :unprocessable_entity
   end
 
@@ -274,46 +274,46 @@ class EtlPipelineBuildersController < ApplicationController
       # Check if draft has expired
       if Time.current > Time.parse(draft_data[:expires_at])
         Rails.cache.delete(draft_key)
-        render json: { 
-          success: false, 
-          error: 'Draft has expired',
-          expired: true 
+        render json: {
+          success: false,
+          error: "Draft has expired",
+          expired: true
         }
       else
-        render json: { 
-          success: true, 
+        render json: {
+          success: true,
           draft: draft_data,
-          message: 'Draft loaded successfully'
+          message: "Draft loaded successfully"
         }
       end
     else
-      render json: { 
-        success: false, 
-        error: 'No draft found',
-        no_draft: true 
+      render json: {
+        success: false,
+        error: "No draft found",
+        no_draft: true
       }
     end
   rescue => e
-    render json: { 
-      success: false, 
-      error: 'Failed to load draft',
-      details: e.message 
+    render json: {
+      success: false,
+      error: "Failed to load draft",
+      details: e.message
     }, status: :unprocessable_entity
   end
 
   def clear_draft
     draft_key = "pipeline_builder_draft_#{current_user.id}"
     Rails.cache.delete(draft_key)
-    
-    render json: { 
-      success: true, 
-      message: 'Draft cleared successfully' 
+
+    render json: {
+      success: true,
+      message: "Draft cleared successfully"
     }
   rescue => e
-    render json: { 
-      success: false, 
-      error: 'Failed to clear draft',
-      details: e.message 
+    render json: {
+      success: false,
+      error: "Failed to clear draft",
+      details: e.message
     }, status: :unprocessable_entity
   end
 
@@ -338,9 +338,9 @@ class EtlPipelineBuildersController < ApplicationController
       transformations: [
         :id, :type, :name, :description, :order,
         config: {},
-        field_mappings: [:from, :to, :type],
-        conditions: [:field, :operator, :value, :condition_type],
-        calculations: [:name, :formula, :output_type]
+        field_mappings: [ :from, :to, :type ],
+        conditions: [ :field, :operator, :value, :condition_type ],
+        calculations: [ :name, :formula, :output_type ]
       ]
     )
   end
@@ -420,8 +420,8 @@ class EtlPipelineBuildersController < ApplicationController
       total_runs: executions.count,
       successful_runs: executions.successful.count,
       failed_runs: executions.failed.count,
-      average_duration: executions.successful.average(:duration_seconds) || 0,
-      average_rows_processed: executions.successful.average("progress") || 0,
+      average_duration: calculate_average_duration(executions.successful),
+      average_rows_processed: executions.successful.average("records_processed") || 0,
       last_run: executions.order(created_at: :desc).first,
       success_rate: executions.any? ? (executions.successful.count.to_f / executions.count * 100).round(2) : 0
     }
@@ -444,28 +444,38 @@ class EtlPipelineBuildersController < ApplicationController
 
   def get_file_extractors
     data_source_config = Rails.application.config_for(:data_sources)
-    file_config = data_source_config['file_upload']
-    
-    return [] unless file_config&.dig('settings', 'accepted_types')
-    
-    file_config['settings']['accepted_types'].map do |type|
+    file_config = data_source_config["file_upload"]
+
+    return [] unless file_config&.dig("settings", "accepted_types")
+
+    file_config["settings"]["accepted_types"].map do |type|
       {
-        'name' => type.upcase,
-        'type' => type.downcase,
-        'description' => get_file_type_description(type)
+        "name" => type.upcase,
+        "type" => type.downcase,
+        "description" => get_file_type_description(type)
       }
     end
   end
 
   def get_file_type_description(type)
     descriptions = {
-      'csv' => 'Comma-separated values files',
-      'xlsx' => 'Microsoft Excel spreadsheets (2007+)',
-      'xls' => 'Legacy Microsoft Excel files',
-      'json' => 'JavaScript Object Notation files',
-      'txt' => 'Plain text files',
-      'tsv' => 'Tab-separated values files'
+      "csv" => "Comma-separated values files",
+      "xlsx" => "Microsoft Excel spreadsheets (2007+)",
+      "xls" => "Legacy Microsoft Excel files",
+      "json" => "JavaScript Object Notation files",
+      "txt" => "Plain text files",
+      "tsv" => "Tab-separated values files"
     }
     descriptions[type.downcase] || "#{type.upcase} files"
+  end
+
+  def calculate_average_duration(executions)
+    completed_executions = executions.where.not(started_at: nil, completed_at: nil)
+    return 0 unless completed_executions.any?
+
+    durations = completed_executions.pluck(:started_at, :completed_at)
+                                   .map { |start_time, end_time| (end_time - start_time).to_i }
+
+    durations.sum.to_f / durations.count
   end
 end

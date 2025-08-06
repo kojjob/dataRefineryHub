@@ -16,6 +16,6 @@ class CreateSystemHealthChecks < ActiveRecord::Migration[8.0]
     add_index :system_health_checks, :check_type
     add_index :system_health_checks, :status
     add_index :system_health_checks, :checked_at
-    add_index :system_health_checks, [:organization_id, :check_type, :checked_at], name: 'idx_health_checks_org_type_checked'
+    add_index :system_health_checks, [ :organization_id, :check_type, :checked_at ], name: 'idx_health_checks_org_type_checked'
   end
 end

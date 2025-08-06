@@ -1,7 +1,6 @@
 # Pipeline Model
 # Stores ETL/ELT pipeline configurations created through the visual builder
 class Pipeline < ApplicationRecord
-  
   belongs_to :organization
   belongs_to :created_by, class_name: "User"
   belongs_to :last_executed_by, class_name: "User", optional: true
@@ -41,7 +40,7 @@ class Pipeline < ApplicationRecord
   # Schedule Value Object Integration
   def schedule
     return nil unless schedule_type.present?
-    
+
     @schedule ||= ::Domain::PipelineManagement::ValueObjects::Schedule.new(
       type: schedule_type,
       expression: schedule_expression,
@@ -50,7 +49,7 @@ class Pipeline < ApplicationRecord
   rescue ActiveModel::ValidationError
     nil
   end
-  
+
   def schedule=(schedule_value_object)
     if schedule_value_object.nil?
       self.schedule_type = nil
@@ -67,10 +66,10 @@ class Pipeline < ApplicationRecord
   # Retry Policy Value Object Integration
   def retry_policy_object
     return nil unless retry_max_attempts.present?
-    
+
     @retry_policy_object ||= ::Domain::PipelineManagement::ValueObjects::RetryPolicy.new(
       max_attempts: retry_max_attempts,
-      backoff_strategy: retry_backoff_strategy || 'exponential',
+      backoff_strategy: retry_backoff_strategy || "exponential",
       initial_delay: retry_initial_delay || 60,
       max_delay: retry_max_delay || 3600,
       multiplier: retry_multiplier || 2.0
@@ -78,7 +77,7 @@ class Pipeline < ApplicationRecord
   rescue ActiveModel::ValidationError
     nil
   end
-  
+
   def retry_policy_object=(retry_value_object)
     if retry_value_object.nil?
       self.retry_max_attempts = nil

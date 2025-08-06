@@ -3,11 +3,11 @@
 module BusinessTemplates
   class ServiceBusinessTemplate < BaseTemplate
     protected
-    
+
     def template_name
-      'service_business'
+      "service_business"
     end
-    
+
     def create_data_sources
       # CRM System
       create_configured_data_source(
@@ -21,7 +21,7 @@ module BusinessTemplates
           include_activities: true
         }
       )
-      
+
       # Project Management
       create_configured_data_source(
         name: "Project Management",
@@ -33,7 +33,7 @@ module BusinessTemplates
           include_milestones: true
         }
       )
-      
+
       # Accounting
       create_configured_data_source(
         name: "Accounting",
@@ -46,7 +46,7 @@ module BusinessTemplates
           include_payments: true
         }
       )
-      
+
       # Calendar/Scheduling
       create_configured_data_source(
         name: "Scheduling",
@@ -58,7 +58,7 @@ module BusinessTemplates
           include_no_shows: true
         }
       )
-      
+
       # Support Tickets
       create_configured_data_source(
         name: "Support System",
@@ -71,7 +71,7 @@ module BusinessTemplates
         }
       )
     end
-    
+
     def create_pipelines
       # Service Delivery Pipeline
       create_etl_pipeline(
@@ -82,8 +82,8 @@ module BusinessTemplates
             name: "Extract Service Data",
             type: "extract",
             configuration: {
-              sources: ["Project Management", "Scheduling", "Support System"],
-              fields: ["project_id", "service_type", "start_time", "completion_time", "satisfaction_score"]
+              sources: [ "Project Management", "Scheduling", "Support System" ],
+              fields: [ "project_id", "service_type", "start_time", "completion_time", "satisfaction_score" ]
             }
           },
           {
@@ -97,8 +97,8 @@ module BusinessTemplates
                 satisfaction_average: "avg(satisfaction_score)"
               },
               aggregations: {
-                by_service_type: ["delivery_time", "satisfaction_average"],
-                by_team_member: ["utilization_rate", "projects_completed"]
+                by_service_type: [ "delivery_time", "satisfaction_average" ],
+                by_team_member: [ "utilization_rate", "projects_completed" ]
               }
             }
           },
@@ -115,7 +115,7 @@ module BusinessTemplates
           }
         ]
       )
-      
+
       # Revenue Recognition Pipeline
       create_etl_pipeline(
         name: "Revenue & Profitability",
@@ -125,8 +125,8 @@ module BusinessTemplates
             name: "Extract Financial Data",
             type: "extract",
             configuration: {
-              sources: ["Accounting", "Project Management"],
-              fields: ["invoice_amount", "hours_worked", "expenses", "project_id", "client_id"]
+              sources: [ "Accounting", "Project Management" ],
+              fields: [ "invoice_amount", "hours_worked", "expenses", "project_id", "client_id" ]
             }
           },
           {
@@ -152,12 +152,12 @@ module BusinessTemplates
             type: "accounting",
             configuration: {
               recognition_method: "percentage_of_completion",
-              revenue_categories: ["consulting", "implementation", "support", "training"]
+              revenue_categories: [ "consulting", "implementation", "support", "training" ]
             }
           }
         ]
       )
-      
+
       # Client Health Pipeline
       create_etl_pipeline(
         name: "Client Health Monitoring",
@@ -167,8 +167,8 @@ module BusinessTemplates
             name: "Extract Client Data",
             type: "extract",
             configuration: {
-              sources: ["CRM System", "Support System", "Accounting"],
-              fields: ["client_id", "last_contact", "support_tickets", "payment_history", "nps_score"]
+              sources: [ "CRM System", "Support System", "Accounting" ],
+              fields: [ "client_id", "last_contact", "support_tickets", "payment_history", "nps_score" ]
             }
           },
           {
@@ -202,10 +202,10 @@ module BusinessTemplates
         ]
       )
     end
-    
+
     def configure_dashboards
       super
-      
+
       # Service Operations Dashboard
       Dashboard.create!(
         organization: organization,
@@ -264,7 +264,7 @@ module BusinessTemplates
               type: "table",
               title: "Client Health",
               data_source: "client_health_scores",
-              columns: ["client", "health_score", "mrr", "last_contact", "action"],
+              columns: [ "client", "health_score", "mrr", "last_contact", "action" ],
               sortable: true,
               row_colors: {
                 healthy: "green",
@@ -275,7 +275,7 @@ module BusinessTemplates
           ]
         }
       )
-      
+
       # Resource Management Dashboard
       Dashboard.create!(
         organization: organization,
@@ -294,24 +294,24 @@ module BusinessTemplates
               type: "chart",
               title: "Billable vs Non-Billable",
               chart_type: "stacked_bar",
-              metrics: ["billable_hours", "non_billable_hours"],
+              metrics: [ "billable_hours", "non_billable_hours" ],
               group_by: "team_member"
             },
             {
               type: "table",
               title: "Project Profitability",
               data_source: "project_profitability",
-              columns: ["project", "revenue", "cost", "margin", "hours"],
+              columns: [ "project", "revenue", "cost", "margin", "hours" ],
               highlight_negative: true
             }
           ]
         }
       )
     end
-    
+
     def setup_automated_reports
       super
-      
+
       # Daily team update via Slack/WhatsApp
       DeliveryPreference.create!(
         user: user,
@@ -333,7 +333,7 @@ module BusinessTemplates
           ]
         }
       )
-      
+
       # Weekly client report
       DeliveryPreference.create!(
         user: user,
@@ -353,10 +353,10 @@ module BusinessTemplates
             "client_health",
             "upcoming_milestones"
           ],
-          recipients: ["management", "project_managers"]
+          recipients: [ "management", "project_managers" ]
         }
       )
-      
+
       # Monthly executive presentation
       DeliveryPreference.create!(
         user: user,
@@ -382,7 +382,7 @@ module BusinessTemplates
         }
       )
     end
-    
+
     def create_sample_data
       # Sample clients
       clients = [
@@ -392,10 +392,10 @@ module BusinessTemplates
         { name: "Retail Dynamics", industry: "Retail", value: "medium" },
         { name: "Financial Advisors LLC", industry: "Finance", value: "low" }
       ]
-      
+
       # Sample team members
-      team_members = ["Sarah Chen", "Mike Johnson", "Emily Davis", "Carlos Rodriguez"]
-      
+      team_members = [ "Sarah Chen", "Mike Johnson", "Emily Davis", "Carlos Rodriguez" ]
+
       # Sample services
       services = [
         { name: "Consulting", hourly_rate: 200, typical_hours: 40 },
@@ -403,7 +403,7 @@ module BusinessTemplates
         { name: "Training", hourly_rate: 175, typical_hours: 16 },
         { name: "Support", hourly_rate: 125, typical_hours: 10 }
       ]
-      
+
       # Generate 90 days of service business data
       90.days.ago.to_date.upto(Date.current) do |date|
         # Create 2-5 time entries per day
@@ -412,7 +412,7 @@ module BusinessTemplates
           team_member = team_members.sample
           service = services.sample
           hours = rand(1.0..8.0).round(1)
-          
+
           # Time entry
           organization.raw_data_records.create!(
             source_type: "quickbooks",
@@ -427,22 +427,22 @@ module BusinessTemplates
               hourly_rate: service[:hourly_rate],
               billable: rand > 0.2, # 80% billable
               description: "#{service[:name]} services for #{client[:name]}",
-              project_phase: ["Discovery", "Design", "Implementation", "Testing", "Deployment"].sample
+              project_phase: [ "Discovery", "Design", "Implementation", "Testing", "Deployment" ].sample
             },
             recorded_at: date.to_time
           )
         end
-        
+
         # Create project milestones (weekly)
         if date.wday == 1
           project = {
             client: clients.sample,
-            name: ["Website Redesign", "System Integration", "Process Automation", "Data Migration"].sample,
+            name: [ "Website Redesign", "System Integration", "Process Automation", "Data Migration" ].sample,
             value: rand(15000..75000),
             duration_weeks: rand(4..16),
             team_lead: team_members.sample
           }
-          
+
           organization.raw_data_records.create!(
             source_type: "asana",
             record_type: "project",
@@ -454,18 +454,18 @@ module BusinessTemplates
               start_date: date,
               end_date: date + project[:duration_weeks].weeks,
               team_lead: project[:team_lead],
-              status: ["Planning", "In Progress", "On Hold", "Completed"].sample,
+              status: [ "Planning", "In Progress", "On Hold", "Completed" ].sample,
               completion_percentage: rand(0..100),
-              health_status: ["On Track", "At Risk", "Behind Schedule"].sample
+              health_status: [ "On Track", "At Risk", "Behind Schedule" ].sample
             },
             recorded_at: date.to_time
           )
         end
-        
+
         # Support tickets (0-3 per day)
         rand(0..3).times do
           ticket_client = clients.sample
-          
+
           organization.raw_data_records.create!(
             source_type: "zendesk",
             record_type: "support_ticket",
@@ -473,9 +473,9 @@ module BusinessTemplates
             data: {
               ticket_id: SecureRandom.hex(6),
               client_name: ticket_client[:name],
-              subject: ["Login Issue", "Feature Request", "Bug Report", "Training Question", "Billing Inquiry"].sample,
-              priority: ["Low", "Medium", "High", "Urgent"].sample,
-              status: ["Open", "Pending", "Resolved", "Closed"].sample,
+              subject: [ "Login Issue", "Feature Request", "Bug Report", "Training Question", "Billing Inquiry" ].sample,
+              priority: [ "Low", "Medium", "High", "Urgent" ].sample,
+              status: [ "Open", "Pending", "Resolved", "Closed" ].sample,
               created_at: date.to_time + rand(8..17).hours,
               response_time_hours: rand(0.5..4.0).round(1),
               resolution_time_hours: rand(2.0..24.0).round(1),
@@ -485,7 +485,7 @@ module BusinessTemplates
           )
         end
       end
-      
+
       Rails.logger.info "Created sample service business data for #{organization.name}"
     end
   end

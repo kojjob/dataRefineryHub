@@ -14,20 +14,20 @@ FactoryBot.define do
     end
     status { "pending" }
     suggested_by { "bi_agent" }
-    
+
     trait :approved do
       status { "approved" }
       approved_at { 1.hour.ago }
       association :approved_by, factory: :user
     end
-    
+
     trait :executing do
       status { "executing" }
       approved_at { 2.hours.ago }
       executed_at { 1.hour.ago }
       association :approved_by, factory: :user
     end
-    
+
     trait :completed do
       status { "completed" }
       approved_at { 3.hours.ago }
@@ -45,7 +45,7 @@ FactoryBot.define do
         }
       end
     end
-    
+
     trait :failed do
       status { "failed" }
       approved_at { 2.hours.ago }
@@ -60,12 +60,12 @@ FactoryBot.define do
         }
       end
     end
-    
+
     trait :high_impact do
       action_type { "adjust_pricing" }
       parameters do
         {
-          product_ids: [1, 2, 3],
+          product_ids: [ 1, 2, 3 ],
           adjustment_type: "percentage",
           adjustment_value: 10,
           estimated_revenue_impact: 50000,
@@ -73,15 +73,15 @@ FactoryBot.define do
         }
       end
     end
-    
+
     trait :with_insight do
       association :insight, factory: :ai_insight
     end
-    
+
     factory :email_action do
       action_type { "send_email" }
     end
-    
+
     factory :campaign_action do
       action_type { "create_campaign" }
       parameters do
@@ -95,12 +95,12 @@ FactoryBot.define do
         }
       end
     end
-    
+
     factory :pricing_action do
       action_type { "adjust_pricing" }
       high_impact
     end
-    
+
     factory :inventory_action do
       action_type { "reorder_inventory" }
       parameters do

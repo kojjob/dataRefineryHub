@@ -39,7 +39,7 @@ class LandingPage < ApplicationRecord
 
   def content_json
     return {} if content.blank?
-    
+
     begin
       JSON.parse(content)
     rescue JSON::ParserError

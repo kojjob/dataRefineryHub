@@ -2,43 +2,43 @@
 
 class ScheduledDeliveryJob < ApplicationJob
   queue_as :deliveries
-  
+
   def perform(delivery_preference)
     return unless delivery_preference.active?
-    
+
     # Get report data based on preference type
     report_data = generate_report_data(delivery_preference)
-    
+
     # Deliver using orchestrator
     orchestrator = DeliveryOrchestratorService.new(
       organization: delivery_preference.organization,
       report_type: delivery_preference.report_type,
       report_data: report_data
     )
-    
+
     # Deliver via the specific channel/format
     result = orchestrator.deliver_via_channel(
       user: delivery_preference.user,
       channel: delivery_preference.channel,
       format: delivery_preference.format
     )
-    
+
     # Schedule next delivery if recurring
     if delivery_preference.schedule.present?
       DeliverySchedulerJob.schedule_preference(delivery_preference)
     end
-    
+
     result
   rescue => e
     Rails.logger.error "Scheduled delivery failed: #{e.message}"
     Rails.logger.error e.backtrace.join("\n")
-    
+
     # Log failure
     DeliveryLog.create!(
       user: delivery_preference.user,
       organization: delivery_preference.organization,
       channel: delivery_preference.channel,
-      status: 'failed',
+      status: "failed",
       report_type: delivery_preference.report_type,
       error_message: e.message,
       metadata: {
@@ -47,48 +47,48 @@ class ScheduledDeliveryJob < ApplicationJob
       }
     )
   end
-  
+
   private
-  
+
   def generate_report_data(preference)
     case preference.report_type
-    when 'daily_summary'
+    when "daily_summary"
       generate_daily_summary_data(preference.organization)
-    when 'weekly_report'
+    when "weekly_report"
       generate_weekly_report_data(preference.organization)
-    when 'monthly_analysis'
+    when "monthly_analysis"
       generate_monthly_analysis_data(preference.organization)
-    when 'real_time_alert'
+    when "real_time_alert"
       generate_alert_data(preference.organization)
-    when 'sales_report'
+    when "sales_report"
       generate_sales_report_data(preference.organization)
-    when 'inventory_report'
+    when "inventory_report"
       generate_inventory_report_data(preference.organization)
-    when 'financial_report'
+    when "financial_report"
       generate_financial_report_data(preference.organization)
     else
       generate_custom_report_data(preference)
     end
   end
-  
+
   def generate_daily_summary_data(organization)
     # Calculate daily metrics
     today = Date.current
     yesterday = today - 1.day
-    
+
     today_revenue = calculate_revenue(organization, today)
     yesterday_revenue = calculate_revenue(organization, yesterday)
     revenue_change = calculate_percentage_change(yesterday_revenue, today_revenue)
-    
+
     today_orders = count_orders(organization, today)
     yesterday_orders = count_orders(organization, yesterday)
     orders_change = calculate_percentage_change(yesterday_orders, today_orders)
-    
+
     {
       revenue: {
         total: today_revenue,
         change: revenue_change,
-        currency: organization.currency || 'USD'
+        currency: organization.currency || "USD"
       },
       orders: {
         count: today_orders,
@@ -106,12 +106,12 @@ class ScheduledDeliveryJob < ApplicationJob
       alerts: get_active_alerts(organization)
     }
   end
-  
+
   def generate_weekly_report_data(organization)
     week_start = Date.current.beginning_of_week
     week_end = Date.current.end_of_week
     last_week_start = week_start - 1.week
-    
+
     {
       week_start: week_start,
       week_end: week_end,
@@ -131,13 +131,13 @@ class ScheduledDeliveryJob < ApplicationJob
       }
     }
   end
-  
+
   def generate_monthly_analysis_data(organization)
     current_month = Date.current.beginning_of_month
     last_month = current_month - 1.month
-    
+
     {
-      month: current_month.strftime('%B %Y'),
+      month: current_month.strftime("%B %Y"),
       executive_summary: generate_executive_summary(organization, current_month),
       performance: {
         revenue: calculate_revenue(organization, current_month..Date.current),
@@ -151,10 +151,10 @@ class ScheduledDeliveryJob < ApplicationJob
       trend_data: generate_trend_data(organization, 6.months.ago..Date.current)
     }
   end
-  
+
   def generate_sales_report_data(organization)
     period = determine_report_period(organization)
-    
+
     {
       period: format_period(period),
       total_sales: calculate_revenue(organization, period),
@@ -167,7 +167,7 @@ class ScheduledDeliveryJob < ApplicationJob
       hourly_distribution: get_hourly_sales_distribution(organization, period)
     }
   end
-  
+
   def generate_inventory_report_data(organization)
     {
       total_skus: count_total_skus(organization),
@@ -180,16 +180,16 @@ class ScheduledDeliveryJob < ApplicationJob
       recommendations: generate_inventory_recommendations(organization)
     }
   end
-  
+
   def generate_financial_report_data(organization)
     period = Date.current.beginning_of_month..Date.current
-    
+
     revenue = calculate_revenue(organization, period)
     cogs = calculate_cogs(organization, period)
     gross_profit = revenue - cogs
     operating_expenses = calculate_operating_expenses(organization, period)
     net_income = gross_profit - operating_expenses
-    
+
     {
       period: format_period(period),
       revenue: revenue,
@@ -205,7 +205,7 @@ class ScheduledDeliveryJob < ApplicationJob
       cash_flow_data: generate_cash_flow_data(organization, period)
     }
   end
-  
+
   def generate_custom_report_data(preference)
     # This would be customizable based on user preferences
     {
@@ -214,67 +214,67 @@ class ScheduledDeliveryJob < ApplicationJob
       data: {}
     }
   end
-  
+
   # Helper methods for data calculation
-  
+
   def calculate_revenue(organization, date_or_range)
     organization.raw_data_records
-                .where(record_type: 'order')
+                .where(record_type: "order")
                 .where(created_at: date_or_range)
                 .sum("COALESCE((data->>'total')::decimal, 0)")
   end
-  
+
   def count_orders(organization, date_or_range)
     organization.raw_data_records
-                .where(record_type: 'order')
+                .where(record_type: "order")
                 .where(created_at: date_or_range)
                 .count
   end
-  
+
   def calculate_percentage_change(old_value, new_value)
     return 0 if old_value.zero?
     ((new_value - old_value) / old_value * 100).round(2)
   end
-  
+
   def calculate_average_order_value(organization, date_or_range)
     revenue = calculate_revenue(organization, date_or_range)
     orders = count_orders(organization, date_or_range)
-    
+
     return 0 if orders.zero?
     (revenue / orders).round(2)
   end
-  
+
   def count_new_customers(organization, date)
     organization.raw_data_records
-                .where(record_type: 'customer')
+                .where(record_type: "customer")
                 .where(created_at: date.all_day)
                 .count
   end
-  
+
   def count_returning_customers(organization, date)
     # This would check for customers who made repeat purchases
     organization.raw_data_records
-                .where(record_type: 'order')
+                .where(record_type: "order")
                 .where(created_at: date.all_day)
                 .where("data->>'customer_type' = 'returning'")
                 .distinct
                 .count("data->>'customer_id'")
   end
-  
+
   def count_active_customers(organization, date)
     organization.raw_data_records
-                .where(record_type: 'order')
+                .where(record_type: "order")
                 .where(created_at: date.all_day)
                 .distinct
                 .count("data->>'customer_id'")
   end
-  
+
   def get_top_products(organization, date_or_range, limit: 5)
     organization.raw_data_records
-                .where(record_type: 'order_item')
+                .where(record_type: "order_item")
                 .where(created_at: date_or_range)
                 .group("data->>'product_name'")
-                .order('sum_revenue DESC')
+                .order("sum_revenue DESC")
                 .limit(limit)
                 .pluck(
                   "data->>'product_name'",
@@ -289,16 +289,16 @@ class ScheduledDeliveryJob < ApplicationJob
                   }
                 end
   end
-  
+
   def generate_daily_insights(organization, date)
     insights = []
-    
+
     # Revenue insight
     revenue_change = calculate_percentage_change(
       calculate_revenue(organization, date - 1.day),
       calculate_revenue(organization, date)
     )
-    
+
     if revenue_change.abs > 20
       insights << if revenue_change > 0
         "Revenue increased by #{revenue_change}% compared to yesterday"
@@ -306,24 +306,24 @@ class ScheduledDeliveryJob < ApplicationJob
         "Revenue decreased by #{revenue_change.abs}% compared to yesterday"
       end
     end
-    
+
     # Add more insights based on data patterns
     insights
   end
-  
+
   def get_active_alerts(organization)
     # This would fetch active alerts from monitoring system
     []
   end
-  
+
   def format_period(period)
     if period.is_a?(Range)
       "#{period.first.strftime('%B %d')} - #{period.last.strftime('%B %d, %Y')}"
     else
-      period.strftime('%B %d, %Y')
+      period.strftime("%B %d, %Y")
     end
   end
-  
+
   def determine_report_period(organization)
     # Default to last 30 days, but could be customizable
     30.days.ago.to_date..Date.current

@@ -5,7 +5,7 @@ module Domain
     module DomainEvents
       # Event raised when a pipeline's status changes
       class PipelineStatusChanged < ::Domain::Shared::DomainEvents::DomainEvent
-        attr_reader :pipeline_id, :pipeline_name, :from_status, :to_status, 
+        attr_reader :pipeline_id, :pipeline_name, :from_status, :to_status,
                     :changed_by, :reason, :organization_id
 
         validates :pipeline_id, presence: true
@@ -23,20 +23,20 @@ module Domain
           @changed_by = attributes[:changed_by]
           @reason = attributes[:reason]
           @organization_id = attributes[:organization_id]
-          
+
           super(attributes.merge(aggregate_id: pipeline_id))
         end
 
         def significant?
           # Transitions to/from certain states are more significant
-          %w[active archived].include?(to_status) || 
+          %w[active archived].include?(to_status) ||
           %w[active].include?(from_status)
         end
 
         def requires_notification?
           # Determine if this change should trigger notifications
-          to_status == 'archived' || 
-          (from_status == 'active' && to_status == 'paused')
+          to_status == "archived" ||
+          (from_status == "active" && to_status == "paused")
         end
 
         def to_h
@@ -55,15 +55,15 @@ module Domain
 
         def validate_status_transition
           valid_statuses = %w[draft active paused archived]
-          
+
           unless valid_statuses.include?(from_status)
             errors.add(:from_status, "is not a valid status")
           end
-          
+
           unless valid_statuses.include?(to_status)
             errors.add(:to_status, "is not a valid status")
           end
-          
+
           if from_status == to_status
             errors.add(:base, "from_status and to_status cannot be the same")
           end

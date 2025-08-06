@@ -29,6 +29,9 @@ export default class extends Controller {
     
     this.initializeForm()
     this.updateNavigation()
+    
+    // Check for existing drafts after initialization
+    this.checkForExistingDraft()
   }
 
   // Initialization Methods
@@ -1754,5 +1757,264 @@ export default class extends Controller {
         }
       }, 300)
     }, 5000)
+  }
+
+  // Draft Management Methods
+  checkForExistingDraft() {
+    console.log('Checking for existing drafts...')
+    
+    fetch('/etl_pipeline_builders/load_draft', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success && data.draft) {
+        console.log('Found existing draft:', data.draft)
+        this.showDraftNotification(data.draft)
+      } else if (data.expired) {
+        console.log('Draft has expired')
+        this.showMessage('Previous draft has expired. Starting fresh.', 'error')
+      } else {
+        console.log('No existing draft found')
+      }
+    })
+    .catch(error => {
+      console.error('Error checking for draft:', error)
+    })
+  }
+
+  showDraftNotification(draftData) {
+    const notification = document.createElement('div')
+    notification.id = 'draft-notification'
+    notification.style.cssText = `
+      position: fixed;
+      top: var(--space-20);
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(79, 70, 229, 0.95) 100%);
+      color: white;
+      padding: var(--space-20) var(--space-24);
+      border-radius: var(--radius-xl);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      z-index: 10000;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideInFromTop 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      max-width: 500px;
+      text-align: center;
+    `
+    
+    const lastSaved = new Date(draftData.timestamp).toLocaleString()
+    
+    notification.innerHTML = `
+      <div style="display: flex; align-items: center; gap: var(--space-12); margin-bottom: var(--space-16);">
+        <div style="
+          width: 40px;
+          height: 40px;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        ">
+          <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"/>
+          </svg>
+        </div>
+        <div style="flex: 1; text-align: left;">
+          <h4 style="margin: 0 0 var(--space-4) 0; font-weight: var(--font-weight-bold);">
+            Unfinished Pipeline Found!
+          </h4>
+          <p style="margin: 0; font-size: var(--font-size-xs); opacity: 0.9;">
+            Last saved: ${lastSaved}
+          </p>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: var(--space-12); justify-content: center;">
+        <button id="load-draft-btn" style="
+          background: rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          color: white;
+          padding: var(--space-10) var(--space-16);
+          border-radius: var(--radius-lg);
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-medium);
+          cursor: pointer;
+          transition: all 0.3s ease;
+        " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" 
+           onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
+          Continue Where I Left Off
+        </button>
+        
+        <button id="dismiss-draft-btn" style="
+          background: transparent;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          color: rgba(255, 255, 255, 0.8);
+          padding: var(--space-10) var(--space-16);
+          border-radius: var(--radius-lg);
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-medium);
+          cursor: pointer;
+          transition: all 0.3s ease;
+        " onmouseover="this.style.color='white'; this.style.borderColor='rgba(255, 255, 255, 0.5)'" 
+           onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'">
+          Start Fresh
+        </button>
+      </div>
+    `
+    
+    document.body.appendChild(notification)
+    
+    // Add event listeners
+    const loadBtn = notification.querySelector('#load-draft-btn')
+    const dismissBtn = notification.querySelector('#dismiss-draft-btn')
+    
+    loadBtn.addEventListener('click', () => {
+      this.loadDraft(draftData)
+      this.hideDraftNotification()
+    })
+    
+    dismissBtn.addEventListener('click', () => {
+      this.clearDraft()
+      this.hideDraftNotification()
+    })
+    
+    // Auto-hide after 10 seconds
+    setTimeout(() => {
+      if (document.getElementById('draft-notification')) {
+        this.hideDraftNotification()
+      }
+    }, 10000)
+  }
+
+  hideDraftNotification() {
+    const notification = document.getElementById('draft-notification')
+    if (notification) {
+      notification.style.animation = 'slideOutToTop 0.3s ease-in'
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification)
+        }
+      }, 300)
+    }
+  }
+
+  loadDraft(draftData) {
+    console.log('Loading draft:', draftData)
+    
+    // Show loading indicator
+    this.showMessage('Loading your saved pipeline...', 'success')
+    
+    try {
+      // Restore step
+      if (draftData.step && draftData.step <= this.totalSteps) {
+        this.currentStep = parseInt(draftData.step)
+        this.currentStepValue = this.currentStep
+        this.showStep(this.currentStep)
+        this.updateNavigation()
+      }
+      
+      // Restore form data
+      if (draftData.pipeline_data) {
+        this.populateForm(draftData.pipeline_data)
+      }
+      
+      // Restore transformations
+      if (draftData.transformations && draftData.transformations.length > 0) {
+        this.transformations = draftData.transformations
+        this.restoreTransformations(draftData.transformations)
+      }
+      
+      setTimeout(() => {
+        this.showMessage('Pipeline restored successfully! Continue where you left off.', 'success')
+      }, 1000)
+      
+    } catch (error) {
+      console.error('Error loading draft:', error)
+      this.showMessage('Error loading draft. Please try again or start fresh.', 'error')
+    }
+  }
+
+  populateForm(pipelineData) {
+    console.log('Populating form with:', pipelineData)
+    
+    const form = this.element.closest('form')
+    if (!form) return
+    
+    // Populate basic fields
+    if (pipelineData.name) {
+      const nameField = form.querySelector('[name="pipeline[name]"]')
+      if (nameField) nameField.value = pipelineData.name
+    }
+    
+    if (pipelineData.description) {
+      const descField = form.querySelector('[name="pipeline[description]"]')
+      if (descField) descField.value = pipelineData.description
+    }
+    
+    if (pipelineData.pipeline_type) {
+      const typeRadio = form.querySelector(`[name="pipeline_type"][value="${pipelineData.pipeline_type}"]`)
+      if (typeRadio) {
+        typeRadio.checked = true
+        this.updatePipelineType({ target: typeRadio })
+      }
+    }
+    
+    // Populate source configuration
+    if (pipelineData.source_config) {
+      Object.entries(pipelineData.source_config).forEach(([key, value]) => {
+        const field = form.querySelector(`[name="pipeline[source_config][${key}]"]`)
+        if (field) field.value = value
+      })
+    }
+    
+    // Populate destination configuration  
+    if (pipelineData.destination_config) {
+      Object.entries(pipelineData.destination_config).forEach(([key, value]) => {
+        const field = form.querySelector(`[name="pipeline[destination_config][${key}]"]`)
+        if (field) {
+          if (field.type === 'checkbox') {
+            field.checked = value === 'true' || value === true
+          } else {
+            field.value = value
+          }
+        }
+      })
+    }
+  }
+
+  restoreTransformations(transformations) {
+    console.log('Restoring transformations:', transformations)
+    
+    transformations.forEach((transformation, index) => {
+      this.addTransformationToPipeline(`${transformation.type || 'Transformation'} ${index + 1}`)
+    })
+  }
+
+  clearDraft() {
+    fetch('/etl_pipeline_builders/clear_draft', {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        console.log('Draft cleared successfully')
+      }
+    })
+    .catch(error => {
+      console.error('Error clearing draft:', error)
+    })
   }
 }

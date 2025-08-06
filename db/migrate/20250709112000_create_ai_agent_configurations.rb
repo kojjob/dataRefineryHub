@@ -10,7 +10,7 @@ class CreateAiAgentConfigurations < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :ai_agent_configurations, [:organization_id, :agent_type], unique: true
+    add_index :ai_agent_configurations, [ :organization_id, :agent_type ], unique: true
     add_index :ai_agent_configurations, :agent_type
   end
 end

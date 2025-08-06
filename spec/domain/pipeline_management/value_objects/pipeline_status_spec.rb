@@ -7,7 +7,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
   describe '#initialize' do
     it 'creates a status with required value' do
       status = described_class.new(value: 'active')
-      
+
       expect(status.value).to eq('active')
       expect(status.changed_at).to be_within(1.second).of(Time.current)
       expect(status.changed_by).to be_nil
@@ -23,7 +23,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
         changed_by: user,
         reason: 'Maintenance window'
       )
-      
+
       expect(status.value).to eq('paused')
       expect(status.changed_at).to eq(time)
       expect(status.changed_by).to eq(user)
@@ -40,7 +40,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
   describe 'status query methods' do
     it 'correctly identifies draft status' do
       status = described_class.new(value: 'draft')
-      
+
       expect(status.draft?).to be true
       expect(status.active?).to be false
       expect(status.paused?).to be false
@@ -49,7 +49,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
 
     it 'correctly identifies active status' do
       status = described_class.new(value: 'active')
-      
+
       expect(status.draft?).to be false
       expect(status.active?).to be true
       expect(status.paused?).to be false
@@ -58,7 +58,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
 
     it 'correctly identifies paused status' do
       status = described_class.new(value: 'paused')
-      
+
       expect(status.draft?).to be false
       expect(status.active?).to be false
       expect(status.paused?).to be true
@@ -67,7 +67,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
 
     it 'correctly identifies archived status' do
       status = described_class.new(value: 'archived')
-      
+
       expect(status.draft?).to be false
       expect(status.active?).to be false
       expect(status.paused?).to be false
@@ -170,7 +170,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
 
     it 'raises error for invalid transition' do
       status = described_class.new(value: 'draft')
-      
+
       expect {
         status.transition_to('paused')
       }.to raise_error(ArgumentError, 'Cannot transition from draft to paused')
@@ -181,13 +181,13 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
     it 'returns available transitions for each status' do
       expect(described_class.new(value: 'draft').available_transitions)
         .to eq(%w[active archived])
-      
+
       expect(described_class.new(value: 'active').available_transitions)
         .to eq(%w[paused archived])
-      
+
       expect(described_class.new(value: 'paused').available_transitions)
         .to eq(%w[active archived])
-      
+
       expect(described_class.new(value: 'archived').available_transitions)
         .to eq([])
     end
@@ -261,7 +261,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
 
     it 'omits nil values' do
       status = described_class.new(value: 'active')
-      
+
       expect(status.to_h).to include(:value, :changed_at)
       expect(status.to_h).not_to include(:changed_by, :reason)
     end
@@ -279,7 +279,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
 
     it 'returns false for different types' do
       status = described_class.new(value: 'active')
-      
+
       expect(status).not_to eq('active')
       expect(status).not_to eq(nil)
     end
@@ -288,14 +288,14 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
   describe 'factory methods' do
     it '.draft creates draft status' do
       status = described_class.draft(changed_by: 'user@example.com')
-      
+
       expect(status.value).to eq('draft')
       expect(status.changed_by).to eq('user@example.com')
     end
 
     it '.active creates active status' do
       status = described_class.active(changed_by: 'user@example.com')
-      
+
       expect(status.value).to eq('active')
       expect(status.changed_by).to eq('user@example.com')
     end
@@ -305,7 +305,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
         changed_by: 'user@example.com',
         reason: 'Maintenance'
       )
-      
+
       expect(status.value).to eq('paused')
       expect(status.changed_by).to eq('user@example.com')
       expect(status.reason).to eq('Maintenance')
@@ -316,7 +316,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
         changed_by: 'user@example.com',
         reason: 'No longer needed'
       )
-      
+
       expect(status.value).to eq('archived')
       expect(status.changed_by).to eq('user@example.com')
       expect(status.reason).to eq('No longer needed')
@@ -327,7 +327,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::PipelineStatus do
         'active',
         changed_by: 'user@example.com'
       )
-      
+
       expect(status.value).to eq('active')
       expect(status.changed_by).to eq('user@example.com')
     end

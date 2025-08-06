@@ -17,7 +17,7 @@ FactoryBot.define do
       }.to_json
     end
     intent { 1 } # revenue_analysis
-    entities { { time_period: "current_month", metrics: ["revenue"] } }
+    entities { { time_period: "current_month", metrics: [ "revenue" ] } }
     context do
       {
         current_page: "/dashboard",
@@ -25,7 +25,7 @@ FactoryBot.define do
       }
     end
     # execution_time is calculated, not stored
-    
+
     trait :with_visualizations do
       response do
         {
@@ -46,7 +46,7 @@ FactoryBot.define do
         }.to_json
       end
     end
-    
+
     trait :with_actions do
       response do
         {
@@ -63,19 +63,19 @@ FactoryBot.define do
         }.to_json
       end
     end
-    
+
     trait :helpful do
       after(:create) do |query|
         query.mark_as_helpful
       end
     end
-    
+
     trait :not_helpful do
       after(:create) do |query|
         query.mark_as_not_helpful("Results were not accurate")
       end
     end
-    
+
     trait :failed do
       response { nil }
     end

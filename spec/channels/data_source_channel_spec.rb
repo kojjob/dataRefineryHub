@@ -13,7 +13,7 @@ RSpec.describe DataSourceChannel, type: :channel do
     context 'with valid data source' do
       it 'subscribes to data source stream' do
         subscribe(data_source_id: data_source.id)
-        
+
         expect(subscription).to be_confirmed
         expect(subscription).to have_stream_from("data_source:#{data_source.id}")
       end
@@ -55,7 +55,7 @@ RSpec.describe DataSourceChannel, type: :channel do
 
     it 'sends recent sync history' do
       perform :request_sync_status
-      
+
       expect(transmissions.last).to include(
         'recent_syncs' => be_an(Array),
         'sync_stats' => hash_including(
@@ -65,7 +65,7 @@ RSpec.describe DataSourceChannel, type: :channel do
           'average_duration'
         )
       )
-      
+
       # Should include recent jobs
       sync_data = transmissions.last['recent_syncs']
       expect(sync_data.size).to eq(3)
@@ -83,7 +83,7 @@ RSpec.describe DataSourceChannel, type: :channel do
         expect {
           perform :trigger_manual_sync
         }.to change(ExtractionJob, :count).by(1)
-        
+
         expect(transmissions.last).to include(
           'action' => 'sync_triggered',
           'job_id' => be_present,
@@ -99,7 +99,7 @@ RSpec.describe DataSourceChannel, type: :channel do
 
       it 'sends error message' do
         perform :trigger_manual_sync
-        
+
         expect(transmissions.last).to include(
           'error' => match(/sync.*already.*progress/i)
         )
@@ -116,7 +116,7 @@ RSpec.describe DataSourceChannel, type: :channel do
 
       it 'sends unauthorized error' do
         perform :trigger_manual_sync
-        
+
         expect(transmissions.last).to include(
           'error' => match(/permission/i)
         )
@@ -131,7 +131,7 @@ RSpec.describe DataSourceChannel, type: :channel do
 
     it 'broadcasts job progress updates' do
       job = create(:extraction_job, data_source: data_source, status: 'running')
-      
+
       expect {
         ActionCable.server.broadcast("data_source:#{data_source.id}", {
           event: 'sync_progress',

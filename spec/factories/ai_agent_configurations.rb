@@ -8,11 +8,11 @@ FactoryBot.define do
     settings { {} }
     learning_data { {} }
     performance_score { nil }
-    
+
     trait :disabled do
       enabled { false }
     end
-    
+
     trait :high_performing do
       performance_score { 0.92 }
       learning_data do
@@ -22,18 +22,18 @@ FactoryBot.define do
         }
       end
     end
-    
+
     trait :with_custom_settings do
       settings do
         {
           monitoring_frequency: "realtime",
           anomaly_threshold: 0.9,
-          alert_channels: ["email", "slack", "sms"],
-          custom_metrics: ["ltv", "cac", "mrr"]
+          alert_channels: [ "email", "slack", "sms" ],
+          custom_metrics: [ "ltv", "cac", "mrr" ]
         }
       end
     end
-    
+
     factory :bi_agent_configuration do
       agent_type { "business_intelligence" }
       settings do
@@ -42,11 +42,11 @@ FactoryBot.define do
           anomaly_threshold: 0.85,
           insight_generation: true,
           report_schedule: "weekly",
-          focus_metrics: ["revenue", "churn", "acquisition"]
+          focus_metrics: [ "revenue", "churn", "acquisition" ]
         }
       end
     end
-    
+
     factory :customer_success_agent_configuration do
       agent_type { "customer_success" }
       settings do
@@ -55,11 +55,11 @@ FactoryBot.define do
           engagement_monitoring: true,
           satisfaction_surveys: true,
           health_score_calculation: "weighted",
-          intervention_triggers: ["low_activity", "support_tickets", "payment_failed"]
+          intervention_triggers: [ "low_activity", "support_tickets", "payment_failed" ]
         }
       end
     end
-    
+
     factory :sales_agent_configuration do
       agent_type { "sales_optimization" }
       settings do
@@ -68,11 +68,11 @@ FactoryBot.define do
           pipeline_monitoring: true,
           forecast_accuracy_target: 0.85,
           deal_velocity_tracking: true,
-          competitor_monitoring: ["Competitor A", "Competitor B"]
+          competitor_monitoring: [ "Competitor A", "Competitor B" ]
         }
       end
     end
-    
+
     factory :inventory_agent_configuration do
       agent_type { "inventory_management" }
       settings do
@@ -85,7 +85,7 @@ FactoryBot.define do
         }
       end
     end
-    
+
     factory :financial_agent_configuration do
       agent_type { "financial_advisor" }
       settings do
@@ -99,7 +99,7 @@ FactoryBot.define do
         }
       end
     end
-    
+
     factory :marketing_agent_configuration do
       agent_type { "marketing_strategist" }
       settings do

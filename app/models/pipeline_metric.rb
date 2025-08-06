@@ -11,11 +11,11 @@ class PipelineMetric < ApplicationRecord
 
   scope :recent, -> { order(recorded_at: :desc) }
   scope :for_period, ->(start_time, end_time) { where(recorded_at: start_time..end_time) }
-  
+
   def performance_status
-    return 'optimal' if records_per_second > 100 && cpu_usage.to_f < 70
-    return 'degraded' if records_per_second < 50 || cpu_usage.to_f > 85
-    'normal'
+    return "optimal" if records_per_second > 100 && cpu_usage.to_f < 70
+    return "degraded" if records_per_second < 50 || cpu_usage.to_f > 85
+    "normal"
   end
 
   def efficiency_score

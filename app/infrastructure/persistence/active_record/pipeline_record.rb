@@ -4,29 +4,29 @@ module Infrastructure
   module ActiveRecord
     # ActiveRecord model for Pipeline persistence
     class PipelineRecord < ApplicationRecord
-      self.table_name = 'pipelines'
-      
+      self.table_name = "pipelines"
+
       # Associations
       belongs_to :organization
-      belongs_to :created_by, class_name: 'User'
-      has_many :domain_events, 
+      belongs_to :created_by, class_name: "User"
+      has_many :domain_events,
                -> { order(:occurred_at) },
                as: :aggregate,
-               class_name: 'Infrastructure::ActiveRecord::DomainEventRecord',
+               class_name: "Infrastructure::ActiveRecord::DomainEventRecord",
                dependent: :destroy
-      
+
       # We keep the existing pipeline_executions association for compatibility
       has_many :pipeline_executions, foreign_key: :pipeline_id, dependent: :destroy
-      
+
       # Validations
       validates :name, presence: true, uniqueness: { scope: :organization_id }
       validates :status, presence: true
-      
+
       # Scopes
-      scope :active, -> { where(status: 'active') }
+      scope :active, -> { where(status: "active") }
       scope :scheduled, -> { where.not(schedule_config: nil) }
       scope :operational, -> { where(status: %w[active paused]) }
-      
+
       # Serialize JSON fields
       serialize :source_config, JSON
       serialize :destination_config, JSON
@@ -34,14 +34,14 @@ module Infrastructure
       serialize :schedule_config, JSON
       serialize :retry_policy, JSON
       serialize :tags, JSON
-      
+
       # Convert to domain aggregate
       def to_aggregate
         # Rebuild aggregate from events
         events = domain_events.map(&:to_domain_event)
         Domain::PipelineManagement::Aggregates::PipelineAggregate.build_from_events(events)
       end
-      
+
       # Update from aggregate
       def update_from_aggregate(aggregate)
         self.name = aggregate.name

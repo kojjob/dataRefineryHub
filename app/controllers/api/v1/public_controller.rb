@@ -161,7 +161,7 @@ class Api::V1::PublicController < ActionController::API
           records: rand(500..2000)
         },
         {
-          type: "transformation_started", 
+          type: "transformation_started",
           message: "Customer segmentation analysis started",
           timestamp: rand(1..3).minutes.ago.iso8601
         }

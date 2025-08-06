@@ -205,7 +205,7 @@ RSpec.describe 'ai/bi_agent/dashboard', type: :view do
     expect(rendered).not_to include('bg-gradient-to-br')
     expect(rendered).not_to include('from-slate-50')
     expect(rendered).not_to include('backdrop-blur-xl')
-    
+
     # Should use DataFlow Pro classes instead
     expect(rendered).to include('class="dashboard-content"')
     expect(rendered).to include('class="metric-card"')

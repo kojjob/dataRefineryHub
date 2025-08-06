@@ -7,17 +7,17 @@ class AddRetryPolicyFieldsToPipelineConfigurations < ActiveRecord::Migration[8.0
     add_column :pipelines, :retry_initial_delay, :integer
     add_column :pipelines, :retry_max_delay, :integer
     add_column :pipelines, :retry_multiplier, :float
-    
+
     reversible do |dir|
       dir.up do
         # Skip if no pipelines exist or retry_policy column doesn't exist
-        return unless ActiveRecord::Base.connection.table_exists?(:pipelines) && 
+        return unless ActiveRecord::Base.connection.table_exists?(:pipelines) &&
                      ActiveRecord::Base.connection.column_exists?(:pipelines, :retry_policy)
-        
+
         # Use raw SQL to avoid model dependencies
         execute <<~SQL
           UPDATE pipelines
-          SET 
+          SET#{' '}
             retry_max_attempts = COALESCE((retry_policy->>'max_attempts')::integer, 3),
             retry_backoff_strategy = COALESCE(
               retry_policy->>'strategy',

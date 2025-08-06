@@ -261,7 +261,7 @@ class User < ApplicationRecord
   def timezone
     # This could be stored as a user preference
     # For now, return a default
-    'Eastern Time (US & Canada)'
+    "Eastern Time (US & Canada)"
   end
 
   # Delivery preferences

@@ -17,7 +17,7 @@ class CreateEventTimeline < ActiveRecord::Migration[8.0]
     add_index :event_timelines, :event_type
     add_index :event_timelines, :event_category
     add_index :event_timelines, :occurred_at
-    add_index :event_timelines, [:resource_type, :resource_id]
-    add_index :event_timelines, [:organization_id, :occurred_at]
+    add_index :event_timelines, [ :resource_type, :resource_id ]
+    add_index :event_timelines, [ :organization_id, :occurred_at ]
   end
 end

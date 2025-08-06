@@ -1,7 +1,7 @@
 class ProjectsController < DataflowProController
   before_action :authenticate_user!
   before_action :ensure_organization_member
-  before_action :set_project, only: [:show, :edit, :update, :destroy]
+  before_action :set_project, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @projects = current_organization.projects.includes(:user).order(created_at: :desc)
@@ -20,7 +20,7 @@ class ProjectsController < DataflowProController
     @project.user = current_user
 
     if @project.save
-      redirect_to @project, notice: 'Project was successfully created.'
+      redirect_to @project, notice: "Project was successfully created."
     else
       render :new
     end
@@ -31,7 +31,7 @@ class ProjectsController < DataflowProController
 
   def update
     if @project.update(project_params)
-      redirect_to @project, notice: 'Project was successfully updated.'
+      redirect_to @project, notice: "Project was successfully updated."
     else
       render :edit
     end
@@ -39,7 +39,7 @@ class ProjectsController < DataflowProController
 
   def destroy
     @project.destroy
-    redirect_to projects_url, notice: 'Project was successfully deleted.'
+    redirect_to projects_url, notice: "Project was successfully deleted."
   end
 
   private

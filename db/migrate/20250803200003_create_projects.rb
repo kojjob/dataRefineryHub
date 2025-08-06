@@ -11,9 +11,9 @@ class CreateProjects < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
+
     add_index :projects, :slug, unique: true
-    add_index :projects, [:organization_id, :slug], unique: true, name: 'idx_projects_org_slug_unique'
+    add_index :projects, [ :organization_id, :slug ], unique: true, name: 'idx_projects_org_slug_unique'
     add_index :projects, :status
   end
 end

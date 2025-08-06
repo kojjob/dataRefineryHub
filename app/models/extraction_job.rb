@@ -23,7 +23,7 @@ class ExtractionJob < ApplicationRecord
   scope :successful, -> { where(status: "completed") }
   scope :failed, -> { where(status: "failed") }
   scope :recent, -> { order(created_at: :desc) }
-  scope :api_syncs, -> { where(job_type: ["api_sync", "manual_sync"]) }
+  scope :api_syncs, -> { where(job_type: [ "api_sync", "manual_sync" ]) }
 
   before_validation :generate_job_id, on: :create
   before_validation :set_defaults, on: :create

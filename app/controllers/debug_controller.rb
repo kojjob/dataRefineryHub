@@ -30,42 +30,42 @@ class DebugController < ApplicationController
 
   def test_flash
     case params[:type]
-    when 'short'
+    when "short"
       flash[:success] = "Short message (12 seconds)"
-    when 'medium'
+    when "medium"
       flash[:info] = "This is a medium length message that should take a bit longer to read and understand. (approximately 15 seconds)"
-    when 'long'
+    when "long"
       flash[:warning] = "This is a very long flash message that contains a lot of information and should definitely take more time to read. It includes multiple sentences and detailed information that users need time to process and understand fully. This message will display for up to 20 seconds to give you adequate reading time."
-    when 'error'
+    when "error"
       flash[:error] = "An error occurred while processing your request. Please check your input and try again. (approximately 14 seconds)"
-    when 'enhanced'
+    when "enhanced"
       flash_success("Enhanced flash message with progress bar and extended timing", {
         title: "Success!",
         action_text: "View Details",
         action_url: "#"
       })
-    when 'persistent'
+    when "persistent"
       flash_success("This message won't auto-dismiss - click X to close", {
         title: "Persistent Message",
         persistent: true
       })
-    when 'action'
+    when "action"
       flash_info("Your report is ready for download", {
         title: "Report Generated",
         action_text: "Download",
         action_url: "#download"
       })
-    when 'undo'
+    when "undo"
       flash_with_undo(:success, "Record deleted successfully", "#undo")
-    when 'custom_timing'
+    when "custom_timing"
       flash_timed(:warning, "This message displays for exactly 8 seconds", 8000)
-    when 'validation'
+    when "validation"
       # Simulate validation errors
       flash_error("Please fix the following errors before continuing:", {
         title: "Validation Failed",
         persistent: true
       })
-    when 'all_types'
+    when "all_types"
       flash_success("Success message")
       flash_error("Error message")
       flash_warning("Warning message")

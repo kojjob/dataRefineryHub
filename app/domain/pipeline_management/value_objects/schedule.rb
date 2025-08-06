@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'fugit'
+require "fugit"
 
 module Domain
   module PipelineManagement
@@ -13,7 +13,7 @@ module Domain
         attr_reader :type, :expression, :timezone
 
         TYPES = %w[cron interval daily hourly].freeze
-        DEFAULT_TIMEZONE = 'UTC'
+        DEFAULT_TIMEZONE = "UTC"
 
         validates :type, inclusion: { in: TYPES }
         validates :expression, presence: true
@@ -24,7 +24,7 @@ module Domain
           @type = type
           @expression = expression
           @timezone = timezone
-          
+
           unless valid?
             raise ActiveModel::ValidationError.new(self)
           end
@@ -32,13 +32,13 @@ module Domain
 
         def next_run_time(from: Time.current)
           case type
-          when 'cron'
+          when "cron"
             calculate_cron_next_time(from)
-          when 'interval'
+          when "interval"
             calculate_interval_next_time(from)
-          when 'daily'
+          when "daily"
             calculate_daily_next_time(from)
-          when 'hourly'
+          when "hourly"
             from.beginning_of_hour + 1.hour
           end
         end
@@ -67,11 +67,11 @@ module Domain
 
         def validate_expression_format
           case type
-          when 'cron'
+          when "cron"
             validate_cron_expression
-          when 'interval'
+          when "interval"
             validate_interval_expression
-          when 'daily'
+          when "daily"
             validate_daily_expression
           end
         end
@@ -79,27 +79,27 @@ module Domain
         def validate_cron_expression
           result = Fugit::Cron.parse(expression)
           if result.nil?
-            errors.add(:expression, 'is not a valid cron expression')
+            errors.add(:expression, "is not a valid cron expression")
           end
         rescue StandardError
-          errors.add(:expression, 'is not a valid cron expression')
+          errors.add(:expression, "is not a valid cron expression")
         end
 
         def validate_interval_expression
           Integer(expression)
         rescue StandardError
-          errors.add(:expression, 'must be a number of minutes')
+          errors.add(:expression, "must be a number of minutes")
         end
 
         def validate_daily_expression
           Time.parse(expression)
         rescue StandardError
-          errors.add(:expression, 'must be in HH:MM format')
+          errors.add(:expression, "must be in HH:MM format")
         end
 
         def calculate_cron_next_time(from)
           cron = Fugit::Cron.parse(expression)
-          cron.next_time(from.in_time_zone(timezone)).in_time_zone('UTC')
+          cron.next_time(from.in_time_zone(timezone)).in_time_zone("UTC")
         end
 
         def calculate_interval_next_time(from)
@@ -107,7 +107,7 @@ module Domain
         end
 
         def calculate_daily_next_time(from)
-          time_parts = expression.split(':')
+          time_parts = expression.split(":")
           hour = time_parts[0].to_i
           minute = time_parts[1].to_i
 
@@ -119,7 +119,7 @@ module Domain
             scheduled_time += 1.day
           end
 
-          scheduled_time.in_time_zone('UTC')
+          scheduled_time.in_time_zone("UTC")
         end
       end
     end

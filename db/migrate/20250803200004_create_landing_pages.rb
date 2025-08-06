@@ -16,9 +16,9 @@ class CreateLandingPages < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
+
     add_index :landing_pages, :slug, unique: true
-    add_index :landing_pages, [:project_id, :slug], unique: true, name: 'idx_landing_pages_project_slug_unique'
+    add_index :landing_pages, [ :project_id, :slug ], unique: true, name: 'idx_landing_pages_project_slug_unique'
     add_index :landing_pages, :published
     add_index :landing_pages, :template_type
   end

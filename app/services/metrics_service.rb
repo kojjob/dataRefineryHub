@@ -148,7 +148,7 @@ class MetricsService
 
     # Subscription metrics by tier
     # Skip if subscription_tier column doesn't exist
-    if Organization.column_names.include?('subscription_tier')
+    if Organization.column_names.include?("subscription_tier")
       Organization.group(:subscription_tier).count.each do |tier, count|
         gauge("subscriptions.active", count, tags: { tier: tier })
       end

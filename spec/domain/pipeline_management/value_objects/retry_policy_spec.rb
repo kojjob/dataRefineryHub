@@ -332,7 +332,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::RetryPolicy do
       )
 
       delays = (1..5).map { |i| policy.delay_for_attempt(i) }
-      expect(delays).to eq([1, 2, 4, 8, 16])
+      expect(delays).to eq([ 1, 2, 4, 8, 16 ])
     end
 
     it 'handles API rate limit scenario' do

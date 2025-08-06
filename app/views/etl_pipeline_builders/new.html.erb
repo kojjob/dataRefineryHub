@@ -1275,75 +1275,803 @@
         </div>
       </div>
 
-      <!-- Step 5: Schedule & Settings -->
-      <div data-pipeline-builder-target="step5" class="mt-8 hidden">
-        <div class="bg-white shadow rounded-lg">
-          <div class="px-6 py-4 border-b border-gray-200">
-            <h2 class="text-lg font-medium text-gray-900">Schedule & Settings</h2>
+      <!-- Step 5: Premium Schedule & Settings -->
+      <div data-pipeline-builder-target="step5" style="margin-top: var(--space-32); display: none;">
+        <div style="
+          background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(99, 102, 241, 0.02) 100%);
+          border: 1px solid rgba(var(--color-border-rgb), 0.2);
+          border-radius: var(--radius-xl);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+          overflow: hidden;
+        ">
+          <!-- Premium Step Header -->
+          <div style="
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+            padding: var(--space-24) var(--space-32);
+          ">
+            <h2 style="
+              font-size: var(--font-size-2xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              display: flex;
+              align-items: center;
+              gap: var(--space-12);
+            ">
+              <div style="
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+                border-radius: var(--radius-lg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+              ">
+                <svg style="width: 20px; height: 20px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              Schedule & Settings
+            </h2>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+              margin: 0;
+            ">Configure execution schedule, error handling, and notification preferences</p>
           </div>
-          <div class="p-6 space-y-6">
-            <!-- Schedule Configuration -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Schedule Type</label>
-              <div class="mt-2 space-y-4">
-                <label class="flex items-center">
-                  <input type="radio" name="schedule_type" value="manual" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" checked>
-                  <span class="ml-3 text-sm text-gray-700">Manual (Run on demand)</span>
-                </label>
-                <label class="flex items-center">
-                  <input type="radio" name="schedule_type" value="interval" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
-                  <span class="ml-3 text-sm text-gray-700">Fixed Interval</span>
-                </label>
-                <label class="flex items-center">
-                  <input type="radio" name="schedule_type" value="cron" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
-                  <span class="ml-3 text-sm text-gray-700">Cron Expression</span>
-                </label>
-                <label class="flex items-center">
-                  <input type="radio" name="schedule_type" value="daily" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
-                  <span class="ml-3 text-sm text-gray-700">Daily at specific time</span>
-                </label>
+
+          <!-- Premium Form Content -->
+          <div style="padding: var(--space-32); display: flex; flex-direction: column; gap: var(--space-32);">
+            
+            <!-- Schedule Configuration Section -->
+            <div style="
+              background: rgba(var(--color-surface-rgb), 0.8);
+              border: 1px solid rgba(var(--color-border-rgb), 0.3);
+              border-radius: var(--radius-lg);
+              padding: var(--space-24);
+              backdrop-filter: blur(10px);
+            ">
+              <h3 style="
+                font-size: var(--font-size-lg);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin: 0 0 var(--space-16) 0;
+                display: flex;
+                align-items: center;
+                gap: var(--space-8);
+              ">
+                <div style="
+                  width: 24px;
+                  height: 24px;
+                  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                ">
+                  <svg style="width: 12px; height: 12px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+                Execution Schedule
+              </h3>
+
+              <div style="display: flex; flex-direction: column; gap: var(--space-20);">
+                <!-- Schedule Type Radio Buttons -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-16);">
+                  <!-- Manual Schedule -->
+                  <label style="
+                    display: flex;
+                    align-items: flex-start;
+                    gap: var(--space-12);
+                    padding: var(--space-16);
+                    border: 2px solid rgba(var(--color-border-rgb), 0.3);
+                    border-radius: var(--radius-lg);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    background: rgba(var(--color-surface-rgb), 0.5);
+                  " onmouseover="this.style.borderColor='rgba(99, 102, 241, 0.4)'; this.style.background='rgba(99, 102, 241, 0.05)'"
+                     onmouseout="this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.background='rgba(var(--color-surface-rgb), 0.5)'">
+                    <input type="radio" 
+                           name="pipeline[schedule_config][type]" 
+                           value="manual" 
+                           checked
+                           style="
+                             margin-top: var(--space-2);
+                             width: 16px;
+                             height: 16px;
+                             accent-color: #6366f1;
+                           ">
+                    <div>
+                      <h4 style="
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-bold);
+                        color: var(--color-text);
+                        margin: 0 0 var(--space-4) 0;
+                      ">Manual Execution</h4>
+                      <p style="
+                        font-size: var(--font-size-xs);
+                        color: var(--color-text-secondary);
+                        margin: 0;
+                      ">Run pipeline on demand when needed</p>
+                    </div>
+                  </label>
+
+                  <!-- Interval Schedule -->
+                  <label style="
+                    display: flex;
+                    align-items: flex-start;
+                    gap: var(--space-12);
+                    padding: var(--space-16);
+                    border: 2px solid rgba(var(--color-border-rgb), 0.3);
+                    border-radius: var(--radius-lg);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    background: rgba(var(--color-surface-rgb), 0.5);
+                  " onmouseover="this.style.borderColor='rgba(99, 102, 241, 0.4)'; this.style.background='rgba(99, 102, 241, 0.05)'"
+                     onmouseout="this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.background='rgba(var(--color-surface-rgb), 0.5)'">
+                    <input type="radio" 
+                           name="pipeline[schedule_config][type]" 
+                           value="interval"
+                           style="
+                             margin-top: var(--space-2);
+                             width: 16px;
+                             height: 16px;
+                             accent-color: #6366f1;
+                           ">
+                    <div>
+                      <h4 style="
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-bold);
+                        color: var(--color-text);
+                        margin: 0 0 var(--space-4) 0;
+                      ">Fixed Interval</h4>
+                      <p style="
+                        font-size: var(--font-size-xs);
+                        color: var(--color-text-secondary);
+                        margin: 0;
+                      ">Run every X hours, minutes, or days</p>
+                    </div>
+                  </label>
+
+                  <!-- Daily Schedule -->
+                  <label style="
+                    display: flex;
+                    align-items: flex-start;
+                    gap: var(--space-12);
+                    padding: var(--space-16);
+                    border: 2px solid rgba(var(--color-border-rgb), 0.3);
+                    border-radius: var(--radius-lg);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    background: rgba(var(--color-surface-rgb), 0.5);
+                  " onmouseover="this.style.borderColor='rgba(99, 102, 241, 0.4)'; this.style.background='rgba(99, 102, 241, 0.05)'"
+                     onmouseout="this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.background='rgba(var(--color-surface-rgb), 0.5)'">
+                    <input type="radio" 
+                           name="pipeline[schedule_config][type]" 
+                           value="daily"
+                           style="
+                             margin-top: var(--space-2);
+                             width: 16px;
+                             height: 16px;
+                             accent-color: #6366f1;
+                           ">
+                    <div>
+                      <h4 style="
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-bold);
+                        color: var(--color-text);
+                        margin: 0 0 var(--space-4) 0;
+                      ">Daily Schedule</h4>
+                      <p style="
+                        font-size: var(--font-size-xs);
+                        color: var(--color-text-secondary);
+                        margin: 0;
+                      ">Run daily at a specific time</p>
+                    </div>
+                  </label>
+
+                  <!-- Cron Expression -->
+                  <label style="
+                    display: flex;
+                    align-items: flex-start;
+                    gap: var(--space-12);
+                    padding: var(--space-16);
+                    border: 2px solid rgba(var(--color-border-rgb), 0.3);
+                    border-radius: var(--radius-lg);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    background: rgba(var(--color-surface-rgb), 0.5);
+                  " onmouseover="this.style.borderColor='rgba(99, 102, 241, 0.4)'; this.style.background='rgba(99, 102, 241, 0.05)'"
+                     onmouseout="this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.background='rgba(var(--color-surface-rgb), 0.5)'">
+                    <input type="radio" 
+                           name="pipeline[schedule_config][type]" 
+                           value="cron"
+                           style="
+                             margin-top: var(--space-2);
+                             width: 16px;
+                             height: 16px;
+                             accent-color: #6366f1;
+                           ">
+                    <div>
+                      <h4 style="
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-bold);
+                        color: var(--color-text);
+                        margin: 0 0 var(--space-4) 0;
+                      ">Custom Cron</h4>
+                      <p style="
+                        font-size: var(--font-size-xs);
+                        color: var(--color-text-secondary);
+                        margin: 0;
+                      ">Advanced scheduling with cron expressions</p>
+                    </div>
+                  </label>
+                </div>
+
+                <!-- Schedule Details (Dynamic based on selection) -->
+                <div style="
+                  background: rgba(var(--color-surface-rgb), 0.6);
+                  border: 1px solid rgba(var(--color-border-rgb), 0.2);
+                  border-radius: var(--radius-md);
+                  padding: var(--space-16);
+                ">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-16);">
+                    <div>
+                      <label style="
+                        display: block;
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-medium);
+                        color: var(--color-text);
+                        margin-bottom: var(--space-8);
+                      ">Start Time:</label>
+                      <input type="time" 
+                             name="pipeline[schedule_config][start_time]"
+                             value="09:00"
+                             style="
+                               width: 100%;
+                               padding: var(--space-10) var(--space-12);
+                               background: rgba(var(--color-surface-rgb), 0.8);
+                               border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                               border-radius: var(--radius-md);
+                               color: var(--color-text);
+                               font-size: var(--font-size-sm);
+                             ">
+                    </div>
+                    <div>
+                      <label style="
+                        display: block;
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-medium);
+                        color: var(--color-text);
+                        margin-bottom: var(--space-8);
+                      ">Timezone:</label>
+                      <select name="pipeline[schedule_config][timezone]" 
+                              style="
+                                width: 100%;
+                                padding: var(--space-10) var(--space-12);
+                                background: rgba(var(--color-surface-rgb), 0.8);
+                                border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                                border-radius: var(--radius-md);
+                                color: var(--color-text);
+                                font-size: var(--font-size-sm);
+                              ">
+                        <option value="UTC">UTC</option>
+                        <option value="America/New_York">Eastern Time</option>
+                        <option value="America/Chicago">Central Time</option>
+                        <option value="America/Denver">Mountain Time</option>
+                        <option value="America/Los_Angeles" selected>Pacific Time</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <!-- Error Handling -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Error Handling Strategy</label>
-              <select name="error_handling_strategy" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                <option value="circuit_breaker">Circuit Breaker (recommended)</option>
-                <option value="retry_with_backoff">Retry with Exponential Backoff</option>
-                <option value="fail_fast">Fail Fast</option>
-                <option value="ignore_errors">Continue on Error</option>
-              </select>
+            <!-- Error Handling Section -->
+            <div style="
+              background: rgba(var(--color-surface-rgb), 0.8);
+              border: 1px solid rgba(var(--color-border-rgb), 0.3);
+              border-radius: var(--radius-lg);
+              padding: var(--space-24);
+              backdrop-filter: blur(10px);
+            ">
+              <h3 style="
+                font-size: var(--font-size-lg);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin: 0 0 var(--space-16) 0;
+                display: flex;
+                align-items: center;
+                gap: var(--space-8);
+              ">
+                <div style="
+                  width: 24px;
+                  height: 24px;
+                  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                ">
+                  <svg style="width: 12px; height: 12px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                  </svg>
+                </div>
+                Error Handling & Resilience
+              </h3>
+
+              <div style="display: flex; flex-direction: column; gap: var(--space-20);">
+                <!-- Error Handling Strategy -->
+                <div>
+                  <label style="
+                    display: block;
+                    font-size: var(--font-size-sm);
+                    font-weight: var(--font-weight-medium);
+                    color: var(--color-text);
+                    margin-bottom: var(--space-12);
+                  ">Error Handling Strategy:</label>
+                  <select name="pipeline[error_handling_strategy]" 
+                          style="
+                            width: 100%;
+                            padding: var(--space-12) var(--space-16);
+                            background: rgba(var(--color-surface-rgb), 0.8);
+                            border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                            border-radius: var(--radius-lg);
+                            color: var(--color-text);
+                            font-size: var(--font-size-sm);
+                            backdrop-filter: blur(10px);
+                          ">
+                    <option value="circuit_breaker">🔧 Circuit Breaker (Recommended) - Stop after repeated failures</option>
+                    <option value="retry_with_backoff">🔄 Retry with Exponential Backoff - Intelligent retry strategy</option>
+                    <option value="fail_fast">⚡ Fail Fast - Stop immediately on any error</option>
+                    <option value="ignore_errors">⚠️ Continue on Error - Keep running despite errors</option>
+                  </select>
+                </div>
+
+                <!-- Retry Configuration -->
+                <div style="
+                  background: rgba(var(--color-surface-rgb), 0.6);
+                  border: 1px solid rgba(var(--color-border-rgb), 0.2);
+                  border-radius: var(--radius-md);
+                  padding: var(--space-16);
+                ">
+                  <h4 style="
+                    font-size: var(--font-size-sm);
+                    font-weight: var(--font-weight-bold);
+                    color: var(--color-text);
+                    margin: 0 0 var(--space-12) 0;
+                  ">Retry Configuration</h4>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-16);">
+                    <div>
+                      <label style="
+                        display: block;
+                        font-size: var(--font-size-xs);
+                        font-weight: var(--font-weight-medium);
+                        color: var(--color-text-secondary);
+                        margin-bottom: var(--space-6);
+                      ">Max Retries:</label>
+                      <input type="number" 
+                             name="pipeline[retry_policy][max_retries]" 
+                             value="3" 
+                             min="0" 
+                             max="10"
+                             style="
+                               width: 100%;
+                               padding: var(--space-8) var(--space-10);
+                               background: rgba(var(--color-surface-rgb), 0.8);
+                               border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                               border-radius: var(--radius-md);
+                               color: var(--color-text);
+                               font-size: var(--font-size-sm);
+                             ">
+                    </div>
+                    <div>
+                      <label style="
+                        display: block;
+                        font-size: var(--font-size-xs);
+                        font-weight: var(--font-weight-medium);
+                        color: var(--color-text-secondary);
+                        margin-bottom: var(--space-6);
+                      ">Initial Delay (seconds):</label>
+                      <input type="number" 
+                             name="pipeline[retry_policy][initial_delay]" 
+                             value="30" 
+                             min="1" 
+                             max="300"
+                             style="
+                               width: 100%;
+                               padding: var(--space-8) var(--space-10);
+                               background: rgba(var(--color-surface-rgb), 0.8);
+                               border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                               border-radius: var(--radius-md);
+                               color: var(--color-text);
+                               font-size: var(--font-size-sm);
+                             ">
+                    </div>
+                    <div>
+                      <label style="
+                        display: block;
+                        font-size: var(--font-size-xs);
+                        font-weight: var(--font-weight-medium);
+                        color: var(--color-text-secondary);
+                        margin-bottom: var(--space-6);
+                      ">Max Delay (seconds):</label>
+                      <input type="number" 
+                             name="pipeline[retry_policy][max_delay]" 
+                             value="300" 
+                             min="60" 
+                             max="3600"
+                             style="
+                               width: 100%;
+                               padding: var(--space-8) var(--space-10);
+                               background: rgba(var(--color-surface-rgb), 0.8);
+                               border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                               border-radius: var(--radius-md);
+                               color: var(--color-text);
+                               font-size: var(--font-size-sm);
+                             ">
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <!-- Retry Policy -->
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700">Max Retries</label>
-                <input type="number" name="max_retries" value="3" min="0" max="10" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700">Retry Delay (seconds)</label>
-                <input type="number" name="retry_delay" value="60" min="1" max="3600" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <!-- Notifications Section -->
+            <div style="
+              background: rgba(var(--color-surface-rgb), 0.8);
+              border: 1px solid rgba(var(--color-border-rgb), 0.3);
+              border-radius: var(--radius-lg);
+              padding: var(--space-24);
+              backdrop-filter: blur(10px);
+            ">
+              <h3 style="
+                font-size: var(--font-size-lg);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin: 0 0 var(--space-16) 0;
+                display: flex;
+                align-items: center;
+                gap: var(--space-8);
+              ">
+                <div style="
+                  width: 24px;
+                  height: 24px;
+                  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                ">
+                  <svg style="width: 12px; height: 12px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.515 2.019A13 13 0 0017 8.566a13 13 0 00-7.656 9.04A13 13 0 002.019 8.515z"/>
+                  </svg>
+                </div>
+                Notifications & Alerts
+              </h3>
+
+              <!-- Notification Preferences -->
+              <div style="display: flex; flex-direction: column; gap: var(--space-16);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-12);">
+                  <!-- Success Notifications -->
+                  <label style="
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-12);
+                    padding: var(--space-12);
+                    border: 1px solid rgba(16, 185, 129, 0.3);
+                    border-radius: var(--radius-md);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.01) 100%);
+                  ">
+                    <input type="checkbox" 
+                           name="pipeline[notification_settings][notify_on_success]"
+                           value="true"
+                           style="
+                             width: 16px;
+                             height: 16px;
+                             accent-color: #10b981;
+                           ">
+                    <div>
+                      <h4 style="
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-medium);
+                        color: var(--color-text);
+                        margin: 0 0 var(--space-2) 0;
+                      ">✅ Success Notifications</h4>
+                      <p style="
+                        font-size: var(--font-size-xs);
+                        color: var(--color-text-secondary);
+                        margin: 0;
+                      ">Notify when pipeline completes successfully</p>
+                    </div>
+                  </label>
+
+                  <!-- Failure Notifications -->
+                  <label style="
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-12);
+                    padding: var(--space-12);
+                    border: 1px solid rgba(239, 68, 68, 0.3);
+                    border-radius: var(--radius-md);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(239, 68, 68, 0.01) 100%);
+                  ">
+                    <input type="checkbox" 
+                           name="pipeline[notification_settings][notify_on_failure]"
+                           value="true"
+                           checked
+                           style="
+                             width: 16px;
+                             height: 16px;
+                             accent-color: #ef4444;
+                           ">
+                    <div>
+                      <h4 style="
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-medium);
+                        color: var(--color-text);
+                        margin: 0 0 var(--space-2) 0;
+                      ">🚨 Failure Notifications</h4>
+                      <p style="
+                        font-size: var(--font-size-xs);
+                        color: var(--color-text-secondary);
+                        margin: 0;
+                      ">Notify immediately on pipeline failures</p>
+                    </div>
+                  </label>
+
+                  <!-- Warning Notifications -->
+                  <label style="
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-12);
+                    padding: var(--space-12);
+                    border: 1px solid rgba(245, 158, 11, 0.3);
+                    border-radius: var(--radius-md);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(245, 158, 11, 0.01) 100%);
+                  ">
+                    <input type="checkbox" 
+                           name="pipeline[notification_settings][notify_on_warning]"
+                           value="true"
+                           style="
+                             width: 16px;
+                             height: 16px;
+                             accent-color: #f59e0b;
+                           ">
+                    <div>
+                      <h4 style="
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-medium);
+                        color: var(--color-text);
+                        margin: 0 0 var(--space-2) 0;
+                      ">⚠️ Warning Notifications</h4>
+                      <p style="
+                        font-size: var(--font-size-xs);
+                        color: var(--color-text-secondary);
+                        margin: 0;
+                      ">Notify on data quality warnings</p>
+                    </div>
+                  </label>
+
+                  <!-- Performance Notifications -->
+                  <label style="
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-12);
+                    padding: var(--space-12);
+                    border: 1px solid rgba(99, 102, 241, 0.3);
+                    border-radius: var(--radius-md);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(99, 102, 241, 0.01) 100%);
+                  ">
+                    <input type="checkbox" 
+                           name="pipeline[notification_settings][notify_on_performance]"
+                           value="true"
+                           style="
+                             width: 16px;
+                             height: 16px;
+                             accent-color: #6366f1;
+                           ">
+                    <div>
+                      <h4 style="
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-medium);
+                        color: var(--color-text);
+                        margin: 0 0 var(--space-2) 0;
+                      ">📈 Performance Alerts</h4>
+                      <p style="
+                        font-size: var(--font-size-xs);
+                        color: var(--color-text-secondary);
+                        margin: 0;
+                      ">Notify on performance degradation</p>
+                    </div>
+                  </label>
+                </div>
+
+                <!-- Notification Channels -->
+                <div style="
+                  background: rgba(var(--color-surface-rgb), 0.6);
+                  border: 1px solid rgba(var(--color-border-rgb), 0.2);
+                  border-radius: var(--radius-md);
+                  padding: var(--space-16);
+                ">
+                  <h4 style="
+                    font-size: var(--font-size-sm);
+                    font-weight: var(--font-weight-bold);
+                    color: var(--color-text);
+                    margin: 0 0 var(--space-12) 0;
+                  ">Notification Channels</h4>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-12);">
+                    <label style="display: flex; align-items: center; gap: var(--space-8);">
+                      <input type="checkbox" 
+                             name="pipeline[notification_settings][channels][]"
+                             value="email"
+                             checked
+                             style="width: 14px; height: 14px; accent-color: #6366f1;">
+                      <span style="font-size: var(--font-size-xs); color: var(--color-text);">📧 Email</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: var(--space-8);">
+                      <input type="checkbox" 
+                             name="pipeline[notification_settings][channels][]"
+                             value="slack"
+                             style="width: 14px; height: 14px; accent-color: #6366f1;">
+                      <span style="font-size: var(--font-size-xs); color: var(--color-text);">💬 Slack</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: var(--space-8);">
+                      <input type="checkbox" 
+                             name="pipeline[notification_settings][channels][]"
+                             value="sms"
+                             style="width: 14px; height: 14px; accent-color: #6366f1;">
+                      <span style="font-size: var(--font-size-xs); color: var(--color-text);">📱 SMS</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: var(--space-8);">
+                      <input type="checkbox" 
+                             name="pipeline[notification_settings][channels][]"
+                             value="webhook"
+                             style="width: 14px; height: 14px; accent-color: #6366f1;">
+                      <span style="font-size: var(--font-size-xs); color: var(--color-text);">🔗 Webhook</span>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <!-- Notifications -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Notifications</label>
-              <div class="space-y-2">
-                <label class="flex items-center">
-                  <input type="checkbox" name="notify_on_success" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                  <span class="ml-2 text-sm text-gray-700">Notify on successful completion</span>
-                </label>
-                <label class="flex items-center">
-                  <input type="checkbox" name="notify_on_failure" checked class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                  <span class="ml-2 text-sm text-gray-700">Notify on failure</span>
-                </label>
-                <label class="flex items-center">
-                  <input type="checkbox" name="notify_on_warning" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                  <span class="ml-2 text-sm text-gray-700">Notify on warnings</span>
-                </label>
+            <!-- Advanced Settings -->
+            <div style="
+              background: rgba(var(--color-surface-rgb), 0.8);
+              border: 1px solid rgba(var(--color-border-rgb), 0.3);
+              border-radius: var(--radius-lg);
+              padding: var(--space-24);
+              backdrop-filter: blur(10px);
+            ">
+              <h3 style="
+                font-size: var(--font-size-lg);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin: 0 0 var(--space-16) 0;
+                display: flex;
+                align-items: center;
+                gap: var(--space-8);
+              ">
+                <div style="
+                  width: 24px;
+                  height: 24px;
+                  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                ">
+                  <svg style="width: 12px; height: 12px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                </div>
+                Advanced Settings
+              </h3>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-20);">
+                <!-- Resource Limits -->
+                <div>
+                  <h4 style="
+                    font-size: var(--font-size-sm);
+                    font-weight: var(--font-weight-bold);
+                    color: var(--color-text);
+                    margin: 0 0 var(--space-12) 0;
+                  ">Resource Limits</h4>
+                  <div style="display: flex; flex-direction: column; gap: var(--space-12);">
+                    <div>
+                      <label style="
+                        display: block;
+                        font-size: var(--font-size-xs);
+                        color: var(--color-text-secondary);
+                        margin-bottom: var(--space-6);
+                      ">Timeout (minutes):</label>
+                      <input type="number" 
+                             name="pipeline[advanced_settings][timeout_minutes]" 
+                             value="60" 
+                             min="5" 
+                             max="1440"
+                             style="
+                               width: 100%;
+                               padding: var(--space-8) var(--space-10);
+                               background: rgba(var(--color-surface-rgb), 0.8);
+                               border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                               border-radius: var(--radius-md);
+                               color: var(--color-text);
+                               font-size: var(--font-size-sm);
+                             ">
+                    </div>
+                    <div>
+                      <label style="
+                        display: block;
+                        font-size: var(--font-size-xs);
+                        color: var(--color-text-secondary);
+                        margin-bottom: var(--space-6);
+                      ">Memory Limit (GB):</label>
+                      <select name="pipeline[advanced_settings][memory_limit_gb]" 
+                              style="
+                                width: 100%;
+                                padding: var(--space-8) var(--space-10);
+                                background: rgba(var(--color-surface-rgb), 0.8);
+                                border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                                border-radius: var(--radius-md);
+                                color: var(--color-text);
+                                font-size: var(--font-size-sm);
+                              ">
+                        <option value="1">1 GB</option>
+                        <option value="2" selected>2 GB</option>
+                        <option value="4">4 GB</option>
+                        <option value="8">8 GB</option>
+                        <option value="16">16 GB</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Data Quality -->
+                <div>
+                  <h4 style="
+                    font-size: var(--font-size-sm);
+                    font-weight: var(--font-weight-bold);
+                    color: var(--color-text);
+                    margin: 0 0 var(--space-12) 0;
+                  ">Data Quality</h4>
+                  <div style="display: flex; flex-direction: column; gap: var(--space-8);">
+                    <label style="display: flex; align-items: center; gap: var(--space-8);">
+                      <input type="checkbox" 
+                             name="pipeline[advanced_settings][enable_data_validation]"
+                             value="true"
+                             checked
+                             style="width: 14px; height: 14px; accent-color: #6366f1;">
+                      <span style="font-size: var(--font-size-xs); color: var(--color-text);">Enable data validation</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: var(--space-8);">
+                      <input type="checkbox" 
+                             name="pipeline[advanced_settings][enable_schema_evolution]"
+                             value="true"
+                             style="width: 14px; height: 14px; accent-color: #6366f1;">
+                      <span style="font-size: var(--font-size-xs); color: var(--color-text);">Allow schema evolution</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: var(--space-8);">
+                      <input type="checkbox" 
+                             name="pipeline[advanced_settings][enable_profiling]"
+                             value="true"
+                             style="width: 14px; height: 14px; accent-color: #6366f1;">
+                      <span style="font-size: var(--font-size-xs); color: var(--color-text);">Enable data profiling</span>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1559,6 +2287,51 @@
 
   input:valid {
     border-color: #22c55e !important;
+  }
+
+  /* Draft notification animations */
+  @keyframes slideInFromTop {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  @keyframes slideOutToTop {
+    from {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-100%);
+    }
+  }
+
+  @keyframes slideInFromRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutToRight {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
   }
 
   /* Enhanced focus states */

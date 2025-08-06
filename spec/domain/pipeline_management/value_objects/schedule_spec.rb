@@ -198,7 +198,7 @@ RSpec.describe Domain::PipelineManagement::ValueObjects::Schedule do
 
       utc_time = Time.parse('2024-01-15 15:00:00 UTC') # 10:00 EST
       next_time = schedule.next_run_time(from: utc_time)
-      
+
       expect(next_time.in_time_zone('America/New_York').hour).to eq(10)
     end
   end

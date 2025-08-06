@@ -17,10 +17,10 @@ RSpec.describe DashboardChannel, type: :channel do
 
       it 'subscribes to dashboard stream and sends initial data' do
         subscribe
-        
+
         expect(subscription).to be_confirmed
         expect(subscription).to have_stream_from("dashboard:#{organization.id}")
-        
+
         # Should transmit initial dashboard data
         expect(transmissions.last).to include(
           'overview' => hash_including(
@@ -56,7 +56,7 @@ RSpec.describe DashboardChannel, type: :channel do
 
     it 'sends updated metrics' do
       perform :request_metrics_update
-      
+
       expect(transmissions.last).to include(
         'overview' => be_a(Hash),
         'recent_activity' => be_an(Array),
@@ -76,7 +76,7 @@ RSpec.describe DashboardChannel, type: :channel do
 
     it 'subscribes to job updates' do
       perform :subscribe_to_job, job_id: job.id
-      
+
       expect(subscription).to have_stream_from("job_progress:#{job.id}")
       expect(transmissions.last).to include(
         'action' => 'job_subscribed',
@@ -86,7 +86,7 @@ RSpec.describe DashboardChannel, type: :channel do
 
     it 'handles non-existent jobs gracefully' do
       perform :subscribe_to_job, job_id: 'non-existent'
-      
+
       expect(transmissions.last).to include(
         'error' => 'Job not found'
       )
@@ -102,7 +102,7 @@ RSpec.describe DashboardChannel, type: :channel do
     it 'broadcasts sync completion updates' do
       data_source = create(:data_source, organization: organization)
       job = create(:extraction_job, data_source: data_source, status: 'running')
-      
+
       expect {
         job.update!(status: 'completed', completed_at: Time.current)
         ActionCable.server.broadcast("dashboard:#{organization.id}", {

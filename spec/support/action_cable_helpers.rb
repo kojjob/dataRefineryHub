@@ -1,9 +1,9 @@
 module ActionCableHelpers
   def stub_connection(current_user: nil)
     # Stub the connection object to return our test user
-    connection = instance_double(ApplicationCable::Connection, 
+    connection = instance_double(ApplicationCable::Connection,
       current_user: current_user,
-      identifiers: [:current_user]
+      identifiers: [ :current_user ]
     )
     allow_any_instance_of(described_class).to receive(:connection).and_return(connection)
   end

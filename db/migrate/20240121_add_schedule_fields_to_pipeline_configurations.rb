@@ -4,11 +4,11 @@ class AddScheduleFieldsToPipelineConfigurations < ActiveRecord::Migration[7.1]
   def change
     # Determine the table name (might be pipelines or pipeline_configurations)
     table_name = table_exists?(:pipelines) ? :pipelines : :pipeline_configurations
-    
+
     add_column table_name, :schedule_type, :string unless column_exists?(table_name, :schedule_type)
     add_column table_name, :schedule_expression, :string unless column_exists?(table_name, :schedule_expression)
     add_column table_name, :schedule_timezone, :string, default: 'UTC' unless column_exists?(table_name, :schedule_timezone)
-    
+
     # Migrate existing schedule_config data
     reversible do |dir|
       dir.up do
@@ -16,7 +16,7 @@ class AddScheduleFieldsToPipelineConfigurations < ActiveRecord::Migration[7.1]
           # Use direct SQL to avoid model dependencies
           execute <<~SQL
             UPDATE #{table_name}
-            SET 
+            SET#{' '}
               schedule_type = COALESCE(schedule_config->>'type', NULL),
               schedule_expression = COALESCE(
                 schedule_config->>'expression',

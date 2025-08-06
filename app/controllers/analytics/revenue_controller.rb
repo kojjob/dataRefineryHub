@@ -38,14 +38,14 @@ class Analytics::RevenueController < Analytics::BaseController
     tax_collected = 0
     shipping_revenue = 0
     discounts_given = 0
-    
+
     order_records.find_each do |order|
       total_revenue += order.raw_data["total_price"].to_f rescue 0
       tax_collected += order.raw_data["total_tax"].to_f rescue 0
       shipping_revenue += order.raw_data["total_shipping"].to_f rescue 0
       discounts_given += order.raw_data["total_discounts"].to_f rescue 0
     end
-    
+
     total_orders = order_records.count
 
     # Calculate previous period for comparison
@@ -78,11 +78,11 @@ class Analytics::RevenueController < Analytics::BaseController
     # Group by day for detailed trends
     daily_revenue = {}
     daily_orders = {}
-    
+
     order_records.find_each do |order|
       date_key = order.created_at.to_date.strftime("%Y-%m-%d")
       revenue = order.raw_data["total_price"].to_f rescue 0
-      
+
       daily_revenue[date_key] = (daily_revenue[date_key] || 0) + revenue
       daily_orders[date_key] = (daily_orders[date_key] || 0) + 1
     end
@@ -125,11 +125,11 @@ class Analytics::RevenueController < Analytics::BaseController
       elsif fulfillment_status == "fulfilled"
         fulfilled_orders << order
         fulfilled_revenue += total_price
-        
+
         # Calculate fulfillment time if data available
         fulfilled_at = order.raw_data["fulfilled_at"] rescue nil
         created_at = order.raw_data["created_at"] rescue nil
-        
+
         if fulfilled_at && created_at
           created = Time.parse(created_at)
           fulfilled = Time.parse(fulfilled_at)

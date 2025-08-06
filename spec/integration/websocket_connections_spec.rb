@@ -125,7 +125,7 @@ RSpec.describe 'ActionCable Broadcasting', type: :integration do
         started_at: Time.current,
         execution_id: SecureRandom.uuid
       )
-      
+
       # Broadcast execution progress
       ActionCable.server.broadcast("task_execution_#{task.id}", {
         event: 'task_started',

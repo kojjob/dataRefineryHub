@@ -3,11 +3,11 @@
 module BusinessTemplates
   class EcommerceTemplate < BaseTemplate
     protected
-    
+
     def template_name
-      'ecommerce'
+      "ecommerce"
     end
-    
+
     def create_data_sources
       # E-commerce Platform
       create_configured_data_source(
@@ -22,7 +22,7 @@ module BusinessTemplates
           include_abandoned_carts: true
         }
       )
-      
+
       # Payment Gateway
       create_configured_data_source(
         name: "Payment Processing",
@@ -35,7 +35,7 @@ module BusinessTemplates
           include_payouts: true
         }
       )
-      
+
       # Email Marketing
       create_configured_data_source(
         name: "Email Marketing",
@@ -47,7 +47,7 @@ module BusinessTemplates
           include_engagement: true
         }
       )
-      
+
       # Google Analytics
       create_configured_data_source(
         name: "Website Analytics",
@@ -59,7 +59,7 @@ module BusinessTemplates
           include_behavior: true
         }
       )
-      
+
       # Advertising Platforms
       create_configured_data_source(
         name: "Google Ads",
@@ -72,7 +72,7 @@ module BusinessTemplates
         }
       )
     end
-    
+
     def create_pipelines
       # Sales Funnel Pipeline
       create_etl_pipeline(
@@ -83,8 +83,8 @@ module BusinessTemplates
             name: "Extract Funnel Data",
             type: "extract",
             configuration: {
-              sources: ["Website Analytics", "Online Store"],
-              fields: ["session_id", "user_id", "events", "conversions", "revenue"]
+              sources: [ "Website Analytics", "Online Store" ],
+              fields: [ "session_id", "user_id", "events", "conversions", "revenue" ]
             }
           },
           {
@@ -118,7 +118,7 @@ module BusinessTemplates
           }
         ]
       )
-      
+
       # Customer Lifetime Value Pipeline
       create_etl_pipeline(
         name: "Customer LTV Analysis",
@@ -128,8 +128,8 @@ module BusinessTemplates
             name: "Extract Customer Data",
             type: "extract",
             configuration: {
-              sources: ["Online Store", "Email Marketing"],
-              fields: ["customer_id", "orders", "total_spent", "first_purchase", "last_purchase"]
+              sources: [ "Online Store", "Email Marketing" ],
+              fields: [ "customer_id", "orders", "total_spent", "first_purchase", "last_purchase" ]
             }
           },
           {
@@ -154,13 +154,13 @@ module BusinessTemplates
             type: "ml_predict",
             configuration: {
               model: "customer_ltv_predictor",
-              features: ["purchase_frequency", "aov", "days_since_last_purchase"],
+              features: [ "purchase_frequency", "aov", "days_since_last_purchase" ],
               target: "next_12_months_value"
             }
           }
         ]
       )
-      
+
       # Marketing ROI Pipeline
       create_etl_pipeline(
         name: "Marketing Performance",
@@ -170,8 +170,8 @@ module BusinessTemplates
             name: "Extract Marketing Data",
             type: "extract",
             configuration: {
-              sources: ["Google Ads", "Email Marketing", "Website Analytics"],
-              fields: ["channel", "campaign", "cost", "impressions", "clicks", "conversions", "revenue"]
+              sources: [ "Google Ads", "Email Marketing", "Website Analytics" ],
+              fields: [ "channel", "campaign", "cost", "impressions", "clicks", "conversions", "revenue" ]
             }
           },
           {
@@ -202,10 +202,10 @@ module BusinessTemplates
         ]
       )
     end
-    
+
     def configure_dashboards
       super
-      
+
       # E-commerce Operations Dashboard
       Dashboard.create!(
         organization: organization,
@@ -247,7 +247,7 @@ module BusinessTemplates
             {
               type: "funnel",
               title: "Sales Funnel",
-              stages: ["Visits", "Product Views", "Add to Cart", "Checkout", "Purchase"],
+              stages: [ "Visits", "Product Views", "Add to Cart", "Checkout", "Purchase" ],
               metric: "funnel_conversion"
             },
             {
@@ -260,7 +260,7 @@ module BusinessTemplates
               type: "table",
               title: "Top Products",
               data_source: "product_performance",
-              columns: ["product", "units_sold", "revenue", "conversion_rate"],
+              columns: [ "product", "units_sold", "revenue", "conversion_rate" ],
               limit: 10
             },
             {
@@ -272,7 +272,7 @@ module BusinessTemplates
           ]
         }
       )
-      
+
       # Marketing Dashboard
       Dashboard.create!(
         organization: organization,
@@ -299,24 +299,24 @@ module BusinessTemplates
               type: "chart",
               title: "Channel Performance",
               chart_type: "bar",
-              metrics: ["cost", "revenue", "roas"],
+              metrics: [ "cost", "revenue", "roas" ],
               group_by: "channel"
             },
             {
               type: "table",
               title: "Campaign Performance",
               data_source: "campaign_metrics",
-              columns: ["campaign", "spend", "conversions", "cpa", "roas"],
+              columns: [ "campaign", "spend", "conversions", "cpa", "roas" ],
               sortable: true
             }
           ]
         }
       )
     end
-    
+
     def setup_automated_reports
       super
-      
+
       # Morning metrics via WhatsApp
       DeliveryPreference.create!(
         user: user,
@@ -338,7 +338,7 @@ module BusinessTemplates
           ]
         }
       )
-      
+
       # Weekly marketing report
       DeliveryPreference.create!(
         user: user,
@@ -360,7 +360,7 @@ module BusinessTemplates
           ]
         }
       )
-      
+
       # Real-time alerts
       DeliveryPreference.create!(
         user: user,
@@ -380,7 +380,7 @@ module BusinessTemplates
         }
       )
     end
-    
+
     def create_sample_data
       # Create sample products
       products = [
@@ -390,26 +390,26 @@ module BusinessTemplates
         { name: "Running Shoes", sku: "RS-004", price: 89.99, category: "Footwear", stock: 120 },
         { name: "Laptop Stand", sku: "LS-005", price: 49.99, category: "Office", stock: 180 }
       ]
-      
+
       # Generate 60 days of e-commerce data
       60.days.ago.to_date.upto(Date.current) do |date|
         # Website traffic (higher on weekends)
         daily_sessions = case date.wday
-                        when 0, 6 then rand(1500..2000)
-                        else rand(800..1200)
-                        end
-        
+        when 0, 6 then rand(1500..2000)
+        else rand(800..1200)
+        end
+
         # Generate sessions and conversions
         daily_sessions.times do
           session_time = date.to_time + rand(0..23).hours + rand(0..59).minutes
           session_id = SecureRandom.uuid
-          
+
           # Funnel progression probabilities
           viewed_product = rand < 0.6
           added_to_cart = viewed_product && rand < 0.3
           started_checkout = added_to_cart && rand < 0.7
           completed_purchase = started_checkout && rand < 0.85
-          
+
           if completed_purchase
             # Create order
             items = products.sample(rand(1..3))
@@ -423,12 +423,12 @@ module BusinessTemplates
                 total: product[:price] * quantity
               }
             end
-            
+
             subtotal = order_items.sum { |i| i[:total] }
             shipping = subtotal > 50 ? 0 : 9.99
             tax = (subtotal * 0.08).round(2)
             total = subtotal + shipping + tax
-            
+
             organization.raw_data_records.create!(
               source_type: "shopify",
               record_type: "order",
@@ -442,13 +442,13 @@ module BusinessTemplates
                 shipping: shipping,
                 tax: tax,
                 total: total,
-                payment_method: ["credit_card", "paypal", "apple_pay"].sample,
+                payment_method: [ "credit_card", "paypal", "apple_pay" ].sample,
                 shipping_address: {
-                  state: ["CA", "NY", "TX", "FL", "WA"].sample,
+                  state: [ "CA", "NY", "TX", "FL", "WA" ].sample,
                   country: "US"
                 },
-                utm_source: ["google", "facebook", "email", "direct", "instagram"].sample,
-                device_type: ["mobile", "desktop", "tablet"].sample
+                utm_source: [ "google", "facebook", "email", "direct", "instagram" ].sample,
+                device_type: [ "mobile", "desktop", "tablet" ].sample
               },
               recorded_at: session_time
             )
@@ -463,14 +463,14 @@ module BusinessTemplates
                 timestamp: session_time,
                 products: products.sample(rand(1..2)).map { |p| p[:name] },
                 cart_value: products.sample(rand(1..2)).sum { |p| p[:price] },
-                abandonment_reason: ["shipping_cost", "payment_issue", "comparison_shopping", "unknown"].sample
+                abandonment_reason: [ "shipping_cost", "payment_issue", "comparison_shopping", "unknown" ].sample
               },
               recorded_at: session_time
             )
           end
         end
       end
-      
+
       Rails.logger.info "Created sample e-commerce data for #{organization.name}"
     end
   end

@@ -12,7 +12,7 @@ module Domain
 
         STRATEGIES = %w[linear exponential constant].freeze
         DEFAULT_MAX_ATTEMPTS = 3
-        DEFAULT_STRATEGY = 'exponential'
+        DEFAULT_STRATEGY = "exponential"
         DEFAULT_BACKOFF_SECONDS = 60
         DEFAULT_MAX_BACKOFF_SECONDS = 3600
 
@@ -42,15 +42,15 @@ module Domain
           return 0 if attempt_number <= 0
 
           delay = case backoff_strategy
-                  when 'linear'
+          when "linear"
                     backoff_seconds * attempt_number
-                  when 'exponential'
+          when "exponential"
                     backoff_seconds * (2**(attempt_number - 1))
-                  when 'constant'
+          when "constant"
                     backoff_seconds
-                  end
+          end
 
-          [delay, max_backoff_seconds].min
+          [ delay, max_backoff_seconds ].min
         end
 
         def should_retry?(attempt_number)

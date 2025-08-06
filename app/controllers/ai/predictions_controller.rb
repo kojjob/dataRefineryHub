@@ -7,10 +7,10 @@ module Ai
     def index
       @page_title = "Predictive Analytics Engine"
       @page_subtitle = "Advanced forecasting and trend analysis powered by machine learning"
-      
+
       # Set active section for navigation
-      @active_section = 'predictive'
-      
+      @active_section = "predictive"
+
       # Sample data for demonstration - in production this would come from your models
       @predictions = {
         demand_forecast: {
@@ -22,7 +22,7 @@ module Ai
           trend: "up"
         },
         customer_behavior: {
-          value: "+15%", 
+          value: "+15%",
           text: "Customer lifetime value trending upward",
           accuracy: 92,
           confidence: "High",
@@ -33,7 +33,7 @@ module Ai
           value: "-8%",
           text: "Competitive pressure may impact margins",
           accuracy: 76,
-          confidence: "Medium", 
+          confidence: "Medium",
           model: "Random Forest",
           trend: "down"
         },
@@ -47,7 +47,7 @@ module Ai
           trend: "up"
         }
       }
-      
+
       @forecast_models = [
         {
           name: "Sales Forecasting",
@@ -58,7 +58,7 @@ module Ai
           r_squared: "0.96"
         },
         {
-          name: "Churn Prediction", 
+          name: "Churn Prediction",
           icon: "🎯",
           status: "active",
           precision: "91%",
@@ -67,25 +67,25 @@ module Ai
         },
         {
           name: "Price Optimization",
-          icon: "💰", 
+          icon: "💰",
           status: "training",
           progress: 67,
           eta: "15 min",
           epochs: "134/200"
         }
       ]
-      
+
       @scenarios = {
         best_case: {
           revenue: "+32%",
-          customers: "+18%", 
+          customers: "+18%",
           profit: "+28%",
           probability: "25%"
         },
         expected: {
           revenue: "+15%",
           customers: "+10%",
-          profit: "+12%", 
+          profit: "+12%",
           probability: "60%"
         },
         worst_case: {
@@ -96,9 +96,9 @@ module Ai
         }
       }
     end
-    
+
     private
-    
+
     def set_organization
       @organization = current_user.organization
     end

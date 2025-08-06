@@ -26,7 +26,7 @@ module Domain
 
         def ==(other)
           return false unless other.is_a?(self.class)
-          
+
           to_h == other.to_h
         end
       end

@@ -14,14 +14,14 @@ RSpec.describe TaskExecutionChannel, type: :channel do
     context 'with valid task' do
       it 'subscribes to task execution stream' do
         subscribe(task_id: task.id)
-        
+
         expect(subscription).to be_confirmed
         expect(subscription).to have_stream_from("task_execution:#{task.id}")
       end
 
       it 'sends initial task state' do
         subscribe(task_id: task.id)
-        
+
         expect(transmissions.last).to include(
           'task' => hash_including(
             'id' => task.id,
@@ -65,7 +65,7 @@ RSpec.describe TaskExecutionChannel, type: :channel do
         expect {
           perform :execute_task
         }.to change { manual_task.reload.status }.from('ready').to('running')
-        
+
         expect(transmissions.last).to include(
           'action' => 'task_started',
           'task_id' => manual_task.id,
@@ -91,7 +91,7 @@ RSpec.describe TaskExecutionChannel, type: :channel do
 
         it 'sends error message' do
           perform :execute_task
-          
+
           expect(transmissions.last).to include(
             'error' => match(/not assigned/i)
           )
@@ -114,7 +114,7 @@ RSpec.describe TaskExecutionChannel, type: :channel do
 
       it 'prevents manual execution' do
         perform :execute_task
-        
+
         expect(transmissions.last).to include(
           'error' => match(/automated.*cannot.*manually/i)
         )
@@ -129,7 +129,7 @@ RSpec.describe TaskExecutionChannel, type: :channel do
 
       it 'sends error message' do
         perform :execute_task
-        
+
         expect(transmissions.last).to include(
           'error' => match(/already completed/i)
         )
@@ -162,7 +162,7 @@ RSpec.describe TaskExecutionChannel, type: :channel do
         expect {
           perform :approve_task, comment: 'Approved for processing'
         }.to change { approval_task.reload.status }.from('ready').to('running')
-        
+
         expect(transmissions.last).to include(
           'action' => 'task_approved',
           'task_id' => approval_task.id,
@@ -172,7 +172,7 @@ RSpec.describe TaskExecutionChannel, type: :channel do
 
       it 'records approval in task metadata' do
         perform :approve_task, comment: 'Looks good'
-        
+
         approval_task.reload
         expect(approval_task.metadata['approval']).to include(
           'approved_by' => admin_user.id,
@@ -185,7 +185,7 @@ RSpec.describe TaskExecutionChannel, type: :channel do
     context 'without proper permissions' do
       it 'sends unauthorized error' do
         perform :approve_task
-        
+
         expect(transmissions.last).to include(
           'error' => match(/permission.*approve/i)
         )
@@ -211,7 +211,7 @@ RSpec.describe TaskExecutionChannel, type: :channel do
       expect {
         perform :reject_task, reason: 'Data quality issues detected'
       }.to change { approval_task.reload.status }.from('ready').to('rejected')
-      
+
       expect(transmissions.last).to include(
         'action' => 'task_rejected',
         'task_id' => approval_task.id
@@ -220,7 +220,7 @@ RSpec.describe TaskExecutionChannel, type: :channel do
 
     it 'requires rejection reason' do
       perform :reject_task
-      
+
       expect(transmissions.last).to include(
         'error' => match(/reason.*required/i)
       )
@@ -228,7 +228,7 @@ RSpec.describe TaskExecutionChannel, type: :channel do
 
     it 'records rejection details' do
       perform :reject_task, reason: 'Missing required data'
-      
+
       approval_task.reload
       expect(approval_task.metadata['rejection']).to include(
         'rejected_by' => connection.current_user.id,
@@ -245,13 +245,13 @@ RSpec.describe TaskExecutionChannel, type: :channel do
 
     it 'broadcasts execution progress' do
       task.update!(status: 'running')
-      
+
       progress_updates = [
         { progress: 25, records_processed: 250 },
         { progress: 50, records_processed: 500 },
         { progress: 75, records_processed: 750 }
       ]
-      
+
       progress_updates.each do |update|
         expect {
           ActionCable.server.broadcast("task_execution:#{task.id}", {
@@ -266,14 +266,14 @@ RSpec.describe TaskExecutionChannel, type: :channel do
 
     it 'broadcasts execution completion' do
       task.update!(status: 'running')
-      
+
       expect {
         task.complete!(
           records_processed: 1000,
           duration_seconds: 120,
           output_location: 's3://bucket/output.json'
         )
-        
+
         ActionCable.server.broadcast("task_execution:#{task.id}", {
           event: 'execution_completed',
           task_id: task.id,
@@ -293,20 +293,20 @@ RSpec.describe TaskExecutionChannel, type: :channel do
 
     it 'broadcasts execution failure' do
       task.update!(status: 'running')
-      
+
       error_details = {
         message: 'Memory limit exceeded',
         code: 'OOM_ERROR',
-        stacktrace: ['line1', 'line2']
+        stacktrace: [ 'line1', 'line2' ]
       }
-      
+
       expect {
         task.update!(
           status: 'failed',
           error_message: error_details[:message],
           metadata: { error: error_details }
         )
-        
+
         ActionCable.server.broadcast("task_execution:#{task.id}", {
           event: 'execution_failed',
           task_id: task.id,

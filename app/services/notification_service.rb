@@ -5,7 +5,7 @@ class NotificationService
     def create_notification(user:, type:, title:, message:, data: {})
       # Enhanced notification creation with persistence
       priority_value = determine_priority_value(type)
-      
+
       # Create notification in database
       notification = Notification.create!(
         user: user,
@@ -58,7 +58,7 @@ class NotificationService
     def mark_as_read(user:, notification_id:)
       # Implementation for marking notification as read
       Rails.logger.info "Marking notification #{notification_id} as read for user #{user.id}"
-      
+
       notification = user.notifications.find_by(id: notification_id)
       notification&.mark_as_read!
     end
@@ -148,7 +148,7 @@ class NotificationService
     def send_additional_alerts(user, notification)
       # For high-priority notifications, send additional alerts
       category = categorize_notification(notification.notification_type)
-      
+
       case category
       when "system"
         # System alerts could trigger external monitoring

@@ -40,7 +40,7 @@ class PipelineConfiguration < ApplicationRecord
   # Schedule Value Object Integration
   def schedule
     return nil unless schedule_type.present?
-    
+
     @schedule ||= Domain::PipelineManagement::ValueObjects::Schedule.new(
       type: schedule_type,
       expression: schedule_expression,
@@ -49,7 +49,7 @@ class PipelineConfiguration < ApplicationRecord
   rescue ActiveModel::ValidationError
     nil
   end
-  
+
   def schedule=(schedule_value_object)
     if schedule_value_object.nil?
       self.schedule_type = nil

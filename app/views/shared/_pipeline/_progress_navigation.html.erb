@@ -1,0 +1,218 @@
+<!-- Premium Step Navigation -->
+<nav aria-label="Pipeline Creation Progress" style="margin-bottom: var(--space-48);">
+  <div style="
+    background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(13, 148, 136, 0.02) 100%);
+    border: 1px solid rgba(var(--color-border-rgb), 0.2);
+    border-radius: var(--radius-xl);
+    padding: var(--space-32);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  ">
+    <ol style="
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    ">
+      <!-- Step 1: Basic Info -->
+      <li data-pipeline-builder-target="step1Nav" style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+      ">
+        <div style="
+          width: 56px;
+          height: 56px;
+          background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+          border: 3px solid white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: var(--font-size-lg);
+          font-weight: var(--font-weight-bold);
+          color: white;
+          box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+          margin-bottom: var(--space-12);
+        ">1</div>
+        <span style="
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text);
+          text-align: center;
+        ">Basic Info</span>
+      </li>
+
+      <!-- Progress Line 1-2 -->
+      <div style="
+        position: absolute;
+        top: 28px;
+        left: 20%;
+        right: 80%;
+        height: 3px;
+        background: rgba(var(--color-border-rgb), 0.3);
+        z-index: 1;
+      "></div>
+
+      <!-- Step 2: Source -->
+      <li data-pipeline-builder-target="step2Nav" style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+      ">
+        <div style="
+          width: 56px;
+          height: 56px;
+          background: rgba(var(--color-border-rgb), 0.3);
+          border: 3px solid white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: var(--font-size-lg);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text-secondary);
+          margin-bottom: var(--space-12);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        ">2</div>
+        <span style="
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-medium);
+          color: var(--color-text-secondary);
+          text-align: center;
+        ">Source</span>
+      </li>
+
+      <!-- Progress Line 2-3 -->
+      <div style="
+        position: absolute;
+        top: 28px;
+        left: 40%;
+        right: 60%;
+        height: 3px;
+        background: rgba(var(--color-border-rgb), 0.3);
+        z-index: 1;
+      "></div>
+
+      <!-- Step 3: Transformations -->
+      <li data-pipeline-builder-target="step3Nav" style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+      ">
+        <div style="
+          width: 56px;
+          height: 56px;
+          background: rgba(var(--color-border-rgb), 0.3);
+          border: 3px solid white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: var(--font-size-lg);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text-secondary);
+          margin-bottom: var(--space-12);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        ">3</div>
+        <span style="
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-medium);
+          color: var(--color-text-secondary);
+          text-align: center;
+        ">Transformations</span>
+      </li>
+
+      <!-- Progress Line 3-4 -->
+      <div style="
+        position: absolute;
+        top: 28px;
+        left: 60%;
+        right: 40%;
+        height: 3px;
+        background: rgba(var(--color-border-rgb), 0.3);
+        z-index: 1;
+      "></div>
+
+      <!-- Step 4: Destination -->
+      <li data-pipeline-builder-target="step4Nav" style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+      ">
+        <div style="
+          width: 56px;
+          height: 56px;
+          background: rgba(var(--color-border-rgb), 0.3);
+          border: 3px solid white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: var(--font-size-lg);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text-secondary);
+          margin-bottom: var(--space-12);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        ">4</div>
+        <span style="
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-medium);
+          color: var(--color-text-secondary);
+          text-align: center;
+        ">Destination</span>
+      </li>
+
+      <!-- Progress Line 4-5 -->
+      <div style="
+        position: absolute;
+        top: 28px;
+        left: 80%;
+        right: 20%;
+        height: 3px;
+        background: rgba(var(--color-border-rgb), 0.3);
+        z-index: 1;
+      "></div>
+
+      <!-- Step 5: Schedule -->
+      <li data-pipeline-builder-target="step5Nav" style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+      ">
+        <div style="
+          width: 56px;
+          height: 56px;
+          background: rgba(var(--color-border-rgb), 0.3);
+          border: 3px solid white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: var(--font-size-lg);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text-secondary);
+          margin-bottom: var(--space-12);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        ">5</div>
+        <span style="
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-medium);
+          color: var(--color-text-secondary);
+          text-align: center;
+        ">Schedule</span>
+      </li>
+    </ol>
+  </div>
+</nav>

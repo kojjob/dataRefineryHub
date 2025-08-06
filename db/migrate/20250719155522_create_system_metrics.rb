@@ -16,6 +16,6 @@ class CreateSystemMetrics < ActiveRecord::Migration[8.0]
     end
 
     add_index :system_metrics, :recorded_at
-    add_index :system_metrics, [:organization_id, :recorded_at]
+    add_index :system_metrics, [ :organization_id, :recorded_at ]
   end
 end

@@ -9,7 +9,7 @@ directories = [
   # Shared Kernel
   'shared/domain_events',
   'shared/value_objects',
-  
+
   # Pipeline Management Bounded Context
   'pipeline_management/entities',
   'pipeline_management/value_objects',
@@ -17,7 +17,7 @@ directories = [
   'pipeline_management/repositories',
   'pipeline_management/services',
   'pipeline_management/events',
-  
+
   # Data Integration Bounded Context
   'data_integration/entities',
   'data_integration/value_objects',
@@ -25,7 +25,7 @@ directories = [
   'data_integration/repositories',
   'data_integration/services',
   'data_integration/events',
-  
+
   # Execution Engine Bounded Context
   'execution_engine/entities',
   'execution_engine/value_objects',
@@ -33,7 +33,7 @@ directories = [
   'execution_engine/repositories',
   'execution_engine/services',
   'execution_engine/events',
-  
+
   # Data Quality Bounded Context
   'data_quality/entities',
   'data_quality/value_objects',
@@ -59,7 +59,7 @@ infra_directories = [
   'app/infrastructure/external/notification_adapters'
 ]
 
-all_directories = directories.map { |d| File.join(base_path, d) } + 
+all_directories = directories.map { |d| File.join(base_path, d) } +
                   app_directories + infra_directories
 
 all_directories.each do |dir|

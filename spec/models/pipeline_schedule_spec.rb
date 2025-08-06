@@ -67,7 +67,7 @@ RSpec.describe Pipeline, 'Schedule integration' do
 
     it 'sets the schedule fields from value object' do
       pipeline.schedule = schedule
-      
+
       expect(pipeline.schedule_type).to eq('interval')
       expect(pipeline.schedule_expression).to eq('30')
       expect(pipeline.schedule_timezone).to eq('America/New_York')
@@ -79,9 +79,9 @@ RSpec.describe Pipeline, 'Schedule integration' do
         schedule_expression: '10:00',
         schedule_timezone: 'UTC'
       )
-      
+
       pipeline.schedule = nil
-      
+
       expect(pipeline.schedule_type).to be_nil
       expect(pipeline.schedule_expression).to be_nil
       expect(pipeline.schedule_timezone).to be_nil
@@ -94,7 +94,7 @@ RSpec.describe Pipeline, 'Schedule integration' do
         schedule_type: 'daily',
         schedule_expression: '10:00'
       )
-      
+
       expect(pipeline).to be_scheduled
     end
 

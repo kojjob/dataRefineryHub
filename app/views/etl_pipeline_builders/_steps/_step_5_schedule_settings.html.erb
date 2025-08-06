@@ -1,0 +1,15 @@
+<!-- Step 5: Premium Schedule & Settings -->
+<div data-pipeline-builder-target="step5" style="margin-top: var(--space-32); display: none;">
+  <%= render 'shared/pipeline/premium_step_container',
+             step_color: 'indigo',
+             step_icon: 'clock',
+             step_title: 'Schedule & Settings',
+             step_description: 'Configure execution schedule, error handling, and notification preferences' do %>
+    
+    <%= render 'etl_pipeline_builders/steps/schedule_configuration', form: form %>
+    <%= render 'etl_pipeline_builders/steps/error_handling', form: form %>
+    <%= render 'etl_pipeline_builders/steps/notifications', form: form %>
+    <%= render 'etl_pipeline_builders/steps/advanced_settings', form: form %>
+    
+  <% end %>
+</div>

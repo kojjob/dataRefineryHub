@@ -8,7 +8,7 @@ class PipelineDashboardController < DataflowProController
     # Get running pipelines for the active monitor
     @pipeline_executions = current_organization.pipeline_executions
                                               .includes(:data_source, :user, :tasks)
-                                              .where(status: ['running', 'processing', 'queued'])
+                                              .where(status: [ "running", "processing", "queued" ])
                                               .recent
                                               .limit(6)
 

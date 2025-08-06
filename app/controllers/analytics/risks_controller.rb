@@ -392,7 +392,7 @@ class Analytics::RisksController < Analytics::BaseController
     payment_failures = []
     order_records.find_each do |order|
       financial_status = order.raw_data["financial_status"] rescue nil
-      payment_failures << order if ["cancelled", "failed", "declined"].include?(financial_status)
+      payment_failures << order if [ "cancelled", "failed", "declined" ].include?(financial_status)
     end
 
     {

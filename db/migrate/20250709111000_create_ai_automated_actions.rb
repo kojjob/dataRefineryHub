@@ -17,7 +17,7 @@ class CreateAiAutomatedActions < ActiveRecord::Migration[8.0]
 
     add_index :ai_automated_actions, :status
     add_index :ai_automated_actions, :action_type
-    add_index :ai_automated_actions, [:organization_id, :status]
+    add_index :ai_automated_actions, [ :organization_id, :status ]
     add_index :ai_automated_actions, :executed_at
   end
 end

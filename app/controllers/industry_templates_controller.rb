@@ -1,6 +1,6 @@
 class IndustryTemplatesController < DataflowProController
   before_action :authenticate_user!
-  before_action :set_template, only: [:show, :apply]
+  before_action :set_template, only: [ :show, :apply ]
 
   def index
     @templates = IndustryTemplate.all_templates
@@ -15,10 +15,10 @@ class IndustryTemplatesController < DataflowProController
 
   def apply
     current_user.update(dashboard_template: @template[:id])
-    
+
     # Apply template configuration to user's dashboard
     apply_template_to_dashboard(@template)
-    
+
     redirect_to dashboard_path, notice: "#{@template[:name]} template applied successfully!"
   end
 
@@ -42,7 +42,7 @@ class IndustryTemplatesController < DataflowProController
   def generate_preview_data(template)
     # Generate realistic preview data based on actual metrics
     case template[:id]
-    when 'retail_ecommerce'
+    when "retail_ecommerce"
       {
         total_revenue: 125000,
         orders_count: 1250,
@@ -51,7 +51,7 @@ class IndustryTemplatesController < DataflowProController
         inventory_turnover: 8.5,
         customer_lifetime_value: 450
       }
-    when 'manufacturing'
+    when "manufacturing"
       {
         production_efficiency: 92,
         quality_score: 98.5,
@@ -60,7 +60,7 @@ class IndustryTemplatesController < DataflowProController
         defect_rate: 0.8,
         oee_score: 85
       }
-    when 'professional_services'
+    when "professional_services"
       {
         billable_hours: 1680,
         project_margin: 28.5,
@@ -69,7 +69,7 @@ class IndustryTemplatesController < DataflowProController
         revenue_per_employee: 125000,
         project_completion_rate: 94
       }
-    when 'healthcare'
+    when "healthcare"
       {
         patient_satisfaction: 4.8,
         readmission_rate: 8.2,
@@ -82,25 +82,25 @@ class IndustryTemplatesController < DataflowProController
       {}
     end
   end
-  
+
   def generate_metric_trends(template)
     # Generate trend percentages for each metric
     template[:metrics].map do |metric|
       {
         key: metric[:key],
         trend: rand(5..15),
-        direction: rand > 0.3 ? 'up' : 'down'
+        direction: rand > 0.3 ? "up" : "down"
       }
     end.index_by { |m| m[:key] }
   end
-  
+
   def generate_chart_data(template)
     # Generate actual chart data for each chart type
     charts = {}
-    
+
     template[:charts]&.each do |chart|
       case chart[:type]
-      when 'line'
+      when "line"
         # Generate line chart data for last 7 days
         labels = (0..6).map { |i| (Date.today - i).strftime("%b %d") }.reverse
         datasets = chart[:metrics].map do |metric|
@@ -110,26 +110,26 @@ class IndustryTemplatesController < DataflowProController
           }
         end
         charts[chart[:id]] = { labels: labels, datasets: datasets }
-        
-      when 'bar'
+
+      when "bar"
         # Generate bar chart data
-        labels = chart[:categories] || ['Category A', 'Category B', 'Category C', 'Category D']
-        datasets = [{
+        labels = chart[:categories] || [ "Category A", "Category B", "Category C", "Category D" ]
+        datasets = [ {
           label: chart[:title],
           data: labels.map { rand(100..500) }
-        }]
+        } ]
         charts[chart[:id]] = { labels: labels, datasets: datasets }
-        
-      when 'doughnut', 'pie'
+
+      when "doughnut", "pie"
         # Generate pie/doughnut chart data
-        labels = chart[:categories] || ['Segment 1', 'Segment 2', 'Segment 3', 'Segment 4']
-        datasets = [{
+        labels = chart[:categories] || [ "Segment 1", "Segment 2", "Segment 3", "Segment 4" ]
+        datasets = [ {
           data: labels.map { rand(15..40) }
-        }]
+        } ]
         charts[chart[:id]] = { labels: labels, datasets: datasets }
       end
     end
-    
+
     charts
   end
 end

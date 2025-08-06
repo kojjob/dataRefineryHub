@@ -14,7 +14,7 @@ RSpec.describe JobProgressChannel, type: :channel do
     context 'with valid job' do
       it 'subscribes to job progress stream' do
         subscribe(job_id: job.id)
-        
+
         expect(subscription).to be_confirmed
         expect(subscription).to have_stream_from("job_progress:#{job.id}")
       end
@@ -51,13 +51,13 @@ RSpec.describe JobProgressChannel, type: :channel do
           estimated_completion: 30.minutes.from_now
         }
       )
-      
+
       subscribe(job_id: job.id)
     end
 
     it 'sends detailed job status' do
       perform :request_status_update
-      
+
       expect(transmissions.last).to include(
         'job' => hash_including(
           'id' => job.id,
@@ -84,7 +84,7 @@ RSpec.describe JobProgressChannel, type: :channel do
         expect {
           perform :cancel_job
         }.to change { job.reload.status }.from('running').to('cancelled')
-        
+
         expect(transmissions.last).to include(
           'action' => 'job_cancelled',
           'job_id' => job.id,
@@ -100,7 +100,7 @@ RSpec.describe JobProgressChannel, type: :channel do
 
       it 'sends error message' do
         perform :cancel_job
-        
+
         expect(transmissions.last).to include(
           'error' => match(/cannot.*cancel.*completed/i)
         )
@@ -117,7 +117,7 @@ RSpec.describe JobProgressChannel, type: :channel do
 
       it 'sends unauthorized error' do
         perform :cancel_job
-        
+
         expect(transmissions.last).to include(
           'error' => match(/permission/i)
         )
@@ -137,7 +137,7 @@ RSpec.describe JobProgressChannel, type: :channel do
         { records_processed: 3000, progress: 30 },
         { records_processed: 5000, progress: 50 }
       ]
-      
+
       updates.each do |update|
         expect {
           ActionCable.server.broadcast("job_progress:#{job.id}", {
@@ -159,7 +159,7 @@ RSpec.describe JobProgressChannel, type: :channel do
           records_processed: 10000,
           duration_seconds: 3600
         )
-        
+
         ActionCable.server.broadcast("job_progress:#{job.id}", {
           event: 'job_completed',
           job_id: job.id,
@@ -181,14 +181,14 @@ RSpec.describe JobProgressChannel, type: :channel do
         code: 'ETIMEDOUT',
         retry_count: 3
       }
-      
+
       expect {
         job.update!(
           status: 'failed',
           error_message: error_details[:message],
           metadata: job.metadata.merge(error_details: error_details)
         )
-        
+
         ActionCable.server.broadcast("job_progress:#{job.id}", {
           event: 'job_failed',
           job_id: job.id,

@@ -15,7 +15,7 @@ FactoryBot.define do
         current_value: 0.15,
         previous_value: 0.11,
         threshold: 0.12,
-        affected_segments: ["premium", "enterprise"]
+        affected_segments: [ "premium", "enterprise" ]
       }
     end
     recommendations do
@@ -32,26 +32,26 @@ FactoryBot.define do
         }
       ]
     end
-    
+
     trait :read do
       read_at { 1.hour.ago }
       read_by { user.id }
     end
-    
+
     trait :acknowledged do
       read_at { 2.hours.ago }
       acknowledged_at { 1.hour.ago }
       read_by { user.id }
       acknowledged_by { user.id }
     end
-    
+
     trait :dismissed do
       read_at { 3.hours.ago }
       acknowledged_at { 2.hours.ago }
       dismissed_at { 1.hour.ago }
       dismissal_reason { "False positive - seasonal variation" }
     end
-    
+
     trait :opportunity do
       insight_type { "opportunity" }
       title { "Cross-sell opportunity identified" }
@@ -66,7 +66,7 @@ FactoryBot.define do
         }
       end
     end
-    
+
     trait :trend do
       insight_type { "trend" }
       title { "Revenue growth accelerating" }
@@ -74,7 +74,7 @@ FactoryBot.define do
       impact_level { "positive" }
       confidence_score { 0.92 }
     end
-    
+
     trait :prediction do
       insight_type { "prediction" }
       title { "Q4 revenue forecast" }
@@ -83,8 +83,8 @@ FactoryBot.define do
       metadata do
         {
           forecast_value: 2500000,
-          confidence_interval: [2300000, 2700000],
-          key_drivers: ["new_product_launch", "holiday_season"]
+          confidence_interval: [ 2300000, 2700000 ],
+          key_drivers: [ "new_product_launch", "holiday_season" ]
         }
       end
     end

@@ -1,7 +1,7 @@
 class CreatePipelineConfigurations < ActiveRecord::Migration[8.0]
   def change
     return if table_exists?(:pipeline_configurations) || table_exists?(:pipelines)
-    
+
     create_table :pipeline_configurations do |t|
       t.references :organization, null: false, foreign_key: true
       t.references :created_by, null: false, foreign_key: { to_table: :users }

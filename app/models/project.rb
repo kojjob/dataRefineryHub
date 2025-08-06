@@ -9,7 +9,7 @@ class Project < ApplicationRecord
 
   before_validation :generate_slug, if: -> { slug.blank? && name.present? }
 
-  scope :active, -> { where(status: 'active') }
+  scope :active, -> { where(status: "active") }
   scope :for_organization, ->(org) { where(organization: org) }
   scope :recent, -> { order(created_at: :desc) }
 
@@ -18,7 +18,7 @@ class Project < ApplicationRecord
   end
 
   def active?
-    status == 'active'
+    status == "active"
   end
 
   def published_landing_pages

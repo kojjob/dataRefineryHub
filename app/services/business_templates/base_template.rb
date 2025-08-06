@@ -3,42 +3,42 @@
 module BusinessTemplates
   class BaseTemplate
     include ActiveModel::Model
-    
+
     attr_accessor :organization, :user, :options
-    
+
     def initialize(organization:, user:, options: {})
       @organization = organization
       @user = user
       @options = options
     end
-    
+
     # Apply template to organization
     def apply!
       ActiveRecord::Base.transaction do
         # Create data sources
         create_data_sources
-        
+
         # Create ETL pipelines
         create_pipelines
-        
+
         # Configure dashboards
         configure_dashboards
-        
+
         # Set up automated reports
         setup_automated_reports
-        
+
         # Configure AI insights
         configure_ai_insights
-        
+
         # Create sample data if requested
         create_sample_data if options[:include_sample_data]
-        
+
         # Mark template as applied
         organization.update!(
           applied_template: template_name,
           template_applied_at: Time.current
         )
-        
+
         true
       end
     rescue => e
@@ -46,43 +46,43 @@ module BusinessTemplates
       Rails.logger.error e.backtrace.join("\n")
       false
     end
-    
+
     protected
-    
+
     # Override in subclasses
     def template_name
       raise NotImplementedError
     end
-    
+
     def create_data_sources
       raise NotImplementedError
     end
-    
+
     def create_pipelines
       raise NotImplementedError
     end
-    
+
     def configure_dashboards
       # Default dashboard configuration
       create_default_dashboards
     end
-    
+
     def setup_automated_reports
       # Default report setup
       create_default_delivery_preferences
     end
-    
+
     def configure_ai_insights
       # Default AI configuration
       enable_default_ai_features
     end
-    
+
     def create_sample_data
       # Override in subclasses if sample data is needed
     end
-    
+
     private
-    
+
     def create_default_dashboards
       # Create revenue dashboard
       Dashboard.create!(
@@ -98,7 +98,7 @@ module BusinessTemplates
           ]
         }
       )
-      
+
       # Create customer dashboard
       Dashboard.create!(
         organization: organization,
@@ -114,7 +114,7 @@ module BusinessTemplates
         }
       )
     end
-    
+
     def create_default_delivery_preferences
       # Daily summary via email
       DeliveryPreference.create!(
@@ -128,7 +128,7 @@ module BusinessTemplates
         timezone: user.timezone || "Eastern Time (US & Canada)",
         active: true
       )
-      
+
       # Weekly report via email with PDF
       DeliveryPreference.create!(
         user: user,
@@ -141,9 +141,9 @@ module BusinessTemplates
         timezone: user.timezone || "Eastern Time (US & Canada)",
         active: true
       )
-      
+
       # Real-time alerts via WhatsApp (if configured)
-      if organization.settings.dig('whatsapp', 'business_id').present?
+      if organization.settings.dig("whatsapp", "business_id").present?
         DeliveryPreference.create!(
           user: user,
           organization: organization,
@@ -155,7 +155,7 @@ module BusinessTemplates
         )
       end
     end
-    
+
     def enable_default_ai_features
       # Enable AI features
       organization.settings.merge!(
@@ -169,7 +169,7 @@ module BusinessTemplates
       )
       organization.save!
     end
-    
+
     # Helper method to create a configured data source
     def create_configured_data_source(name:, source_type:, configuration:)
       DataSource.create!(
@@ -181,19 +181,19 @@ module BusinessTemplates
         active: true
       )
     end
-    
+
     # Helper method to create ETL pipeline
     def create_etl_pipeline(name:, description:, steps:)
       pipeline = organization.pipelines.create!(
         name: name,
         description: description,
-        status: 'active',
+        status: "active",
         metadata: {
           created_by_template: template_name,
           created_at: Time.current
         }
       )
-      
+
       # Create pipeline steps
       steps.each_with_index do |step_config, index|
         pipeline.pipeline_steps.create!(
@@ -203,7 +203,7 @@ module BusinessTemplates
           position: index + 1
         )
       end
-      
+
       pipeline
     end
   end

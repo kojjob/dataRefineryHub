@@ -16,7 +16,7 @@ class CreateReportComponents < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :report_components, [:report_template_id, :component_id], unique: true, name: 'idx_report_components_unique'
+    add_index :report_components, [ :report_template_id, :component_id ], unique: true, name: 'idx_report_components_unique'
     add_index :report_components, :component_type
   end
 end

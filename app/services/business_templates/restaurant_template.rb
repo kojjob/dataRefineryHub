@@ -3,11 +3,11 @@
 module BusinessTemplates
   class RestaurantTemplate < BaseTemplate
     protected
-    
+
     def template_name
-      'restaurant'
+      "restaurant"
     end
-    
+
     def create_data_sources
       # POS System Integration
       create_configured_data_source(
@@ -21,7 +21,7 @@ module BusinessTemplates
           include_inventory: true
         }
       )
-      
+
       # Online Ordering Integration
       create_configured_data_source(
         name: "Online Orders",
@@ -31,7 +31,7 @@ module BusinessTemplates
           include_delivery_data: true
         }
       )
-      
+
       # Reservation System
       create_configured_data_source(
         name: "Reservations",
@@ -42,7 +42,7 @@ module BusinessTemplates
           include_table_data: true
         }
       )
-      
+
       # Accounting Integration
       create_configured_data_source(
         name: "Accounting",
@@ -55,7 +55,7 @@ module BusinessTemplates
         }
       )
     end
-    
+
     def create_pipelines
       # Daily Sales Pipeline
       create_etl_pipeline(
@@ -66,8 +66,8 @@ module BusinessTemplates
             name: "Extract Sales Data",
             type: "extract",
             configuration: {
-              sources: ["POS System", "Online Orders"],
-              fields: ["order_id", "timestamp", "total", "items", "payment_method"]
+              sources: [ "POS System", "Online Orders" ],
+              fields: [ "order_id", "timestamp", "total", "items", "payment_method" ]
             }
           },
           {
@@ -79,7 +79,7 @@ module BusinessTemplates
                 order_count: "count(order_id)",
                 average_ticket: "avg(total)"
               },
-              grouping: ["date", "order_source"]
+              grouping: [ "date", "order_source" ]
             }
           },
           {
@@ -92,7 +92,7 @@ module BusinessTemplates
           }
         ]
       )
-      
+
       # Menu Performance Pipeline
       create_etl_pipeline(
         name: "Menu Item Performance",
@@ -102,8 +102,8 @@ module BusinessTemplates
             name: "Extract Item Sales",
             type: "extract",
             configuration: {
-              sources: ["POS System"],
-              fields: ["item_name", "category", "quantity", "revenue", "cost"]
+              sources: [ "POS System" ],
+              fields: [ "item_name", "category", "quantity", "revenue", "cost" ]
             }
           },
           {
@@ -128,7 +128,7 @@ module BusinessTemplates
           }
         ]
       )
-      
+
       # Labor Cost Analysis Pipeline
       create_etl_pipeline(
         name: "Labor Cost Optimization",
@@ -138,8 +138,8 @@ module BusinessTemplates
             name: "Extract Labor Data",
             type: "extract",
             configuration: {
-              sources: ["POS System", "Accounting"],
-              fields: ["employee_hours", "hourly_rate", "shift_time", "revenue_per_hour"]
+              sources: [ "POS System", "Accounting" ],
+              fields: [ "employee_hours", "hourly_rate", "shift_time", "revenue_per_hour" ]
             }
           },
           {
@@ -165,10 +165,10 @@ module BusinessTemplates
         ]
       )
     end
-    
+
     def configure_dashboards
       super
-      
+
       # Restaurant-specific dashboard
       Dashboard.create!(
         organization: organization,
@@ -176,40 +176,40 @@ module BusinessTemplates
         dashboard_type: "operations",
         configuration: {
           widgets: [
-            { 
-              type: "metric", 
-              title: "Today's Revenue", 
+            {
+              type: "metric",
+              title: "Today's Revenue",
               metric: "revenue_today",
               format: "currency",
               comparison: "yesterday"
             },
-            { 
-              type: "metric", 
-              title: "Table Turnover", 
+            {
+              type: "metric",
+              title: "Table Turnover",
               metric: "table_turnover_rate",
               format: "decimal",
               target: 2.5
             },
-            { 
-              type: "metric", 
-              title: "Labor Cost %", 
+            {
+              type: "metric",
+              title: "Labor Cost %",
               metric: "labor_cost_percentage",
               format: "percentage",
               target: 30,
               alert_threshold: 35
             },
-            { 
-              type: "chart", 
-              title: "Hourly Sales", 
+            {
+              type: "chart",
+              title: "Hourly Sales",
               chart_type: "bar",
               metric: "sales_by_hour",
               group_by: "hour"
             },
-            { 
-              type: "table", 
-              title: "Top Menu Items", 
+            {
+              type: "table",
+              title: "Top Menu Items",
               data_source: "menu_performance",
-              columns: ["item", "quantity", "revenue", "margin"],
+              columns: [ "item", "quantity", "revenue", "margin" ],
               limit: 10
             },
             {
@@ -223,10 +223,10 @@ module BusinessTemplates
         }
       )
     end
-    
+
     def setup_automated_reports
       super
-      
+
       # Daily closing report
       DeliveryPreference.create!(
         user: user,
@@ -249,7 +249,7 @@ module BusinessTemplates
           ]
         }
       )
-      
+
       # Weekly performance review
       DeliveryPreference.create!(
         user: user,
@@ -272,7 +272,7 @@ module BusinessTemplates
         }
       )
     end
-    
+
     def create_sample_data
       # Create sample menu items
       menu_items = [
@@ -282,23 +282,23 @@ module BusinessTemplates
         { name: "Chocolate Cake", category: "Desserts", price: 7.99, cost: 2.00 },
         { name: "House Wine", category: "Beverages", price: 8.99, cost: 2.50 }
       ]
-      
+
       # Generate 30 days of sample sales data
       30.days.ago.to_date.upto(Date.current) do |date|
         # Vary order count by day of week
         base_orders = case date.wday
-                      when 0, 6 then 150 # Weekend
-                      when 5 then 120     # Friday
-                      else 80             # Weekday
-                      end
-        
+        when 0, 6 then 150 # Weekend
+        when 5 then 120     # Friday
+        else 80             # Weekday
+        end
+
         order_count = base_orders + rand(-20..20)
-        
+
         order_count.times do
           # Create order
           order_time = date.to_time + rand(10..22).hours + rand(0..59).minutes
           items_count = rand(1..4)
-          
+
           order_items = menu_items.sample(items_count).map do |item|
             quantity = rand(1..3)
             {
@@ -310,9 +310,9 @@ module BusinessTemplates
               cost: item[:cost] * quantity
             }
           end
-          
+
           order_total = order_items.sum { |i| i[:total_price] }
-          
+
           organization.raw_data_records.create!(
             source_type: "pos_system",
             record_type: "order",
@@ -324,15 +324,15 @@ module BusinessTemplates
               subtotal: order_total,
               tax: (order_total * 0.08).round(2),
               total: (order_total * 1.08).round(2),
-              payment_method: ["cash", "credit", "debit"].sample,
-              server: ["Alice", "Bob", "Charlie", "Diana"].sample,
+              payment_method: [ "cash", "credit", "debit" ].sample,
+              server: [ "Alice", "Bob", "Charlie", "Diana" ].sample,
               table_number: rand(1..20)
             },
             recorded_at: order_time
           )
         end
       end
-      
+
       Rails.logger.info "Created sample restaurant data for #{organization.name}"
     end
   end

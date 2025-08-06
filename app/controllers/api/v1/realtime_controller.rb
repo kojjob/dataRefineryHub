@@ -371,6 +371,4 @@ class Api::V1::RealtimeController < Api::V1::BaseController
       organization_id: @current_organization.id
     }
   end
-
-
 end

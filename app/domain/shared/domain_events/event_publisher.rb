@@ -17,7 +17,7 @@ module Domain
 
         def publish(event)
           handlers = @subscribers[event.class] + @subscribers[DomainEvent]
-          
+
           handlers.each do |handler|
             case handler
             when Proc

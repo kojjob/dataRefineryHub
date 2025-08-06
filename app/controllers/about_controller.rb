@@ -22,7 +22,7 @@ class AboutController < ApplicationController
       },
       {
         name: "Michael Chen",
-        role: "CTO & Co-Founder", 
+        role: "CTO & Co-Founder",
         bio: "Ex-Google engineer who built machine learning systems at scale. PhD in Computer Science from Stanford, specializing in AI and data processing.",
         image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
         linkedin: "#"
@@ -51,7 +51,7 @@ class AboutController < ApplicationController
         description: "Started with a vision to make enterprise analytics accessible to SMEs"
       },
       {
-        year: "2021", 
+        year: "2021",
         title: "First 100 Customers",
         description: "Reached our first major milestone with businesses across 5 industries"
       },

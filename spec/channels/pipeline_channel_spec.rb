@@ -4,7 +4,7 @@ RSpec.describe PipelineChannel, type: :channel do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:pipeline) { create(:pipeline_execution, organization: organization, user: user) }
-  
+
   let!(:tasks) do
     %w[extraction transformation validation].map.with_index do |type, i|
       create(:task,
@@ -24,7 +24,7 @@ RSpec.describe PipelineChannel, type: :channel do
     context 'with pipeline_id' do
       it 'subscribes to specific pipeline stream' do
         subscribe(pipeline_id: pipeline.id)
-        
+
         expect(subscription).to be_confirmed
         expect(subscription).to have_stream_from("pipeline_#{pipeline.id}")
       end
@@ -32,7 +32,7 @@ RSpec.describe PipelineChannel, type: :channel do
       it 'rejects subscription for unauthorized pipeline' do
         other_org = create(:organization)
         other_pipeline = create(:pipeline_execution, organization: other_org)
-        
+
         subscribe(pipeline_id: other_pipeline.id)
         expect(subscription).to be_rejected
       end
@@ -41,7 +41,7 @@ RSpec.describe PipelineChannel, type: :channel do
     context 'without pipeline_id' do
       it 'subscribes to organization-wide pipeline stream' do
         subscribe
-        
+
         expect(subscription).to be_confirmed
         expect(subscription).to have_stream_from("pipelines:organization:#{organization.id}")
       end
@@ -57,9 +57,9 @@ RSpec.describe PipelineChannel, type: :channel do
       # Update some task states
       tasks[0].update!(status: 'completed', completed_at: Time.current)
       tasks[1].update!(status: 'running', started_at: Time.current)
-      
+
       perform :refresh
-      
+
       expect(transmissions.last).to include(
         'pipeline' => hash_including(
           'id' => pipeline.id,
@@ -68,7 +68,7 @@ RSpec.describe PipelineChannel, type: :channel do
           'tasks' => be_an(Array)
         )
       )
-      
+
       tasks_data = transmissions.last['pipeline']['tasks']
       expect(tasks_data.size).to eq(3)
       expect(tasks_data[0]['status']).to eq('completed')
@@ -79,9 +79,9 @@ RSpec.describe PipelineChannel, type: :channel do
     it 'calculates correct progress percentage' do
       tasks[0].update!(status: 'completed')
       tasks[1].update!(status: 'completed')
-      
+
       perform :refresh
-      
+
       # 2 out of 3 tasks completed = 67%
       expect(transmissions.last['pipeline']['progress']).to be_within(1).of(67)
     end
@@ -92,7 +92,7 @@ RSpec.describe PipelineChannel, type: :channel do
 
     before do
       subscribe(pipeline_id: pipeline.id)
-      
+
       # Add some execution details to the task
       task.update!(
         status: 'running',
@@ -108,7 +108,7 @@ RSpec.describe PipelineChannel, type: :channel do
 
     it 'sends detailed task information' do
       perform :task_details, task_id: task.id
-      
+
       expect(transmissions.last).to include(
         'task' => hash_including(
           'id' => task.id,
@@ -127,7 +127,7 @@ RSpec.describe PipelineChannel, type: :channel do
 
     it 'handles non-existent tasks' do
       perform :task_details, task_id: 'non-existent'
-      
+
       expect(transmissions.last).to include(
         'error' => match(/task not found/i)
       )
@@ -136,9 +136,9 @@ RSpec.describe PipelineChannel, type: :channel do
     it 'prevents access to tasks from other pipelines' do
       other_pipeline = create(:pipeline_execution, organization: organization)
       other_task = create(:task, pipeline_execution: other_pipeline)
-      
+
       perform :task_details, task_id: other_task.id
-      
+
       expect(transmissions.last).to include(
         'error' => match(/not found|unauthorized/i)
       )
@@ -159,7 +159,7 @@ RSpec.describe PipelineChannel, type: :channel do
     it 'receives updates for all organization pipelines' do
       # Update one of the other pipelines
       other_pipeline = other_pipelines.first
-      
+
       expect {
         ActionCable.server.broadcast("pipelines:organization:#{organization.id}", {
           event: 'pipeline_started',
@@ -179,10 +179,10 @@ RSpec.describe PipelineChannel, type: :channel do
 
     it 'broadcasts task state changes' do
       task = tasks.first
-      
+
       expect {
         task.update!(status: 'running', started_at: Time.current)
-        
+
         ActionCable.server.broadcast("pipeline_#{pipeline.id}", {
           event: 'task_started',
           task_id: task.id,
@@ -201,7 +201,7 @@ RSpec.describe PipelineChannel, type: :channel do
       # Complete all tasks
       tasks.each { |t| t.update!(status: 'completed', completed_at: Time.current) }
       pipeline.update!(status: 'completed', completed_at: Time.current)
-      
+
       expect {
         ActionCable.server.broadcast("pipeline_#{pipeline.id}", {
           event: 'pipeline_completed',
@@ -224,7 +224,7 @@ RSpec.describe PipelineChannel, type: :channel do
         code: 'VALIDATION_ERROR',
         details: 'Missing required fields'
       }
-      
+
       expect {
         failing_task.update!(
           status: 'failed',
@@ -232,7 +232,7 @@ RSpec.describe PipelineChannel, type: :channel do
           metadata: { error: error_details }
         )
         pipeline.update!(status: 'failed')
-        
+
         ActionCable.server.broadcast("pipeline_#{pipeline.id}", {
           event: 'pipeline_failed',
           pipeline_id: pipeline.id,

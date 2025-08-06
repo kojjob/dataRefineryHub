@@ -14,6 +14,6 @@ class CreatePipelineMetrics < ActiveRecord::Migration[8.0]
     end
 
     add_index :pipeline_metrics, :recorded_at
-    add_index :pipeline_metrics, [:pipeline_execution_id, :recorded_at]
+    add_index :pipeline_metrics, [ :pipeline_execution_id, :recorded_at ]
   end
 end

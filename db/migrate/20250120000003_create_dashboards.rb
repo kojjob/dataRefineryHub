@@ -9,12 +9,12 @@ class CreateDashboards < ActiveRecord::Migration[8.0]
       t.jsonb :configuration, default: {}
       t.boolean :active, default: true
       t.integer :position
-      
+
       t.timestamps
     end
-    
+
     add_index :dashboards, :dashboard_type
     add_index :dashboards, :active
-    add_index :dashboards, [:organization_id, :active]
+    add_index :dashboards, [ :organization_id, :active ]
   end
 end

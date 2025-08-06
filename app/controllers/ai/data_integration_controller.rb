@@ -328,13 +328,13 @@ module Ai
       sources = current_organization.data_sources
                                    .order(created_at: :desc)
                                    .limit(5)
-      
+
       # Get counts in a single query
       source_ids = sources.pluck(:id)
       counts = RawDataRecord.where(data_source_id: source_ids)
                            .group(:data_source_id)
                            .count
-      
+
       sources.map do |source|
         {
           id: source.id,
