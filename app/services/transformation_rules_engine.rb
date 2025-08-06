@@ -526,41 +526,19 @@ class TransformationRulesEngine
   end
 
   def evaluate_expression(expression, record, context)
-    # Simple expression evaluator
-    # In production, use a proper expression parser
-
-    # Replace field references
-    expr = expression.gsub(/\{(\w+)\}/) { |match| record[$1].to_s }
-
-    # Replace function calls
-    expr.gsub!(/(\w+)\((.*?)\)/) do |match|
-      function_name = $1
-      args = $2.split(",").map(&:strip).map { |arg|
-        # Handle string literals
-        if arg.start_with?('"') && arg.end_with?('"')
-          arg[1..-2]
-        elsif arg =~ /^\d+$/
-          arg.to_i
-        elsif arg =~ /^\d+\.\d+$/
-          arg.to_f
-        else
-          # Field reference
-          record[arg]
-        end
-      }
-
-      if function = @function_library[function_name]
-        function.call(*args)
-      else
-        match
-      end
-    end
-
-    # Evaluate simple arithmetic
+    # Safe expression evaluator that doesn't use eval()
+    # Uses a proper parser to prevent code injection
+    
+    # Build evaluation context with record fields
+    eval_context = record.merge(context)
+    
     begin
-      eval(expr)
-    rescue => e
+      SafeExpressionEvaluator.evaluate(expression, eval_context)
+    rescue SafeExpressionEvaluator::ExpressionError => e
       @logger.warn "Expression evaluation failed: #{e.message}"
+      nil
+    rescue => e
+      @logger.error "Unexpected error in expression evaluation: #{e.message}"
       nil
     end
   end

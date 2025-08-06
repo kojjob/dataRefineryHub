@@ -402,7 +402,12 @@ class EtlOrchestrationService
   end
 
   def execute_job_stage(stage, execution_context)
-    job_class = stage[:job_class].constantize
+    # Safely resolve job class using whitelist
+    job_class = SafeClassResolver.resolve!(stage[:job_class])
+    
+    unless job_class
+      raise "Unauthorized job class: #{stage[:job_class]}"
+    end
 
     # Execute job with timeout if specified
     if stage[:timeout]
@@ -415,12 +420,24 @@ class EtlOrchestrationService
   end
 
   def execute_service_stage(stage, execution_context)
-    service_class = stage[:service_class].constantize
+    # Safely resolve service class using whitelist
+    service_class = SafeClassResolver.resolve!(stage[:service_class])
+    
+    unless service_class
+      raise "Unauthorized service class: #{stage[:service_class]}"
+    end
+    
     service_instance = service_class.new
     method_name = stage[:method]
+    
+    # Validate method name against whitelist
+    allowed_methods = [:extract, :transform, :load, :validate, :process, :execute, :run]
+    unless allowed_methods.include?(method_name.to_sym)
+      raise "Unauthorized method: #{method_name}"
+    end
 
     # Call service method with context
-    service_instance.send(method_name, execution_context.data_source_id, execution_context.parameters)
+    service_instance.public_send(method_name, execution_context.data_source_id, execution_context.parameters)
   end
 
   def resolve_stage_dependencies(stages)
@@ -526,13 +543,31 @@ class EtlOrchestrationService
   end
 
   def get_memory_usage
-    `ps -o pid,rss -p #{Process.pid}`.split("\n")[1].split[1].to_i / 1024.0 # MB
+    # Use Ruby's built-in methods instead of shell commands
+    # Gets RSS (Resident Set Size) in MB
+    begin
+      File.read("/proc/#{Process.pid}/status").match(/VmRSS:\s+(\d+)/)[1].to_i / 1024.0
+    rescue
+      # Fallback for non-Linux systems
+      0.0
+    end
   end
 
   def get_cpu_usage
     # This is a simplified CPU usage calculation
     # In production, you might want to use a more sophisticated approach
-    `ps -o pid,pcpu -p #{Process.pid}`.split("\n")[1].split[1].to_f
+    # Use Ruby's built-in methods instead of shell commands
+    begin
+      stat = File.read("/proc/#{Process.pid}/stat").split
+      utime = stat[13].to_f
+      stime = stat[14].to_f
+      total_time = utime + stime
+      uptime = File.read("/proc/uptime").split[0].to_f
+      (total_time / uptime * 100).round(2)
+    rescue
+      # Fallback for non-Linux systems
+      0.0
+    end
   end
 
   def get_active_jobs_count

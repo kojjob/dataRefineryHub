@@ -270,21 +270,17 @@ class DataTransformationPipelineService
   end
 
   def evaluate_expression(expression, row)
-    # Simple expression evaluator - can be enhanced with a proper parser
-    # For now, support basic arithmetic and field references
+    # Safe expression evaluator using parser instead of eval()
+    # Prevents code injection attacks
 
-    # Replace field references with actual values
-    processed_expression = expression.dup
-    row.each do |field, value|
-      if value.is_a?(Numeric)
-        processed_expression.gsub!("{{#{field}}}", value.to_s)
-      end
-    end
-
-    # Evaluate simple arithmetic expressions
+    # Use the safe expression evaluator with row data as context
     begin
-      eval(processed_expression) if processed_expression.match?(/^[\d\s\+\-\*\/\(\)\.]+$/)
-    rescue
+      SafeExpressionEvaluator.evaluate(expression, row)
+    rescue SafeExpressionEvaluator::ExpressionError => e
+      Rails.logger.warn "Failed to evaluate expression: #{e.message}"
+      nil
+    rescue => e
+      Rails.logger.error "Unexpected error evaluating expression: #{e.message}"
       nil
     end
   end
