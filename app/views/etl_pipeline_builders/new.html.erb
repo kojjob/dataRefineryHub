@@ -1,123 +1,717 @@
-<div class="min-h-screen bg-gray-50">
-  <!-- Page Header -->
-  <div class="bg-white shadow-sm border-b border-gray-200">
-    <div class="px-4 sm:px-6 lg:px-8">
-      <div class="py-6">
-        <div class="flex items-center">
-          <%= link_to etl_pipeline_builders_path, class: "mr-4 text-gray-400 hover:text-gray-500" do %>
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-          <% end %>
-          <h1 class="text-3xl font-bold text-gray-900">Create New Pipeline</h1>
+<!-- Executive Pipeline Builder with Premium Design System -->
+<div style="
+  min-height: 100vh;
+  background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(13, 148, 136, 0.02) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+">
+  <!-- Premium Executive Header -->
+  <div style="
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+    border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+    box-shadow: 0 8px 32px rgba(13, 148, 136, 0.3);
+    position: relative;
+    overflow: hidden;
+  ">
+    <!-- Background Pattern -->
+    <div style="
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 300px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(30%, -30%);
+    "></div>
+
+    <div style="
+      padding: var(--space-24) var(--space-32);
+      position: relative;
+      z-index: 1;
+    ">
+      <div style="
+        display: flex;
+        align-items: center;
+        gap: var(--space-20);
+      ">
+        <%= link_to etl_pipeline_builders_path, style: "
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
+          background: rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: var(--radius-xl);
+          color: white;
+          text-decoration: none;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(10px);
+        ", onmouseover: "this.style.background='rgba(255, 255, 255, 0.3)'; this.style.transform='scale(1.05)'", onmouseout: "this.style.background='rgba(255, 255, 255, 0.2)'; this.style.transform='scale(1)'" do %>
+          <svg style="width: 24px; height: 24px;" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
+          </svg>
+        <% end %>
+
+        <div>
+          <h1 style="
+            font-size: var(--font-size-4xl);
+            font-weight: var(--font-weight-bold);
+            color: white;
+            margin: 0 0 var(--space-8) 0;
+            line-height: var(--line-height-tight);
+            display: flex;
+            align-items: center;
+            gap: var(--space-16);
+          ">
+            <div style="
+              width: 64px;
+              height: 64px;
+              background: rgba(255, 255, 255, 0.2);
+              border-radius: var(--radius-xl);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              backdrop-filter: blur(10px);
+            ">
+              <svg style="width: 32px; height: 32px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            Create New Pipeline
+          </h1>
+          <p style="
+            font-size: var(--font-size-lg);
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+            font-weight: var(--font-weight-medium);
+          ">Build sophisticated ETL pipelines with our intuitive visual designer</p>
         </div>
       </div>
     </div>
   </div>
 
-  <%= form_with model: @pipeline, url: etl_pipeline_builders_path, local: false, data: { controller: "pipeline-builder" } do |form| %>
-    <!-- Pipeline Configuration Steps -->
-    <div class="px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Step Navigation -->
-      <nav aria-label="Progress">
-        <ol class="flex items-center justify-center space-x-5">
-          <li data-pipeline-builder-target="step1Nav" class="relative">
-            <div class="flex items-center">
-              <span class="h-10 w-10 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-medium">1</span>
-              <span class="ml-4 text-sm font-medium text-gray-900">Basic Info</span>
-            </div>
-          </li>
-          <li data-pipeline-builder-target="step2Nav" class="relative">
-            <div class="absolute left-0 top-5 -ml-px mt-0.5 h-0.5 w-full bg-gray-300"></div>
-            <div class="group relative flex items-center">
-              <span class="h-10 w-10 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">2</span>
-              <span class="ml-4 text-sm font-medium text-gray-500">Source</span>
-            </div>
-          </li>
-          <li data-pipeline-builder-target="step3Nav" class="relative">
-            <div class="absolute left-0 top-5 -ml-px mt-0.5 h-0.5 w-full bg-gray-300"></div>
-            <div class="group relative flex items-center">
-              <span class="h-10 w-10 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">3</span>
-              <span class="ml-4 text-sm font-medium text-gray-500">Transformations</span>
-            </div>
-          </li>
-          <li data-pipeline-builder-target="step4Nav" class="relative">
-            <div class="absolute left-0 top-5 -ml-px mt-0.5 h-0.5 w-full bg-gray-300"></div>
-            <div class="group relative flex items-center">
-              <span class="h-10 w-10 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">4</span>
-              <span class="ml-4 text-sm font-medium text-gray-500">Destination</span>
-            </div>
-          </li>
-          <li data-pipeline-builder-target="step5Nav" class="relative">
-            <div class="absolute left-0 top-5 -ml-px mt-0.5 h-0.5 w-full bg-gray-300"></div>
-            <div class="group relative flex items-center">
-              <span class="h-10 w-10 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">5</span>
-              <span class="ml-4 text-sm font-medium text-gray-500">Schedule</span>
-            </div>
-          </li>
-        </ol>
+  <%= form_with model: @pipeline, url: etl_pipeline_builders_path, local: false,
+                data: {
+                  controller: "pipeline-builder",
+                  "pipeline-builder-current-step-value": 1,
+                  "pipeline-builder-total-steps-value": 5
+                } do |form| %>
+
+    <!-- Executive Pipeline Configuration Container -->
+    <div style="
+      padding: var(--space-32);
+      max-width: 1200px;
+      margin: 0 auto;
+    ">
+      <!-- Premium Step Navigation -->
+      <nav aria-label="Pipeline Creation Progress" style="margin-bottom: var(--space-48);">
+        <div style="
+          background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(13, 148, 136, 0.02) 100%);
+          border: 1px solid rgba(var(--color-border-rgb), 0.2);
+          border-radius: var(--radius-xl);
+          padding: var(--space-32);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        ">
+          <ol style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+          ">
+            <!-- Step 1: Basic Info -->
+            <li data-pipeline-builder-target="step1Nav" style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              position: relative;
+              z-index: 2;
+            ">
+              <div style="
+                width: 56px;
+                height: 56px;
+                background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+                border: 3px solid white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: var(--font-size-lg);
+                font-weight: var(--font-weight-bold);
+                color: white;
+                box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+                margin-bottom: var(--space-12);
+              ">1</div>
+              <span style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                text-align: center;
+              ">Basic Info</span>
+            </li>
+
+            <!-- Progress Line 1-2 -->
+            <div style="
+              position: absolute;
+              top: 28px;
+              left: 20%;
+              right: 80%;
+              height: 3px;
+              background: rgba(var(--color-border-rgb), 0.3);
+              z-index: 1;
+            "></div>
+
+            <!-- Step 2: Source -->
+            <li data-pipeline-builder-target="step2Nav" style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              position: relative;
+              z-index: 2;
+            ">
+              <div style="
+                width: 56px;
+                height: 56px;
+                background: rgba(var(--color-border-rgb), 0.3);
+                border: 3px solid white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: var(--font-size-lg);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text-secondary);
+                margin-bottom: var(--space-12);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+              ">2</div>
+              <span style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text-secondary);
+                text-align: center;
+              ">Source</span>
+            </li>
+
+            <!-- Progress Line 2-3 -->
+            <div style="
+              position: absolute;
+              top: 28px;
+              left: 40%;
+              right: 60%;
+              height: 3px;
+              background: rgba(var(--color-border-rgb), 0.3);
+              z-index: 1;
+            "></div>
+
+            <!-- Step 3: Transformations -->
+            <li data-pipeline-builder-target="step3Nav" style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              position: relative;
+              z-index: 2;
+            ">
+              <div style="
+                width: 56px;
+                height: 56px;
+                background: rgba(var(--color-border-rgb), 0.3);
+                border: 3px solid white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: var(--font-size-lg);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text-secondary);
+                margin-bottom: var(--space-12);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+              ">3</div>
+              <span style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text-secondary);
+                text-align: center;
+              ">Transformations</span>
+            </li>
+
+            <!-- Progress Line 3-4 -->
+            <div style="
+              position: absolute;
+              top: 28px;
+              left: 60%;
+              right: 40%;
+              height: 3px;
+              background: rgba(var(--color-border-rgb), 0.3);
+              z-index: 1;
+            "></div>
+
+            <!-- Step 4: Destination -->
+            <li data-pipeline-builder-target="step4Nav" style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              position: relative;
+              z-index: 2;
+            ">
+              <div style="
+                width: 56px;
+                height: 56px;
+                background: rgba(var(--color-border-rgb), 0.3);
+                border: 3px solid white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: var(--font-size-lg);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text-secondary);
+                margin-bottom: var(--space-12);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+              ">4</div>
+              <span style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text-secondary);
+                text-align: center;
+              ">Destination</span>
+            </li>
+
+            <!-- Progress Line 4-5 -->
+            <div style="
+              position: absolute;
+              top: 28px;
+              left: 80%;
+              right: 20%;
+              height: 3px;
+              background: rgba(var(--color-border-rgb), 0.3);
+              z-index: 1;
+            "></div>
+
+            <!-- Step 5: Schedule -->
+            <li data-pipeline-builder-target="step5Nav" style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              position: relative;
+              z-index: 2;
+            ">
+              <div style="
+                width: 56px;
+                height: 56px;
+                background: rgba(var(--color-border-rgb), 0.3);
+                border: 3px solid white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: var(--font-size-lg);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text-secondary);
+                margin-bottom: var(--space-12);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+              ">5</div>
+              <span style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text-secondary);
+                text-align: center;
+              ">Schedule</span>
+            </li>
+          </ol>
+        </div>
       </nav>
 
-      <!-- Step 1: Basic Information -->
-      <div data-pipeline-builder-target="step1" class="mt-8">
-        <div class="bg-white shadow rounded-lg">
-          <div class="px-6 py-4 border-b border-gray-200">
-            <h2 class="text-lg font-medium text-gray-900">Basic Information</h2>
+      <!-- Step 1: Premium Basic Information -->
+      <div data-pipeline-builder-target="step1" style="margin-top: var(--space-32);">
+        <div style="
+          background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(13, 148, 136, 0.02) 100%);
+          border: 1px solid rgba(var(--color-border-rgb), 0.2);
+          border-radius: var(--radius-xl);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+          overflow: hidden;
+        ">
+          <!-- Premium Step Header -->
+          <div style="
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(13, 148, 136, 0.05) 100%);
+            border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+            padding: var(--space-24) var(--space-32);
+          ">
+            <h2 style="
+              font-size: var(--font-size-2xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              display: flex;
+              align-items: center;
+              gap: var(--space-12);
+            ">
+              <div style="
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+                border-radius: var(--radius-lg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+              ">
+                <svg style="width: 20px; height: 20px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              Basic Information
+            </h2>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+              margin: 0;
+            ">Define the core properties and type of your data pipeline</p>
           </div>
-          <div class="p-6 space-y-6">
+
+          <!-- Premium Form Fields -->
+          <div style="padding: var(--space-32); display: flex; flex-direction: column; gap: var(--space-32);">
+            <!-- Pipeline Name Field -->
             <div>
-              <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", placeholder: "e.g., Daily Customer Data Sync" %>
+              <%= form.label :name, style: "
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin-bottom: var(--space-8);
+              " do %>
+                Pipeline Name
+                <span style="color: #ef4444;">*</span>
+              <% end %>
+              <%= form.text_field :name,
+                    style: "
+                      display: block;
+                      width: 100%;
+                      padding: var(--space-12) var(--space-16);
+                      background: rgba(var(--color-surface-rgb), 0.8);
+                      border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                      border-radius: var(--radius-lg);
+                      color: var(--color-text);
+                      font-size: var(--font-size-sm);
+                      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                      backdrop-filter: blur(10px);
+                    ",
+                    placeholder: "e.g., Daily Customer Data Sync",
+                    required: true,
+                    "aria-describedby": "name-help",
+                    data: { action: "input->pipeline-builder#validateField" },
+                    onfocus: "this.style.borderColor='rgba(13, 148, 136, 0.5)'; this.style.boxShadow='0 0 0 3px rgba(13, 148, 136, 0.1)'",
+                    onblur: "this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.boxShadow='none'" %>
+              <p id="name-help" style="
+                font-size: var(--font-size-xs);
+                color: var(--color-text-secondary);
+                margin: var(--space-4) 0 0 0;
+              ">Choose a descriptive name that clearly identifies this pipeline's purpose</p>
             </div>
 
+            <!-- Pipeline Description Field -->
             <div>
-              <%= form.label :description, class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_area :description, rows: 3, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", placeholder: "Describe what this pipeline does..." %>
+              <%= form.label :description, style: "
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin-bottom: var(--space-8);
+              " do %>
+                Description
+              <% end %>
+              <%= form.text_area :description,
+                    rows: 4,
+                    style: "
+                      display: block;
+                      width: 100%;
+                      padding: var(--space-12) var(--space-16);
+                      background: rgba(var(--color-surface-rgb), 0.8);
+                      border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                      border-radius: var(--radius-lg);
+                      color: var(--color-text);
+                      font-size: var(--font-size-sm);
+                      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                      backdrop-filter: blur(10px);
+                      resize: vertical;
+                      min-height: 100px;
+                    ",
+                    placeholder: "Describe what this pipeline does, its data sources, transformations, and business purpose...",
+                    "aria-describedby": "description-help",
+                    onfocus: "this.style.borderColor='rgba(13, 148, 136, 0.5)'; this.style.boxShadow='0 0 0 3px rgba(13, 148, 136, 0.1)'",
+                    onblur: "this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.boxShadow='none'" %>
+              <p id="description-help" style="
+                font-size: var(--font-size-xs);
+                color: var(--color-text-secondary);
+                margin: var(--space-4) 0 0 0;
+              ">Provide a detailed description to help team members understand this pipeline's purpose</p>
             </div>
 
+            <!-- Pipeline Type Selection -->
             <div>
-              <%= form.label :pipeline_type, "Pipeline Type", class: "block text-sm font-medium text-gray-700" %>
-              <div class="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <label class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
-                  <%= form.radio_button :pipeline_type, 'etl', class: "sr-only", data: { action: "change->pipeline-builder#updatePipelineType" } %>
-                  <div class="flex flex-1">
-                    <div class="flex flex-col">
-                      <span class="block text-sm font-medium text-gray-900">ETL</span>
-                      <span class="mt-1 flex items-center text-sm text-gray-500">Extract, Transform, then Load</span>
+              <%= form.label :pipeline_type, "Pipeline Type", style: "
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin-bottom: var(--space-16);
+              " do %>
+                Pipeline Type
+                <span style="color: #ef4444;">*</span>
+              <% end %>
+              <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: var(--space-16);
+              ">
+                <!-- ETL Pipeline Type -->
+                <label style="
+                  position: relative;
+                  display: flex;
+                  cursor: pointer;
+                  background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(13, 148, 136, 0.02) 100%);
+                  border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                  border-radius: var(--radius-lg);
+                  padding: var(--space-20);
+                  backdrop-filter: blur(10px);
+                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                  overflow: hidden;
+                " onmouseover="this.style.borderColor='rgba(13, 148, 136, 0.4)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                  <%= form.radio_button :pipeline_type, 'etl',
+                        style: "position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;",
+                        data: { action: "change->pipeline-builder#updatePipelineType" },
+                        "aria-describedby": "etl-description" %>
+                  <div style="display: flex; flex: 1; flex-direction: column; gap: var(--space-12);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: var(--space-12);
+                      ">
+                        <div style="
+                          width: 48px;
+                          height: 48px;
+                          background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+                          border-radius: var(--radius-lg);
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                          box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+                        ">
+                          <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <span style="
+                            display: block;
+                            font-size: var(--font-size-lg);
+                            font-weight: var(--font-weight-bold);
+                            color: var(--color-text);
+                          ">ETL</span>
+                          <span style="
+                            display: block;
+                            font-size: var(--font-size-sm);
+                            color: var(--color-text-secondary);
+                            margin-top: var(--space-2);
+                          ">Extract, Transform, then Load</span>
+                        </div>
+                      </div>
+                      <div style="
+                        width: 20px;
+                        height: 20px;
+                        border: 2px solid rgba(var(--color-border-rgb), 0.3);
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                      " data-pipeline-builder-target="etlCheckbox">
+                        <div style="
+                          width: 8px;
+                          height: 8px;
+                          background: #0d9488;
+                          border-radius: 50%;
+                          opacity: 0;
+                          transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        "></div>
+                      </div>
                     </div>
+                    <p id="etl-description" style="
+                      font-size: var(--font-size-xs);
+                      color: var(--color-text-secondary);
+                      margin: 0;
+                      line-height: var(--line-height-relaxed);
+                    ">Traditional approach: Extract data from sources, transform it in memory, then load to destination. Best for complex transformations and data quality checks.</p>
                   </div>
-                  <svg class="h-5 w-5 text-indigo-600 hidden" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <div class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></div>
                 </label>
 
-                <label class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
-                  <%= form.radio_button :pipeline_type, 'elt', class: "sr-only", data: { action: "change->pipeline-builder#updatePipelineType" } %>
-                  <div class="flex flex-1">
-                    <div class="flex flex-col">
-                      <span class="block text-sm font-medium text-gray-900">ELT</span>
-                      <span class="mt-1 flex items-center text-sm text-gray-500">Extract, Load, then Transform</span>
+                <!-- ELT Pipeline Type -->
+                <label style="
+                  position: relative;
+                  display: flex;
+                  cursor: pointer;
+                  background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(96, 165, 250, 0.02) 100%);
+                  border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                  border-radius: var(--radius-lg);
+                  padding: var(--space-20);
+                  backdrop-filter: blur(10px);
+                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                  overflow: hidden;
+                " onmouseover="this.style.borderColor='rgba(96, 165, 250, 0.4)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                  <%= form.radio_button :pipeline_type, 'elt',
+                        style: "position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;",
+                        data: { action: "change->pipeline-builder#updatePipelineType" },
+                        "aria-describedby": "elt-description" %>
+                  <div style="display: flex; flex: 1; flex-direction: column; gap: var(--space-12);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: var(--space-12);
+                      ">
+                        <div style="
+                          width: 48px;
+                          height: 48px;
+                          background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+                          border-radius: var(--radius-lg);
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                          box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+                        ">
+                          <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <span style="
+                            display: block;
+                            font-size: var(--font-size-lg);
+                            font-weight: var(--font-weight-bold);
+                            color: var(--color-text);
+                          ">ELT</span>
+                          <span style="
+                            display: block;
+                            font-size: var(--font-size-sm);
+                            color: var(--color-text-secondary);
+                            margin-top: var(--space-2);
+                          ">Extract, Load, then Transform</span>
+                        </div>
+                      </div>
+                      <div style="
+                        width: 20px;
+                        height: 20px;
+                        border: 2px solid rgba(var(--color-border-rgb), 0.3);
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                      " data-pipeline-builder-target="eltCheckbox">
+                        <div style="
+                          width: 8px;
+                          height: 8px;
+                          background: #60a5fa;
+                          border-radius: 50%;
+                          opacity: 0;
+                          transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        "></div>
+                      </div>
                     </div>
+                    <p id="elt-description" style="
+                      font-size: var(--font-size-xs);
+                      color: var(--color-text-secondary);
+                      margin: 0;
+                      line-height: var(--line-height-relaxed);
+                    ">Modern cloud approach: Extract and load raw data first, then transform in the destination. Ideal for big data and cloud data warehouses.</p>
                   </div>
-                  <svg class="h-5 w-5 text-indigo-600 hidden" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <div class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></div>
                 </label>
 
-                <label class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
-                  <%= form.radio_button :pipeline_type, 'streaming', class: "sr-only", data: { action: "change->pipeline-builder#updatePipelineType" } %>
-                  <div class="flex flex-1">
-                    <div class="flex flex-col">
-                      <span class="block text-sm font-medium text-gray-900">Streaming</span>
-                      <span class="mt-1 flex items-center text-sm text-gray-500">Real-time data processing</span>
+                <!-- Streaming Pipeline Type -->
+                <label style="
+                  position: relative;
+                  display: flex;
+                  cursor: pointer;
+                  background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(168, 85, 247, 0.02) 100%);
+                  border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                  border-radius: var(--radius-lg);
+                  padding: var(--space-20);
+                  backdrop-filter: blur(10px);
+                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                  overflow: hidden;
+                " onmouseover="this.style.borderColor='rgba(168, 85, 247, 0.4)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                  <%= form.radio_button :pipeline_type, 'streaming',
+                        style: "position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;",
+                        data: { action: "change->pipeline-builder#updatePipelineType" },
+                        "aria-describedby": "streaming-description" %>
+                  <div style="display: flex; flex: 1; flex-direction: column; gap: var(--space-12);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: var(--space-12);
+                      ">
+                        <div style="
+                          width: 48px;
+                          height: 48px;
+                          background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+                          border-radius: var(--radius-lg);
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                          box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+                        ">
+                          <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <span style="
+                            display: block;
+                            font-size: var(--font-size-lg);
+                            font-weight: var(--font-weight-bold);
+                            color: var(--color-text);
+                          ">Streaming</span>
+                          <span style="
+                            display: block;
+                            font-size: var(--font-size-sm);
+                            color: var(--color-text-secondary);
+                            margin-top: var(--space-2);
+                          ">Real-time data processing</span>
+                        </div>
+                      </div>
+                      <div style="
+                        width: 20px;
+                        height: 20px;
+                        border: 2px solid rgba(var(--color-border-rgb), 0.3);
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                      " data-pipeline-builder-target="streamingCheckbox">
+                        <div style="
+                          width: 8px;
+                          height: 8px;
+                          background: #a855f7;
+                          border-radius: 50%;
+                          opacity: 0;
+                          transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        "></div>
+                      </div>
                     </div>
+                    <p id="streaming-description" style="
+                      font-size: var(--font-size-xs);
+                      color: var(--color-text-secondary);
+                      margin: 0;
+                      line-height: var(--line-height-relaxed);
+                    ">Continuous processing: Handle data streams in real-time with low latency. Perfect for event-driven architectures and live analytics.</p>
                   </div>
-                  <svg class="h-5 w-5 text-indigo-600 hidden" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <div class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></div>
                 </label>
               </div>
             </div>
@@ -125,57 +719,273 @@
         </div>
       </div>
 
-      <!-- Step 2: Source Configuration -->
-      <div data-pipeline-builder-target="step2" class="mt-8 hidden">
-        <div class="bg-white shadow rounded-lg">
-          <div class="px-6 py-4 border-b border-gray-200">
-            <h2 class="text-lg font-medium text-gray-900">Data Source</h2>
+      <!-- Step 2: Premium Data Source Configuration -->
+      <div data-pipeline-builder-target="step2" style="margin-top: var(--space-32); display: none;">
+        <div style="
+          background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(13, 148, 136, 0.02) 100%);
+          border: 1px solid rgba(var(--color-border-rgb), 0.2);
+          border-radius: var(--radius-xl);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+          overflow: hidden;
+        ">
+          <!-- Premium Step Header -->
+          <div style="
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(13, 148, 136, 0.05) 100%);
+            border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+            padding: var(--space-24) var(--space-32);
+          ">
+            <h2 style="
+              font-size: var(--font-size-2xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              display: flex;
+              align-items: center;
+              gap: var(--space-12);
+            ">
+              <div style="
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+                border-radius: var(--radius-lg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+              ">
+                <svg style="width: 20px; height: 20px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                </svg>
+              </div>
+              Data Source Configuration
+            </h2>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+              margin: 0;
+            ">Select your data source and configure the connection settings</p>
           </div>
-          <div class="p-6 space-y-6">
+
+          <!-- Premium Source Type Selection -->
+          <div style="padding: var(--space-32); display: flex; flex-direction: column; gap: var(--space-32);">
             <div>
-              <label class="block text-sm font-medium text-gray-700">Source Type</label>
-              <div class="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <button type="button" data-action="click->pipeline-builder#selectSourceType" data-source-type="database" class="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                  <div class="flex flex-col items-center">
-                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-                    </svg>
-                    <span class="mt-2 text-sm font-medium text-gray-900">Database</span>
+              <label style="
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin-bottom: var(--space-16);
+              ">Choose Data Source Type</label>
+              
+              <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: var(--space-16);
+              ">
+                <!-- Database Source -->
+                <button type="button" 
+                        data-action="click->pipeline-builder#selectSourceType" 
+                        data-source-type="database"
+                        style="
+                          position: relative;
+                          display: flex;
+                          cursor: pointer;
+                          background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(59, 130, 246, 0.02) 100%);
+                          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                          border-radius: var(--radius-lg);
+                          padding: var(--space-20);
+                          backdrop-filter: blur(10px);
+                          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                          overflow: hidden;
+                        " 
+                        onmouseover="this.style.borderColor='rgba(59, 130, 246, 0.4)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.1)'" 
+                        onmouseout="this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                  <div style="display: flex; flex: 1; flex-direction: column; gap: var(--space-12);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: var(--space-12);">
+                        <div style="
+                          width: 48px;
+                          height: 48px;
+                          background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+                          border-radius: var(--radius-lg);
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                        ">
+                          <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <span style="display: block; font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-text);">Database</span>
+                          <span style="display: block; font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: var(--space-2);">Connect to SQL/NoSQL databases</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0; line-height: var(--line-height-relaxed);">
+                      Direct connection: PostgreSQL, MySQL, MongoDB, SQL Server. Real-time data synchronization with customizable query intervals.
+                    </p>
                   </div>
                 </button>
 
-                <button type="button" data-action="click->pipeline-builder#selectSourceType" data-source-type="api" class="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                  <div class="flex flex-col items-center">
-                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
-                    </svg>
-                    <span class="mt-2 text-sm font-medium text-gray-900">API</span>
+                <!-- API Source -->
+                <button type="button" 
+                        data-action="click->pipeline-builder#selectSourceType" 
+                        data-source-type="api"
+                        style="
+                          position: relative;
+                          display: flex;
+                          cursor: pointer;
+                          background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(16, 185, 129, 0.02) 100%);
+                          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                          border-radius: var(--radius-lg);
+                          padding: var(--space-20);
+                          backdrop-filter: blur(10px);
+                          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                          overflow: hidden;
+                        " 
+                        onmouseover="this.style.borderColor='rgba(16, 185, 129, 0.4)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.1)'" 
+                        onmouseout="this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                  <div style="display: flex; flex: 1; flex-direction: column; gap: var(--space-12);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: var(--space-12);">
+                        <div style="
+                          width: 48px;
+                          height: 48px;
+                          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                          border-radius: var(--radius-lg);
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                        ">
+                          <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <span style="display: block; font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-text);">REST API</span>
+                          <span style="display: block; font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: var(--space-2);">Connect to web services</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0; line-height: var(--line-height-relaxed);">
+                      HTTP integration: REST, GraphQL, webhooks. Authentication support with automatic retry logic and rate limiting.
+                    </p>
                   </div>
                 </button>
 
-                <button type="button" data-action="click->pipeline-builder#selectSourceType" data-source-type="cloud_storage" class="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                  <div class="flex flex-col items-center">
-                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
-                    </svg>
-                    <span class="mt-2 text-sm font-medium text-gray-900">Cloud Storage</span>
+                <!-- Cloud Storage Source -->
+                <button type="button" 
+                        data-action="click->pipeline-builder#selectSourceType" 
+                        data-source-type="cloud_storage"
+                        style="
+                          position: relative;
+                          display: flex;
+                          cursor: pointer;
+                          background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(147, 51, 234, 0.02) 100%);
+                          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                          border-radius: var(--radius-lg);
+                          padding: var(--space-20);
+                          backdrop-filter: blur(10px);
+                          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                          overflow: hidden;
+                        " 
+                        onmouseover="this.style.borderColor='rgba(147, 51, 234, 0.4)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.1)'" 
+                        onmouseout="this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                  <div style="display: flex; flex: 1; flex-direction: column; gap: var(--space-12);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: var(--space-12);">
+                        <div style="
+                          width: 48px;
+                          height: 48px;
+                          background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+                          border-radius: var(--radius-lg);
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                          box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+                        ">
+                          <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <span style="display: block; font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-text);">Cloud Storage</span>
+                          <span style="display: block; font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: var(--space-2);">S3, GCS, Azure Blob</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0; line-height: var(--line-height-relaxed);">
+                      Cloud storage: AWS S3, Google Cloud Storage, Azure Blob. Automatic file discovery with pattern matching and compression support.
+                    </p>
                   </div>
                 </button>
 
-                <button type="button" data-action="click->pipeline-builder#selectSourceType" data-source-type="streaming" class="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                  <div class="flex flex-col items-center">
-                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                    </svg>
-                    <span class="mt-2 text-sm font-medium text-gray-900">Streaming</span>
+                <!-- File Upload Source - PREMIUM ENHANCED -->
+                <button type="button" 
+                        data-action="click->pipeline-builder#selectSourceType" 
+                        data-source-type="file_upload"
+                        style="
+                          position: relative;
+                          display: flex;
+                          cursor: pointer;
+                          background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(245, 158, 11, 0.02) 100%);
+                          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                          border-radius: var(--radius-lg);
+                          padding: var(--space-20);
+                          backdrop-filter: blur(10px);
+                          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                          overflow: hidden;
+                        " 
+                        onmouseover="this.style.borderColor='rgba(245, 158, 11, 0.4)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.1)'" 
+                        onmouseout="this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                  <div style="display: flex; flex: 1; flex-direction: column; gap: var(--space-12);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: var(--space-12);">
+                        <div style="
+                          width: 48px;
+                          height: 48px;
+                          background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                          border-radius: var(--radius-lg);
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+                        ">
+                          <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <span style="display: block; font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-text);">File Upload</span>
+                          <span style="display: block; font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: var(--space-2);">CSV, Excel, JSON, TXT</span>
+                        </div>
+                      </div>
+                      <div style="
+                        padding: var(--space-4) var(--space-8);
+                        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                        border-radius: var(--radius-md);
+                        font-size: var(--font-size-xs);
+                        font-weight: var(--font-weight-bold);
+                        color: white;
+                        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+                      ">POPULAR</div>
+                    </div>
+                    <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0; line-height: var(--line-height-relaxed);">
+                      Direct upload: Drag & drop flat files with automatic schema detection, data preview, and validation. Supports large files up to 100MB.
+                    </p>
                   </div>
                 </button>
               </div>
             </div>
 
-            <!-- Dynamic source configuration based on type -->
-            <div data-pipeline-builder-target="sourceConfig" class="mt-6">
-              <!-- Configuration will be loaded dynamically -->
+            <!-- Dynamic Source Configuration Panel -->
+            <div data-pipeline-builder-target="sourceConfig" style="margin-top: var(--space-24);">
+              <!-- Configuration will be loaded dynamically based on source type selection -->
             </div>
           </div>
         </div>
@@ -186,31 +996,186 @@
         <div class="bg-white shadow rounded-lg">
           <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-medium text-gray-900">Transformations</h2>
-              <button type="button" data-action="click->pipeline-builder#addTransformation" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <svg class="-ml-0.5 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Add Transformation
-              </button>
+              <div>
+                <h2 class="text-lg font-medium text-gray-900">Data Transformations</h2>
+                <p class="mt-1 text-sm text-gray-500">Transform and clean your data before loading to destination</p>
+              </div>
+              <div class="flex space-x-2">
+                <button type="button" data-action="click->pipeline-builder#previewTransformations" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                  <svg class="-ml-0.5 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  Preview
+                </button>
+                <button type="button" data-action="click->pipeline-builder#showTransformationSelector" class="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                  <svg class="-ml-0.5 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  Add Transformation
+                </button>
+              </div>
             </div>
           </div>
           
           <div class="p-6">
-            <!-- Visual Pipeline Canvas -->
-            <div class="mb-6 border-2 border-dashed border-gray-300 rounded-lg p-8 min-h-[400px]" data-pipeline-builder-target="canvas">
-              <div class="text-center">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">No transformations yet</h3>
-                <p class="mt-1 text-sm text-gray-500">Get started by adding a transformation rule above.</p>
+            <!-- Transformation Selector (Initially Hidden) -->
+            <div id="transformation-selector" class="mb-6 hidden">
+              <div class="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                <h3 class="text-sm font-medium text-gray-900 mb-4">Choose a Transformation Type</h3>
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                  <!-- Field Operations -->
+                  <button type="button" data-action="click->pipeline-builder#selectTransformationType" data-transform-type="rename_field" class="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <div class="flex flex-col items-center">
+                      <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                      </div>
+                      <span class="mt-2 text-xs font-medium text-gray-900">Rename Field</span>
+                      <span class="mt-1 text-xs text-gray-500">Rename columns</span>
+                    </div>
+                  </button>
+
+                  <button type="button" data-action="click->pipeline-builder#selectTransformationType" data-transform-type="type_conversion" class="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <div class="flex flex-col items-center">
+                      <div class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                        </svg>
+                      </div>
+                      <span class="mt-2 text-xs font-medium text-gray-900">Data Type</span>
+                      <span class="mt-1 text-xs text-gray-500">Convert types</span>
+                    </div>
+                  </button>
+
+                  <button type="button" data-action="click->pipeline-builder#selectTransformationType" data-transform-type="calculated_field" class="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <div class="flex flex-col items-center">
+                      <div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                        <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                      </div>
+                      <span class="mt-2 text-xs font-medium text-gray-900">Formula</span>
+                      <span class="mt-1 text-xs text-gray-500">Calculations</span>
+                    </div>
+                  </button>
+
+                  <button type="button" data-action="click->pipeline-builder#selectTransformationType" data-transform-type="filter" class="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <div class="flex flex-col items-center">
+                      <div class="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                        <svg class="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                        </svg>
+                      </div>
+                      <span class="mt-2 text-xs font-medium text-gray-900">Filter Rows</span>
+                      <span class="mt-1 text-xs text-gray-500">Condition filter</span>
+                    </div>
+                  </button>
+
+                  <button type="button" data-action="click->pipeline-builder#selectTransformationType" data-transform-type="aggregate" class="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <div class="flex flex-col items-center">
+                      <div class="h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center">
+                        <svg class="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                      </div>
+                      <span class="mt-2 text-xs font-medium text-gray-900">Aggregate</span>
+                      <span class="mt-1 text-xs text-gray-500">Group & sum</span>
+                    </div>
+                  </button>
+
+                  <button type="button" data-action="click->pipeline-builder#selectTransformationType" data-transform-type="sort" class="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <div class="flex flex-col items-center">
+                      <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                        <svg class="h-5 w-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                        </svg>
+                      </div>
+                      <span class="mt-2 text-xs font-medium text-gray-900">Sort</span>
+                      <span class="mt-1 text-xs text-gray-500">Order data</span>
+                    </div>
+                  </button>
+
+                  <button type="button" data-action="click->pipeline-builder#selectTransformationType" data-transform-type="deduplicate" class="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <div class="flex flex-col items-center">
+                      <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                      </div>
+                      <span class="mt-2 text-xs font-medium text-gray-900">Remove Dupes</span>
+                      <span class="mt-1 text-xs text-gray-500">Deduplicate</span>
+                    </div>
+                  </button>
+
+                  <button type="button" data-action="click->pipeline-builder#selectTransformationType" data-transform-type="validation" class="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <div class="flex flex-col items-center">
+                      <div class="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
+                        <svg class="h-5 w-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                      </div>
+                      <span class="mt-2 text-xs font-medium text-gray-900">Validate</span>
+                      <span class="mt-1 text-xs text-gray-500">Data quality</span>
+                    </div>
+                  </button>
+                </div>
+
+                <div class="mt-4 flex justify-end">
+                  <button type="button" data-action="click->pipeline-builder#hideTransformationSelector" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
 
-            <!-- Transformation Rules List -->
-            <div data-pipeline-builder-target="transformationsList" class="space-y-3">
-              <!-- Transformation rules will be added here dynamically -->
+            <!-- Dynamic Transformation Configuration Form -->
+            <div id="transformation-config-form" class="mb-6 hidden">
+              <!-- Form will be loaded dynamically -->
+            </div>
+
+            <!-- Visual Pipeline Flow -->
+            <div class="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-6 min-h-[300px]" data-pipeline-builder-target="canvas">
+              <div id="empty-transformations" class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No transformations configured</h3>
+                <p class="mt-1 text-sm text-gray-500">Add transformations to process your data before loading to the destination.</p>
+                <div class="mt-6">
+                  <button type="button" data-action="click->pipeline-builder#showTransformationSelector" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Add First Transformation
+                  </button>
+                </div>
+              </div>
+
+              <!-- Transformation Pipeline Flow -->
+              <div id="transformation-pipeline" class="hidden">
+                <div class="flex items-center space-x-4" data-pipeline-builder-target="transformationsList">
+                  <!-- Transformations will be displayed here as a flow -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Transformation Summary -->
+            <div id="transformation-summary" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-blue-800">Transformation Pipeline</h3>
+                  <div id="transformation-summary-text" class="mt-1 text-sm text-blue-700">
+                    <!-- Summary will be generated dynamically -->
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -371,7 +1336,118 @@
             </svg>
           </button>
 
-          <%= form.submit "Create Pipeline", data: { pipeline_builder_target: "submitButton" }, class: "hidden inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+          <!-- Premium Navigation Buttons -->
+          <div style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-32);
+            background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(13, 148, 136, 0.02) 100%);
+            border: 1px solid rgba(var(--color-border-rgb), 0.2);
+            border-radius: var(--radius-xl);
+            margin-top: var(--space-32);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+          ">
+            <!-- Previous Button -->
+            <button type="button"
+                    data-action="click->pipeline-builder#previousStep"
+                    data-pipeline-builder-target="prevButton"
+                    class="btn btn--outline"
+                    style="
+                      background: rgba(var(--color-surface-rgb), 0.8);
+                      border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                      color: var(--color-text-secondary);
+                      display: none;
+                      align-items: center;
+                      gap: var(--space-8);
+                      padding: var(--space-12) var(--space-20);
+                      border-radius: var(--radius-lg);
+                      font-size: var(--font-size-sm);
+                      font-weight: var(--font-weight-medium);
+                      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                      backdrop-filter: blur(10px);
+                    "
+                    onmouseover="this.style.borderColor='rgba(13, 148, 136, 0.4)'; this.style.color='#0d9488'"
+                    onmouseout="this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.color='var(--color-text-secondary)'">
+              <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+              Previous
+            </button>
+
+            <!-- Step Progress Indicator -->
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-8);
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+            ">
+              <span>Step</span>
+              <span data-pipeline-builder-target="currentStepIndicator" style="
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+              ">1</span>
+              <span>of</span>
+              <span style="font-weight: var(--font-weight-bold);">5</span>
+            </div>
+
+            <!-- Next/Submit Button -->
+            <div style="display: flex; align-items: center; gap: var(--space-12);">
+              <!-- Next Button -->
+              <button type="button"
+                      data-action="click->pipeline-builder#nextStep"
+                      data-pipeline-builder-target="nextButton"
+                      class="btn btn--primary"
+                      style="
+                        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+                        border: none;
+                        color: white;
+                        display: flex;
+                        align-items: center;
+                        gap: var(--space-8);
+                        padding: var(--space-12) var(--space-20);
+                        border-radius: var(--radius-lg);
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-medium);
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+                      "
+                      onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(13, 148, 136, 0.4)'"
+                      onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(13, 148, 136, 0.3)'">
+                Next
+                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </button>
+
+              <!-- Submit Button (hidden initially) -->
+              <%= form.submit "Create Pipeline",
+                    data: {
+                      action: "click->pipeline-builder#submitForm",
+                      pipeline_builder_target: "submitButton"
+                    },
+                    style: "
+                      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+                      border: none;
+                      color: white;
+                      display: none;
+                      align-items: center;
+                      gap: var(--space-8);
+                      padding: var(--space-12) var(--space-20);
+                      border-radius: var(--radius-lg);
+                      font-size: var(--font-size-sm);
+                      font-weight: var(--font-weight-medium);
+                      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+                      cursor: pointer;
+                    ",
+                    onmouseover: "this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(34, 197, 94, 0.4)'",
+                    onmouseout: "this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(34, 197, 94, 0.3)'" %>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -403,3 +1479,249 @@
     </div>
   </div>
 </div>
+
+<!-- Premium Pipeline Builder CSS and Dark Mode Support -->
+<style>
+  /* Enhanced dark mode support for pipeline builder */
+  @media (prefers-color-scheme: dark), [data-color-scheme="dark"] {
+    /* Enhanced glass morphism for dark mode */
+    div[style*="background: linear-gradient(135deg, rgba(var(--color-surface-rgb)"] {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.9) 0%, rgba(13, 148, 136, 0.08) 100%) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Enhanced form fields for dark mode */
+    input[style*="background: rgba(var(--color-surface-rgb)"],
+    textarea[style*="background: rgba(var(--color-surface-rgb)"],
+    select[style*="background: rgba(var(--color-surface-rgb)"] {
+      background: rgba(var(--color-surface-rgb), 0.8) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      color: var(--color-text) !important;
+    }
+
+    /* Enhanced pipeline type cards for dark mode */
+    label[style*="background: linear-gradient(135deg, rgba(var(--color-surface-rgb)"] {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(13, 148, 136, 0.05) 100%) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+    }
+
+    /* Enhanced step navigation for dark mode */
+    nav[aria-label="Pipeline Creation Progress"] div {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.9) 0%, rgba(13, 148, 136, 0.08) 100%) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Enhanced text colors for dark mode */
+    h1, h2, h3, h4, h5, h6,
+    p, span, label {
+      color: var(--color-text) !important;
+    }
+
+    /* Enhanced placeholder text for dark mode */
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--color-text-secondary) !important;
+    }
+  }
+
+  /* Enhanced radio button selection states */
+  input[type="radio"]:checked + div div[data-pipeline-builder-target$="Checkbox"] {
+    border-color: var(--color-primary) !important;
+  }
+
+  input[type="radio"]:checked + div div[data-pipeline-builder-target$="Checkbox"] div {
+    opacity: 1 !important;
+  }
+
+  /* Enhanced form validation states */
+  input:invalid {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+  }
+
+  input:valid {
+    border-color: #22c55e !important;
+  }
+
+  /* Enhanced focus states */
+  input:focus,
+  textarea:focus,
+  select:focus,
+  button:focus {
+    outline: none !important;
+    border-color: rgba(13, 148, 136, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1) !important;
+  }
+
+  /* Enhanced hover states */
+  label:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Enhanced button states */
+  button:hover {
+    transform: translateY(-1px) !important;
+  }
+
+  button:active {
+    transform: translateY(0) !important;
+  }
+
+  /* Enhanced step navigation animations */
+  li[data-pipeline-builder-target*="Nav"] {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  li[data-pipeline-builder-target*="Nav"].active div {
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3) !important;
+  }
+
+  li[data-pipeline-builder-target*="Nav"].completed div {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3) !important;
+  }
+
+  /* Enhanced progress lines */
+  div[style*="background: rgba(var(--color-border-rgb), 0.3)"].completed {
+    background: linear-gradient(90deg, #0d9488 0%, #22c55e 100%) !important;
+    height: 4px !important;
+  }
+
+  /* Enhanced responsive design */
+  @media (max-width: 768px) {
+    div[style*="padding: var(--space-32)"] {
+      padding: var(--space-16) !important;
+    }
+
+    div[style*="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    ol[style*="justify-content: space-between"] {
+      flex-direction: column !important;
+      gap: var(--space-16) !important;
+    }
+
+    ol[style*="justify-content: space-between"] li {
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: var(--space-12) !important;
+    }
+
+    div[style*="position: absolute"][style*="height: 3px"] {
+      display: none !important;
+    }
+  }
+
+  /* Enhanced accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Enhanced print styles */
+  @media print {
+    div[style*="background: linear-gradient"] {
+      background: white !important;
+      border: 1px solid #ccc !important;
+      box-shadow: none !important;
+    }
+
+    button {
+      display: none !important;
+    }
+
+    input, textarea, select {
+      border: 1px solid #ccc !important;
+      background: white !important;
+      color: black !important;
+    }
+  }
+
+  /* Enhanced loading states */
+  .loading {
+    opacity: 0.7;
+    pointer-events: none;
+    position: relative;
+  }
+
+  .loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #0d9488;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Enhanced error states */
+  .error {
+    border-color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+  }
+
+  .error-message {
+    color: #ef4444 !important;
+    font-size: var(--font-size-xs) !important;
+    margin-top: var(--space-4) !important;
+  }
+
+  /* Enhanced success states */
+  .success {
+    border-color: #22c55e !important;
+    background: rgba(34, 197, 94, 0.05) !important;
+  }
+
+  /* Enhanced tooltip styles */
+  .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background: rgba(var(--color-surface-rgb), 0.95);
+    color: var(--color-text);
+    text-align: center;
+    border-radius: var(--radius-md);
+    padding: var(--space-8);
+    position: absolute;
+    z-index: 1000;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(var(--color-border-rgb), 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+</style>

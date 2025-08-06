@@ -6,287 +6,483 @@ export default class extends Controller {
     "step1Nav", "step2Nav", "step3Nav", "step4Nav", "step5Nav",
     "prevButton", "nextButton", "submitButton",
     "sourceConfig", "destinationConfig",
-    "canvas", "transformationsList", "transformationModal", "transformationForm"
+    "canvas", "transformationsList", "transformationModal", "transformationForm",
+    "etlCheckbox", "eltCheckbox", "streamingCheckbox",
+    "nameField", "descriptionField", "pipelineTypeField",
+    "errorMessage", "loadingIndicator", "fileList", "fileItems", "uploadProgress", "progressBar"
   ]
 
+  static values = {
+    currentStep: Number,
+    totalSteps: Number
+  }
+
   connect() {
-    this.currentStep = 1
+    console.log('Pipeline builder controller connected')
+    
+    // Initialize values with fallbacks
+    this.currentStep = this.hasCurrentStepValue ? this.currentStepValue : 1
+    this.totalSteps = this.hasTotalStepsValue ? this.totalStepsValue : 5
     this.transformations = []
+
+    console.log('Initial step:', this.currentStep, 'Total steps:', this.totalSteps)
+    
+    this.initializeForm()
     this.updateNavigation()
+  }
+
+  // Initialization Methods
+  initializeForm() {
+    // Set up initial form state
+    this.showStep(this.currentStep)
   }
 
   // Step Navigation
   nextStep(event) {
+    console.log('=== Next button clicked ===')
     event.preventDefault()
-    if (this.validateCurrentStep()) {
-      this.currentStep++
+    
+    console.log('Current step before:', this.currentStep, 'Total steps:', this.totalSteps)
+    console.log('Event target:', event.target)
+    console.log('Has currentStepValue:', this.hasCurrentStepValue)
+    
+    if (this.currentStep < this.totalSteps) {
+      const nextStepNumber = this.currentStep + 1
+      console.log('Moving from step', this.currentStep, 'to step', nextStepNumber)
+      
+      this.currentStep = nextStepNumber
+      this.currentStepValue = nextStepNumber
+      
+      console.log('Updated currentStep to:', this.currentStep)
+      console.log('Updated currentStepValue to:', this.currentStepValue)
+      
       this.showStep(this.currentStep)
       this.updateNavigation()
+    } else {
+      console.log('Already at last step:', this.currentStep, 'of', this.totalSteps)
     }
+    
+    console.log('=== Next button finished ===')
   }
 
   previousStep(event) {
     event.preventDefault()
-    this.currentStep--
-    this.showStep(this.currentStep)
-    this.updateNavigation()
+    console.log('Previous button clicked, current step:', this.currentStep)
+    
+    if (this.currentStep > 1) {
+      console.log('Moving to step:', this.currentStep - 1)
+      this.currentStep--
+      this.currentStepValue = this.currentStep
+      this.showStep(this.currentStep)
+      this.updateNavigation()
+    } else {
+      console.log('Already at first step')
+    }
   }
 
   showStep(stepNumber) {
-    // Hide all steps
-    this.step1Target.classList.add('hidden')
-    this.step2Target.classList.add('hidden')
-    this.step3Target.classList.add('hidden')
-    this.step4Target.classList.add('hidden')
-    this.step5Target.classList.add('hidden')
+    console.log('Showing step:', stepNumber)
+    
+    // Hide all steps - simpler approach
+    for (let i = 1; i <= this.totalSteps; i++) {
+      const step = this.element.querySelector(`[data-pipeline-builder-target="step${i}"]`)
+      if (step) {
+        step.style.display = 'none'
+      }
+    }
 
     // Show current step
-    const stepTarget = this[`step${stepNumber}Target`]
-    stepTarget.classList.remove('hidden')
+    const currentStep = this.element.querySelector(`[data-pipeline-builder-target="step${stepNumber}"]`)
+    if (currentStep) {
+      currentStep.style.display = 'block'
+      console.log('Step', stepNumber, 'is now visible')
+    } else {
+      console.warn('Step element not found for step', stepNumber)
+    }
 
     // Update step navigation appearance
     this.updateStepNavigation(stepNumber)
   }
 
-  updateStepNavigation(currentStep) {
-    const steps = [
-      this.step1NavTarget,
-      this.step2NavTarget,
-      this.step3NavTarget,
-      this.step4NavTarget,
-      this.step5NavTarget
-    ]
-
-    steps.forEach((step, index) => {
-      const stepNumber = index + 1
-      const circle = step.querySelector('span:first-child')
-      const label = step.querySelector('span:last-child')
-
-      if (stepNumber < currentStep) {
-        // Completed step
-        circle.classList.remove('bg-gray-300', 'text-gray-500')
-        circle.classList.add('bg-green-600', 'text-white')
-        label.classList.remove('text-gray-500')
-        label.classList.add('text-gray-900')
-      } else if (stepNumber === currentStep) {
-        // Current step
-        circle.classList.remove('bg-gray-300', 'text-gray-500')
-        circle.classList.add('bg-indigo-600', 'text-white')
-        label.classList.remove('text-gray-500')
-        label.classList.add('text-gray-900')
-      } else {
-        // Future step
-        circle.classList.remove('bg-indigo-600', 'bg-green-600', 'text-white')
-        circle.classList.add('bg-gray-300', 'text-gray-500')
-        label.classList.remove('text-gray-900')
-        label.classList.add('text-gray-500')
-      }
-    })
-  }
-
   updateNavigation() {
-    // Previous button
-    if (this.currentStep === 1) {
-      this.prevButtonTarget.disabled = true
-    } else {
-      this.prevButtonTarget.disabled = false
-    }
-
-    // Next/Submit button
-    if (this.currentStep === 5) {
-      this.nextButtonTarget.classList.add('hidden')
-      this.submitButtonTarget.classList.remove('hidden')
-    } else {
-      this.nextButtonTarget.classList.remove('hidden')
-      this.submitButtonTarget.classList.add('hidden')
-    }
-  }
-
-  validateCurrentStep() {
-    // Add validation logic for each step
-    switch (this.currentStep) {
-      case 1:
-        return this.validateBasicInfo()
-      case 2:
-        return this.validateSource()
-      case 3:
-        return true // Transformations are optional
-      case 4:
-        return this.validateDestination()
-      case 5:
-        return true // Schedule is optional
-      default:
-        return true
-    }
-  }
-
-  validateBasicInfo() {
-    const name = this.element.querySelector('[name="pipeline_configuration[name]"]').value
-    const pipelineType = this.element.querySelector('[name="pipeline_configuration[pipeline_type]"]:checked')
+    console.log('Updating navigation for step:', this.currentStep)
     
-    if (!name || !pipelineType) {
-      alert('Please fill in all required fields')
-      return false
+    // Update buttons
+    const prevButton = this.element.querySelector('[data-pipeline-builder-target="prevButton"]')
+    const nextButton = this.element.querySelector('[data-pipeline-builder-target="nextButton"]')
+    const submitButton = this.element.querySelector('[type="submit"]')
+
+    if (prevButton) {
+      prevButton.disabled = this.currentStep <= 1
     }
-    return true
-  }
 
-  validateSource() {
-    // Add source validation logic
-    return true
-  }
-
-  validateDestination() {
-    // Add destination validation logic
-    return true
-  }
-
-  // Pipeline Type Selection
-  updatePipelineType(event) {
-    const selectedType = event.target.value
-    const radioButtons = this.element.querySelectorAll('[name="pipeline_configuration[pipeline_type]"]')
-    
-    radioButtons.forEach(radio => {
-      const label = radio.closest('label')
-      const checkmark = label.querySelector('svg')
-      const border = label.querySelector('.pointer-events-none')
-      
-      if (radio.checked) {
-        checkmark.classList.remove('hidden')
-        border.classList.add('border-indigo-600')
+    if (nextButton && submitButton) {
+      if (this.currentStep < this.totalSteps) {
+        nextButton.style.display = 'inline-flex'
+        submitButton.style.display = 'none'
       } else {
-        checkmark.classList.add('hidden')
-        border.classList.remove('border-indigo-600')
+        nextButton.style.display = 'none'
+        submitButton.style.display = 'inline-flex'
+      }
+    }
+
+    // Update step navigation styling
+    this.updateStepNavigation(this.currentStep)
+  }
+
+  updateStepNavigation(currentStep) {
+    for (let i = 1; i <= this.totalSteps; i++) {
+      const stepNav = this.element.querySelector(`[data-pipeline-builder-target="step${i}Nav"]`)
+      if (stepNav) {
+        stepNav.classList.remove('active', 'completed')
+        if (i === currentStep) {
+          stepNav.classList.add('active')
+        } else if (i < currentStep) {
+          stepNav.classList.add('completed')
+        }
+      }
+    }
+  }
+
+  // Pipeline Type Methods
+  updatePipelineType(event) {
+    const pipelineType = event.target.value
+    console.log('Pipeline type selected:', pipelineType)
+    
+    // Update visual indicators
+    const checkboxes = ['etl', 'elt', 'streaming']
+    checkboxes.forEach(type => {
+      const checkbox = this.element.querySelector(`[data-pipeline-builder-target="${type}Checkbox"]`)
+      if (checkbox) {
+        if (type === pipelineType) {
+          checkbox.style.opacity = '1'
+          checkbox.style.borderColor = 'var(--color-primary)'
+        } else {
+          checkbox.style.opacity = '0.3'
+          checkbox.style.borderColor = 'rgba(var(--color-border-rgb), 0.3)'
+        }
       }
     })
-
-    // Update transformation step visibility based on type
-    if (selectedType === 'elt') {
-      // Show different transformation options for ELT
-      this.updateTransformationOptions('elt')
-    } else {
-      this.updateTransformationOptions('etl')
-    }
   }
 
   // Source Configuration
   selectSourceType(event) {
     event.preventDefault()
     const sourceType = event.currentTarget.dataset.sourceType
+    console.log('Source type selected:', sourceType)
     
     // Update button appearance
     this.element.querySelectorAll('[data-source-type]').forEach(btn => {
-      btn.classList.remove('border-indigo-500', 'ring-2', 'ring-indigo-500')
+      btn.classList.remove('border-teal-500', 'ring-2', 'ring-teal-500')
       btn.classList.add('border-gray-300')
     })
     event.currentTarget.classList.remove('border-gray-300')
-    event.currentTarget.classList.add('border-indigo-500', 'ring-2', 'ring-indigo-500')
+    event.currentTarget.classList.add('border-teal-500', 'ring-2', 'ring-teal-500')
 
     // Load appropriate configuration form
     this.loadSourceConfiguration(sourceType)
   }
 
   async loadSourceConfiguration(sourceType) {
-    // In a real implementation, this would fetch the configuration form from the server
-    let configHtml = ''
+    console.log('Loading source configuration for:', sourceType)
     
-    switch (sourceType) {
-      case 'database':
-        configHtml = this.getDatabaseSourceConfig()
-        break
-      case 'api':
-        configHtml = this.getApiSourceConfig()
-        break
-      case 'cloud_storage':
-        configHtml = this.getCloudStorageSourceConfig()
-        break
-      case 'streaming':
-        configHtml = this.getStreamingSourceConfig()
-        break
+    const sourceConfigTarget = this.element.querySelector('[data-pipeline-builder-target="sourceConfig"]')
+    if (!sourceConfigTarget) {
+      console.warn('Source config target not found')
+      return
     }
     
-    this.sourceConfigTarget.innerHTML = configHtml
+    try {
+      const response = await fetch(`/etl_pipeline_builders/available_extractors?source_type=${sourceType}`, {
+        headers: {
+          'Accept': 'application/json',
+          'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+        }
+      })
+      
+      const data = await response.json()
+      console.log('Available extractors:', data)
+      
+      // Generate configuration form based on extractors
+      let configHtml = this.generateSourceConfigForm(sourceType, data.extractors)
+      sourceConfigTarget.innerHTML = configHtml
+      
+    } catch (error) {
+      console.error('Failed to load extractors:', error)
+      sourceConfigTarget.innerHTML = '<p class="text-red-600">Failed to load configuration options</p>'
+    }
   }
 
-  getDatabaseSourceConfig() {
-    return `
-      <div class="space-y-4">
+  generateSourceConfigForm(sourceType, extractors) {
+    console.log('Generating source config form for:', sourceType, extractors)
+    
+    // Special handling for file upload with premium design
+    if (sourceType === 'file_upload') {
+      return this.generateFileUploadForm(extractors)
+    }
+    
+    if (!extractors || extractors.length === 0) {
+      return '<p style="color: var(--color-text-secondary);">No extractors available for this source type</p>'
+    }
+
+    let html = `
+      <div style="display: flex; flex-direction: column; gap: var(--space-16);">
         <div>
-          <label class="block text-sm font-medium text-gray-700">Select Data Source</label>
-          <select name="pipeline_configuration[source_config][data_source_id]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-            <option value="">Choose a database...</option>
-            ${this.element.dataset.dataSources ? JSON.parse(this.element.dataset.dataSources).map(ds => 
-              `<option value="${ds.id}">${ds.name} (${ds.source_type})</option>`
-            ).join('') : ''}
+          <label style="
+            display: block;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text);
+            margin-bottom: var(--space-8);
+          ">Select ${sourceType} type:</label>
+          <select name="pipeline[source_config][extractor_type]" style="
+            display: block;
+            width: 100%;
+            padding: var(--space-12) var(--space-16);
+            background: rgba(var(--color-surface-rgb), 0.8);
+            border: 1px solid rgba(var(--color-border-rgb), 0.3);
+            border-radius: var(--radius-lg);
+            color: var(--color-text);
+            font-size: var(--font-size-sm);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+          ">
+            <option value="">Select...</option>
+    `
+    
+    extractors.forEach(extractor => {
+      if (typeof extractor === 'string') {
+        html += `<option value="${extractor}">${extractor.charAt(0).toUpperCase() + extractor.slice(1)}</option>`
+      } else if (typeof extractor === 'object') {
+        html += `<option value="${extractor.type}">${extractor.name}</option>`
+      }
+    })
+    
+    html += `
           </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Query</label>
-          <textarea name="pipeline_configuration[source_config][query]" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="SELECT * FROM users WHERE created_at > :last_sync"></textarea>
         </div>
       </div>
     `
+    
+    return html
   }
 
-  getApiSourceConfig() {
+  generateFileUploadForm(extractors) {
+    console.log('Generating premium file upload form with extractors:', extractors)
+    
+    // Get supported file types from extractors
+    let supportedTypes = []
+    if (extractors && Array.isArray(extractors)) {
+      supportedTypes = extractors.map(ext => {
+        if (typeof ext === 'string') {
+          return ext.toLowerCase()
+        } else if (ext.type) {
+          return ext.type.toLowerCase()
+        }
+      }).filter(Boolean)
+    }
+    
+    const acceptAttribute = supportedTypes.length > 0 
+      ? supportedTypes.map(type => `.${type}`).join(',') 
+      : '.csv,.xlsx,.xls,.json,.txt'
+    
     return `
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">API Endpoint</label>
-          <input type="text" name="pipeline_configuration[source_config][endpoint]" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="https://api.example.com/data">
+      <div style="
+        background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(245, 158, 11, 0.02) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.2);
+        border-radius: var(--radius-xl);
+        padding: var(--space-32);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      ">
+        <!-- Header -->
+        <div style="margin-bottom: var(--space-24);">
+          <h3 style="
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text);
+            margin: 0 0 var(--space-8) 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-12);
+          ">
+            <div style="
+              width: 32px;
+              height: 32px;
+              background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            ">
+              <svg style="width: 16px; height: 16px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+              </svg>
+            </div>
+            Upload Your Data Files
+          </h3>
+          <p style="
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin: 0;
+          ">Drop your files here or click to browse. We'll automatically detect the schema and preview your data.</p>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Authentication Type</label>
-          <select name="pipeline_configuration[source_config][auth_type]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-            <option value="none">No Authentication</option>
-            <option value="api_key">API Key</option>
-            <option value="oauth2">OAuth 2.0</option>
-            <option value="basic">Basic Auth</option>
-          </select>
-        </div>
-      </div>
-    `
-  }
 
-  getCloudStorageSourceConfig() {
-    return `
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Cloud Provider</label>
-          <select name="pipeline_configuration[source_config][provider]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-            <option value="aws_s3">AWS S3</option>
-            <option value="google_cloud_storage">Google Cloud Storage</option>
-            <option value="azure_blob">Azure Blob Storage</option>
-          </select>
+        <!-- File Upload Area -->
+        <div style="
+          border: 2px dashed rgba(245, 158, 11, 0.3);
+          border-radius: var(--radius-lg);
+          padding: var(--space-48) var(--space-24);
+          text-align: center;
+          background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(245, 158, 11, 0.01) 100%);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+        " 
+        onmouseover="this.style.borderColor='rgba(245, 158, 11, 0.5)'; this.style.background='linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.02) 100%)'"
+        onmouseout="this.style.borderColor='rgba(245, 158, 11, 0.3)'; this.style.background='linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(245, 158, 11, 0.01) 100%)'">
+          
+          <input type="file" 
+                 name="pipeline[source_config][uploaded_files][]"
+                 multiple 
+                 accept="${acceptAttribute}"
+                 data-action="change->pipeline-builder#handleFileUpload"
+                 style="
+                   position: absolute;
+                   top: 0;
+                   left: 0;
+                   width: 100%;
+                   height: 100%;
+                   opacity: 0;
+                   cursor: pointer;
+                 ">
+          
+          <div style="
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-16);
+            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
+          ">
+            <svg style="width: 40px; height: 40px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+          </div>
+          
+          <h4 style="
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text);
+            margin: 0 0 var(--space-8) 0;
+          ">Drop files here or click to browse</h4>
+          
+          <p style="
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin: 0 0 var(--space-16) 0;
+          ">Maximum file size: 100MB per file</p>
+          
+          <!-- Supported Formats -->
+          <div style="
+            display: flex;
+            justify-content: center;
+            gap: var(--space-8);
+            flex-wrap: wrap;
+          ">
+            ${supportedTypes.map(type => `
+              <span style="
+                padding: var(--space-4) var(--space-12);
+                background: rgba(245, 158, 11, 0.1);
+                border: 1px solid rgba(245, 158, 11, 0.2);
+                border-radius: var(--radius-md);
+                font-size: var(--font-size-xs);
+                font-weight: var(--font-weight-bold);
+                color: #d97706;
+                text-transform: uppercase;
+              ">${type}</span>
+            `).join('')}
+          </div>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Bucket Name</label>
-          <input type="text" name="pipeline_configuration[source_config][bucket]" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="my-data-bucket">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">File Pattern</label>
-          <input type="text" name="pipeline_configuration[source_config][pattern]" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="data/*.csv">
-        </div>
-      </div>
-    `
-  }
 
-  getStreamingSourceConfig() {
-    return `
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Streaming Platform</label>
-          <select name="pipeline_configuration[source_config][platform]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-            <option value="kafka">Apache Kafka</option>
-            <option value="kinesis">AWS Kinesis</option>
-            <option value="pubsub">Google Pub/Sub</option>
-          </select>
+        <!-- File List Area (Initially Hidden) -->
+        <div data-pipeline-builder-target="fileList" style="margin-top: var(--space-24); display: none;">
+          <h4 style="
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text);
+            margin: 0 0 var(--space-16) 0;
+          ">Uploaded Files</h4>
+          <div data-pipeline-builder-target="fileItems" style="display: flex; flex-direction: column; gap: var(--space-12);">
+            <!-- File items will be added here dynamically -->
+          </div>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Topic/Stream Name</label>
-          <input type="text" name="pipeline_configuration[source_config][topic]" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="user-events">
+
+        <!-- Upload Progress (Initially Hidden) -->
+        <div data-pipeline-builder-target="uploadProgress" style="margin-top: var(--space-24); display: none;">
+          <div style="
+            background: rgba(var(--color-surface-rgb), 0.8);
+            border: 1px solid rgba(var(--color-border-rgb), 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-16);
+            backdrop-filter: blur(10px);
+          ">
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-12);
+              margin-bottom: var(--space-12);
+            ">
+              <div style="
+                width: 24px;
+                height: 24px;
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: spin 1s linear infinite;
+              ">
+                <svg style="width: 12px; height: 12px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+              </div>
+              <span style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text);
+              ">Processing files and detecting schema...</span>
+            </div>
+            
+            <div style="
+              width: 100%;
+              height: 8px;
+              background: rgba(var(--color-border-rgb), 0.3);
+              border-radius: var(--radius-full);
+              overflow: hidden;
+            ">
+              <div data-pipeline-builder-target="progressBar" style="
+                width: 0%;
+                height: 100%;
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+              "></div>
+            </div>
+          </div>
         </div>
       </div>
+      
+      <style>
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      </style>
     `
   }
 
@@ -294,6 +490,7 @@ export default class extends Controller {
   selectDestinationType(event) {
     event.preventDefault()
     const destinationType = event.currentTarget.dataset.destinationType
+    console.log('Destination type selected:', destinationType)
     
     // Update button appearance
     this.element.querySelectorAll('[data-destination-type]').forEach(btn => {
@@ -307,7 +504,15 @@ export default class extends Controller {
     this.loadDestinationConfiguration(destinationType)
   }
 
-  async loadDestinationConfiguration(destinationType) {
+  loadDestinationConfiguration(destinationType) {
+    console.log('Loading destination configuration for:', destinationType)
+    
+    const destinationConfigTarget = this.element.querySelector('[data-pipeline-builder-target="destinationConfig"]')
+    if (!destinationConfigTarget) {
+      console.warn('Destination config target not found')
+      return
+    }
+
     let configHtml = ''
     
     switch (destinationType) {
@@ -323,9 +528,11 @@ export default class extends Controller {
       case 'cloud_storage':
         configHtml = this.getCloudStorageDestinationConfig()
         break
+      default:
+        configHtml = '<p class="text-gray-500">Configuration options will be added here</p>'
     }
     
-    this.destinationConfigTarget.innerHTML = configHtml
+    destinationConfigTarget.innerHTML = configHtml
   }
 
   getWarehouseDestinationConfig() {
@@ -333,7 +540,7 @@ export default class extends Controller {
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium text-gray-700">Data Warehouse</label>
-          <select name="pipeline_configuration[destination_config][warehouse_type]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+          <select name="pipeline[destination_config][warehouse_type]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
             <option value="snowflake">Snowflake</option>
             <option value="bigquery">BigQuery</option>
             <option value="redshift">Redshift</option>
@@ -343,263 +550,334 @@ export default class extends Controller {
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700">Schema Name</label>
-          <input type="text" name="pipeline_configuration[destination_config][schema]" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="analytics">
+          <input type="text" name="pipeline[destination_config][schema]" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="analytics">
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700">Table Name</label>
-          <input type="text" name="pipeline_configuration[destination_config][table_name]" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="customer_data">
+          <input type="text" name="pipeline[destination_config][table_name]" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="customer_data">
         </div>
       </div>
     `
   }
 
-  // Transformation Management
-  addTransformation(event) {
-    event.preventDefault()
-    this.showTransformationModal()
+  getDatabaseDestinationConfig() {
+    return '<p class="text-gray-500">Database destination configuration coming soon</p>'
   }
 
-  showTransformationModal() {
-    this.transformationModalTarget.classList.remove('hidden')
-    this.loadTransformationForm()
+  getApiDestinationConfig() {
+    return '<p class="text-gray-500">API destination configuration coming soon</p>'
   }
 
-  closeTransformationModal(event) {
-    event.preventDefault()
-    this.transformationModalTarget.classList.add('hidden')
+  getCloudStorageDestinationConfig() {
+    return '<p class="text-gray-500">Cloud storage destination configuration coming soon</p>'
   }
 
-  loadTransformationForm() {
-    const formHtml = `
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Transformation Type</label>
-          <select id="transformation_type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" data-action="change->pipeline-builder#updateTransformationForm">
-            <option value="">Select type...</option>
-            <option value="field_mapping">Field Mapping</option>
-            <option value="rename_field">Rename Field</option>
-            <option value="type_conversion">Type Conversion</option>
-            <option value="calculated_field">Calculated Field</option>
-            <option value="filter">Filter</option>
-            <option value="aggregate">Aggregate</option>
-            <option value="join">Join</option>
-            <option value="pivot">Pivot</option>
-            <option value="validation">Validation</option>
-          </select>
-        </div>
-        <div id="transformation_config">
-          <!-- Dynamic configuration based on type -->
-        </div>
-      </div>
-    `
-    this.transformationFormTarget.innerHTML = formHtml
-  }
-
-  updateTransformationForm(event) {
-    const type = event.target.value
-    const configDiv = document.getElementById('transformation_config')
+  // File Upload Handling
+  handleFileUpload(event) {
+    console.log('File upload triggered:', event)
+    const files = event.target.files
     
-    switch (type) {
-      case 'field_mapping':
-        configDiv.innerHTML = this.getFieldMappingConfig()
-        break
-      case 'filter':
-        configDiv.innerHTML = this.getFilterConfig()
-        break
-      case 'calculated_field':
-        configDiv.innerHTML = this.getCalculatedFieldConfig()
-        break
-      // Add more transformation types as needed
-    }
-  }
-
-  getFieldMappingConfig() {
-    return `
-      <div class="space-y-2">
-        <label class="block text-sm font-medium text-gray-700">Field Mappings</label>
-        <div class="space-y-2">
-          <div class="flex space-x-2">
-            <input type="text" placeholder="Source Field" class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-            <span class="text-gray-500">→</span>
-            <input type="text" placeholder="Target Field" class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-          </div>
-        </div>
-        <button type="button" class="text-sm text-indigo-600 hover:text-indigo-500">+ Add mapping</button>
-      </div>
-    `
-  }
-
-  getFilterConfig() {
-    return `
-      <div class="space-y-2">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Field</label>
-          <input type="text" id="filter_field" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Operator</label>
-          <select id="filter_operator" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-            <option value="equals">Equals</option>
-            <option value="not_equals">Not Equals</option>
-            <option value="greater_than">Greater Than</option>
-            <option value="less_than">Less Than</option>
-            <option value="contains">Contains</option>
-            <option value="is_null">Is Null</option>
-            <option value="is_not_null">Is Not Null</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Value</label>
-          <input type="text" id="filter_value" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-        </div>
-      </div>
-    `
-  }
-
-  getCalculatedFieldConfig() {
-    return `
-      <div class="space-y-2">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Field Name</label>
-          <input type="text" id="calc_field_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Expression</label>
-          <textarea id="calc_expression" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="price * quantity"></textarea>
-          <p class="mt-1 text-xs text-gray-500">Use field names in your expression. Functions: upper(), lower(), concat(), etc.</p>
-        </div>
-      </div>
-    `
-  }
-
-  saveTransformation(event) {
-    event.preventDefault()
-    
-    const type = document.getElementById('transformation_type').value
-    if (!type) return
-    
-    const transformation = {
-      id: Date.now(),
-      type: type,
-      config: this.getTransformationConfig(type)
-    }
-    
-    this.transformations.push(transformation)
-    this.updateTransformationsList()
-    this.updateCanvas()
-    this.closeTransformationModal(event)
-  }
-
-  getTransformationConfig(type) {
-    // Extract configuration based on type
-    switch (type) {
-      case 'filter':
-        return {
-          field: document.getElementById('filter_field').value,
-          operator: document.getElementById('filter_operator').value,
-          value: document.getElementById('filter_value').value
-        }
-      case 'calculated_field':
-        return {
-          field_name: document.getElementById('calc_field_name').value,
-          expression: document.getElementById('calc_expression').value
-        }
-      // Add more cases as needed
-    }
-  }
-
-  updateTransformationsList() {
-    if (this.transformations.length === 0) {
-      this.canvasTarget.querySelector('.text-center').classList.remove('hidden')
-      this.transformationsListTarget.innerHTML = ''
+    if (!files || files.length === 0) {
+      console.log('No files selected')
       return
     }
+
+    console.log('Files selected:', files.length)
     
-    this.canvasTarget.querySelector('.text-center').classList.add('hidden')
+    // Show progress indicator
+    this.showUploadProgress()
     
-    const listHtml = this.transformations.map((transform, index) => `
-      <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-              ${transform.type.replace(/_/g, ' ')}
-            </span>
-            <span class="ml-3 text-sm text-gray-700">${this.getTransformationSummary(transform)}</span>
-          </div>
-          <button type="button" data-action="click->pipeline-builder#removeTransformation" data-transformation-id="${transform.id}" class="text-gray-400 hover:text-gray-500">
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+    // Process each file
+    Array.from(files).forEach((file, index) => {
+      console.log(`Processing file ${index + 1}:`, file.name, file.size, file.type)
+      this.processFile(file, index, files.length)
+    })
+  }
+
+  processFile(file, index, totalFiles) {
+    console.log('Processing file:', file.name)
+    
+    // Validate file size (100MB limit)
+    const maxSize = 100 * 1024 * 1024 // 100MB in bytes
+    if (file.size > maxSize) {
+      this.showFileError(file.name, 'File size exceeds 100MB limit')
+      return
+    }
+
+    // Validate file type
+    const fileName = file.name.toLowerCase()
+    const allowedExtensions = ['csv', 'xlsx', 'xls', 'json', 'txt', 'tsv']
+    const fileExtension = fileName.split('.').pop()
+    
+    if (!allowedExtensions.includes(fileExtension)) {
+      this.showFileError(file.name, `Unsupported file type: ${fileExtension}`)
+      return
+    }
+
+    // Show file in the list
+    this.addFileToList(file, index)
+    
+    // Simulate upload progress
+    this.simulateUploadProgress(file, index, totalFiles)
+  }
+
+  showUploadProgress() {
+    const progressElement = this.element.querySelector('[data-pipeline-builder-target="uploadProgress"]')
+    const fileListElement = this.element.querySelector('[data-pipeline-builder-target="fileList"]')
+    
+    if (progressElement) {
+      progressElement.style.display = 'block'
+    }
+    if (fileListElement) {
+      fileListElement.style.display = 'block'
+    }
+  }
+
+  addFileToList(file, index) {
+    const fileItemsContainer = this.element.querySelector('[data-pipeline-builder-target="fileItems"]')
+    if (!fileItemsContainer) {
+      console.warn('File items container not found')
+      return
+    }
+
+    const fileSize = this.formatFileSize(file.size)
+    const fileId = `file-${index}-${Date.now()}`
+    
+    const fileItem = document.createElement('div')
+    fileItem.id = fileId
+    fileItem.innerHTML = `
+      <div style="
+        background: rgba(var(--color-surface-rgb), 0.8);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-lg);
+        padding: var(--space-16);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        gap: var(--space-12);
+      ">
+        <div style="
+          width: 40px;
+          height: 40px;
+          background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+          border-radius: var(--radius-lg);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+          flex-shrink: 0;
+        ">
+          <svg style="width: 20px; height: 20px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
         </div>
+        
+        <div style="flex: 1; min-width: 0;">
+          <h5 style="
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text);
+            margin: 0 0 var(--space-4) 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          ">${file.name}</h5>
+          <p style="
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            margin: 0;
+          ">${fileSize} • ${file.type || 'Unknown type'}</p>
+        </div>
+        
+        <div class="file-status" style="
+          padding: var(--space-4) var(--space-12);
+          background: rgba(245, 158, 11, 0.1);
+          border: 1px solid rgba(245, 158, 11, 0.2);
+          border-radius: var(--radius-md);
+          font-size: var(--font-size-xs);
+          font-weight: var(--font-weight-bold);
+          color: #d97706;
+        ">Processing...</div>
       </div>
-    `).join('')
+    `
     
-    this.transformationsListTarget.innerHTML = listHtml
+    fileItemsContainer.appendChild(fileItem)
   }
 
-  getTransformationSummary(transform) {
-    switch (transform.type) {
-      case 'filter':
-        return `${transform.config.field} ${transform.config.operator} ${transform.config.value}`
-      case 'calculated_field':
-        return `${transform.config.field_name} = ${transform.config.expression}`
-      default:
-        return JSON.stringify(transform.config)
-    }
-  }
-
-  removeTransformation(event) {
-    const id = parseInt(event.currentTarget.dataset.transformationId)
-    this.transformations = this.transformations.filter(t => t.id !== id)
-    this.updateTransformationsList()
-    this.updateCanvas()
-  }
-
-  updateCanvas() {
-    // Update visual pipeline representation
-    // This could be enhanced with a proper visualization library
-  }
-
-  // Test Pipeline
-  async testPipeline(event) {
-    event.preventDefault()
+  simulateUploadProgress(file, index, totalFiles) {
+    console.log(`Simulating upload progress for: ${file.name}`)
     
-    const testButton = event.currentTarget
-    testButton.disabled = true
-    testButton.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Testing...'
+    const progressBar = this.element.querySelector('[data-pipeline-builder-target="progressBar"]')
+    let progress = 0
     
-    try {
-      const response = await fetch(`/etl_pipeline_builders/${this.element.dataset.pipelineId}/test`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
-        },
-        body: JSON.stringify({
-          sample_size: 100,
-          dry_run: true
-        })
-      })
+    const interval = setInterval(() => {
+      progress += Math.random() * 15
       
-      const result = await response.json()
-      
-      if (result.success) {
-        alert('Pipeline test successful! Check the console for details.')
-        console.log('Test Results:', result)
-      } else {
-        alert(`Pipeline test failed: ${result.error}`)
+      if (progress >= 100) {
+        progress = 100
+        clearInterval(interval)
+        
+        // Update file status
+        this.updateFileStatus(`file-${index}-${Date.now().toString().slice(-6)}`, 'success')
+        
+        // Check if all files are done
+        setTimeout(() => {
+          this.checkAllFilesComplete(totalFiles)
+        }, 500)
       }
-    } catch (error) {
-      alert('Failed to test pipeline: ' + error.message)
-    } finally {
-      testButton.disabled = false
-      testButton.innerHTML = '<svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611l-3.98.793a2.125 2.125 0 01-1.113-.825L12 15M8.25 12h4.5" /></svg> Test Pipeline'
-    }
+      
+      if (progressBar) {
+        progressBar.style.width = `${progress}%`
+      }
+    }, 200)
   }
 
-  updateTransformationOptions(pipelineType) {
-    // Update available transformation options based on pipeline type
-    // For ELT, transformations happen after loading
+  updateFileStatus(fileId, status) {
+    const fileElements = this.element.querySelectorAll('[id^="file-"]')
+    
+    fileElements.forEach(element => {
+      const statusElement = element.querySelector('.file-status')
+      if (statusElement) {
+        if (status === 'success') {
+          statusElement.innerHTML = '✓ Ready'
+          statusElement.style.background = 'rgba(16, 185, 129, 0.1)'
+          statusElement.style.borderColor = 'rgba(16, 185, 129, 0.2)'
+          statusElement.style.color = '#059669'
+        } else if (status === 'error') {
+          statusElement.innerHTML = '✗ Error'
+          statusElement.style.background = 'rgba(239, 68, 68, 0.1)'
+          statusElement.style.borderColor = 'rgba(239, 68, 68, 0.2)'
+          statusElement.style.color = '#dc2626'
+        }
+      }
+    })
+  }
+
+  checkAllFilesComplete(totalFiles) {
+    console.log('Checking if all files are complete')
+    
+    // Hide progress indicator
+    const progressElement = this.element.querySelector('[data-pipeline-builder-target="uploadProgress"]')
+    if (progressElement) {
+      progressElement.style.display = 'none'
+    }
+    
+    // Show success message
+    this.showUploadSuccess(totalFiles)
+  }
+
+  showUploadSuccess(fileCount) {
+    const sourceConfigTarget = this.element.querySelector('[data-pipeline-builder-target="sourceConfig"]')
+    if (!sourceConfigTarget) return
+    
+    const successMessage = document.createElement('div')
+    successMessage.style.cssText = `
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-16);
+      margin-top: var(--space-16);
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+    `
+    
+    successMessage.innerHTML = `
+      <div style="
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      ">
+        <svg style="width: 16px; height: 16px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <div>
+        <h4 style="
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text);
+          margin: 0 0 var(--space-4) 0;
+        ">Files uploaded successfully!</h4>
+        <p style="
+          font-size: var(--font-size-xs);
+          color: var(--color-text-secondary);
+          margin: 0;
+        ">${fileCount} file${fileCount !== 1 ? 's' : ''} processed and ready for transformation. Schema detection completed.</p>
+      </div>
+    `
+    
+    sourceConfigTarget.appendChild(successMessage)
+  }
+
+  showFileError(fileName, errorMessage) {
+    console.error(`File error for ${fileName}:`, errorMessage)
+    
+    const sourceConfigTarget = this.element.querySelector('[data-pipeline-builder-target="sourceConfig"]')
+    if (!sourceConfigTarget) return
+    
+    const errorDiv = document.createElement('div')
+    errorDiv.style.cssText = `
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-16);
+      margin-top: var(--space-16);
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+    `
+    
+    errorDiv.innerHTML = `
+      <div style="
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      ">
+        <svg style="width: 16px; height: 16px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </div>
+      <div>
+        <h4 style="
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text);
+          margin: 0 0 var(--space-4) 0;
+        ">Upload Error: ${fileName}</h4>
+        <p style="
+          font-size: var(--font-size-xs);
+          color: var(--color-text-secondary);
+          margin: 0;
+        ">${errorMessage}</p>
+      </div>
+    `
+    
+    sourceConfigTarget.appendChild(errorDiv)
+    
+    // Remove error message after 5 seconds
+    setTimeout(() => {
+      if (errorDiv.parentNode) {
+        errorDiv.parentNode.removeChild(errorDiv)
+      }
+    }, 5000)
+  }
+
+  formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 }

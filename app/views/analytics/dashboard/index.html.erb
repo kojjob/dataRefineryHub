@@ -3271,6 +3271,48 @@
         height: 150px !important;
       }
     }
+
+    /* Dark mode enhancements for glass morphism */
+    @media (prefers-color-scheme: dark), [data-color-scheme="dark"] {
+      /* Enhanced glass morphism for dark mode */
+      .executive-dashboard-header,
+      .executive-kpi-metrics-section,
+      .executive-business-intelligence-section,
+      .executive-predictive-cta-section {
+        background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.9) 0%, rgba(var(--color-primary-rgb), 0.08) 100%) !important;
+        border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+      }
+
+      /* Enhanced card backgrounds for dark mode */
+      .executive-kpi-metrics-section > div:last-child > div,
+      .executive-business-intelligence-section > div:last-child > div {
+        background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(var(--color-primary-rgb), 0.05) 100%) !important;
+        border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      }
+
+      /* Enhanced text contrast for dark mode */
+      .executive-dashboard-header h1,
+      .executive-kpi-metrics-section h2,
+      .executive-business-intelligence-section h2 {
+        color: var(--color-text) !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Enhanced backdrop blur for dark mode */
+      .executive-dashboard-header,
+      .executive-kpi-metrics-section,
+      .executive-business-intelligence-section,
+      .executive-predictive-cta-section {
+        backdrop-filter: blur(24px) !important;
+        -webkit-backdrop-filter: blur(24px) !important;
+      }
+
+      /* Enhanced status indicators for dark mode */
+      .executive-kpi-metrics-section [style*="pulse"] {
+        box-shadow: 0 0 8px rgba(var(--color-success-rgb), 0.6) !important;
+      }
+    }
   `;
   document.head.appendChild(style);
 </script>

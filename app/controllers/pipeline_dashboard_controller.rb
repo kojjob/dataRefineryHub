@@ -19,7 +19,10 @@ class PipelineDashboardController < DataflowProController
       successful_pipelines: current_organization.pipeline_executions.successful.where("created_at >= ?", 24.hours.ago).count,
       failed_pipelines: current_organization.pipeline_executions.failed.where("created_at >= ?", 24.hours.ago).count,
       average_duration: calculate_average_duration,
-      success_rate: calculate_success_rate
+      success_rate: calculate_success_rate,
+      avg_runtime: calculate_average_runtime_minutes,
+      data_throughput: calculate_data_throughput,
+      error_rate: calculate_error_rate
     }
 
     # Pipeline performance by type
@@ -252,5 +255,47 @@ class PipelineDashboardController < DataflowProController
       progress: @progress_details,
       timeline: @timeline_events
     }
+  end
+
+  def calculate_average_runtime_minutes
+    executions = current_organization.pipeline_executions
+                                   .where.not(completed_at: nil)
+                                   .where("created_at >= ?", 24.hours.ago)
+
+    return 0 if executions.empty?
+
+    avg_seconds = executions.average("EXTRACT(EPOCH FROM (completed_at - started_at))")
+    return 0 unless avg_seconds
+
+    (avg_seconds / 60.0).round(1)
+  end
+
+  def calculate_data_throughput
+    # Calculate total data processed in the last 24 hours
+    executions = current_organization.pipeline_executions
+                                   .where("created_at >= ?", 24.hours.ago)
+
+    total_records = executions.sum { |e| e.processed_records || 0 }
+
+    # Estimate data size (assuming average record size of 1KB)
+    estimated_bytes = total_records * 1024
+
+    # Return bytes per hour
+    estimated_bytes
+  end
+
+  def calculate_error_rate
+    total_executions = current_organization.pipeline_executions
+                                         .where("created_at >= ?", 24.hours.ago)
+                                         .count
+
+    return 0 if total_executions == 0
+
+    failed_executions = current_organization.pipeline_executions
+                                          .failed
+                                          .where("created_at >= ?", 24.hours.ago)
+                                          .count
+
+    ((failed_executions.to_f / total_executions) * 100).round(1)
   end
 end

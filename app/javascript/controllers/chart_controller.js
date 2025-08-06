@@ -24,9 +24,9 @@ export default class extends Controller {
   }
   
   initializeCharts() {
-    // Get the current theme
-    const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark'
-    
+    // Get the current theme - FIXED: use data-color-scheme instead of data-theme
+    const isDarkMode = document.documentElement.getAttribute('data-color-scheme') === 'dark'
+
     // Set Chart.js defaults based on theme
     Chart.defaults.color = isDarkMode ? '#F5F5F5' : '#13343B'
     Chart.defaults.borderColor = isDarkMode ? 'rgba(119, 124, 124, 0.2)' : 'rgba(94, 82, 64, 0.2)'

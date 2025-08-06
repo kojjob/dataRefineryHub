@@ -26,22 +26,49 @@ class EtlPipelineBuildersController < ApplicationController
     @pipeline = current_organization.pipelines.build(pipeline_params)
     @pipeline.created_by = current_user
 
-    if @pipeline.save
-      # Register pipeline with orchestration service
-      begin
-        EtlOrchestrationService.instance.register_pipeline(
-          @pipeline.name,
-          @pipeline.to_orchestration_config
-        )
-      rescue => e
-        Rails.logger.error "Failed to register pipeline with orchestration service: #{e.message}"
-      end
+    # Set default values for draft pipeline
+    @pipeline.status = 'draft'
+    @pipeline.source_config ||= {}
+    @pipeline.destination_config ||= {}
+    @pipeline.transformation_rules ||= []
 
-      redirect_to etl_pipeline_builder_path(@pipeline),
-                  notice: "Pipeline created successfully"
-    else
-      load_form_data
-      render :new
+    respond_to do |format|
+      if @pipeline.save
+        # Register pipeline with orchestration service
+        begin
+          EtlOrchestrationService.instance.register_pipeline(
+            @pipeline.name,
+            @pipeline.to_orchestration_config
+          )
+        rescue => e
+          Rails.logger.error "Failed to register pipeline with orchestration service: #{e.message}"
+        end
+
+        format.html {
+          redirect_to etl_pipeline_builder_path(@pipeline),
+                      notice: "Pipeline created successfully"
+        }
+        format.json {
+          render json: {
+            success: true,
+            message: "Pipeline created successfully",
+            redirect_url: etl_pipeline_builder_path(@pipeline),
+            pipeline: @pipeline.as_json(only: [:id, :name, :pipeline_type])
+          }, status: :created
+        }
+      else
+        format.html {
+          load_form_data
+          render :new
+        }
+        format.json {
+          render json: {
+            success: false,
+            message: "Failed to create pipeline",
+            errors: @pipeline.errors.full_messages
+          }, status: :unprocessable_entity
+        }
+      end
     end
   end
 
@@ -132,6 +159,8 @@ class EtlPipelineBuildersController < ApplicationController
       [ "aws_s3", "google_cloud_storage", "azure_blob" ]
     when "streaming"
       [ "kafka", "kinesis", "pubsub" ]
+    when "file_upload"
+      get_file_extractors
     else
       []
     end
@@ -152,6 +181,27 @@ class EtlPipelineBuildersController < ApplicationController
     }
   rescue => e
     render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  def validate_transformation
+    transformation_config = params[:transformation]
+    
+    validator = TransformationValidator.new(transformation_config)
+    validation_result = validator.validate
+    
+    render json: {
+      valid: validation_result[:valid],
+      errors: validation_result[:errors] || [],
+      warnings: validation_result[:warnings] || [],
+      suggestions: validation_result[:suggestions] || []
+    }
+  rescue => e
+    render json: { 
+      valid: false, 
+      errors: [e.message],
+      warnings: [],
+      suggestions: []
+    }, status: :unprocessable_entity
   end
 
   def validate_pipeline
@@ -191,6 +241,82 @@ class EtlPipelineBuildersController < ApplicationController
     end
   end
 
+  def save_draft
+    draft_key = "pipeline_builder_draft_#{current_user.id}"
+    draft_data = {
+      step: params[:step],
+      pipeline_data: params[:pipeline_data],
+      transformations: params[:transformations] || [],
+      timestamp: Time.current.iso8601,
+      expires_at: 7.days.from_now.iso8601
+    }
+
+    Rails.cache.write(draft_key, draft_data, expires_in: 7.days)
+    
+    render json: { 
+      success: true, 
+      message: 'Draft saved successfully',
+      timestamp: draft_data[:timestamp]
+    }
+  rescue => e
+    render json: { 
+      success: false, 
+      error: 'Failed to save draft',
+      details: e.message 
+    }, status: :unprocessable_entity
+  end
+
+  def load_draft
+    draft_key = "pipeline_builder_draft_#{current_user.id}"
+    draft_data = Rails.cache.read(draft_key)
+
+    if draft_data
+      # Check if draft has expired
+      if Time.current > Time.parse(draft_data[:expires_at])
+        Rails.cache.delete(draft_key)
+        render json: { 
+          success: false, 
+          error: 'Draft has expired',
+          expired: true 
+        }
+      else
+        render json: { 
+          success: true, 
+          draft: draft_data,
+          message: 'Draft loaded successfully'
+        }
+      end
+    else
+      render json: { 
+        success: false, 
+        error: 'No draft found',
+        no_draft: true 
+      }
+    end
+  rescue => e
+    render json: { 
+      success: false, 
+      error: 'Failed to load draft',
+      details: e.message 
+    }, status: :unprocessable_entity
+  end
+
+  def clear_draft
+    draft_key = "pipeline_builder_draft_#{current_user.id}"
+    Rails.cache.delete(draft_key)
+    
+    render json: { 
+      success: true, 
+      message: 'Draft cleared successfully' 
+    }
+  rescue => e
+    render json: { 
+      success: false, 
+      error: 'Failed to clear draft',
+      details: e.message 
+    }, status: :unprocessable_entity
+  end
+
   private
 
   def set_pipeline
@@ -208,7 +334,14 @@ class EtlPipelineBuildersController < ApplicationController
       source_config: {},
       destination_config: {},
       transformation_rules: [],
-      dependencies: []
+      dependencies: [],
+      transformations: [
+        :id, :type, :name, :description, :order,
+        config: {},
+        field_mappings: [:from, :to, :type],
+        conditions: [:field, :operator, :value, :condition_type],
+        calculations: [:name, :formula, :output_type]
+      ]
     )
   end
 
@@ -307,5 +440,32 @@ class EtlPipelineBuildersController < ApplicationController
     else
       raise ArgumentError, "Unsupported file format"
     end
+  end
+
+  def get_file_extractors
+    data_source_config = Rails.application.config_for(:data_sources)
+    file_config = data_source_config['file_upload']
+    
+    return [] unless file_config&.dig('settings', 'accepted_types')
+    
+    file_config['settings']['accepted_types'].map do |type|
+      {
+        'name' => type.upcase,
+        'type' => type.downcase,
+        'description' => get_file_type_description(type)
+      }
+    end
+  end
+
+  def get_file_type_description(type)
+    descriptions = {
+      'csv' => 'Comma-separated values files',
+      'xlsx' => 'Microsoft Excel spreadsheets (2007+)',
+      'xls' => 'Legacy Microsoft Excel files',
+      'json' => 'JavaScript Object Notation files',
+      'txt' => 'Plain text files',
+      'tsv' => 'Tab-separated values files'
+    }
+    descriptions[type.downcase] || "#{type.upcase} files"
   end
 end

@@ -4,19 +4,19 @@
    1. CSS Variables & Theming
    =========================== */
 :root {
-  /* Premium Color Palette */
-  --color-primary: #3b82f6;
-  --color-primary-dark: #2563eb;
-  --color-primary-light: #60a5fa;
+  /* Premium Color Palette - Teal */
+  --color-primary: #14b8a6;
+  --color-primary-dark: #0d9488;
+  --color-primary-light: #5eead4;
+
+  --color-secondary: #2dd4bf;
+  --color-secondary-dark: #14b8a6;
+  --color-secondary-light: #99f6e4;
   
-  --color-secondary: #8b5cf6;
-  --color-secondary-dark: #7c3aed;
-  --color-secondary-light: #a78bfa;
-  
-  --color-success: #10b981;
+  --color-success: #14b8a6;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
-  --color-info: #06b6d4;
+  --color-info: #14b8a6;
   
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);

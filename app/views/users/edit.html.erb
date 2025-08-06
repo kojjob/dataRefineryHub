@@ -1,26 +1,77 @@
 <% content_for :title, "Edit #{@user.full_name}" %>
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
-  <!-- Modern Header Section -->
-  <div class="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-700 relative overflow-hidden">
-    <div class="absolute inset-0 bg-black/10"></div>
-    <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/90 to-purple-700/90"></div>
-    
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-6">
-          <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center shadow-2xl">
-            <span class="text-2xl font-bold text-white"><%= @user.initials %></span>
+<div class="dashboard-content">
+  <!-- Executive Dashboard Premium Header Section -->
+  <div style="
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-32);
+    margin-bottom: var(--space-32);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    box-shadow: 0 12px 40px rgba(var(--color-primary-rgb), 0.25),
+                0 4px 12px rgba(var(--color-primary-rgb), 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  ">
+    <!-- Glass morphism overlay -->
+    <div style="
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    "></div>
+
+    <div style="position: relative; z-index: 1;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-16);">
+        <div style="display: flex; align-items: center; gap: var(--space-20);">
+          <div style="
+            width: 64px;
+            height: 64px;
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          ">
+            <span style="
+              font-size: var(--font-size-xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text-inverse);
+            "><%= @user.initials %></span>
           </div>
           <div>
-            <h1 class="text-3xl font-black text-white mb-2">Edit User Profile</h1>
-            <p class="text-lg text-white/90">Update <%= @user.full_name %>'s information and permissions</p>
+            <h1 style="
+              font-size: var(--font-size-3xl);
+              font-weight: var(--font-weight-black);
+              color: var(--color-text-inverse);
+              margin-bottom: var(--space-2);
+              line-height: var(--line-height-tight);
+            ">Edit User Profile</h1>
+            <p style="
+              font-size: var(--font-size-lg);
+              color: rgba(255, 255, 255, 0.9);
+              font-weight: var(--font-weight-medium);
+            ">Update <%= @user.full_name %>'s information and permissions</p>
           </div>
         </div>
-        
-        <div class="flex items-center gap-4">
-          <%= link_to @user, class: "inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm text-white font-bold rounded-2xl border border-white/20 hover:bg-white/20 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+
+        <div style="display: flex; align-items: center; gap: var(--space-12);">
+          <%= link_to @user, class: "btn btn--outline", style: "
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--color-text-inverse);
+            transition: all var(--duration-normal) var(--ease-standard);
+          " do %>
+            <svg style="width: 20px; height: 20px; margin-right: var(--space-2);" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
             Cancel
@@ -30,42 +81,102 @@
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-6 relative z-10">
+  <div style="max-width: 1200px; margin: 0 auto;">
 
-    <%= form_with model: @user, local: true, class: "space-y-10" do |form| %>
-      
+    <%= form_with model: @user, local: true, style: "display: flex; flex-direction: column; gap: var(--space-32);" do |form| %>
+
       <!-- Basic Information -->
-      <div class="bg-gradient-to-br from-white to-gray-50/50 shadow-2xl ring-1 ring-gray-900/5 rounded-3xl border border-gray-100/50 overflow-hidden">
-        <div class="bg-gradient-to-r from-indigo-50 to-blue-50 px-8 py-6 border-b border-gray-200/50">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-2xl flex items-center justify-center">
-              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <div style="
+        background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      ">
+        <div style="
+          background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.05) 0%, rgba(var(--color-accent-rgb), 0.03) 100%);
+          padding: var(--space-24);
+          border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+        ">
+          <div style="display: flex; align-items: center; gap: var(--space-16);">
+            <div style="
+              width: 48px;
+              height: 48px;
+              background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.3);
+            ">
+              <svg style="width: 24px; height: 24px; color: var(--color-text-inverse);" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
               </svg>
             </div>
             <div>
-              <h3 class="text-xl font-black text-gray-900">Basic Information</h3>
-              <p class="text-sm text-gray-600 font-medium">Personal details and contact information</p>
+              <h3 style="
+                font-size: var(--font-size-xl);
+                font-weight: var(--font-weight-black);
+                color: var(--color-text);
+                margin-bottom: var(--space-1);
+                line-height: var(--line-height-tight);
+              ">Basic Information</h3>
+              <p style="
+                font-size: var(--font-size-sm);
+                color: var(--color-text-secondary);
+                font-weight: var(--font-weight-medium);
+              ">Personal details and contact information</p>
             </div>
           </div>
         </div>
-        <div class="px-8 py-8">
+        <div style="padding: var(--space-32);">
           <% if @user.errors.any? %>
-            <div class="mb-8 rounded-2xl bg-gradient-to-r from-red-50 to-rose-50 p-6 border border-red-200/50 shadow-lg">
-              <div class="flex">
-                <div class="flex-shrink-0">
-                  <div class="w-8 h-8 bg-red-500 rounded-xl flex items-center justify-center">
-                    <svg class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+            <div style="
+              margin-bottom: var(--space-32);
+              border-radius: var(--radius-lg);
+              background: linear-gradient(135deg, rgba(var(--color-error-rgb), 0.05) 0%, rgba(var(--color-error-rgb), 0.02) 100%);
+              padding: var(--space-24);
+              border: 1px solid rgba(var(--color-error-rgb), 0.2);
+              box-shadow: 0 4px 12px rgba(var(--color-error-rgb), 0.1);
+            ">
+              <div style="display: flex; gap: var(--space-16);">
+                <div style="flex-shrink: 0;">
+                  <div style="
+                    width: 32px;
+                    height: 32px;
+                    background: var(--color-error);
+                    border-radius: var(--radius-md);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  ">
+                    <svg style="width: 20px; height: 20px; color: var(--color-text-inverse);" viewBox="0 0 20 20" fill="currentColor">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
                     </svg>
                   </div>
                 </div>
-                <div class="ml-4">
-                  <h3 class="text-sm font-bold text-red-800">Please fix the following errors:</h3>
-                  <div class="mt-3 text-sm text-red-700">
-                    <ul role="list" class="list-disc space-y-2 pl-5">
+                <div>
+                  <h3 style="
+                    font-size: var(--font-size-sm);
+                    font-weight: var(--font-weight-bold);
+                    color: var(--color-error);
+                    margin-bottom: var(--space-3);
+                  ">Please fix the following errors:</h3>
+                  <div style="
+                    font-size: var(--font-size-sm);
+                    color: var(--color-error);
+                  ">
+                    <ul role="list" style="
+                      list-style-type: disc;
+                      padding-left: var(--space-20);
+                      display: flex;
+                      flex-direction: column;
+                      gap: var(--space-2);
+                    ">
                       <% @user.errors.full_messages.each do |message| %>
-                        <li class="font-medium"><%= message %></li>
+                        <li style="font-weight: var(--font-weight-medium);"><%= message %></li>
                       <% end %>
                     </ul>
                   </div>
@@ -75,109 +186,273 @@
           <% end %>
 
           <!-- Profile Avatar Section -->
-          <div class="mb-8">
-            <div class="flex items-center gap-6">
-              <div class="relative group">
+          <div style="margin-bottom: var(--space-32);">
+            <div style="display: flex; align-items: center; gap: var(--space-24);">
+              <div style="position: relative; cursor: pointer; transition: all var(--duration-normal) var(--ease-standard);">
                 <% if @user.has_avatar? && @user.avatar_url(:medium).present? %>
-                  <%= image_tag @user.avatar_url(:medium), class: "h-24 w-24 rounded-2xl object-cover ring-4 ring-indigo-100 shadow-xl group-hover:ring-indigo-200 transition-all duration-300" %>
+                  <%= image_tag @user.avatar_url(:medium), style: "
+                    width: 96px;
+                    height: 96px;
+                    border-radius: var(--radius-lg);
+                    object-fit: cover;
+                    border: 4px solid rgba(var(--color-primary-rgb), 0.2);
+                    box-shadow: 0 8px 32px rgba(var(--color-primary-rgb), 0.2);
+                    transition: all var(--duration-normal) var(--ease-standard);
+                  " %>
                 <% else %>
-                  <div class="h-24 w-24 rounded-2xl bg-gradient-to-br from-indigo-500 via-blue-600 to-purple-600 flex items-center justify-center ring-4 ring-indigo-100 shadow-xl group-hover:ring-indigo-200 transition-all duration-300">
-                    <span class="text-2xl font-bold text-white"><%= @user.initials %></span>
+                  <div style="
+                    width: 96px;
+                    height: 96px;
+                    border-radius: var(--radius-lg);
+                    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: 4px solid rgba(var(--color-primary-rgb), 0.2);
+                    box-shadow: 0 8px 32px rgba(var(--color-primary-rgb), 0.2);
+                    transition: all var(--duration-normal) var(--ease-standard);
+                  ">
+                    <span style="
+                      font-size: var(--font-size-2xl);
+                      font-weight: var(--font-weight-bold);
+                      color: var(--color-text-inverse);
+                    "><%= @user.initials %></span>
                   </div>
                 <% end %>
                 <!-- Upload overlay -->
-                <div class="absolute inset-0 bg-black/40 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-                  <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <div style="
+                  position: absolute;
+                  inset: 0;
+                  background: rgba(0, 0, 0, 0.4);
+                  border-radius: var(--radius-lg);
+                  opacity: 0;
+                  transition: all var(--duration-normal) var(--ease-standard);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+                  <svg style="width: 32px; height: 32px; color: var(--color-text-inverse);" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                   </svg>
                 </div>
               </div>
-              
-              <div class="flex-1">
-                <div class="mb-4">
-                  <%= form.label :avatar, "Profile Photo", class: "block text-sm font-bold leading-6 text-gray-900 mb-2" %>
-                  <p class="text-sm text-gray-600 font-medium mb-4">Upload a professional profile photo. JPG, PNG, or GIF up to 5MB.</p>
+
+              <div style="flex: 1;">
+                <div style="margin-bottom: var(--space-16);">
+                  <%= form.label :avatar, "Profile Photo", style: "
+                    display: block;
+                    font-size: var(--font-size-sm);
+                    font-weight: var(--font-weight-bold);
+                    color: var(--color-text);
+                    margin-bottom: var(--space-2);
+                    line-height: var(--line-height-normal);
+                  " %>
+                  <p style="
+                    font-size: var(--font-size-sm);
+                    color: var(--color-text-secondary);
+                    font-weight: var(--font-weight-medium);
+                    margin-bottom: var(--space-16);
+                  ">Upload a professional profile photo. JPG, PNG, or GIF up to 5MB.</p>
                 </div>
-                
-                <div class="flex items-center gap-4">
-                  <div class="relative">
-                    <%= form.file_field :avatar, 
+
+                <div style="display: flex; align-items: center; gap: var(--space-16);">
+                  <div style="position: relative;">
+                    <%= form.file_field :avatar,
                         accept: "image/*",
-                        class: "hidden", 
+                        style: "display: none;",
                         id: "avatar_upload",
-                        data: { 
+                        data: {
                           controller: "avatar-upload",
                           action: "change->avatar-upload#handleFileSelect"
                         } %>
-                    <label for="avatar_upload" class="cursor-pointer inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-indigo-50 to-blue-50 text-indigo-700 font-bold rounded-2xl border-2 border-indigo-200 hover:border-indigo-300 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-blue-100 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 group">
-                      <svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <label for="avatar_upload" class="btn btn--outline" style="
+                      cursor: pointer;
+                      background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.05) 0%, rgba(var(--color-accent-rgb), 0.03) 100%);
+                      border: 1px solid rgba(var(--color-primary-rgb), 0.3);
+                      color: var(--color-primary);
+                      transition: all var(--duration-normal) var(--ease-standard);
+                      display: inline-flex;
+                      align-items: center;
+                      gap: var(--space-3);
+                    ">
+                      <svg style="width: 20px; height: 20px;" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                       </svg>
                       <span>Choose Photo</span>
                     </label>
                   </div>
-                  
+
                   <% if @user.has_avatar? %>
-                    <%= link_to remove_avatar_user_path(@user), 
-                        class: "inline-flex items-center gap-2 px-4 py-3 text-red-600 font-bold rounded-2xl border-2 border-red-200 hover:border-red-300 hover:bg-red-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5",
-                        data: { 
+                    <%= link_to remove_avatar_user_path(@user),
+                        style: "
+                          display: inline-flex;
+                          align-items: center;
+                          gap: var(--space-2);
+                          padding: var(--space-8) var(--space-16);
+                          color: var(--color-error);
+                          font-weight: var(--font-weight-bold);
+                          border-radius: var(--radius-base);
+                          border: 1px solid rgba(var(--color-error-rgb), 0.3);
+                          background: rgba(var(--color-error-rgb), 0.05);
+                          transition: all var(--duration-normal) var(--ease-standard);
+                          text-decoration: none;
+                        ",
+                        data: {
                           turbo_method: :delete,
                           confirm: "Are you sure you want to remove the profile photo?"
                         } do %>
-                      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                       </svg>
                       Remove
                     <% end %>
                   <% end %>
                 </div>
-                
-                <div data-avatar-upload-target="preview" class="hidden mt-4">
-                  <div class="relative inline-block">
-                    <img data-avatar-upload-target="previewImage" class="h-20 w-20 rounded-xl object-cover ring-2 ring-green-200 shadow-lg" />
-                    <div class="absolute -top-2 -right-2 h-6 w-6 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+
+                <div data-avatar-upload-target="preview" style="display: none; margin-top: var(--space-16);">
+                  <div style="position: relative; display: inline-block;">
+                    <img data-avatar-upload-target="previewImage" style="
+                      width: 80px;
+                      height: 80px;
+                      border-radius: var(--radius-md);
+                      object-fit: cover;
+                      border: 2px solid var(--color-success);
+                      box-shadow: 0 4px 12px rgba(var(--color-success-rgb), 0.2);
+                    " />
+                    <div style="
+                      position: absolute;
+                      top: -8px;
+                      right: -8px;
+                      width: 24px;
+                      height: 24px;
+                      background: var(--color-success);
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    ">
+                      <svg style="width: 16px; height: 16px; color: var(--color-text-inverse);" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
                   </div>
-                  <p class="mt-2 text-sm text-green-600 font-semibold">New photo selected - save to update</p>
+                  <p style="
+                    margin-top: var(--space-2);
+                    font-size: var(--font-size-sm);
+                    color: var(--color-success);
+                    font-weight: var(--font-weight-semibold);
+                  ">New photo selected - save to update</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-6">
-            
+          <div style="
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-32) var(--space-32);
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          ">
+
             <!-- First Name -->
-            <div class="sm:col-span-3">
-              <%= form.label :first_name, class: "block text-sm font-bold leading-6 text-gray-900 mb-3" %>
-              <div class="relative">
-                <%= form.text_field :first_name, class: "block w-full rounded-2xl border-0 py-4 px-4 text-gray-900 shadow-lg ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:shadow-xl focus:shadow-xl" %>
+            <div>
+              <%= form.label :first_name, style: "
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin-bottom: var(--space-3);
+                line-height: var(--line-height-normal);
+              " %>
+              <div style="position: relative;">
+                <%= form.text_field :first_name, style: "
+                  display: block;
+                  width: 100%;
+                  border-radius: var(--radius-lg);
+                  border: 1px solid var(--color-border);
+                  padding: var(--space-16) var(--space-16);
+                  color: var(--color-text);
+                  background: var(--color-surface);
+                  backdrop-filter: blur(10px);
+                  -webkit-backdrop-filter: blur(10px);
+                  box-shadow: 0 4px 12px rgba(var(--color-border-rgb), 0.1);
+                  transition: all var(--duration-normal) var(--ease-standard);
+                  font-size: var(--font-size-sm);
+                  line-height: var(--line-height-normal);
+                " %>
               </div>
             </div>
 
             <!-- Last Name -->
-            <div class="sm:col-span-3">
-              <%= form.label :last_name, class: "block text-sm font-bold leading-6 text-gray-900 mb-3" %>
-              <div class="relative">
-                <%= form.text_field :last_name, class: "block w-full rounded-2xl border-0 py-4 px-4 text-gray-900 shadow-lg ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:shadow-xl focus:shadow-xl" %>
+            <div>
+              <%= form.label :last_name, style: "
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin-bottom: var(--space-3);
+                line-height: var(--line-height-normal);
+              " %>
+              <div style="position: relative;">
+                <%= form.text_field :last_name, style: "
+                  display: block;
+                  width: 100%;
+                  border-radius: var(--radius-lg);
+                  border: 1px solid var(--color-border);
+                  padding: var(--space-16) var(--space-16);
+                  color: var(--color-text);
+                  background: var(--color-surface);
+                  backdrop-filter: blur(10px);
+                  -webkit-backdrop-filter: blur(10px);
+                  box-shadow: 0 4px 12px rgba(var(--color-border-rgb), 0.1);
+                  transition: all var(--duration-normal) var(--ease-standard);
+                  font-size: var(--font-size-sm);
+                  line-height: var(--line-height-normal);
+                " %>
               </div>
             </div>
 
             <!-- Email -->
-            <div class="sm:col-span-4">
-              <%= form.label :email, class: "block text-sm font-bold leading-6 text-gray-900 mb-3" %>
-              <div class="relative">
-                <%= form.email_field :email, class: "block w-full rounded-2xl border-0 py-4 px-4 text-gray-900 shadow-lg ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:shadow-xl focus:shadow-xl" %>
+            <div style="grid-column: span 2;">
+              <%= form.label :email, style: "
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin-bottom: var(--space-3);
+                line-height: var(--line-height-normal);
+              " %>
+              <div style="position: relative;">
+                <%= form.email_field :email, style: "
+                  display: block;
+                  width: 100%;
+                  border-radius: var(--radius-lg);
+                  border: 1px solid var(--color-border);
+                  padding: var(--space-16) var(--space-16);
+                  color: var(--color-text);
+                  background: var(--color-surface);
+                  backdrop-filter: blur(10px);
+                  -webkit-backdrop-filter: blur(10px);
+                  box-shadow: 0 4px 12px rgba(var(--color-border-rgb), 0.1);
+                  transition: all var(--duration-normal) var(--ease-standard);
+                  font-size: var(--font-size-sm);
+                  line-height: var(--line-height-normal);
+                " %>
               </div>
             </div>
 
             <!-- Role -->
-            <div class="sm:col-span-2">
-              <%= form.label :role, class: "block text-sm font-bold leading-6 text-gray-900 mb-3" %>
-              <div class="relative">
+            <div style="grid-column: span 2;">
+              <%= form.label :role, style: "
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin-bottom: var(--space-3);
+                line-height: var(--line-height-normal);
+              " %>
+              <div style="position: relative;">
                 <%= form.select :role,
                     options_for_select([
                       ['Owner', 'owner'],
@@ -186,26 +461,82 @@
                       ['Viewer', 'viewer']
                     ], @user.role),
                     {},
-                    { class: "block w-full rounded-2xl border-0 py-4 px-4 text-gray-900 shadow-lg ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:shadow-xl focus:shadow-xl" } %>
+                    { style: "
+                      display: block;
+                      width: 100%;
+                      border-radius: var(--radius-lg);
+                      border: 1px solid var(--color-border);
+                      padding: var(--space-16) var(--space-16);
+                      color: var(--color-text);
+                      background: var(--color-surface);
+                      backdrop-filter: blur(10px);
+                      -webkit-backdrop-filter: blur(10px);
+                      box-shadow: 0 4px 12px rgba(var(--color-border-rgb), 0.1);
+                      transition: all var(--duration-normal) var(--ease-standard);
+                      font-size: var(--font-size-sm);
+                      line-height: var(--line-height-normal);
+                    " } %>
               </div>
-              <p class="mt-3 text-sm text-gray-600 font-medium">Defines what actions this user can perform.</p>
+              <p style="
+                margin-top: var(--space-3);
+                font-size: var(--font-size-sm);
+                color: var(--color-text-secondary);
+                font-weight: var(--font-weight-medium);
+              ">Defines what actions this user can perform.</p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Role Permissions Info -->
-      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-base font-semibold leading-6 text-gray-900">Role Permissions</h3>
+      <div style="
+        background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      ">
+        <div style="
+          background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.05) 0%, rgba(var(--color-accent-rgb), 0.03) 100%);
+          padding: var(--space-24);
+          border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+        ">
+          <h3 style="
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text);
+            line-height: var(--line-height-normal);
+          ">Role Permissions</h3>
         </div>
-        <div class="px-6 py-6">
-          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            
+        <div style="padding: var(--space-24);">
+          <div style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-24);
+          ">
+
             <!-- Owner -->
-            <div class="bg-purple-50 rounded-lg p-4">
-              <h4 class="text-sm font-semibold text-purple-900 mb-2">Owner</h4>
-              <ul class="text-xs text-purple-700 space-y-1">
+            <div style="
+              background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.08) 0%, rgba(var(--color-primary-rgb), 0.03) 100%);
+              border-radius: var(--radius-lg);
+              padding: var(--space-16);
+              border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+            ">
+              <h4 style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-semibold);
+                color: var(--color-primary);
+                margin-bottom: var(--space-2);
+              ">Owner</h4>
+              <ul style="
+                font-size: var(--font-size-xs);
+                color: var(--color-primary);
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-1);
+              ">
                 <li>• Full organization access</li>
                 <li>• Manage all users</li>
                 <li>• Billing & plan management</li>
@@ -214,9 +545,25 @@
             </div>
 
             <!-- Admin -->
-            <div class="bg-blue-50 rounded-lg p-4">
-              <h4 class="text-sm font-semibold text-blue-900 mb-2">Admin</h4>
-              <ul class="text-xs text-blue-700 space-y-1">
+            <div style="
+              background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.08) 0%, rgba(var(--color-accent-rgb), 0.03) 100%);
+              border-radius: var(--radius-lg);
+              padding: var(--space-16);
+              border: 1px solid rgba(var(--color-accent-rgb), 0.2);
+            ">
+              <h4 style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-semibold);
+                color: var(--color-accent);
+                margin-bottom: var(--space-2);
+              ">Admin</h4>
+              <ul style="
+                font-size: var(--font-size-xs);
+                color: var(--color-accent);
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-1);
+              ">
                 <li>• Manage users & data sources</li>
                 <li>• Access all analytics</li>
                 <li>• Export data</li>
@@ -225,9 +572,25 @@
             </div>
 
             <!-- Member -->
-            <div class="bg-green-50 rounded-lg p-4">
-              <h4 class="text-sm font-semibold text-green-900 mb-2">Member</h4>
-              <ul class="text-xs text-green-700 space-y-1">
+            <div style="
+              background: linear-gradient(135deg, rgba(var(--color-success-rgb), 0.08) 0%, rgba(var(--color-success-rgb), 0.03) 100%);
+              border-radius: var(--radius-lg);
+              padding: var(--space-16);
+              border: 1px solid rgba(var(--color-success-rgb), 0.2);
+            ">
+              <h4 style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-semibold);
+                color: var(--color-success);
+                margin-bottom: var(--space-2);
+              ">Member</h4>
+              <ul style="
+                font-size: var(--font-size-xs);
+                color: var(--color-success);
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-1);
+              ">
                 <li>• Manage data sources</li>
                 <li>• View analytics</li>
                 <li>• Export data</li>
@@ -236,9 +599,25 @@
             </div>
 
             <!-- Viewer -->
-            <div class="bg-gray-50 rounded-lg p-4">
-              <h4 class="text-sm font-semibold text-gray-900 mb-2">Viewer</h4>
-              <ul class="text-xs text-gray-700 space-y-1">
+            <div style="
+              background: linear-gradient(135deg, rgba(var(--color-text-secondary-rgb), 0.05) 0%, rgba(var(--color-text-secondary-rgb), 0.02) 100%);
+              border-radius: var(--radius-lg);
+              padding: var(--space-16);
+              border: 1px solid rgba(var(--color-text-secondary-rgb), 0.1);
+            ">
+              <h4 style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-semibold);
+                color: var(--color-text);
+                margin-bottom: var(--space-2);
+              ">Viewer</h4>
+              <ul style="
+                font-size: var(--font-size-xs);
+                color: var(--color-text-secondary);
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-1);
+              ">
                 <li>• View analytics only</li>
                 <li>• Read-only access</li>
                 <li>• No data management</li>
@@ -250,27 +629,94 @@
       </div>
 
       <!-- Password Change -->
-      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-base font-semibold leading-6 text-gray-900">Change Password</h3>
-          <p class="mt-1 text-sm text-gray-500">Leave blank to keep current password</p>
+      <div style="
+        background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      ">
+        <div style="
+          background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.05) 0%, rgba(var(--color-accent-rgb), 0.03) 100%);
+          padding: var(--space-24);
+          border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+        ">
+          <h3 style="
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text);
+            line-height: var(--line-height-normal);
+            margin-bottom: var(--space-1);
+          ">Change Password</h3>
+          <p style="
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+          ">Leave blank to keep current password</p>
         </div>
-        <div class="px-6 py-6">
-          <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
-            
+        <div style="padding: var(--space-24);">
+          <div style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-24);
+          ">
+
             <!-- New Password -->
             <div>
-              <%= form.label :password, "New Password", class: "block text-sm font-medium leading-6 text-gray-900" %>
-              <div class="mt-2">
-                <%= form.password_field :password, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", autocomplete: "new-password" %>
+              <%= form.label :password, "New Password", style: "
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text);
+                line-height: var(--line-height-normal);
+                margin-bottom: var(--space-2);
+              " %>
+              <div>
+                <%= form.password_field :password, style: "
+                  display: block;
+                  width: 100%;
+                  border-radius: var(--radius-base);
+                  border: 1px solid var(--color-border);
+                  padding: var(--space-6) var(--space-16);
+                  color: var(--color-text);
+                  background: var(--color-surface);
+                  backdrop-filter: blur(10px);
+                  -webkit-backdrop-filter: blur(10px);
+                  box-shadow: 0 2px 8px rgba(var(--color-border-rgb), 0.1);
+                  transition: all var(--duration-normal) var(--ease-standard);
+                  font-size: var(--font-size-sm);
+                  line-height: var(--line-height-normal);
+                ", autocomplete: "new-password" %>
               </div>
             </div>
 
             <!-- Confirm Password -->
             <div>
-              <%= form.label :password_confirmation, "Confirm Password", class: "block text-sm font-medium leading-6 text-gray-900" %>
-              <div class="mt-2">
-                <%= form.password_field :password_confirmation, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", autocomplete: "new-password" %>
+              <%= form.label :password_confirmation, "Confirm Password", style: "
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text);
+                line-height: var(--line-height-normal);
+                margin-bottom: var(--space-2);
+              " %>
+              <div>
+                <%= form.password_field :password_confirmation, style: "
+                  display: block;
+                  width: 100%;
+                  border-radius: var(--radius-base);
+                  border: 1px solid var(--color-border);
+                  padding: var(--space-6) var(--space-16);
+                  color: var(--color-text);
+                  background: var(--color-surface);
+                  backdrop-filter: blur(10px);
+                  -webkit-backdrop-filter: blur(10px);
+                  box-shadow: 0 2px 8px rgba(var(--color-border-rgb), 0.1);
+                  transition: all var(--duration-normal) var(--ease-standard);
+                  font-size: var(--font-size-sm);
+                  line-height: var(--line-height-normal);
+                ", autocomplete: "new-password" %>
               </div>
             </div>
           </div>
@@ -278,47 +724,118 @@
       </div>
 
       <!-- Account Status -->
-      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-base font-semibold leading-6 text-gray-900">Account Status</h3>
+      <div style="
+        background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      ">
+        <div style="
+          background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.05) 0%, rgba(var(--color-accent-rgb), 0.03) 100%);
+          padding: var(--space-24);
+          border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+        ">
+          <h3 style="
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text);
+            line-height: var(--line-height-normal);
+          ">Account Status</h3>
         </div>
-        <div class="px-6 py-6">
-          <dl class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-3">
+        <div style="padding: var(--space-24);">
+          <dl style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-24);
+          ">
             <div>
-              <dt class="text-sm font-medium text-gray-500">Email Status</dt>
-              <dd class="mt-1">
-                <span class="inline-flex items-center rounded-md bg-<%= @user.confirmed? ? 'green' : 'yellow' %>-50 px-2 py-1 text-xs font-medium text-<%= @user.confirmed? ? 'green' : 'yellow' %>-700 ring-1 ring-inset ring-<%= @user.confirmed? ? 'green' : 'yellow' %>-600/20">
+              <dt style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text-secondary);
+              ">Email Status</dt>
+              <dd style="margin-top: var(--space-1);">
+                <span style="
+                  display: inline-flex;
+                  align-items: center;
+                  border-radius: var(--radius-base);
+                  background: <%= @user.confirmed? ? 'rgba(var(--color-success-rgb), 0.1)' : 'rgba(var(--color-warning-rgb), 0.1)' %>;
+                  padding: var(--space-2) var(--space-3);
+                  font-size: var(--font-size-xs);
+                  font-weight: var(--font-weight-medium);
+                  color: <%= @user.confirmed? ? 'var(--color-success)' : 'var(--color-warning)' %>;
+                  border: 1px solid <%= @user.confirmed? ? 'rgba(var(--color-success-rgb), 0.2)' : 'rgba(var(--color-warning-rgb), 0.2)' %>;
+                ">
                   <%= @user.confirmed? ? 'Confirmed' : 'Pending Confirmation' %>
                 </span>
               </dd>
             </div>
             <div>
-              <dt class="text-sm font-medium text-gray-500">Account Created</dt>
-              <dd class="mt-1 text-sm text-gray-900"><%= @user.created_at.strftime("%B %d, %Y") %></dd>
+              <dt style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text-secondary);
+              ">Account Created</dt>
+              <dd style="
+                margin-top: var(--space-1);
+                font-size: var(--font-size-sm);
+                color: var(--color-text);
+              "><%= @user.created_at.strftime("%B %d, %Y") %></dd>
             </div>
             <div>
-              <dt class="text-sm font-medium text-gray-500">Last Sign In</dt>
-              <dd class="mt-1 text-sm text-gray-900">
+              <dt style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text-secondary);
+              ">Last Sign In</dt>
+              <dd style="
+                margin-top: var(--space-1);
+                font-size: var(--font-size-sm);
+                color: var(--color-text);
+              ">
                 <%= @user.last_sign_in_at&.strftime("%B %d, %Y at %l:%M %p") || 'Never' %>
               </dd>
             </div>
           </dl>
 
           <% unless @user.confirmed? %>
-            <div class="mt-4 p-4 bg-yellow-50 rounded-lg">
-              <div class="flex">
-                <div class="flex-shrink-0">
-                  <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+            <div style="
+              margin-top: var(--space-16);
+              padding: var(--space-16);
+              background: linear-gradient(135deg, rgba(var(--color-warning-rgb), 0.05) 0%, rgba(var(--color-warning-rgb), 0.02) 100%);
+              border-radius: var(--radius-lg);
+              border: 1px solid rgba(var(--color-warning-rgb), 0.2);
+            ">
+              <div style="display: flex; gap: var(--space-12);">
+                <div style="flex-shrink: 0;">
+                  <svg style="width: 20px; height: 20px; color: var(--color-warning);" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
                   </svg>
                 </div>
-                <div class="ml-3">
-                  <h3 class="text-sm font-medium text-yellow-800">Email confirmation pending</h3>
-                  <div class="mt-2 text-sm text-yellow-700">
+                <div>
+                  <h3 style="
+                    font-size: var(--font-size-sm);
+                    font-weight: var(--font-weight-medium);
+                    color: var(--color-warning);
+                    margin-bottom: var(--space-2);
+                  ">Email confirmation pending</h3>
+                  <div style="
+                    font-size: var(--font-size-sm);
+                    color: var(--color-warning);
+                    margin-bottom: var(--space-16);
+                  ">
                     <p>This user hasn't confirmed their email address yet. They won't be able to sign in until they confirm.</p>
                   </div>
-                  <div class="mt-4">
-                    <%= link_to "#", class: "inline-flex items-center rounded-md bg-yellow-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-500" do %>
+                  <div>
+                    <%= link_to "#", class: "btn btn--primary", style: "
+                      background: linear-gradient(135deg, var(--color-warning) 0%, var(--color-warning-hover) 100%);
+                      color: var(--color-text-inverse);
+                      font-size: var(--font-size-sm);
+                      padding: var(--space-8) var(--space-12);
+                    " do %>
                       Resend Confirmation Email
                     <% end %>
                   </div>
@@ -330,15 +847,170 @@
       </div>
 
       <!-- Submit Button -->
-      <div class="flex items-center justify-end gap-x-6 pt-6">
-        <%= link_to @user, class: "inline-flex items-center gap-2 px-6 py-3 text-sm font-bold leading-6 text-gray-700 hover:text-gray-900 bg-white border border-gray-300 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5" do %>
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <div style="
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: var(--space-24);
+        padding-top: var(--space-24);
+      ">
+        <%= link_to @user, class: "btn btn--outline", style: "
+          display: inline-flex;
+          align-items: center;
+          gap: var(--space-2);
+          color: var(--color-text-secondary);
+          border: 1px solid var(--color-border);
+          background: var(--color-surface);
+          transition: all var(--duration-normal) var(--ease-standard);
+        " do %>
+          <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
           Cancel
         <% end %>
-        <%= form.submit "Update User", class: "inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 px-8 py-4 text-sm font-black text-white shadow-2xl hover:shadow-indigo-500/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105" %>
+        <%= form.submit "Update User", class: "btn btn--primary", style: "
+          background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+          color: var(--color-text-inverse);
+          border: none;
+          box-shadow: 0 8px 32px rgba(var(--color-primary-rgb), 0.3);
+          transition: all var(--duration-normal) var(--ease-standard);
+          font-weight: var(--font-weight-black);
+        " %>
       </div>
     <% end %>
+
+    <!-- Executive Dashboard Footer Spacing (No Footer Component) -->
+    <div style="
+      height: var(--space-48);
+      background: transparent;
+    "></div>
   </div>
 </div>
+
+<style>
+  /* Premium form input enhancements */
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  select:focus {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1),
+                0 4px 12px rgba(var(--color-primary-rgb), 0.15) !important;
+    transform: translateY(-1px) !important;
+    outline: none !important;
+  }
+
+  input[type="text"]:hover,
+  input[type="email"]:hover,
+  input[type="password"]:hover,
+  select:hover {
+    border-color: rgba(var(--color-primary-rgb), 0.5) !important;
+    box-shadow: 0 6px 20px rgba(var(--color-border-rgb), 0.15) !important;
+  }
+
+  /* Button hover enhancements */
+  .btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(var(--color-primary-rgb), 0.25) !important;
+  }
+
+  .btn--outline:hover {
+    background: rgba(var(--color-primary-rgb), 0.05) !important;
+    border-color: var(--color-primary) !important;
+  }
+
+  /* Avatar upload label hover */
+  label[for="avatar_upload"]:hover {
+    background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.1) 0%, rgba(var(--color-accent-rgb), 0.05) 100%) !important;
+    border-color: rgba(var(--color-primary-rgb), 0.5) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(var(--color-primary-rgb), 0.15) !important;
+  }
+
+  /* Remove avatar button hover */
+  a[href*="remove_avatar"]:hover {
+    background: rgba(var(--color-error-rgb), 0.1) !important;
+    border-color: rgba(var(--color-error-rgb), 0.5) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(var(--color-error-rgb), 0.15) !important;
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark), [data-color-scheme="dark"] {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select {
+      background: rgba(var(--color-surface-rgb), 0.8) !important;
+      border-color: rgba(var(--color-border-rgb), 0.4) !important;
+      color: var(--color-text) !important;
+    }
+  }
+
+  /* Executive Dashboard Premium Enhancements */
+  .dashboard-content {
+    background: linear-gradient(135deg, var(--color-background) 0%, rgba(var(--color-primary-rgb), 0.01) 100%) !important;
+    min-height: calc(100vh - 80px) !important;
+    padding-bottom: var(--space-48) !important;
+  }
+
+  /* Premium card hover effects */
+  .dashboard-content > div > div[style*="background: linear-gradient"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 40px rgba(var(--color-primary-rgb), 0.15) !important;
+    transition: all var(--duration-normal) var(--ease-standard) !important;
+  }
+
+  /* Enhanced glass morphism for executive dashboard */
+  .dashboard-content > div > div[style*="backdrop-filter"] {
+    backdrop-filter: blur(25px) !important;
+    -webkit-backdrop-filter: blur(25px) !important;
+    border: 1px solid rgba(var(--color-primary-rgb), 0.1) !important;
+  }
+
+  /* Premium focus ring with teal */
+  input:focus,
+  select:focus,
+  textarea:focus {
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.15),
+                0 4px 12px rgba(var(--color-primary-rgb), 0.2) !important;
+    border-color: var(--color-primary) !important;
+  }
+
+  /* Executive dashboard typography enhancements */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color-text) !important;
+    font-weight: var(--font-weight-bold) !important;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .btn:hover {
+      transform: translateY(-1px) !important;
+    }
+
+    label[for="avatar_upload"]:hover {
+      transform: translateY(-1px) !important;
+    }
+
+    .dashboard-content {
+      padding: var(--space-16) !important;
+    }
+
+    .dashboard-content > div > div[style*="background: linear-gradient"]:hover {
+      transform: none !important;
+    }
+  }
+
+  /* Print styles for executive reports */
+  @media print {
+    .dashboard-content {
+      background: white !important;
+      box-shadow: none !important;
+    }
+
+    .btn {
+      display: none !important;
+    }
+  }
+</style>

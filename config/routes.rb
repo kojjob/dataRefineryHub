@@ -93,9 +93,13 @@ Rails.application.routes.draw do
     collection do
       get :available_extractors
       post :transformation_preview
+      post :validate_transformation
       post :validate_pipeline
       get :export_pipeline
       post :import_pipeline
+      post :save_draft
+      get :load_draft
+      delete :clear_draft
     end
   end
 

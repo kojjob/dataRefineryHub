@@ -1,43 +1,751 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<% content_for :title, "Account Settings" %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<div class="dashboard-content">
+  <!-- Executive Account Settings Header with Premium Dark Teal Glass Morphism -->
+  <div style="
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-32);
+    margin-bottom: var(--space-32);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(13, 148, 136, 0.3);
+  ">
+    <!-- Glass morphism overlay -->
+    <div style="
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    "></div>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+    <div style="position: relative; z-index: 1;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-16);">
+        <div style="display: flex; align-items: center; gap: var(--space-20);">
+          <div style="
+            width: 64px;
+            height: 64px;
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          ">
+            <svg style="width: 32px; height: 32px; color: var(--color-text-inverse);" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <div>
+            <h1 style="
+              font-size: var(--font-size-3xl);
+              font-weight: var(--font-weight-black);
+              color: var(--color-text-inverse);
+              margin-bottom: var(--space-2);
+              line-height: var(--line-height-tight);
+            ">Account Settings</h1>
+            <p style="
+              font-size: var(--font-size-lg);
+              color: rgba(255, 255, 255, 0.9);
+              font-weight: var(--font-weight-medium);
+            ">Manage your personal information and security preferences</p>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: var(--space-12);">
+          <%= link_to :back, class: "btn btn--outline", style: "
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--color-text-inverse);
+            transition: all var(--duration-normal) var(--ease-standard);
+          " do %>
+            <svg style="width: 20px; height: 20px; margin-right: var(--space-2);" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+            </svg>
+            Back
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }, style: "display: flex; flex-direction: column; gap: var(--space-32);") do |f| %>
 
-  <div class="field">
-    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-    <% if @minimum_password_length %>
-      <br />
-      <em><%= @minimum_password_length %> characters minimum</em>
+      <!-- Account Information Section -->
+      <div style="
+        background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      ">
+        <div style="
+          background: linear-gradient(135deg, rgba(13, 148, 136, 0.05) 0%, rgba(15, 118, 110, 0.03) 100%);
+          padding: var(--space-24);
+          border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+        ">
+          <div style="display: flex; align-items: center; gap: var(--space-16);">
+            <div style="
+              width: 48px;
+              height: 48px;
+              background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+            ">
+              <svg style="width: 24px; height: 24px; color: var(--color-text-inverse);" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+              </svg>
+            </div>
+            <div>
+              <h3 style="
+                font-size: var(--font-size-xl);
+                font-weight: var(--font-weight-black);
+                color: var(--color-text);
+                margin-bottom: var(--space-1);
+                line-height: var(--line-height-tight);
+              ">Account Information</h3>
+              <p style="
+                font-size: var(--font-size-sm);
+                color: var(--color-text-secondary);
+                font-weight: var(--font-weight-medium);
+              ">Update your email address and personal details</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding: var(--space-32);">
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+          <!-- Email Field -->
+          <div style="margin-bottom: var(--space-24);">
+            <%= f.label :email, style: "
+              display: block;
+              font-size: var(--font-size-sm);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin-bottom: var(--space-3);
+              line-height: var(--line-height-normal);
+            " %>
+            <div style="position: relative;">
+              <%= f.email_field :email, autofocus: true, autocomplete: "email", style: "
+                display: block;
+                width: 100%;
+                border-radius: var(--radius-lg);
+                border: 1px solid var(--color-border);
+                padding: var(--space-16) var(--space-16);
+                color: var(--color-text);
+                background: var(--color-surface);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                box-shadow: 0 4px 12px rgba(var(--color-border-rgb), 0.1);
+                transition: all var(--duration-normal) var(--ease-standard);
+                font-size: var(--font-size-sm);
+                line-height: var(--line-height-normal);
+              " %>
+            </div>
+
+            <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+              <div style="
+                margin-top: var(--space-3);
+                padding: var(--space-12);
+                background: linear-gradient(135deg, rgba(var(--color-warning-rgb), 0.05) 0%, rgba(var(--color-warning-rgb), 0.02) 100%);
+                border: 1px solid rgba(var(--color-warning-rgb), 0.2);
+                border-radius: var(--radius-base);
+                font-size: var(--font-size-sm);
+                color: var(--color-warning);
+              ">
+                <strong>Pending confirmation:</strong> <%= resource.unconfirmed_email %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password Security Section -->
+      <div style="
+        background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      ">
+        <div style="
+          background: linear-gradient(135deg, rgba(13, 148, 136, 0.05) 0%, rgba(15, 118, 110, 0.03) 100%);
+          padding: var(--space-24);
+          border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+        ">
+          <div style="display: flex; align-items: center; gap: var(--space-16);">
+            <div style="
+              width: 48px;
+              height: 48px;
+              background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+            ">
+              <svg style="width: 24px; height: 24px; color: var(--color-text-inverse);" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+            </div>
+            <div>
+              <h3 style="
+                font-size: var(--font-size-xl);
+                font-weight: var(--font-weight-black);
+                color: var(--color-text);
+                margin-bottom: var(--space-1);
+                line-height: var(--line-height-tight);
+              ">Password & Security</h3>
+              <p style="
+                font-size: var(--font-size-sm);
+                color: var(--color-text-secondary);
+                font-weight: var(--font-weight-medium);
+              ">Update your password to keep your account secure</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding: var(--space-32);">
+          <div style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-24);
+          ">
+
+            <!-- New Password -->
+            <div>
+              <%= f.label :password, style: "
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin-bottom: var(--space-3);
+                line-height: var(--line-height-normal);
+              " do %>
+                New Password
+                <span style="
+                  font-weight: var(--font-weight-normal);
+                  color: var(--color-text-secondary);
+                  font-style: italic;
+                ">(leave blank if you don't want to change it)</span>
+              <% end %>
+              <div style="position: relative;">
+                <%= f.password_field :password, autocomplete: "new-password", style: "
+                  display: block;
+                  width: 100%;
+                  border-radius: var(--radius-lg);
+                  border: 1px solid var(--color-border);
+                  padding: var(--space-16) var(--space-16);
+                  color: var(--color-text);
+                  background: var(--color-surface);
+                  backdrop-filter: blur(10px);
+                  -webkit-backdrop-filter: blur(10px);
+                  box-shadow: 0 4px 12px rgba(var(--color-border-rgb), 0.1);
+                  transition: all var(--duration-normal) var(--ease-standard);
+                  font-size: var(--font-size-sm);
+                  line-height: var(--line-height-normal);
+                " %>
+              </div>
+              <% if @minimum_password_length %>
+                <p style="
+                  margin-top: var(--space-2);
+                  font-size: var(--font-size-xs);
+                  color: var(--color-text-secondary);
+                  font-style: italic;
+                "><%= @minimum_password_length %> characters minimum</p>
+              <% end %>
+            </div>
+
+            <!-- Confirm Password -->
+            <div>
+              <%= f.label :password_confirmation, "Confirm New Password", style: "
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin-bottom: var(--space-3);
+                line-height: var(--line-height-normal);
+              " %>
+              <div style="position: relative;">
+                <%= f.password_field :password_confirmation, autocomplete: "new-password", style: "
+                  display: block;
+                  width: 100%;
+                  border-radius: var(--radius-lg);
+                  border: 1px solid var(--color-border);
+                  padding: var(--space-16) var(--space-16);
+                  color: var(--color-text);
+                  background: var(--color-surface);
+                  backdrop-filter: blur(10px);
+                  -webkit-backdrop-filter: blur(10px);
+                  box-shadow: 0 4px 12px rgba(var(--color-border-rgb), 0.1);
+                  transition: all var(--duration-normal) var(--ease-standard);
+                  font-size: var(--font-size-sm);
+                  line-height: var(--line-height-normal);
+                " %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Password (Required for Changes) -->
+          <div style="margin-top: var(--space-24);">
+            <%= f.label :current_password, style: "
+              display: block;
+              font-size: var(--font-size-sm);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin-bottom: var(--space-3);
+              line-height: var(--line-height-normal);
+            " do %>
+              Current Password
+              <span style="
+                font-weight: var(--font-weight-normal);
+                color: var(--color-text-secondary);
+                font-style: italic;
+              ">(required to confirm your changes)</span>
+            <% end %>
+            <div style="position: relative; max-width: 400px;">
+              <%= f.password_field :current_password, autocomplete: "current-password", style: "
+                display: block;
+                width: 100%;
+                border-radius: var(--radius-lg);
+                border: 1px solid var(--color-border);
+                padding: var(--space-16) var(--space-16);
+                color: var(--color-text);
+                background: var(--color-surface);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                box-shadow: 0 4px 12px rgba(var(--color-border-rgb), 0.1);
+                transition: all var(--duration-normal) var(--ease-standard);
+                font-size: var(--font-size-sm);
+                line-height: var(--line-height-normal);
+              " %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Actions Section -->
+      <div style="
+        background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      ">
+        <div style="
+          background: linear-gradient(135deg, rgba(13, 148, 136, 0.05) 0%, rgba(15, 118, 110, 0.03) 100%);
+          padding: var(--space-24);
+          border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+        ">
+          <div style="display: flex; align-items: center; gap: var(--space-16);">
+            <div style="
+              width: 48px;
+              height: 48px;
+              background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+            ">
+              <svg style="width: 24px; height: 24px; color: var(--color-text-inverse);" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 style="
+                font-size: var(--font-size-xl);
+                font-weight: var(--font-weight-black);
+                color: var(--color-text);
+                margin-bottom: var(--space-1);
+                line-height: var(--line-height-tight);
+              ">Account Actions</h3>
+              <p style="
+                font-size: var(--font-size-sm);
+                color: var(--color-text-secondary);
+                font-weight: var(--font-weight-medium);
+              ">Save your changes or manage your account</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding: var(--space-32);">
+          <!-- Update Button -->
+          <div style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: var(--space-16);
+            margin-bottom: var(--space-32);
+          ">
+            <%= f.submit "Update Account", class: "btn btn--primary", style: "
+              background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+              color: var(--color-text-inverse);
+              border: none;
+              box-shadow: 0 8px 32px rgba(13, 148, 136, 0.3);
+              transition: all var(--duration-normal) var(--ease-standard);
+              font-weight: var(--font-weight-black);
+              padding: var(--space-12) var(--space-24);
+            " %>
+
+            <%= link_to :back, class: "btn btn--outline", style: "
+              color: var(--color-text-secondary);
+              border: 1px solid var(--color-border);
+              background: var(--color-surface);
+              transition: all var(--duration-normal) var(--ease-standard);
+            " do %>
+              <svg style="width: 16px; height: 16px; margin-right: var(--space-2);" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+              </svg>
+              Cancel
+            <% end %>
+          </div>
+        </div>
+      </div>
     <% end %>
+
+    <!-- Danger Zone Section -->
+    <div style="
+      background: linear-gradient(135deg, rgba(var(--color-error-rgb), 0.02) 0%, rgba(var(--color-error-rgb), 0.01) 100%);
+      border: 1px solid rgba(var(--color-error-rgb), 0.2);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(var(--color-error-rgb), 0.1);
+    ">
+      <div style="
+        background: linear-gradient(135deg, rgba(var(--color-error-rgb), 0.05) 0%, rgba(var(--color-error-rgb), 0.02) 100%);
+        padding: var(--space-24);
+        border-bottom: 1px solid rgba(var(--color-error-rgb), 0.2);
+      ">
+        <div style="display: flex; align-items: center; gap: var(--space-16);">
+          <div style="
+            width: 48px;
+            height: 48px;
+            background: var(--color-error);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(var(--color-error-rgb), 0.3);
+          ">
+            <svg style="width: 24px; height: 24px; color: var(--color-text-inverse);" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+          </div>
+          <div>
+            <h3 style="
+              font-size: var(--font-size-xl);
+              font-weight: var(--font-weight-black);
+              color: var(--color-error);
+              margin-bottom: var(--space-1);
+              line-height: var(--line-height-tight);
+            ">Danger Zone</h3>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-error);
+              font-weight: var(--font-weight-medium);
+            ">Irreversible and destructive actions</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: var(--space-32);">
+        <div style="
+          background: rgba(var(--color-error-rgb), 0.05);
+          border: 1px solid rgba(var(--color-error-rgb), 0.2);
+          border-radius: var(--radius-lg);
+          padding: var(--space-24);
+        ">
+          <h4 style="
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-error);
+            margin-bottom: var(--space-3);
+          ">Delete Account</h4>
+          <p style="
+            font-size: var(--font-size-sm);
+            color: var(--color-error);
+            margin-bottom: var(--space-16);
+            line-height: var(--line-height-relaxed);
+          ">
+            Once you delete your account, there is no going back. This will permanently delete your account,
+            all your data, and remove your access to all services. Please be certain.
+          </p>
+
+          <%= button_to "Delete My Account", registration_path(resource_name),
+              method: :delete,
+              data: {
+                confirm: "Are you absolutely sure? This action cannot be undone and will permanently delete your account and all associated data.",
+                turbo_confirm: "Are you absolutely sure? This action cannot be undone and will permanently delete your account and all associated data."
+              },
+              style: "
+                background: var(--color-error);
+                color: var(--color-text-inverse);
+                border: none;
+                border-radius: var(--radius-base);
+                padding: var(--space-12) var(--space-20);
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+                cursor: pointer;
+                transition: all var(--duration-normal) var(--ease-standard);
+                box-shadow: 0 4px 12px rgba(var(--color-error-rgb), 0.3);
+              " %>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
 
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
+<!-- Premium Dark Teal Theme CSS and Dark Mode Enhancements -->
+<style>
+  /* Dark Teal Brand Color System */
+  :root {
+    --color-brand-primary: #0d9488;
+    --color-brand-primary-hover: #0f766e;
+    --color-brand-primary-rgb: 13, 148, 136;
+    --color-brand-secondary: #0f766e;
+    --color-brand-secondary-rgb: 15, 118, 110;
+  }
 
-  <div class="field">
-    <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-    <%= f.password_field :current_password, autocomplete: "current-password" %>
-  </div>
+  /* Enhanced hover effects for dark teal buttons */
+  .btn--primary:hover {
+    background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%) !important;
+    box-shadow: 0 12px 40px rgba(13, 148, 136, 0.4) !important;
+    transform: translateY(-2px);
+  }
 
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
+  /* Form field focus states with dark teal */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: rgba(13, 148, 136, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1) !important;
+  }
 
-<h3>Cancel my account</h3>
+  /* Dark mode enhancements for glass morphism */
+  @media (prefers-color-scheme: dark), [data-color-scheme="dark"] {
+    /* Enhanced glass morphism for dark mode */
+    .dashboard-content > div:first-child,
+    .dashboard-content > div:nth-child(2),
+    .dashboard-content > div:nth-child(3),
+    .dashboard-content > div:nth-child(4) {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.9) 0%, rgba(13, 148, 136, 0.08) 100%) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    }
 
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
+    /* Enhanced section headers for dark mode */
+    .dashboard-content div[style*="background: linear-gradient"] {
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(15, 118, 110, 0.05) 100%) !important;
+      border-bottom: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+    }
 
-<%= link_to "Back", :back %>
+    /* Enhanced text contrast for dark mode */
+    .dashboard-content h1,
+    .dashboard-content h2,
+    .dashboard-content h3 {
+      color: var(--color-text) !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Enhanced backdrop blur for dark mode */
+    .dashboard-content > div {
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+    }
+
+    /* Enhanced form fields for dark mode */
+    input,
+    textarea,
+    select {
+      background: rgba(var(--color-surface-rgb), 0.8) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      color: var(--color-text) !important;
+    }
+
+    /* Enhanced buttons for dark mode */
+    .btn--primary {
+      background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+      box-shadow: 0 8px 32px rgba(13, 148, 136, 0.4) !important;
+    }
+
+    .btn--outline {
+      background: rgba(var(--color-surface-rgb), 0.8) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      backdrop-filter: blur(10px) !important;
+    }
+
+    /* Enhanced icon containers for dark mode */
+    .dashboard-content div[style*="width: 48px"] {
+      background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+      box-shadow: 0 8px 16px rgba(13, 148, 136, 0.4) !important;
+    }
+  }
+
+  /* Responsive design enhancements */
+  @media (max-width: 768px) {
+    .dashboard-content {
+      padding: var(--space-16) !important;
+    }
+
+    .dashboard-content > div {
+      margin-bottom: var(--space-24) !important;
+    }
+
+    .dashboard-content h1 {
+      font-size: var(--font-size-2xl) !important;
+    }
+
+    .dashboard-content div[style*="display: flex"] {
+      flex-direction: column !important;
+      gap: var(--space-16) !important;
+    }
+
+    .dashboard-content div[style*="max-width: 400px"] {
+      max-width: 100% !important;
+    }
+  }
+
+  /* Enhanced transitions for smooth interactions */
+  .dashboard-content * {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Premium focus indicators */
+  .btn:focus,
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2) !important;
+  }
+
+  /* Enhanced validation message styling */
+  .field_with_errors input,
+  .field_with_errors textarea,
+  .field_with_errors select {
+    border-color: var(--color-error) !important;
+    box-shadow: 0 0 0 3px rgba(var(--color-error-rgb), 0.1) !important;
+  }
+
+  /* Success message styling with dark teal */
+  .alert-success,
+  .notice {
+    background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(15, 118, 110, 0.05) 100%) !important;
+    border: 1px solid rgba(13, 148, 136, 0.2) !important;
+    color: #0d9488 !important;
+  }
+</style>
+
+<style>
+  /* Premium form input enhancements */
+  input[type="email"]:focus,
+  input[type="password"]:focus {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1),
+                0 4px 12px rgba(var(--color-primary-rgb), 0.15) !important;
+    transform: translateY(-1px) !important;
+    outline: none !important;
+  }
+
+  input[type="email"]:hover,
+  input[type="password"]:hover {
+    border-color: rgba(var(--color-primary-rgb), 0.5) !important;
+    box-shadow: 0 6px 20px rgba(var(--color-border-rgb), 0.15) !important;
+  }
+
+  /* Button hover enhancements */
+  .btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(var(--color-primary-rgb), 0.25) !important;
+  }
+
+  .btn--outline:hover {
+    background: rgba(var(--color-primary-rgb), 0.05) !important;
+    border-color: var(--color-primary) !important;
+  }
+
+  /* Delete button hover */
+  button[data-turbo-confirm]:hover {
+    background: var(--color-error) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(var(--color-error-rgb), 0.4) !important;
+  }
+
+  /* Header back button hover */
+  a[href]:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark), [data-color-scheme="dark"] {
+    input[type="email"],
+    input[type="password"] {
+      background: rgba(var(--color-surface-rgb), 0.8) !important;
+      border-color: rgba(var(--color-border-rgb), 0.4) !important;
+      color: var(--color-text) !important;
+    }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .btn:hover {
+      transform: translateY(-1px) !important;
+    }
+
+    button[data-turbo-confirm]:hover {
+      transform: translateY(-1px) !important;
+    }
+  }
+
+  /* Enhanced error message styling */
+  .alert {
+    background: linear-gradient(135deg, rgba(var(--color-error-rgb), 0.05) 0%, rgba(var(--color-error-rgb), 0.02) 100%) !important;
+    border: 1px solid rgba(var(--color-error-rgb), 0.2) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: var(--space-16) !important;
+    margin-bottom: var(--space-24) !important;
+    color: var(--color-error) !important;
+  }
+
+  /* Form validation styling */
+  .field_with_errors input {
+    border-color: var(--color-error) !important;
+    box-shadow: 0 0 0 3px rgba(var(--color-error-rgb), 0.1) !important;
+  }
+
+  /* Success message styling */
+  .notice {
+    background: linear-gradient(135deg, rgba(var(--color-success-rgb), 0.05) 0%, rgba(var(--color-success-rgb), 0.02) 100%) !important;
+    border: 1px solid rgba(var(--color-success-rgb), 0.2) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: var(--space-16) !important;
+    margin-bottom: var(--space-24) !important;
+    color: var(--color-success) !important;
+  }
+</style>

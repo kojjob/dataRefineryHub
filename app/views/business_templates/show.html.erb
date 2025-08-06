@@ -2,47 +2,183 @@
   <!-- Template Overview Section -->
   <section class="content-section active" id="template-overview">
 
-    <!-- Template Header -->
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <%= link_to business_templates_path, class: "btn btn--outline btn--sm inline-flex items-center gap-2 mb-4" do %>
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to Templates
-        <% end %>
-        <div class="flex items-center gap-4 mb-2">
-          <div class="text-4xl"><%= @template[:icon] %></div>
-          <div>
-            <h1 class="text-2xl font-bold" style="color: var(--color-text);"><%= @template[:name] %> Template</h1>
-            <p style="color: var(--color-text-secondary);"><%= @template[:description] %></p>
-          </div>
-        </div>
-        <div class="flex items-center gap-4 mt-3">
-          <div class="flex items-center gap-2 px-3 py-1 rounded-full" style="background: rgba(255, 255, 255, 0.1);">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--color-text-secondary);">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <!-- Executive Template Header with Premium Glass Morphism -->
+    <div style="
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(var(--color-primary-rgb), 0.05) 100%);
+      backdrop-filter: blur(var(--blur-lg, 20px));
+      -webkit-backdrop-filter: blur(var(--blur-lg, 20px));
+      border: 1px solid rgba(var(--color-border-rgb), 0.2);
+      border-radius: var(--radius-xl);
+      padding: var(--space-32);
+      margin-bottom: var(--space-32);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+    ">
+      <!-- Premium Background Pattern -->
+      <div style="
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(50%, -50%);
+      "></div>
+
+      <div style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        z-index: 1;
+      ">
+        <div>
+          <%= link_to business_templates_path, class: "btn btn--outline btn--sm", style: "
+            background: rgba(var(--color-surface-rgb), 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(var(--color-border-rgb), 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-8);
+            margin-bottom: var(--space-16);
+          " do %>
+            <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
-            <span class="text-sm" style="color: var(--color-text-secondary);">Setup: <%= @template[:setup_time] %></span>
-          </div>
-          <div class="flex items-center gap-2 px-3 py-1 rounded-full" style="background: rgba(255, 255, 255, 0.1);">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--color-text-secondary);">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span class="text-sm" style="color: var(--color-text-secondary);">Complexity: <%= @template[:complexity] %></span>
-          </div>
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <% if @applied_template.blank? %>
-          <%= form_with url: apply_business_template_path(@template[:id]), method: :post, local: true, class: "inline" do |form| %>
-            <%= form.submit "Apply Template", class: "btn btn--primary" %>
+            Back to Templates
           <% end %>
-        <% else %>
-          <span class="px-4 py-2 rounded-lg text-sm font-medium" style="background-color: var(--color-success-light); color: var(--color-success);">
-            Template Applied
-          </span>
-        <% end %>
+
+          <div style="
+            display: flex;
+            align-items: center;
+            gap: var(--space-20);
+            margin-bottom: var(--space-16);
+          ">
+            <div style="
+              width: 80px;
+              height: 80px;
+              background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+              border-radius: var(--radius-xl);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 12px 24px rgba(var(--color-primary-rgb), 0.3);
+              font-size: 2.5rem;
+            "><%= @template[:icon] %></div>
+            <div>
+              <h1 style="
+                font-size: var(--font-size-3xl);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                margin: 0 0 var(--space-8) 0;
+                line-height: var(--line-height-tight);
+              "><%= @template[:name] %> Template</h1>
+              <p style="
+                font-size: var(--font-size-lg);
+                color: var(--color-text-secondary);
+                margin: 0;
+                font-weight: var(--font-weight-medium);
+              "><%= @template[:description] %></p>
+            </div>
+          </div>
+
+          <!-- Enhanced Template Metadata -->
+          <div style="display: flex; align-items: center; gap: var(--space-16);">
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-8);
+              padding: var(--space-8) var(--space-16);
+              background: rgba(var(--color-info-rgb), 0.1);
+              border: 1px solid rgba(var(--color-info-rgb), 0.2);
+              border-radius: var(--radius-full);
+            ">
+              <svg style="width: 16px; height: 16px; color: var(--color-info);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-info);
+              ">Setup: <%= @template[:setup_time] %></span>
+            </div>
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-8);
+              padding: var(--space-8) var(--space-16);
+              background: rgba(var(--color-success-rgb), 0.1);
+              border: 1px solid rgba(var(--color-success-rgb), 0.2);
+              border-radius: var(--radius-full);
+            ">
+              <svg style="width: 16px; height: 16px; color: var(--color-success);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-success);
+              ">Complexity: <%= @template[:complexity] %></span>
+            </div>
+          </div>
+        </div>
+        <!-- Premium Executive Actions -->
+        <div style="
+          display: flex;
+          align-items: center;
+          gap: var(--space-12);
+          position: relative;
+          z-index: 1;
+        ">
+          <% if @applied_template.blank? %>
+            <%= form_with url: apply_business_template_path(@template[:id]), method: :post, local: true, class: "inline" do |form| %>
+              <%= form.submit "Apply Template", class: "btn btn--primary", style: "
+                background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+                box-shadow: 0 8px 16px rgba(var(--color-primary-rgb), 0.3);
+                display: inline-flex;
+                align-items: center;
+                gap: var(--space-8);
+                padding: var(--space-16) var(--space-24);
+                font-size: var(--font-size-lg);
+                font-weight: var(--font-weight-bold);
+              " %>
+            <% end %>
+          <% else %>
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-8);
+              padding: var(--space-12) var(--space-20);
+              background: rgba(var(--color-success-rgb), 0.1);
+              border: 1px solid rgba(var(--color-success-rgb), 0.2);
+              border-radius: var(--radius-lg);
+              font-size: var(--font-size-sm);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-success);
+            ">
+              <svg style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Template Applied
+            </div>
+          <% end %>
+
+          <button class="btn btn--outline" style="
+            background: rgba(var(--color-surface-rgb), 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(var(--color-border-rgb), 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-8);
+          ">
+            <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
+            </svg>
+            Share Template
+          </button>
+        </div>
       </div>
     </div>
 
@@ -449,3 +585,79 @@
     </div>
   </section>
 </div>
+
+<!-- Premium CSS Animations and Dark Mode Enhancements -->
+<style>
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* Enhanced hover effects for template elements */
+  .executive-template-details-header [onmouseover] {
+    cursor: pointer;
+  }
+
+  /* Dark mode enhancements for glass morphism */
+  @media (prefers-color-scheme: dark), [data-color-scheme="dark"] {
+    /* Enhanced glass morphism for dark mode */
+    .executive-template-details-header,
+    .metric-card,
+    .chart-container {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.9) 0%, rgba(var(--color-primary-rgb), 0.08) 100%) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Enhanced text contrast for dark mode */
+    .executive-template-details-header h1,
+    .metric-card h3,
+    .chart-container h3 {
+      color: var(--color-text) !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Enhanced backdrop blur for dark mode */
+    .executive-template-details-header,
+    .metric-card,
+    .chart-container {
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+    }
+
+    /* Enhanced status indicators for dark mode */
+    .executive-template-details-header [style*="pulse"] {
+      box-shadow: 0 0 8px rgba(var(--color-success-rgb), 0.6) !important;
+    }
+
+    /* Enhanced feature cards for dark mode */
+    .chart-container .space-y-3 > div {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(var(--color-surface-rgb), 0.95) 100%) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+    }
+  }
+
+  /* Responsive design for template details */
+  @media (max-width: 768px) {
+    .executive-template-details-header > div {
+      flex-direction: column !important;
+      gap: var(--space-24) !important;
+    }
+
+    .executive-template-details-header h1 {
+      font-size: var(--font-size-2xl) !important;
+    }
+
+    .metrics-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .charts-section {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>

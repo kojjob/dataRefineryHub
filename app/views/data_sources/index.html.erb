@@ -941,52 +941,441 @@
       </div>
     <% end %>
 
-  <!-- Popular Integrations -->
-  <div class="integrations-section">
-    <h2 class="section-title">Popular Integrations</h2>
-    <div class="integrations-grid">
-      <% [
-        { name: 'Shopify', type: 'shopify', icon: '🛍️', description: 'E-commerce platform', color: 'primary' },
-        { name: 'Stripe', type: 'stripe', icon: '💳', description: 'Payment processing', color: 'purple' },
-        { name: 'QuickBooks', type: 'quickbooks', icon: '📊', description: 'Accounting software', color: 'blue' },
-        { name: 'Google Analytics', type: 'google_analytics', icon: '📈', description: 'Web analytics', color: 'orange' },
-        { name: 'Mailchimp', type: 'mailchimp', icon: '📧', description: 'Email marketing', color: 'yellow' },
-        { name: 'HubSpot', type: 'hubspot', icon: '🎯', description: 'CRM & Marketing', color: 'red', coming_soon: true },
-        { name: 'Salesforce', type: 'salesforce', icon: '☁️', description: 'Customer CRM', color: 'blue', coming_soon: true },
-        { name: 'Amazon', type: 'amazon', icon: '📦', description: 'E-commerce marketplace', color: 'orange', coming_soon: true }
-      ].each do |integration| %>
-        <div class="integration-card <%= 'coming-soon' if integration[:coming_soon] %>" data-integration="<%= integration[:type] %>">
-          <div class="card-header">
-            <div class="icon-wrapper <%= integration[:color] %>">
-              <span class="icon"><%= integration[:icon] %></span>
-            </div>
-            <% if integration[:coming_soon] %>
-              <span class="coming-soon-badge">Coming Soon</span>
-            <% end %>
-          </div>
-          <div class="card-content">
-            <h3><%= integration[:name] %></h3>
-            <p><%= integration[:description] %></p>
-          </div>
-          <div class="card-footer">
-            <% if integration[:coming_soon] %>
-              <button class="btn btn--outline" disabled>Coming Soon</button>
-            <% else %>
-              <%= link_to "Connect", new_data_source_path(source_type: integration[:type]), 
-                  class: "btn btn--primary" %>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
+    <!-- Executive Popular Integrations Marketplace -->
+    <div class="executive-popular-integrations-section" style="
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(var(--color-success-rgb), 0.02) 100%);
+      border: 1px solid rgba(var(--color-border-rgb), 0.2);
+      border-radius: var(--radius-xl);
+      padding: var(--space-32);
+      margin-bottom: var(--space-48);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+    ">
+      <!-- Background Pattern -->
+      <div style="
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(var(--color-success-rgb), 0.05) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(50%, -50%);
+      "></div>
 
-  <!-- More Integrations Coming Soon -->
-  <div class="more-integrations">
-    <div class="more-content">
-      <h3>Can't find what you're looking for?</h3>
-      <p>We're constantly adding new integrations. Let us know what you need!</p>
-      <button class="btn btn--outline">Request Integration</button>
+      <div style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-32);
+        position: relative;
+        z-index: 1;
+      ">
+        <h2 style="
+          font-size: var(--font-size-2xl);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text);
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: var(--space-12);
+        ">
+          <div style="
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--color-success) 0%, rgba(var(--color-success-rgb), 0.8) 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(var(--color-success-rgb), 0.3);
+          ">
+            <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          Popular Integrations
+        </h2>
+        <div style="
+          display: flex;
+          align-items: center;
+          gap: var(--space-8);
+          padding: var(--space-8) var(--space-16);
+          background: rgba(var(--color-success-rgb), 0.1);
+          border: 1px solid rgba(var(--color-success-rgb), 0.2);
+          border-radius: var(--radius-full);
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-medium);
+          color: var(--color-success);
+        ">
+          <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+          </svg>
+          200+ Available
+        </div>
+      </div>
+
+      <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: var(--space-24);
+        position: relative;
+        z-index: 1;
+      ">
+        <% [
+          { name: 'Shopify', type: 'shopify', icon: '🛍️', description: 'E-commerce platform', category: 'E-commerce' },
+          { name: 'Stripe', type: 'stripe', icon: '💳', description: 'Payment processing', category: 'Payments' },
+          { name: 'QuickBooks', type: 'quickbooks', icon: '📊', description: 'Accounting software', category: 'Finance' },
+          { name: 'Google Analytics', type: 'google_analytics', icon: '📈', description: 'Web analytics', category: 'Analytics' },
+          { name: 'Mailchimp', type: 'mailchimp', icon: '📧', description: 'Email marketing', category: 'Marketing' },
+          { name: 'HubSpot', type: 'hubspot', icon: '🎯', description: 'CRM & Marketing', category: 'CRM', coming_soon: true },
+          { name: 'Salesforce', type: 'salesforce', icon: '☁️', description: 'Customer CRM', category: 'CRM', coming_soon: true },
+          { name: 'Amazon', type: 'amazon', icon: '📦', description: 'E-commerce marketplace', category: 'E-commerce', coming_soon: true }
+        ].each do |integration| %>
+          <% is_connected = @data_sources&.any? { |ds| ds.source_type == integration[:type] } %>
+          <div data-integration="<%= integration[:type] %>" style="
+            background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+            border: 1px solid rgba(var(--color-border-rgb), 0.3);
+            border-radius: var(--radius-xl);
+            padding: var(--space-24);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+          " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 32px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            <!-- Status indicator background -->
+            <div style="
+              position: absolute;
+              top: 0;
+              right: 0;
+              width: 80px;
+              height: 80px;
+              background: linear-gradient(135deg, rgba(<%= is_connected ? 'var(--color-success-rgb)' : integration[:coming_soon] ? 'var(--color-warning-rgb)' : 'var(--color-primary-rgb)' %>, 0.1) 0%, transparent 100%);
+              border-radius: 0 var(--radius-xl) 0 100%;
+            "></div>
+
+            <!-- Integration Header -->
+            <div style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: var(--space-16);
+              position: relative;
+              z-index: 1;
+            ">
+              <div style="display: flex; align-items: center; gap: var(--space-16);">
+                <div style="
+                  width: 48px;
+                  height: 48px;
+                  background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+                  border-radius: var(--radius-lg);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: var(--font-size-xl);
+                  box-shadow: 0 6px 12px rgba(var(--color-primary-rgb), 0.3);
+                ">
+                  <%= integration[:icon] %>
+                </div>
+                <div>
+                  <h3 style="
+                    font-size: var(--font-size-lg);
+                    font-weight: var(--font-weight-bold);
+                    color: var(--color-text);
+                    margin: 0 0 var(--space-4) 0;
+                  "><%= integration[:name] %></h3>
+                  <p style="
+                    font-size: var(--font-size-sm);
+                    color: var(--color-text-secondary);
+                    margin: 0;
+                  "><%= integration[:description] %></p>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: var(--space-8); align-items: flex-end;">
+                <% if integration[:coming_soon] %>
+                  <div style="
+                    padding: var(--space-4) var(--space-8);
+                    background: rgba(var(--color-warning-rgb), 0.1);
+                    border: 1px solid rgba(var(--color-warning-rgb), 0.2);
+                    border-radius: var(--radius-full);
+                    font-size: var(--font-size-xs);
+                    font-weight: var(--font-weight-medium);
+                    color: var(--color-warning);
+                  ">Coming Soon</div>
+                <% end %>
+                <% if is_connected %>
+                  <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-4);
+                    padding: var(--space-4) var(--space-8);
+                    background: rgba(var(--color-success-rgb), 0.1);
+                    border: 1px solid rgba(var(--color-success-rgb), 0.2);
+                    border-radius: var(--radius-full);
+                    font-size: var(--font-size-xs);
+                    font-weight: var(--font-weight-medium);
+                    color: var(--color-success);
+                  ">
+                    <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Connected
+                  </div>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Category Tag -->
+            <div style="margin-bottom: var(--space-20);">
+              <span style="
+                padding: var(--space-6) var(--space-12);
+                background: rgba(var(--color-info-rgb), 0.1);
+                border: 1px solid rgba(var(--color-info-rgb), 0.2);
+                border-radius: var(--radius-lg);
+                font-size: var(--font-size-xs);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-info);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+              "><%= integration[:category] %></span>
+            </div>
+
+            <!-- Integration Actions -->
+            <div style="position: relative; z-index: 1;">
+              <% if is_connected %>
+                <% connected_source = @data_sources.find { |ds| ds.source_type == integration[:type] } %>
+                <%= link_to data_source_path(connected_source), class: "btn btn--outline", style: "
+                  background: rgba(var(--color-surface-rgb), 0.8);
+                  backdrop-filter: blur(10px);
+                  border: 1px solid rgba(var(--color-success-rgb), 0.3);
+                  color: var(--color-success);
+                  display: inline-flex;
+                  align-items: center;
+                  gap: var(--space-8);
+                  width: 100%;
+                  justify-content: center;
+                " do %>
+                  <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  Manage Integration
+                <% end %>
+              <% elsif integration[:coming_soon] %>
+                <button disabled class="btn btn--outline" style="
+                  background: rgba(var(--color-surface-rgb), 0.5);
+                  border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                  color: var(--color-text-secondary);
+                  display: inline-flex;
+                  align-items: center;
+                  gap: var(--space-8);
+                  width: 100%;
+                  justify-content: center;
+                  cursor: not-allowed;
+                  opacity: 0.6;
+                ">
+                  <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Coming Soon
+                </button>
+              <% else %>
+                <%= link_to new_data_source_path(source_type: integration[:type]), class: "btn btn--primary", style: "
+                  background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+                  box-shadow: 0 4px 8px rgba(var(--color-primary-rgb), 0.3);
+                  display: inline-flex;
+                  align-items: center;
+                  gap: var(--space-8);
+                  width: 100%;
+                  justify-content: center;
+                " do %>
+                  <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  Connect Now
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
     </div>
-  </div>
+
+    <!-- Executive Request Integration CTA -->
+    <div class="executive-request-integration-section" style="
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(var(--color-info-rgb), 0.02) 100%);
+      border: 1px solid rgba(var(--color-border-rgb), 0.2);
+      border-radius: var(--radius-xl);
+      padding: var(--space-32);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    ">
+      <!-- Background Pattern -->
+      <div style="
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(var(--color-info-rgb), 0.05) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+      "></div>
+
+      <div style="position: relative; z-index: 1;">
+        <h3 style="
+          font-size: var(--font-size-xl);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text);
+          margin: 0 0 var(--space-16) 0;
+        ">Can't find what you're looking for?</h3>
+        <p style="
+          font-size: var(--font-size-lg);
+          color: var(--color-text-secondary);
+          margin: 0 0 var(--space-24) 0;
+          max-width: 500px;
+          margin-left: auto;
+          margin-right: auto;
+        ">We're constantly adding new integrations. Let us know what you need and we'll prioritize it for development.</p>
+        <button class="btn btn--outline" style="
+          background: rgba(var(--color-surface-rgb), 0.8);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+          display: inline-flex;
+          align-items: center;
+          gap: var(--space-8);
+          padding: var(--space-16) var(--space-24);
+          font-size: var(--font-size-lg);
+        ">
+          <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          Request Integration
+        </button>
+      </div>
+    </div>
+  </section>
 </div>
+
+<!-- Premium CSS Animations and Enhancements -->
+<style>
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Enhanced hover effects for integration cards */
+  .executive-popular-integrations-section [onmouseover] {
+    cursor: pointer;
+  }
+
+  /* Responsive design for integration sections */
+  @media (max-width: 768px) {
+    .executive-integration-header > div {
+      flex-direction: column !important;
+      gap: var(--space-24) !important;
+    }
+
+    .executive-integration-controls {
+      width: 100% !important;
+    }
+
+    .executive-integration-controls > div:first-child {
+      min-width: 100% !important;
+    }
+
+    .executive-integration-metrics-section > div:last-child {
+      grid-template-columns: 1fr !important;
+    }
+
+    .executive-connected-integrations-section > div:last-child {
+      grid-template-columns: 1fr !important;
+    }
+
+    .executive-popular-integrations-section > div:last-child {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* Dark mode enhancements for glass morphism */
+  @media (prefers-color-scheme: dark), [data-color-scheme="dark"] {
+    /* Enhanced glass morphism for dark mode */
+    .executive-integration-header,
+    .executive-integration-metrics-section,
+    .executive-connected-integrations-section,
+    .executive-empty-state-section,
+    .executive-popular-integrations-section,
+    .executive-request-integration-section {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.9) 0%, rgba(var(--color-primary-rgb), 0.08) 100%) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Enhanced integration cards for dark mode */
+    .executive-integration-metrics-section > div:last-child > div,
+    .executive-connected-integrations-section > div:last-child > div,
+    .executive-popular-integrations-section > div:last-child > div {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(var(--color-primary-rgb), 0.05) 100%) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+    }
+
+    /* Enhanced text contrast for dark mode */
+    .executive-integration-header h1,
+    .executive-integration-metrics-section h2,
+    .executive-connected-integrations-section h2,
+    .executive-popular-integrations-section h2 {
+      color: var(--color-text) !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Enhanced backdrop blur for dark mode */
+    .executive-integration-header,
+    .executive-integration-metrics-section,
+    .executive-connected-integrations-section,
+    .executive-empty-state-section,
+    .executive-popular-integrations-section,
+    .executive-request-integration-section {
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+    }
+
+    /* Enhanced status indicators for dark mode */
+    .executive-integration-metrics-section [style*="pulse"],
+    .executive-connected-integrations-section [style*="pulse"] {
+      box-shadow: 0 0 8px rgba(var(--color-success-rgb), 0.6) !important;
+    }
+
+    /* Enhanced search input for dark mode */
+    .executive-integration-controls input {
+      background: rgba(var(--color-surface-rgb), 0.9) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      color: var(--color-text) !important;
+    }
+
+    .executive-integration-controls input::placeholder {
+      color: rgba(var(--color-text-secondary-rgb), 0.7) !important;
+    }
+  }
+</style>

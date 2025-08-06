@@ -26,8 +26,8 @@ class Pipeline < ApplicationRecord
   # Validations
   validates :name, presence: true, uniqueness: { scope: :organization_id }
   validates :pipeline_type, presence: true
-  validates :source_config, presence: true
-  validates :destination_config, presence: true
+  validates :source_config, presence: true, unless: :draft?
+  validates :destination_config, presence: true, unless: :draft?
 
   # Scopes
   scope :active, -> { where(status: "active") }

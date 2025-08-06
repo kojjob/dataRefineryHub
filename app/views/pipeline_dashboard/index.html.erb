@@ -1,275 +1,1588 @@
-<% content_for :page_title, "Pipeline Control Center" %>
-<% content_for :page_subtitle, "Real-time ETL monitoring and orchestration" %>
+<% content_for :page_title, "Executive Pipeline Control Center" %>
+<% content_for :page_subtitle, "Real-time ETL monitoring and orchestration with premium analytics" %>
 
-<!-- Pipeline Dashboard -->
-<div class="pipeline-dashboard" data-controller="pipeline-dashboard">
-  <!-- Performance Overview -->
-  <div class="performance-overview">
-    <div class="performance-grid">
-      <!-- Total Pipelines -->
-      <div class="performance-card">
-        <div class="performance-icon">
-          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-          </svg>
-        </div>
-        <div class="performance-content">
-          <p class="performance-label">Total Pipelines</p>
-          <p class="performance-value"><%= @statistics[:total_pipelines] %></p>
-          <div class="performance-trend">
-            <span class="trend-text">All configured pipelines</span>
-          </div>
-        </div>
-      </div>
+<!-- Executive Pipeline Dashboard with Premium Design System -->
+<div class="dashboard-content">
+  <!-- Executive Pipeline Header with Premium Dark Teal Glass Morphism -->
+  <div style="
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-32);
+    margin-bottom: var(--space-32);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(13, 148, 136, 0.3);
+  ">
+    <!-- Premium Background Pattern -->
+    <div style="
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(50%, -50%);
+    "></div>
 
-      <!-- Running Pipelines -->
-      <div class="performance-card active">
-        <div class="performance-icon running">
-          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        </div>
-        <div class="performance-content">
-          <p class="performance-label">Running Now</p>
-          <p class="performance-value"><%= @statistics[:running_pipelines] %></p>
-          <div class="performance-trend positive">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+    <div style="
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    ">
+      <div>
+        <h1 style="
+          font-size: var(--font-size-4xl);
+          font-weight: var(--font-weight-bold);
+          color: white;
+          margin: 0 0 var(--space-8) 0;
+          line-height: var(--line-height-tight);
+          display: flex;
+          align-items: center;
+          gap: var(--space-16);
+        ">
+          <div style="
+            width: 64px;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+          ">
+            <svg style="width: 32px; height: 32px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
-            <span class="trend-text">Active pipelines</span>
           </div>
-        </div>
-        <div class="live-indicator">
-          <span class="live-dot"></span>
-          LIVE
-        </div>
+          Pipeline Control Center
+        </h1>
+        <p style="
+          font-size: var(--font-size-lg);
+          color: rgba(255, 255, 255, 0.9);
+          margin: 0;
+          font-weight: var(--font-weight-medium);
+        ">Real-time ETL monitoring and orchestration with premium analytics</p>
       </div>
 
-      <!-- Success Rate -->
-      <div class="performance-card">
-        <div class="performance-icon success">
-          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <div class="performance-content">
-          <p class="performance-label">Success Rate</p>
-          <p class="performance-value"><%= @statistics[:success_rate] %>%</p>
-          <div class="performance-trend <%= @statistics[:success_rate] >= 95 ? 'positive' : 'warning' %>">
-            <span class="trend-text">Last 24 hours</span>
-          </div>
-        </div>
-        <div class="performance-chart">
-          <canvas id="successRateChart" width="80" height="40"></canvas>
-        </div>
-      </div>
-
-      <!-- Average Duration -->
-      <div class="performance-card">
-        <div class="performance-icon">
-          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <div class="performance-content">
-          <p class="performance-label">Avg Duration</p>
-          <p class="performance-value"><%= @statistics[:average_duration] %></p>
-          <div class="performance-trend">
-            <span class="trend-text">Per pipeline run</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Active Pipelines Monitor -->
-  <div class="active-pipelines-monitor">
-    <div class="monitor-header">
-      <h2>Active Pipeline Executions</h2>
-      <div class="monitor-controls">
-        <button class="btn btn--sm btn--outline" data-action="click->pipeline-dashboard#refreshPipelines">
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      <!-- Premium Action Buttons -->
+      <div style="display: flex; align-items: center; gap: var(--space-12);">
+        <button class="btn btn--outline" style="
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          color: white;
+          backdrop-filter: blur(10px);
+        ">
+          <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
           Refresh
         </button>
-        <button class="btn btn--primary">
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        <button class="btn btn--primary" style="
+          background: rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          color: white;
+          backdrop-filter: blur(10px);
+        ">
+          <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
           </svg>
           New Pipeline
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- Executive Performance Overview -->
+  <div style="
+    background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(13, 148, 136, 0.02) 100%);
+    border: 1px solid rgba(var(--color-border-rgb), 0.2);
+    border-radius: var(--radius-xl);
+    padding: var(--space-32);
+    margin-bottom: var(--space-32);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  ">
+    <h2 style="
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      margin: 0 0 var(--space-24) 0;
+    ">Performance Overview</h2>
+
+    <div style="
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-24);
+    ">
+      <!-- Total Pipelines Metric -->
+      <div style="
+        background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(13, 148, 136, 0.05) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-lg);
+        padding: var(--space-24);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div style="
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, transparent 100%);
+          border-radius: 0 var(--radius-lg) 0 100%;
+        "></div>
+
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div style="flex: 1;">
+            <div style="
+              width: 48px;
+              height: 48px;
+              background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: var(--space-16);
+              box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+            ">
+              <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+              </svg>
+            </div>
+            <h3 style="
+              font-size: var(--font-size-sm);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-text-secondary);
+              margin: 0 0 var(--space-4) 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            ">Total Pipelines</h3>
+            <p style="
+              font-size: var(--font-size-3xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              font-variant-numeric: tabular-nums;
+            "><%= @statistics[:total_pipelines] || 0 %></p>
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+              font-size: var(--font-size-xs);
+              color: var(--color-text-secondary);
+            ">
+              <span>All configured pipelines</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Running Pipelines Metric with Live Indicator -->
+      <div style="
+        background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(13, 148, 136, 0.05) 100%);
+        border: 1px solid rgba(13, 148, 136, 0.3);
+        border-radius: var(--radius-lg);
+        padding: var(--space-24);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);
+      " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(13, 148, 136, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(13, 148, 136, 0.2)'">
+        <div style="
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, rgba(13, 148, 136, 0.2) 0%, transparent 100%);
+          border-radius: 0 var(--radius-lg) 0 100%;
+        "></div>
+
+        <!-- Live Indicator -->
+        <div style="
+          position: absolute;
+          top: var(--space-16);
+          right: var(--space-16);
+          display: flex;
+          align-items: center;
+          gap: var(--space-6);
+          padding: var(--space-4) var(--space-8);
+          background: rgba(13, 148, 136, 0.1);
+          border: 1px solid rgba(13, 148, 136, 0.3);
+          border-radius: var(--radius-full);
+          font-size: var(--font-size-xs);
+          font-weight: var(--font-weight-bold);
+          color: #0d9488;
+        ">
+          <div style="
+            width: 6px;
+            height: 6px;
+            background: #0d9488;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+          "></div>
+          LIVE
+        </div>
+
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div style="flex: 1;">
+            <div style="
+              width: 48px;
+              height: 48px;
+              background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: var(--space-16);
+              box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+              animation: pulse 3s infinite;
+            ">
+              <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <h3 style="
+              font-size: var(--font-size-sm);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-text-secondary);
+              margin: 0 0 var(--space-4) 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            ">Running Now</h3>
+            <p style="
+              font-size: var(--font-size-3xl);
+              font-weight: var(--font-weight-bold);
+              color: #0d9488;
+              margin: 0 0 var(--space-8) 0;
+              font-variant-numeric: tabular-nums;
+            "><%= @statistics[:running_pipelines] || 0 %></p>
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+              font-size: var(--font-size-xs);
+              color: #0d9488;
+            ">
+              <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+              </svg>
+              <span>Active pipelines</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Rate Metric -->
+      <div style="
+        background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(34, 197, 94, 0.05) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-lg);
+        padding: var(--space-24);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div style="
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, transparent 100%);
+          border-radius: 0 var(--radius-lg) 0 100%;
+        "></div>
+
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div style="flex: 1;">
+            <div style="
+              width: 48px;
+              height: 48px;
+              background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: var(--space-16);
+              box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+            ">
+              <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <h3 style="
+              font-size: var(--font-size-sm);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-text-secondary);
+              margin: 0 0 var(--space-4) 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            ">Success Rate</h3>
+            <p style="
+              font-size: var(--font-size-3xl);
+              font-weight: var(--font-weight-bold);
+              color: <%= (@statistics[:success_rate] || 0) >= 95 ? '#22c55e' : '#f59e0b' %>;
+              margin: 0 0 var(--space-8) 0;
+              font-variant-numeric: tabular-nums;
+            "><%= (@statistics[:success_rate] || 0).round(1) %>%</p>
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+              font-size: var(--font-size-xs);
+              color: var(--color-text-secondary);
+            ">
+              <% if (@statistics[:success_rate] || 0) >= 95 %>
+                <svg style="width: 12px; height: 12px; color: #22c55e;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+              <% else %>
+                <svg style="width: 12px; height: 12px; color: #f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+              <% end %>
+              <span>Last 24 hours</span>
+            </div>
+          </div>
+          <div style="
+            width: 60px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">
+            <canvas id="successRateChart" width="50" height="30" style="max-width: 50px; max-height: 30px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Average Duration Metric -->
+      <div style="
+        background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(96, 165, 250, 0.05) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-lg);
+        padding: var(--space-24);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div style="
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, rgba(96, 165, 250, 0.1) 0%, transparent 100%);
+          border-radius: 0 var(--radius-lg) 0 100%;
+        "></div>
+
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div style="flex: 1;">
+            <div style="
+              width: 48px;
+              height: 48px;
+              background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: var(--space-16);
+              box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+            ">
+              <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <h3 style="
+              font-size: var(--font-size-sm);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-text-secondary);
+              margin: 0 0 var(--space-4) 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            ">Avg Duration</h3>
+            <p style="
+              font-size: var(--font-size-3xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              font-variant-numeric: tabular-nums;
+            "><%= @statistics[:average_duration] || "0m" %></p>
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+              font-size: var(--font-size-xs);
+              color: var(--color-text-secondary);
+            ">
+              <span>Per pipeline run</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Throughput Metric -->
+      <div style="
+        background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(168, 85, 247, 0.05) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-lg);
+        padding: var(--space-24);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div style="
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, transparent 100%);
+          border-radius: 0 var(--radius-lg) 0 100%;
+        "></div>
+
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div style="flex: 1;">
+            <div style="
+              width: 48px;
+              height: 48px;
+              background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: var(--space-16);
+              box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+            ">
+              <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+              </svg>
+            </div>
+            <h3 style="
+              font-size: var(--font-size-sm);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-text-secondary);
+              margin: 0 0 var(--space-4) 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            ">Data Throughput</h3>
+            <p style="
+              font-size: var(--font-size-3xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              font-variant-numeric: tabular-nums;
+            "><%= number_to_human_size((@statistics[:data_throughput] || 0), precision: 1) %>/h</p>
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+              font-size: var(--font-size-xs);
+              color: var(--color-text-secondary);
+            ">
+              <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+              </svg>
+              <span>Hourly average</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Rate Metric -->
+      <div style="
+        background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(248, 113, 113, 0.05) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-lg);
+        padding: var(--space-24);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div style="
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, rgba(248, 113, 113, 0.1) 0%, transparent 100%);
+          border-radius: 0 var(--radius-lg) 0 100%;
+        "></div>
+
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div style="flex: 1;">
+            <div style="
+              width: 48px;
+              height: 48px;
+              background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: var(--space-16);
+              box-shadow: 0 4px 12px rgba(248, 113, 113, 0.3);
+            ">
+              <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+            </div>
+            <h3 style="
+              font-size: var(--font-size-sm);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-text-secondary);
+              margin: 0 0 var(--space-4) 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            ">Error Rate</h3>
+            <p style="
+              font-size: var(--font-size-3xl);
+              font-weight: var(--font-weight-bold);
+              color: <%= (@statistics[:error_rate] || 0) > 5 ? '#ef4444' : '#22c55e' %>;
+              margin: 0 0 var(--space-8) 0;
+              font-variant-numeric: tabular-nums;
+            "><%= (@statistics[:error_rate] || 0).round(1) %>%</p>
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+              font-size: var(--font-size-xs);
+              color: var(--color-text-secondary);
+            ">
+              <% if (@statistics[:error_rate] || 0) <= 5 %>
+                <svg style="width: 12px; height: 12px; color: #22c55e;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              <% else %>
+                <svg style="width: 12px; height: 12px; color: #ef4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              <% end %>
+              <span>Last 24 hours</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Executive Active Pipeline Executions -->
+  <div style="
+    background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(13, 148, 136, 0.02) 100%);
+    border: 1px solid rgba(var(--color-border-rgb), 0.2);
+    border-radius: var(--radius-xl);
+    padding: var(--space-32);
+    margin-bottom: var(--space-32);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  " data-controller="pipeline-monitor" data-pipeline-monitor-auto-refresh-value="true">
+    <div style="
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-24);
+    ">
+      <div>
+        <h2 style="
+          font-size: var(--font-size-2xl);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text);
+          margin: 0 0 var(--space-8) 0;
+          display: flex;
+          align-items: center;
+          gap: var(--space-12);
+        ">
+          <div style="
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+          ">
+            <svg style="width: 20px; height: 20px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          Active Pipeline Executions
+          <% if @pipeline_executions.any? %>
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-6);
+              padding: var(--space-4) var(--space-8);
+              background: rgba(13, 148, 136, 0.1);
+              border: 1px solid rgba(13, 148, 136, 0.3);
+              border-radius: var(--radius-full);
+              font-size: var(--font-size-xs);
+              font-weight: var(--font-weight-bold);
+              color: #0d9488;
+            ">
+              <div style="
+                width: 6px;
+                height: 6px;
+                background: #0d9488;
+                border-radius: 50%;
+                animation: pulse 2s infinite;
+              "></div>
+              <%= @pipeline_executions.count %> ACTIVE
+            </div>
+          <% end %>
+        </h2>
+        <p style="
+          font-size: var(--font-size-sm);
+          color: var(--color-text-secondary);
+          margin: 0;
+        ">Monitor and control active pipeline executions in real-time</p>
+      </div>
+
+      <!-- Premium Control Actions -->
+      <div style="display: flex; align-items: center; gap: var(--space-12);">
+        <button class="btn btn--outline"
+                data-action="click->pipeline-monitor#refreshPipelines"
+                data-pipeline-monitor-target="refreshButton"
+                style="
+                  background: rgba(var(--color-surface-rgb), 0.8);
+                  backdrop-filter: blur(10px);
+                  border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                  display: inline-flex;
+                  align-items: center;
+                  gap: var(--space-8);
+                "
+                aria-label="Refresh pipeline executions">
+          <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Refresh
+        </button>
+        <%= link_to new_etl_pipeline_builder_path, class: "btn btn--primary", style: "
+          background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+          box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+          display: inline-flex;
+          align-items: center;
+          gap: var(--space-8);
+        " do %>
+          <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          New Pipeline
+        <% end %>
+      </div>
+    </div>
 
     <% if @pipeline_executions.any? %>
-      <div class="pipeline-grid">
+      <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: var(--space-24);
+        margin-top: var(--space-24);
+      " data-pipeline-monitor-target="pipelineGrid">
         <% @pipeline_executions.each do |pipeline| %>
-          <div class="pipeline-card <%= pipeline.status %>" data-pipeline-id="<%= pipeline.id %>">
-            <div class="pipeline-header">
-              <div class="pipeline-info">
-                <h3><%= pipeline.job_type.humanize %></h3>
-                <p><%= pipeline.data_source.name %></p>
+          <div style="
+            background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(13, 148, 136, 0.02) 100%);
+            border: 1px solid rgba(var(--color-border-rgb), 0.3);
+            border-radius: var(--radius-xl);
+            padding: var(--space-24);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            <%= 'border-color: rgba(13, 148, 136, 0.4); box-shadow: 0 8px 24px rgba(13, 148, 136, 0.2);' if pipeline.status == 'running' %>
+          "
+               data-pipeline-id="<%= pipeline.id %>"
+               data-controller="pipeline-card"
+               onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 32px rgba(0, 0, 0, 0.1)'"
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='<%= pipeline.status == 'running' ? '0 8px 24px rgba(13, 148, 136, 0.2)' : 'none' %>'">
+
+            <!-- Background Pattern -->
+            <div style="
+              position: absolute;
+              top: 0;
+              right: 0;
+              width: 80px;
+              height: 80px;
+              background: radial-gradient(circle, rgba(13, 148, 136, 0.1) 0%, transparent 70%);
+              border-radius: 50%;
+              transform: translate(30%, -30%);
+            "></div>
+
+            <!-- Premium Pipeline Header -->
+            <div style="
+              display: flex;
+              align-items: flex-start;
+              justify-content: space-between;
+              margin-bottom: var(--space-20);
+              position: relative;
+              z-index: 1;
+            ">
+              <div style="flex: 1;">
+                <h3 style="
+                  font-size: var(--font-size-lg);
+                  font-weight: var(--font-weight-bold);
+                  color: var(--color-text);
+                  margin: 0 0 var(--space-4) 0;
+                  display: flex;
+                  align-items: center;
+                  gap: var(--space-8);
+                ">
+                  <div style="
+                    width: 32px;
+                    height: 32px;
+                    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+                    border-radius: var(--radius-md);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 4px 8px rgba(13, 148, 136, 0.3);
+                  ">
+                    <svg style="width: 16px; height: 16px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                  </div>
+                  <%= pipeline.job_type.humanize %>
+                </h3>
+                <p style="
+                  font-size: var(--font-size-sm);
+                  color: var(--color-text-secondary);
+                  margin: 0;
+                  font-weight: var(--font-weight-medium);
+                "><%= pipeline.data_source.name %></p>
               </div>
-              <div class="pipeline-status-badge <%= pipeline.status %>">
-                <span class="status-icon"></span>
+
+              <!-- Enhanced Status Badge -->
+              <div style="
+                display: flex;
+                align-items: center;
+                gap: var(--space-6);
+                padding: var(--space-6) var(--space-12);
+                background: <%= case pipeline.status
+                  when 'running' then 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)'
+                  when 'completed' then 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)'
+                  when 'failed' then 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                  when 'pending' then 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                  else 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)'
+                end %>;
+                border-radius: var(--radius-full);
+                font-size: var(--font-size-xs);
+                font-weight: var(--font-weight-bold);
+                color: white;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+              ">
+                <div style="
+                  width: 6px;
+                  height: 6px;
+                  background: white;
+                  border-radius: 50%;
+                  <%= 'animation: pulse 2s infinite;' if pipeline.status == 'running' %>
+                "></div>
                 <%= pipeline.status.upcase %>
               </div>
             </div>
-            
-            <div class="pipeline-progress">
-              <div class="progress-header">
-                <span class="progress-label">Progress</span>
-                <span class="progress-percentage"><%= pipeline.progress_percentage || 0 %>%</span>
+
+            <!-- Premium Progress Section -->
+            <div style="margin-bottom: var(--space-20);">
+              <div style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: var(--space-12);
+              ">
+                <span style="
+                  font-size: var(--font-size-sm);
+                  font-weight: var(--font-weight-medium);
+                  color: var(--color-text-secondary);
+                ">Progress</span>
+                <span style="
+                  font-size: var(--font-size-lg);
+                  font-weight: var(--font-weight-bold);
+                  color: var(--color-text);
+                  font-variant-numeric: tabular-nums;
+                "><%= pipeline.progress_percentage || 0 %>%</span>
               </div>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: <%= pipeline.progress_percentage || 0 %>%">
-                  <div class="progress-glow"></div>
+
+              <!-- Enhanced Progress Bar -->
+              <div style="
+                width: 100%;
+                height: 8px;
+                background: rgba(var(--color-border-rgb), 0.3);
+                border-radius: var(--radius-full);
+                overflow: hidden;
+                position: relative;
+                margin-bottom: var(--space-16);
+              ">
+                <div style="
+                  width: <%= pipeline.progress_percentage || 0 %>%;
+                  height: 100%;
+                  background: linear-gradient(90deg, #0d9488 0%, #14b8a6 100%);
+                  border-radius: var(--radius-full);
+                  position: relative;
+                  transition: width 0.5s ease-in-out;
+                ">
+                  <div style="
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 20px;
+                    height: 100%;
+                    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 100%);
+                    animation: <%= pipeline.status == 'running' ? 'shimmer 2s infinite' : 'none' %>;
+                  "></div>
                 </div>
               </div>
-              <div class="progress-stats">
-                <span class="stat-item">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+
+              <!-- Enhanced Progress Stats -->
+              <div style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--space-16);
+              ">
+                <div style="
+                  display: flex;
+                  align-items: center;
+                  gap: var(--space-8);
+                  padding: var(--space-8) var(--space-12);
+                  background: rgba(var(--color-surface-rgb), 0.5);
+                  border: 1px solid rgba(var(--color-border-rgb), 0.2);
+                  border-radius: var(--radius-md);
+                  font-size: var(--font-size-xs);
+                  color: var(--color-text-secondary);
+                ">
+                  <svg style="width: 14px; height: 14px; color: #0d9488;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                   </svg>
-                  <%= number_with_delimiter(pipeline.processed_records) %> / <%= number_with_delimiter(pipeline.total_records) %>
-                </span>
-                <span class="stat-item">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <span style="font-weight: var(--font-weight-medium);">
+                    <%= number_with_delimiter(pipeline.processed_records || 0) %> / <%= number_with_delimiter(pipeline.total_records || 0) %>
+                  </span>
+                </div>
+                <div style="
+                  display: flex;
+                  align-items: center;
+                  gap: var(--space-8);
+                  padding: var(--space-8) var(--space-12);
+                  background: rgba(var(--color-surface-rgb), 0.5);
+                  border: 1px solid rgba(var(--color-border-rgb), 0.2);
+                  border-radius: var(--radius-md);
+                  font-size: var(--font-size-xs);
+                  color: var(--color-text-secondary);
+                ">
+                  <svg style="width: 14px; height: 14px; color: #0d9488;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
-                  <%= distance_of_time_in_words_to_now(pipeline.started_at) %>
-                </span>
+                  <span style="font-weight: var(--font-weight-medium);">
+                    <%= distance_of_time_in_words_to_now(pipeline.started_at) %>
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div class="pipeline-actions">
-              <button class="action-btn" title="View Details">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            <!-- Premium Action Buttons -->
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-8);
+              padding-top: var(--space-16);
+              border-top: 1px solid rgba(var(--color-border-rgb), 0.2);
+            ">
+              <!-- View Details Button -->
+              <%= link_to pipeline_dashboard_path(pipeline),
+                    style: "
+                      display: inline-flex;
+                      align-items: center;
+                      justify-content: center;
+                      width: 36px;
+                      height: 36px;
+                      background: rgba(var(--color-surface-rgb), 0.8);
+                      border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                      border-radius: var(--radius-md);
+                      color: var(--color-text-secondary);
+                      text-decoration: none;
+                      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                      backdrop-filter: blur(10px);
+                    ",
+                    title: "View Pipeline Details",
+                    "aria-label": "View pipeline details for #{pipeline.job_type.humanize}",
+                    onmouseover: "this.style.background='rgba(13, 148, 136, 0.1)'; this.style.borderColor='rgba(13, 148, 136, 0.3)'; this.style.color='#0d9488'",
+                    onmouseout: "this.style.background='rgba(var(--color-surface-rgb), 0.8)'; this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.color='var(--color-text-secondary)'" do %>
+                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                 </svg>
-              </button>
+              <% end %>
+
+              <!-- Pause/Resume Button -->
               <% if pipeline.status == 'running' %>
-                <button class="action-btn warning" title="Pause Pipeline">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <button style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 36px;
+                  height: 36px;
+                  background: rgba(251, 191, 36, 0.1);
+                  border: 1px solid rgba(251, 191, 36, 0.3);
+                  border-radius: var(--radius-md);
+                  color: #f59e0b;
+                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                  backdrop-filter: blur(10px);
+                  cursor: pointer;
+                "
+                        title="Pause Pipeline"
+                        aria-label="Pause pipeline execution"
+                        data-action="click->pipeline-card#pausePipeline"
+                        data-pipeline-id="<%= pipeline.id %>"
+                        data-confirm="Are you sure you want to pause this pipeline?"
+                        onmouseover="this.style.background='rgba(251, 191, 36, 0.2)'; this.style.transform='scale(1.05)'"
+                        onmouseout="this.style.background='rgba(251, 191, 36, 0.1)'; this.style.transform='scale(1)'">
+                  <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
                 </button>
-              <% else %>
-                <button class="action-btn success" title="Resume Pipeline">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <% elsif pipeline.status == 'paused' %>
+                <button style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 36px;
+                  height: 36px;
+                  background: rgba(34, 197, 94, 0.1);
+                  border: 1px solid rgba(34, 197, 94, 0.3);
+                  border-radius: var(--radius-md);
+                  color: #22c55e;
+                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                  backdrop-filter: blur(10px);
+                  cursor: pointer;
+                "
+                        title="Resume Pipeline"
+                        aria-label="Resume pipeline execution"
+                        data-action="click->pipeline-card#resumePipeline"
+                        data-pipeline-id="<%= pipeline.id %>"
+                        onmouseover="this.style.background='rgba(34, 197, 94, 0.2)'; this.style.transform='scale(1.05)'"
+                        onmouseout="this.style.background='rgba(34, 197, 94, 0.1)'; this.style.transform='scale(1)'">
+                  <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </button>
+              <% elsif pipeline.status == 'failed' %>
+                <button style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 36px;
+                  height: 36px;
+                  background: rgba(34, 197, 94, 0.1);
+                  border: 1px solid rgba(34, 197, 94, 0.3);
+                  border-radius: var(--radius-md);
+                  color: #22c55e;
+                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                  backdrop-filter: blur(10px);
+                  cursor: pointer;
+                "
+                        title="Restart Pipeline"
+                        aria-label="Restart failed pipeline"
+                        data-action="click->pipeline-card#restartPipeline"
+                        data-pipeline-id="<%= pipeline.id %>"
+                        data-confirm="Are you sure you want to restart this pipeline?"
+                        onmouseover="this.style.background='rgba(34, 197, 94, 0.2)'; this.style.transform='scale(1.05)'"
+                        onmouseout="this.style.background='rgba(34, 197, 94, 0.1)'; this.style.transform='scale(1)'">
+                  <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                   </svg>
                 </button>
               <% end %>
-              <button class="action-btn error" title="Stop Pipeline">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
-                </svg>
-              </button>
+
+              <!-- Stop Button -->
+              <% if ['running', 'paused'].include?(pipeline.status) %>
+                <button style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 36px;
+                  height: 36px;
+                  background: rgba(239, 68, 68, 0.1);
+                  border: 1px solid rgba(239, 68, 68, 0.3);
+                  border-radius: var(--radius-md);
+                  color: #ef4444;
+                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                  backdrop-filter: blur(10px);
+                  cursor: pointer;
+                "
+                        title="Stop Pipeline"
+                        aria-label="Stop pipeline execution"
+                        data-action="click->pipeline-card#stopPipeline"
+                        data-pipeline-id="<%= pipeline.id %>"
+                        data-confirm="Are you sure you want to stop this pipeline? This action cannot be undone."
+                        onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'; this.style.transform='scale(1.05)'"
+                        onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.transform='scale(1)'">
+                  <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>
+                  </svg>
+                </button>
+              <% end %>
+
+              <!-- Loading Indicator (hidden by default) -->
+              <div style="
+                display: none;
+                width: 36px;
+                height: 36px;
+                align-items: center;
+                justify-content: center;
+              " data-pipeline-card-target="loadingIndicator">
+                <div style="
+                  width: 20px;
+                  height: 20px;
+                  border: 2px solid rgba(13, 148, 136, 0.3);
+                  border-top: 2px solid #0d9488;
+                  border-radius: 50%;
+                  animation: spin 1s linear infinite;
+                "></div>
+              </div>
             </div>
           </div>
         <% end %>
       </div>
     <% else %>
-      <div class="empty-state">
-        <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-        </svg>
-        <h3>No Active Pipelines</h3>
-        <p>All pipelines are currently idle. Start a new pipeline to begin processing data.</p>
-        <button class="btn btn--primary">Create New Pipeline</button>
+      <!-- Premium Empty State -->
+      <div style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-48) var(--space-24);
+        text-align: center;
+        background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.5) 0%, rgba(13, 148, 136, 0.02) 100%);
+        border: 2px dashed rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-xl);
+        margin-top: var(--space-24);
+      ">
+        <div style="
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(13, 148, 136, 0.05) 100%);
+          border-radius: var(--radius-xl);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: var(--space-24);
+        ">
+          <svg style="width: 40px; height: 40px; color: #0d9488;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+        </div>
+        <h3 style="
+          font-size: var(--font-size-xl);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text);
+          margin: 0 0 var(--space-8) 0;
+        ">No Active Pipelines</h3>
+        <p style="
+          font-size: var(--font-size-sm);
+          color: var(--color-text-secondary);
+          margin: 0 0 var(--space-24) 0;
+          max-width: 400px;
+          line-height: var(--line-height-relaxed);
+        ">All pipelines are currently idle. Start a new pipeline to begin processing data and monitor real-time execution progress.</p>
+        <%= link_to new_etl_pipeline_builder_path, class: "btn btn--primary", style: "
+          background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+          box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+          display: inline-flex;
+          align-items: center;
+          gap: var(--space-8);
+        " do %>
+          <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Create New Pipeline
+        <% end %>
       </div>
     <% end %>
   </div>
 
-  <!-- Pipeline History -->
-  <div class="pipeline-history">
-    <div class="history-header">
-      <h2>Execution History</h2>
-      <div class="history-filters">
-        <select class="filter-select">
-          <option>All Statuses</option>
-          <option>Completed</option>
-          <option>Failed</option>
-          <option>Running</option>
+  <!-- Executive Execution History -->
+  <div style="
+    background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(13, 148, 136, 0.02) 100%);
+    border: 1px solid rgba(var(--color-border-rgb), 0.2);
+    border-radius: var(--radius-xl);
+    padding: var(--space-32);
+    margin-bottom: var(--space-32);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  " data-controller="execution-history" data-execution-history-auto-refresh-value="false">
+    <div style="
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-24);
+    ">
+      <div>
+        <h2 style="
+          font-size: var(--font-size-2xl);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text);
+          margin: 0 0 var(--space-8) 0;
+          display: flex;
+          align-items: center;
+          gap: var(--space-12);
+        ">
+          <div style="
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+          ">
+            <svg style="width: 20px; height: 20px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+          </div>
+          Execution History
+          <% if @recent_activities && @recent_activities.any? %>
+            <div style="
+              padding: var(--space-4) var(--space-8);
+              background: rgba(107, 114, 128, 0.1);
+              border: 1px solid rgba(107, 114, 128, 0.3);
+              border-radius: var(--radius-full);
+              font-size: var(--font-size-xs);
+              font-weight: var(--font-weight-bold);
+              color: #6b7280;
+            ">
+              <%= @recent_activities.count %> RECORDS
+            </div>
+          <% end %>
+        </h2>
+        <p style="
+          font-size: var(--font-size-sm);
+          color: var(--color-text-secondary);
+          margin: 0;
+        ">Complete audit trail of all pipeline executions with detailed analytics</p>
+      </div>
+
+      <!-- Premium Filter Controls -->
+      <div style="display: flex; align-items: center; gap: var(--space-12);">
+        <select style="
+          padding: var(--space-8) var(--space-12);
+          background: rgba(var(--color-surface-rgb), 0.8);
+          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+          border-radius: var(--radius-md);
+          color: var(--color-text);
+          font-size: var(--font-size-sm);
+          backdrop-filter: blur(10px);
+          cursor: pointer;
+        "
+                data-action="change->execution-history#filterByStatus"
+                data-execution-history-target="statusFilter"
+                aria-label="Filter by pipeline status">
+          <option value="">All Statuses</option>
+          <option value="completed">Completed</option>
+          <option value="failed">Failed</option>
+          <option value="running">Running</option>
+          <option value="pending">Pending</option>
         </select>
-        <select class="filter-select">
-          <option>Last 24 Hours</option>
-          <option>Last 7 Days</option>
-          <option>Last 30 Days</option>
+        <select style="
+          padding: var(--space-8) var(--space-12);
+          background: rgba(var(--color-surface-rgb), 0.8);
+          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+          border-radius: var(--radius-md);
+          color: var(--color-text);
+          font-size: var(--font-size-sm);
+          backdrop-filter: blur(10px);
+          cursor: pointer;
+        "
+                data-action="change->execution-history#filterByTimeframe"
+                data-execution-history-target="timeframeFilter"
+                aria-label="Filter by time period">
+          <option value="24h">Last 24 Hours</option>
+          <option value="7d">Last 7 Days</option>
+          <option value="30d">Last 30 Days</option>
+          <option value="90d">Last 90 Days</option>
         </select>
+        <button class="btn btn--outline"
+                data-action="click->execution-history#refreshHistory"
+                data-execution-history-target="refreshButton"
+                style="
+                  background: rgba(var(--color-surface-rgb), 0.8);
+                  backdrop-filter: blur(10px);
+                  border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                  display: inline-flex;
+                  align-items: center;
+                  gap: var(--space-8);
+                "
+                aria-label="Refresh execution history">
+          <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Refresh
+        </button>
       </div>
     </div>
 
     <% if @recent_activities && @recent_activities.any? %>
-      <div class="history-table">
-        <table>
+      <!-- Premium Execution History Table -->
+      <div style="
+        background: rgba(var(--color-surface-rgb), 0.5);
+        border: 1px solid rgba(var(--color-border-rgb), 0.2);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+      " data-execution-history-target="tableContainer">
+        <table style="
+          width: 100%;
+          border-collapse: collapse;
+          font-size: var(--font-size-sm);
+        ">
           <thead>
-            <tr>
-              <th>Pipeline</th>
-              <th>Source</th>
-              <th>Started</th>
-              <th>Duration</th>
-              <th>Records</th>
-              <th>Status</th>
-              <th>Actions</th>
+            <tr style="
+              background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(13, 148, 136, 0.05) 100%);
+              border-bottom: 1px solid rgba(var(--color-border-rgb), 0.3);
+            ">
+              <th style="
+                padding: var(--space-16) var(--space-20);
+                text-align: left;
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                font-size: var(--font-size-xs);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                border-right: 1px solid rgba(var(--color-border-rgb), 0.2);
+              ">Pipeline</th>
+              <th style="
+                padding: var(--space-16) var(--space-20);
+                text-align: left;
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                font-size: var(--font-size-xs);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                border-right: 1px solid rgba(var(--color-border-rgb), 0.2);
+              ">Source</th>
+              <th style="
+                padding: var(--space-16) var(--space-20);
+                text-align: left;
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                font-size: var(--font-size-xs);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                border-right: 1px solid rgba(var(--color-border-rgb), 0.2);
+              ">Started</th>
+              <th style="
+                padding: var(--space-16) var(--space-20);
+                text-align: left;
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                font-size: var(--font-size-xs);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                border-right: 1px solid rgba(var(--color-border-rgb), 0.2);
+              ">Duration</th>
+              <th style="
+                padding: var(--space-16) var(--space-20);
+                text-align: left;
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                font-size: var(--font-size-xs);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                border-right: 1px solid rgba(var(--color-border-rgb), 0.2);
+              ">Records</th>
+              <th style="
+                padding: var(--space-16) var(--space-20);
+                text-align: left;
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                font-size: var(--font-size-xs);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                border-right: 1px solid rgba(var(--color-border-rgb), 0.2);
+              ">Status</th>
+              <th style="
+                padding: var(--space-16) var(--space-20);
+                text-align: center;
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text);
+                font-size: var(--font-size-xs);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+              ">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <% @recent_activities.each do |execution| %>
-              <tr class="history-row" data-execution-id="<%= execution.id %>">
-                <td>
-                  <div class="pipeline-name">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    <%= execution.job_type.humanize %>
+            <% @recent_activities.each_with_index do |execution, index| %>
+              <tr style="
+                border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+              "
+                  data-execution-id="<%= execution.id %>"
+                  data-controller="execution-row"
+                  onmouseover="this.style.background='rgba(13, 148, 136, 0.05)'"
+                  onmouseout="this.style.background='transparent'"
+                  onclick="window.location.href='<%= pipeline_dashboard_path(execution) %>'">
+
+                <!-- Pipeline Name -->
+                <td style="
+                  padding: var(--space-16) var(--space-20);
+                  border-right: 1px solid rgba(var(--color-border-rgb), 0.2);
+                ">
+                  <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-8);
+                  ">
+                    <div style="
+                      width: 24px;
+                      height: 24px;
+                      background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+                      border-radius: var(--radius-md);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      flex-shrink: 0;
+                    ">
+                      <svg style="width: 12px; height: 12px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                      </svg>
+                    </div>
+                    <span style="
+                      font-weight: var(--font-weight-medium);
+                      color: var(--color-text);
+                    "><%= execution.job_type.humanize %></span>
                   </div>
                 </td>
-                <td><%= execution.data_source.name %></td>
-                <td><%= execution.started_at.strftime("%b %d, %I:%M %p") %></td>
-                <td>
+
+                <!-- Data Source -->
+                <td style="
+                  padding: var(--space-16) var(--space-20);
+                  border-right: 1px solid rgba(var(--color-border-rgb), 0.2);
+                  color: var(--color-text-secondary);
+                  font-weight: var(--font-weight-medium);
+                "><%= execution.data_source.name %></td>
+
+                <!-- Started Time -->
+                <td style="
+                  padding: var(--space-16) var(--space-20);
+                  border-right: 1px solid rgba(var(--color-border-rgb), 0.2);
+                  color: var(--color-text-secondary);
+                  font-variant-numeric: tabular-nums;
+                "><%= execution.started_at.strftime("%b %d, %I:%M %p") %></td>
+
+                <!-- Duration -->
+                <td style="
+                  padding: var(--space-16) var(--space-20);
+                  border-right: 1px solid rgba(var(--color-border-rgb), 0.2);
+                  font-variant-numeric: tabular-nums;
+                ">
                   <% if execution.completed_at %>
-                    <%= distance_of_time_in_words(execution.started_at, execution.completed_at) %>
+                    <span style="
+                      color: var(--color-text);
+                      font-weight: var(--font-weight-medium);
+                    "><%= distance_of_time_in_words(execution.started_at, execution.completed_at) %></span>
                   <% else %>
-                    <span class="in-progress">In Progress</span>
+                    <span style="
+                      display: inline-flex;
+                      align-items: center;
+                      gap: var(--space-4);
+                      padding: var(--space-2) var(--space-6);
+                      background: rgba(13, 148, 136, 0.1);
+                      border: 1px solid rgba(13, 148, 136, 0.3);
+                      border-radius: var(--radius-sm);
+                      color: #0d9488;
+                      font-size: var(--font-size-xs);
+                      font-weight: var(--font-weight-bold);
+                    ">
+                      <div style="
+                        width: 4px;
+                        height: 4px;
+                        background: #0d9488;
+                        border-radius: 50%;
+                        animation: pulse 2s infinite;
+                      "></div>
+                      In Progress
+                    </span>
                   <% end %>
                 </td>
-                <td>
-                  <div class="record-count">
-                    <%= number_with_delimiter(execution.processed_records) %>
-                    <% if execution.total_records > 0 %>
-                      <span class="record-percentage">(<%= ((execution.processed_records.to_f / execution.total_records) * 100).round %>%)</span>
+
+                <!-- Records -->
+                <td style="
+                  padding: var(--space-16) var(--space-20);
+                  border-right: 1px solid rgba(var(--color-border-rgb), 0.2);
+                ">
+                  <div style="
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--space-2);
+                  ">
+                    <span style="
+                      color: var(--color-text);
+                      font-weight: var(--font-weight-medium);
+                      font-variant-numeric: tabular-nums;
+                    "><%= number_with_delimiter(execution.processed_records || 0) %></span>
+                    <% if execution.total_records && execution.total_records > 0 %>
+                      <span style="
+                        font-size: var(--font-size-xs);
+                        color: var(--color-text-secondary);
+                        font-variant-numeric: tabular-nums;
+                      ">(<%= ((execution.processed_records.to_f / execution.total_records) * 100).round %>% of <%= number_with_delimiter(execution.total_records) %>)</span>
                     <% end %>
                   </div>
                 </td>
-                <td>
-                  <span class="status-pill <%= execution.status %>">
+
+                <!-- Status -->
+                <td style="
+                  padding: var(--space-16) var(--space-20);
+                  border-right: 1px solid rgba(var(--color-border-rgb), 0.2);
+                ">
+                  <span style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: var(--space-6);
+                    padding: var(--space-4) var(--space-8);
+                    background: <%= case execution.status
+                      when 'completed' then 'linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%)'
+                      when 'failed' then 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%)'
+                      when 'running' then 'linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(13, 148, 136, 0.05) 100%)'
+                      when 'pending' then 'linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(251, 191, 36, 0.05) 100%)'
+                      else 'linear-gradient(135deg, rgba(107, 114, 128, 0.1) 0%, rgba(107, 114, 128, 0.05) 100%)'
+                    end %>;
+                    border: 1px solid <%= case execution.status
+                      when 'completed' then 'rgba(34, 197, 94, 0.3)'
+                      when 'failed' then 'rgba(239, 68, 68, 0.3)'
+                      when 'running' then 'rgba(13, 148, 136, 0.3)'
+                      when 'pending' then 'rgba(251, 191, 36, 0.3)'
+                      else 'rgba(107, 114, 128, 0.3)'
+                    end %>;
+                    border-radius: var(--radius-full);
+                    font-size: var(--font-size-xs);
+                    font-weight: var(--font-weight-bold);
+                    color: <%= case execution.status
+                      when 'completed' then '#22c55e'
+                      when 'failed' then '#ef4444'
+                      when 'running' then '#0d9488'
+                      when 'pending' then '#f59e0b'
+                      else '#6b7280'
+                    end %>;
+                  ">
+                    <div style="
+                      width: 6px;
+                      height: 6px;
+                      background: currentColor;
+                      border-radius: 50%;
+                      <%= 'animation: pulse 2s infinite;' if execution.status == 'running' %>
+                    "></div>
                     <%= execution.status.humanize %>
                   </span>
                 </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="icon-btn" title="View Details">
-                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                <!-- Actions -->
+                <td style="
+                  padding: var(--space-16) var(--space-20);
+                  text-align: center;
+                " onclick="event.stopPropagation()">
+                  <div style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: var(--space-6);
+                  ">
+                    <!-- View Details Button -->
+                    <%= link_to pipeline_dashboard_path(execution),
+                          style: "
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 28px;
+                            height: 28px;
+                            background: rgba(var(--color-surface-rgb), 0.8);
+                            border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                            border-radius: var(--radius-md);
+                            color: var(--color-text-secondary);
+                            text-decoration: none;
+                            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                            backdrop-filter: blur(10px);
+                          ",
+                          title: "View Execution Details",
+                          "aria-label": "View details for #{execution.job_type.humanize} execution",
+                          onmouseover: "this.style.background='rgba(13, 148, 136, 0.1)'; this.style.borderColor='rgba(13, 148, 136, 0.3)'; this.style.color='#0d9488'",
+                          onmouseout: "this.style.background='rgba(var(--color-surface-rgb), 0.8)'; this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.color='var(--color-text-secondary)'" do %>
+                      <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                       </svg>
-                    </button>
+                    <% end %>
+
+                    <!-- Retry Button (for failed executions) -->
                     <% if execution.status == 'failed' %>
-                      <button class="icon-btn" title="Retry">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      <button style="
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 28px;
+                        height: 28px;
+                        background: rgba(34, 197, 94, 0.1);
+                        border: 1px solid rgba(34, 197, 94, 0.3);
+                        border-radius: var(--radius-md);
+                        color: #22c55e;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        backdrop-filter: blur(10px);
+                        cursor: pointer;
+                      "
+                              title="Retry Failed Pipeline"
+                              aria-label="Retry failed pipeline execution"
+                              data-action="click->execution-row#retryExecution"
+                              data-execution-id="<%= execution.id %>"
+                              data-confirm="Are you sure you want to retry this failed pipeline execution?"
+                              onmouseover="this.style.background='rgba(34, 197, 94, 0.2)'; this.style.transform='scale(1.05)'"
+                              onmouseout="this.style.background='rgba(34, 197, 94, 0.1)'; this.style.transform='scale(1)'">
+                        <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                         </svg>
                       </button>
                     <% end %>
-                    <button class="icon-btn" title="Download Logs">
-                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+
+                    <!-- Download Logs Button -->
+                    <button style="
+                      display: inline-flex;
+                      align-items: center;
+                      justify-content: center;
+                      width: 28px;
+                      height: 28px;
+                      background: rgba(var(--color-surface-rgb), 0.8);
+                      border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                      border-radius: var(--radius-md);
+                      color: var(--color-text-secondary);
+                      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                      backdrop-filter: blur(10px);
+                      cursor: pointer;
+                    "
+                            title="Download Execution Logs"
+                            aria-label="Download logs for #{execution.job_type.humanize} execution"
+                            data-action="click->execution-row#downloadLogs"
+                            data-execution-id="<%= execution.id %>"
+                            onmouseover="this.style.background='rgba(96, 165, 250, 0.1)'; this.style.borderColor='rgba(96, 165, 250, 0.3)'; this.style.color='#60a5fa'"
+                            onmouseout="this.style.background='rgba(var(--color-surface-rgb), 0.8)'; this.style.borderColor='rgba(var(--color-border-rgb), 0.3)'; this.style.color='var(--color-text-secondary)'">
+                      <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
                       </svg>
                     </button>
                   </div>
@@ -280,13 +1593,413 @@
         </table>
       </div>
     <% else %>
-      <div class="empty-state">
-        <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
-        <h3>No Execution History</h3>
-        <p>Pipeline execution history will appear here once pipelines have been run.</p>
+      <!-- Premium Empty State for Execution History -->
+      <div style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-48) var(--space-24);
+        text-align: center;
+        background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.5) 0%, rgba(107, 114, 128, 0.02) 100%);
+        border: 2px dashed rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-xl);
+        margin-top: var(--space-24);
+      ">
+        <div style="
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(135deg, rgba(107, 114, 128, 0.1) 0%, rgba(107, 114, 128, 0.05) 100%);
+          border-radius: var(--radius-xl);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: var(--space-24);
+        ">
+          <svg style="width: 40px; height: 40px; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+        </div>
+        <h3 style="
+          font-size: var(--font-size-xl);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text);
+          margin: 0 0 var(--space-8) 0;
+        ">No Execution History</h3>
+        <p style="
+          font-size: var(--font-size-sm);
+          color: var(--color-text-secondary);
+          margin: 0 0 var(--space-24) 0;
+          max-width: 400px;
+          line-height: var(--line-height-relaxed);
+        ">Pipeline execution history will appear here once pipelines have been run. Start your first pipeline to begin tracking execution analytics.</p>
+        <%= link_to new_etl_pipeline_builder_path, class: "btn btn--primary", style: "
+          background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+          box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+          display: inline-flex;
+          align-items: center;
+          gap: var(--space-8);
+        " do %>
+          <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Create First Pipeline
+        <% end %>
       </div>
     <% end %>
   </div>
 </div>
+
+<!-- Premium Pipeline Dashboard Dark Mode Enhancements and CSS -->
+<style>
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Enhanced dark mode support for pipeline dashboard */
+  @media (prefers-color-scheme: dark), [data-color-scheme="dark"] {
+    /* Enhanced glass morphism for dark mode */
+    .dashboard-content > div {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.9) 0%, rgba(13, 148, 136, 0.08) 100%) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Enhanced metric cards for dark mode */
+    .dashboard-content div[style*="background: linear-gradient"] {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(13, 148, 136, 0.05) 100%) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+    }
+
+    /* Enhanced text contrast for dark mode */
+    .dashboard-content h1,
+    .dashboard-content h2,
+    .dashboard-content h3 {
+      color: var(--color-text) !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Enhanced pipeline cards for dark mode */
+    .pipeline-card {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(var(--color-surface-rgb), 0.95) 100%) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+    }
+
+    /* Enhanced activity cards for dark mode */
+    .activity-card {
+      background: rgba(var(--color-surface-rgb), 0.8) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      backdrop-filter: blur(10px) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+    }
+
+    /* Enhanced empty state for dark mode */
+    .empty-state {
+      background: rgba(var(--color-surface-rgb), 0.8) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+    }
+
+    .empty-state svg {
+      color: var(--color-text-secondary) !important;
+    }
+
+    .empty-state h3 {
+      color: var(--color-text) !important;
+    }
+
+    .empty-state p {
+      color: var(--color-text-secondary) !important;
+    }
+  }
+
+  /* Enhanced responsive design */
+  @media (max-width: 768px) {
+    .dashboard-content {
+      padding: var(--space-16) !important;
+    }
+
+    .dashboard-content > div {
+      margin-bottom: var(--space-24) !important;
+      padding: var(--space-24) !important;
+    }
+
+    .dashboard-content h1 {
+      font-size: var(--font-size-2xl) !important;
+    }
+
+    .dashboard-content div[style*="grid-template-columns"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    .pipeline-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .activities-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* Enhanced transitions for smooth interactions */
+  .dashboard-content *,
+  .pipeline-card,
+  .activity-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Enhanced focus states */
+  button:focus,
+  .pipeline-card:focus,
+  .activity-card:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2) !important;
+  }
+
+  /* Enhanced status indicators */
+  .pipeline-status-badge.running {
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+    color: white !important;
+  }
+
+  .pipeline-status-badge.completed {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+    color: white !important;
+  }
+
+  .pipeline-status-badge.failed {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    color: white !important;
+  }
+
+  .pipeline-status-badge.pending {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    color: white !important;
+  }
+
+  /* Enhanced live indicators */
+  .live-indicator {
+    animation: pulse 2s infinite;
+  }
+
+  /* Enhanced chart containers */
+  canvas {
+    border-radius: var(--radius-md) !important;
+  }
+
+  /* Enhanced button hover states */
+  .btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 16px rgba(13, 148, 136, 0.3) !important;
+  }
+
+  /* Enhanced metric card hover effects */
+  .dashboard-content div[onmouseover]:hover {
+    border-color: rgba(13, 148, 136, 0.4) !important;
+  }
+
+  /* Enhanced loading states */
+  .loading {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #0d9488;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Enhanced error states */
+  .error-state {
+    background: linear-gradient(135deg, rgba(248, 113, 113, 0.1) 0%, rgba(248, 113, 113, 0.05) 100%) !important;
+    border: 1px solid rgba(248, 113, 113, 0.3) !important;
+    color: #ef4444 !important;
+  }
+
+  /* Enhanced success states */
+  .success-state {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%) !important;
+    border: 1px solid rgba(34, 197, 94, 0.3) !important;
+    color: #22c55e !important;
+  }
+
+  /* Enhanced table interactions */
+  tbody tr {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  tbody tr:nth-child(even) {
+    background: rgba(var(--color-surface-rgb), 0.3) !important;
+  }
+
+  /* Enhanced button interactions */
+  button[data-action*="Pipeline"],
+  button[data-action*="Execution"] {
+    position: relative;
+    overflow: hidden;
+  }
+
+  button[data-action*="Pipeline"]:active,
+  button[data-action*="Execution"]:active {
+    transform: scale(0.95) !important;
+  }
+
+  /* Enhanced loading states for pipeline actions */
+  [data-pipeline-card-target="loadingIndicator"] {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(var(--color-surface-rgb), 0.9);
+    border-radius: var(--radius-full);
+    padding: var(--space-8);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Enhanced filter controls */
+  select:focus {
+    outline: none !important;
+    border-color: rgba(13, 148, 136, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1) !important;
+  }
+
+  /* Enhanced table responsiveness */
+  @media (max-width: 1024px) {
+    table {
+      font-size: var(--font-size-xs) !important;
+    }
+
+    th, td {
+      padding: var(--space-8) var(--space-12) !important;
+    }
+
+    .dashboard-content div[style*="grid-template-columns"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tbody tr {
+      display: block;
+      border: 1px solid rgba(var(--color-border-rgb), 0.3);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-12);
+      padding: var(--space-16);
+      background: rgba(var(--color-surface-rgb), 0.8) !important;
+    }
+
+    tbody td {
+      display: block;
+      border: none !important;
+      padding: var(--space-4) 0 !important;
+      text-align: left !important;
+    }
+
+    tbody td:before {
+      content: attr(data-label) ": ";
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-secondary);
+      display: inline-block;
+      width: 100px;
+    }
+  }
+
+  /* Enhanced accessibility */
+  button:focus-visible,
+  a:focus-visible,
+  select:focus-visible {
+    outline: 2px solid #0d9488 !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Enhanced performance optimizations */
+  * {
+    will-change: auto;
+  }
+
+  .dashboard-content {
+    contain: layout style paint;
+  }
+
+  /* Enhanced print styles */
+  @media print {
+    .dashboard-content {
+      background: white !important;
+      color: black !important;
+    }
+
+    button, .btn {
+      display: none !important;
+    }
+
+    table {
+      border-collapse: collapse !important;
+    }
+
+    th, td {
+      border: 1px solid #ccc !important;
+      padding: 8px !important;
+    }
+  }
+</style>

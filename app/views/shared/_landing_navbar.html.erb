@@ -19,6 +19,68 @@
         <%= link_to about_path, class: "navbar__link" do %>About<% end %>
 
         <div class="navbar__actions">
+          <!-- Premium Theme Toggle for Landing -->
+          <div class="navbar__theme-toggle" data-controller="theme-toggle">
+            <button type="button"
+                    class="premium-theme-toggle-landing"
+                    data-action="click->theme-toggle#toggle"
+                    data-theme-toggle-target="button"
+                    aria-label="Toggle theme"
+                    style="
+                      position: relative;
+                      padding: var(--space-8);
+                      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(var(--color-primary-rgb), 0.05) 100%);
+                      backdrop-filter: blur(20px);
+                      -webkit-backdrop-filter: blur(20px);
+                      border: 1px solid rgba(var(--color-border-rgb), 0.2);
+                      border-radius: var(--radius-lg);
+                      color: var(--color-text-secondary);
+                      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                      overflow: hidden;
+                      margin-right: var(--space-16);
+                    "
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0, 0, 0, 0.1)'; this.style.borderColor='rgba(var(--color-primary-rgb), 0.3)'"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.05)'; this.style.borderColor='rgba(var(--color-border-rgb), 0.2)'">
+
+              <!-- Background Pattern -->
+              <div style="
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 30px;
+                height: 30px;
+                background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                transform: translate(30%, -30%);
+              "></div>
+
+              <!-- Light Mode Icon -->
+              <svg data-theme-toggle-target="lightIcon"
+                   style="width: 20px; height: 20px; position: relative; z-index: 1;"
+                   fill="none"
+                   stroke="currentColor"
+                   viewBox="0 0 24 24">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+              </svg>
+
+              <!-- Dark Mode Icon -->
+              <svg data-theme-toggle-target="darkIcon"
+                   style="width: 20px; height: 20px; position: relative; z-index: 1; display: none;"
+                   fill="none"
+                   stroke="currentColor"
+                   viewBox="0 0 24 24">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+              </svg>
+            </button>
+          </div>
+
           <% if user_signed_in? %>
             <%= link_to dashboard_path, class: "navbar__link" do %>
               Dashboard
@@ -57,6 +119,78 @@
       <%= link_to about_path, class: "navbar__mobile-link", data: { action: "click->landing-navbar#closeMobile" } do %>About<% end %>
 
       <div class="navbar__mobile-actions">
+        <!-- Mobile Theme Toggle -->
+        <div class="navbar__mobile-theme-toggle" data-controller="theme-toggle" style="margin-bottom: var(--space-16);">
+          <button type="button"
+                  class="premium-theme-toggle-mobile"
+                  data-action="click->theme-toggle#toggle"
+                  data-theme-toggle-target="button"
+                  aria-label="Toggle theme"
+                  style="
+                    position: relative;
+                    padding: var(--space-12);
+                    background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(var(--color-primary-rgb), 0.05) 100%);
+                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(20px);
+                    border: 1px solid rgba(var(--color-border-rgb), 0.2);
+                    border-radius: var(--radius-lg);
+                    color: var(--color-text-secondary);
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                    overflow: hidden;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: var(--space-12);
+                  ">
+
+            <!-- Background Pattern -->
+            <div style="
+              position: absolute;
+              top: 0;
+              right: 0;
+              width: 40px;
+              height: 40px;
+              background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.1) 0%, transparent 70%);
+              border-radius: 50%;
+              transform: translate(30%, -30%);
+            "></div>
+
+            <!-- Light Mode Icon -->
+            <svg data-theme-toggle-target="lightIcon"
+                 style="width: 24px; height: 24px; position: relative; z-index: 1;"
+                 fill="none"
+                 stroke="currentColor"
+                 viewBox="0 0 24 24">
+              <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+
+            <!-- Dark Mode Icon -->
+            <svg data-theme-toggle-target="darkIcon"
+                 style="width: 24px; height: 24px; position: relative; z-index: 1; display: none;"
+                 fill="none"
+                 stroke="currentColor"
+                 viewBox="0 0 24 24">
+              <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+
+            <span style="
+              font-size: var(--font-size-sm);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-text);
+              position: relative;
+              z-index: 1;
+            ">Toggle Theme</span>
+          </button>
+        </div>
+
         <% if user_signed_in? %>
           <%= link_to dashboard_path, class: "navbar__mobile-link", data: { action: "click->landing-navbar#closeMobile" } do %>
             Dashboard
@@ -78,3 +212,72 @@
     </div>
   </div>
 </nav>
+
+<!-- Landing Navbar Height Consistency and Dark Mode Support -->
+<style>
+  /* Ensure consistent navbar height */
+  .navbar {
+    min-height: 80px !important;
+  }
+
+  .navbar__content {
+    min-height: 80px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* Enhanced dark mode support for landing navbar */
+  @media (prefers-color-scheme: dark), [data-color-scheme="dark"] {
+    .navbar {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.9) 0%, rgba(var(--color-primary-rgb), 0.08) 100%) !important;
+      border-bottom: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+    }
+
+    .navbar__brand,
+    .navbar__link,
+    .navbar__mobile-link {
+      color: var(--color-text) !important;
+    }
+
+    .navbar__logo-icon {
+      color: var(--color-primary) !important;
+    }
+
+    .premium-theme-toggle-landing,
+    .premium-theme-toggle-mobile {
+      background: rgba(var(--color-surface-rgb), 0.8) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      color: var(--color-text-secondary) !important;
+    }
+
+    .btn--primary {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%) !important;
+      color: white !important;
+    }
+
+    .btn--secondary {
+      background: rgba(var(--color-surface-rgb), 0.8) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      color: var(--color-text) !important;
+    }
+
+    /* Mobile menu dark mode */
+    .navbar__mobile-menu {
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.9) 0%, rgba(var(--color-primary-rgb), 0.08) 100%) !important;
+      border: 1px solid rgba(var(--color-border-rgb), 0.4) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+    }
+  }
+
+  /* Enhanced transitions */
+  .navbar *,
+  .navbar *:before,
+  .navbar *:after {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+</style>
