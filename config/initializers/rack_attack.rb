@@ -110,6 +110,35 @@ class Rack::Attack
       req.ip
     end
   end
+
+  # Throttle API requests by user
+  throttle('api_requests_per_user', limit: 1000, period: 1.hour) do |req|
+    if req.path.start_with?('/api/')
+      req.env['warden']&.user&.id
+    end
+  end
+
+  # Specific rate limits for notification endpoints
+  throttle('notifications_per_user', limit: 200, period: 1.hour) do |req|
+    if req.path.start_with?('/api/v1/notifications')
+      req.env['warden']&.user&.id
+    end
+  end
+
+  # Limit notification marking operations (prevent abuse)
+  throttle('notification_mark_operations', limit: 100, period: 10.minutes) do |req|
+    if req.path.match?(%r{/api/v1/notifications/.*/mark_as_(read|unread)$}) ||
+       req.path == '/api/v1/notifications/mark_all_as_read'
+      req.env['warden']&.user&.id
+    end
+  end
+
+  # Limit notification deletion (prevent mass deletion abuse)
+  throttle('notification_deletions', limit: 50, period: 1.hour) do |req|
+    if req.path.match?(%r{/api/v1/notifications/\d+$}) && req.delete?
+      req.env['warden']&.user&.id
+    end
+  end
   
   # Custom response for rate limited requests
   self.throttled_responder = lambda do |req|
