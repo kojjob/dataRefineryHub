@@ -99,17 +99,23 @@ class IndustryTemplatesController < DataflowProController
     charts = {}
 
     template[:charts]&.each do |chart|
+      chart_id = chart[:data_key] || chart[:title]&.parameterize || "chart_#{charts.size}"
+      
       case chart[:type]
       when "line"
         # Generate line chart data for last 7 days
         labels = (0..6).map { |i| (Date.today - i).strftime("%b %d") }.reverse
-        datasets = chart[:metrics].map do |metric|
+        # Use template metrics to generate multiple datasets for line charts
+        datasets = template[:metrics]&.first(3)&.map do |metric|
           {
             label: metric[:label],
             data: (0..6).map { rand(50..150) }
           }
-        end
-        charts[chart[:id]] = { labels: labels, datasets: datasets }
+        end || [{
+          label: chart[:title],
+          data: (0..6).map { rand(50..150) }
+        }]
+        charts[chart_id] = { labels: labels, datasets: datasets }
 
       when "bar"
         # Generate bar chart data
@@ -118,7 +124,7 @@ class IndustryTemplatesController < DataflowProController
           label: chart[:title],
           data: labels.map { rand(100..500) }
         } ]
-        charts[chart[:id]] = { labels: labels, datasets: datasets }
+        charts[chart_id] = { labels: labels, datasets: datasets }
 
       when "doughnut", "pie"
         # Generate pie/doughnut chart data
@@ -126,7 +132,71 @@ class IndustryTemplatesController < DataflowProController
         datasets = [ {
           data: labels.map { rand(15..40) }
         } ]
-        charts[chart[:id]] = { labels: labels, datasets: datasets }
+        charts[chart_id] = { labels: labels, datasets: datasets }
+        
+      when "area"
+        # Generate area chart data (similar to line)
+        labels = (0..6).map { |i| (Date.today - i).strftime("%b %d") }.reverse
+        datasets = [{
+          label: chart[:title],
+          data: (0..6).map { rand(30..120) }
+        }]
+        charts[chart_id] = { labels: labels, datasets: datasets }
+        
+      when "gauge"
+        # Generate gauge chart data
+        datasets = [{
+          value: rand(60..95),
+          max: 100
+        }]
+        charts[chart_id] = { datasets: datasets }
+        
+      when "heatmap"
+        # Generate heatmap data
+        datasets = [{
+          data: (1..7).map { |day|
+            (1..24).map { |hour|
+              { x: hour, y: day, v: rand(0..100) }
+            }
+          }.flatten
+        }]
+        charts[chart_id] = { datasets: datasets }
+        
+      when "radar"
+        # Generate radar chart data
+        labels = [ "Quality", "Efficiency", "Safety", "Cost", "Delivery" ]
+        datasets = [{
+          label: chart[:title],
+          data: labels.map { rand(60..100) }
+        }]
+        charts[chart_id] = { labels: labels, datasets: datasets }
+        
+      when "scatter"
+        # Generate scatter plot data
+        datasets = [{
+          label: chart[:title],
+          data: (1..20).map { { x: rand(10..100), y: rand(10..100) } }
+        }]
+        charts[chart_id] = { datasets: datasets }
+        
+      when "funnel"
+        # Generate funnel chart data
+        labels = [ "Leads", "Qualified", "Proposal", "Negotiation", "Closed" ]
+        datasets = [{
+          data: [ 1000, 750, 500, 300, 200 ]
+        }]
+        charts[chart_id] = { labels: labels, datasets: datasets }
+        
+      when "timeline"
+        # Generate timeline data
+        datasets = [{
+          data: [
+            { name: "Project A", start: Date.today, end: Date.today + 30.days },
+            { name: "Project B", start: Date.today + 10.days, end: Date.today + 45.days },
+            { name: "Project C", start: Date.today + 20.days, end: Date.today + 60.days }
+          ]
+        }]
+        charts[chart_id] = { datasets: datasets }
       end
     end
 
