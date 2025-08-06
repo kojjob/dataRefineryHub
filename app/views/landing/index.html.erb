@@ -402,119 +402,33 @@
     </div>
   </div>
 </section>
-<!-- Enhanced Final CTA Section -->
-<section class="cta-enhanced">
+<!-- Final CTA Section -->
+<section class="cta">
   <div class="container">
-    <!-- Background Pattern -->
-    <div class="cta-enhanced__pattern" aria-hidden="true">
-      <div class="pattern-grid">
-        <div class="pattern-dot"></div>
-        <div class="pattern-dot"></div>
-        <div class="pattern-dot"></div>
-        <div class="pattern-dot"></div>
-        <div class="pattern-dot"></div>
-        <div class="pattern-dot"></div>
-        <div class="pattern-dot"></div>
-        <div class="pattern-dot"></div>
+    <div class="cta__content">
+      <h2 class="cta__title">Ready to Transform Your Data?</h2>
+      <p class="cta__subtitle">Join 2,500+ businesses already using Data Reflow to drive growth</p>
+      <div class="cta__actions">
+        <%= link_to new_user_registration_path, class: "btn btn--primary btn--lg" do %>
+          Start Free Trial
+        <% end %>
+        <button data-controller="video-modal"
+                data-action="click->video-modal#open"
+                data-video-url="https://player.vimeo.com/video/ai-dashboard-demo"
+                class="btn btn--outline btn--lg">Watch Demo</button>
       </div>
-    </div>
-
-    <div class="cta-enhanced__wrapper">
-      <div class="cta-enhanced__content">
-        <!-- Main Content -->
-        <div class="cta-enhanced__main">
-          <h2 class="cta-enhanced__title">Ready to Transform Your Data?</h2>
-          <p class="cta-enhanced__subtitle">Join 2,500+ businesses already using Data Reflow to drive growth</p>
-
-          <!-- Trust Indicators with Enhanced Design -->
-          <div class="cta-enhanced__trust">
-            <div class="trust-item-enhanced">
-              <div class="trust-icon-enhanced">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 6L9 17l-5-5"/>
-                </svg>
-              </div>
-              <span class="trust-text-enhanced">No credit card required</span>
-            </div>
-            <div class="trust-item-enhanced">
-              <div class="trust-icon-enhanced">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 6L9 17l-5-5"/>
-                </svg>
-              </div>
-              <span class="trust-text-enhanced">14-day free trial</span>
-            </div>
-            <div class="trust-item-enhanced">
-              <div class="trust-icon-enhanced">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 6L9 17l-5-5"/>
-                </svg>
-              </div>
-              <span class="trust-text-enhanced">Setup in 5 minutes</span>
-            </div>
-          </div>
-
-          <!-- Enhanced Action Buttons -->
-          <div class="cta-enhanced__actions">
-            <%= link_to new_user_registration_path, class: "btn-cta btn-cta--primary" do %>
-              <span class="btn-cta__text">Start Free Trial</span>
-              <svg class="btn-cta__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            <% end %>
-            <button data-controller="video-modal"
-                    data-action="click->video-modal#open"
-                    data-video-url="https://player.vimeo.com/video/ai-dashboard-demo"
-                    class="btn-cta btn-cta--outline">
-              <span class="btn-cta__text">Watch Demo</span>
-              <svg class="btn-cta__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-              </svg>
-            </button>
-          </div>
+      <div class="cta__trust">
+        <div class="trust-item">
+          <span class="trust-icon">✓</span>
+          No credit card required
         </div>
-
-        <!-- Visual Enhancement -->
-        <div class="cta-enhanced__visual">
-          <div class="visual-dashboard">
-            <div class="dashboard-header">
-              <div class="dashboard-dots">
-                <span class="dot dot--red"></span>
-                <span class="dot dot--yellow"></span>
-                <span class="dot dot--green"></span>
-              </div>
-              <span class="dashboard-title">Data Reflow Analytics</span>
-            </div>
-            <div class="dashboard-content">
-              <div class="metric-card">
-                <div class="metric-label">Revenue Growth</div>
-                <div class="metric-value">+340%</div>
-                <div class="metric-trend metric-trend--up">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M7 14l5-5 5 5"/>
-                  </svg>
-                  <span>+23% this month</span>
-                </div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-label">Cost Reduction</div>
-                <div class="metric-value">-30%</div>
-                <div class="metric-trend metric-trend--down">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 10l-5 5-5-5"/>
-                  </svg>
-                  <span>-12% this month</span>
-                </div>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-label">Setup Progress</div>
-                <div class="progress-track">
-                  <div class="progress-fill" style="width: 85%"></div>
-                </div>
-                <div class="progress-text">85% Complete</div>
-              </div>
-            </div>
-          </div>
+        <div class="trust-item">
+          <span class="trust-icon">✓</span>
+          14-day free trial
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">✓</span>
+          Setup in 5 minutes
         </div>
       </div>
     </div>
