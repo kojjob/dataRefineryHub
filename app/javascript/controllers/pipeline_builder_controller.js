@@ -110,24 +110,144 @@ export default class extends Controller {
     // Update buttons
     const prevButton = this.element.querySelector('[data-pipeline-builder-target="prevButton"]')
     const nextButton = this.element.querySelector('[data-pipeline-builder-target="nextButton"]')
-    const submitButton = this.element.querySelector('[type="submit"]')
+    const submitButton = this.element.querySelector('[data-pipeline-builder-target="submitButton"]')
 
     if (prevButton) {
-      prevButton.disabled = this.currentStep <= 1
+      if (this.currentStep <= 1) {
+        prevButton.style.display = 'none'
+      } else {
+        prevButton.style.display = 'flex'
+      }
     }
 
+    // Update step indicator
+    const stepIndicator = this.element.querySelector('[data-pipeline-builder-target="currentStepIndicator"]')
+    if (stepIndicator) {
+      stepIndicator.textContent = this.currentStep
+    }
+
+    // Handle final step navigation - show multiple options
     if (nextButton && submitButton) {
       if (this.currentStep < this.totalSteps) {
-        nextButton.style.display = 'inline-flex'
+        nextButton.style.display = 'flex'
         submitButton.style.display = 'none'
+        this.hideActionButtons()
       } else {
         nextButton.style.display = 'none'
-        submitButton.style.display = 'inline-flex'
+        submitButton.style.display = 'flex'
+        this.showActionButtons()
       }
     }
 
     // Update step navigation styling
     this.updateStepNavigation(this.currentStep)
+  }
+
+  showActionButtons() {
+    // Show additional action buttons for final step
+    const actionButtonsContainer = this.element.querySelector('.action-buttons-container')
+    if (!actionButtonsContainer) {
+      this.createActionButtons()
+    }
+  }
+
+  hideActionButtons() {
+    const actionButtonsContainer = this.element.querySelector('.action-buttons-container')
+    if (actionButtonsContainer) {
+      actionButtonsContainer.style.display = 'none'
+    }
+  }
+
+  createActionButtons() {
+    const navigationContainer = this.element.querySelector('div[style*="justify-content: space-between"]')
+    if (!navigationContainer) return
+
+    // Find the action buttons area (right side)
+    const actionArea = navigationContainer.querySelector('div[style*="display: flex; align-items: center; gap: var(--space-12)"]')
+    if (!actionArea) return
+
+    // Create container for additional action buttons
+    const actionButtonsContainer = document.createElement('div')
+    actionButtonsContainer.className = 'action-buttons-container'
+    actionButtonsContainer.style.cssText = `
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      margin-right: var(--space-12);
+    `
+
+    // Save as Draft Button
+    const saveDraftButton = document.createElement('button')
+    saveDraftButton.type = 'button'
+    saveDraftButton.setAttribute('data-action', 'click->pipeline-builder#saveDraft')
+    saveDraftButton.style.cssText = `
+      background: rgba(var(--color-surface-rgb), 0.8);
+      border: 1px solid rgba(var(--color-border-rgb), 0.3);
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      padding: var(--space-8) var(--space-12);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+    `
+    saveDraftButton.innerHTML = `
+      <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"/>
+      </svg>
+      Draft
+    `
+
+    // Export Config Button
+    const exportButton = document.createElement('button')
+    exportButton.type = 'button'
+    exportButton.setAttribute('data-action', 'click->pipeline-builder#exportConfiguration')
+    exportButton.style.cssText = `
+      background: rgba(var(--color-surface-rgb), 0.8);
+      border: 1px solid rgba(var(--color-border-rgb), 0.3);
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      padding: var(--space-8) var(--space-12);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+    `
+    exportButton.innerHTML = `
+      <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      Export
+    `
+
+    // Add hover effects
+    const addHoverEffects = (button, hoverColor) => {
+      button.addEventListener('mouseenter', () => {
+        button.style.borderColor = `rgba(${hoverColor}, 0.4)`
+        button.style.color = `rgb(${hoverColor})`
+      })
+      button.addEventListener('mouseleave', () => {
+        button.style.borderColor = 'rgba(var(--color-border-rgb), 0.3)'
+        button.style.color = 'var(--color-text-secondary)'
+      })
+    }
+
+    addHoverEffects(saveDraftButton, '99, 102, 241') // Blue
+    addHoverEffects(exportButton, '245, 158, 11') // Orange
+
+    actionButtonsContainer.appendChild(saveDraftButton)
+    actionButtonsContainer.appendChild(exportButton)
+    
+    // Insert before the main action area
+    actionArea.parentNode.insertBefore(actionButtonsContainer, actionArea)
   }
 
   updateStepNavigation(currentStep) {
@@ -516,6 +636,9 @@ export default class extends Controller {
     let configHtml = ''
     
     switch (destinationType) {
+      case 'preview_only':
+        configHtml = this.getPreviewOnlyDestinationConfig()
+        break
       case 'warehouse':
         configHtml = this.getWarehouseDestinationConfig()
         break
@@ -570,6 +693,230 @@ export default class extends Controller {
 
   getCloudStorageDestinationConfig() {
     return '<p class="text-gray-500">Cloud storage destination configuration coming soon</p>'
+  }
+
+  getPreviewOnlyDestinationConfig() {
+    return `
+      <div style="
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        border-radius: var(--radius-lg);
+        padding: var(--space-24);
+        backdrop-filter: blur(10px);
+      ">
+        <!-- Header -->
+        <div style="margin-bottom: var(--space-20);">
+          <h3 style="
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text);
+            margin: 0 0 var(--space-8) 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-12);
+          ">
+            <div style="
+              width: 32px;
+              height: 32px;
+              background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+            ">
+              <svg style="width: 16px; height: 16px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            Preview & Test Mode
+          </h3>
+          <p style="
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin: 0;
+          ">Perfect for SMEs who want to validate their data transformations before committing to a destination.</p>
+        </div>
+
+        <!-- Features List -->
+        <div style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: var(--space-16);
+          margin-bottom: var(--space-24);
+        ">
+          <div style="display: flex; align-items: flex-start; gap: var(--space-12);">
+            <div style="
+              width: 20px;
+              height: 20px;
+              background: #22c55e;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+              margin-top: var(--space-2);
+            ">
+              <svg style="width: 12px; height: 12px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-text); margin: 0 0 var(--space-4) 0;">Live Preview</h4>
+              <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">See transformed data in real-time</p>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: flex-start; gap: var(--space-12);">
+            <div style="
+              width: 20px;
+              height: 20px;
+              background: #22c55e;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+              margin-top: var(--space-2);
+            ">
+              <svg style="width: 12px; height: 12px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-text); margin: 0 0 var(--space-4) 0;">Export Options</h4>
+              <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">Download as CSV, JSON, or Excel</p>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: flex-start; gap: var(--space-12);">
+            <div style="
+              width: 20px;
+              height: 20px;
+              background: #22c55e;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+              margin-top: var(--space-2);
+            ">
+              <svg style="width: 12px; height: 12px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-text); margin: 0 0 var(--space-4) 0;">Save as Draft</h4>
+              <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">Keep configuration for later use</p>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: flex-start; gap: var(--space-12);">
+            <div style="
+              width: 20px;
+              height: 20px;
+              background: #22c55e;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+              margin-top: var(--space-2);
+            ">
+              <svg style="width: 12px; height: 12px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-text); margin: 0 0 var(--space-4) 0;">Share Template</h4>
+              <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">Export pipeline config for teams</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Configuration Options -->
+        <div style="
+          background: rgba(var(--color-surface-rgb), 0.8);
+          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+          border-radius: var(--radius-lg);
+          padding: var(--space-20);
+          backdrop-filter: blur(10px);
+        ">
+          <h4 style="
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-medium);
+            color: var(--color-text);
+            margin: 0 0 var(--space-16) 0;
+          ">Preview Configuration</h4>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16);">
+            <div>
+              <label style="
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text);
+                margin-bottom: var(--space-8);
+              ">Sample Size:</label>
+              <select name="pipeline[destination_config][sample_size]" style="
+                width: 100%;
+                padding: var(--space-12);
+                background: rgba(var(--color-surface-rgb), 0.8);
+                border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                border-radius: var(--radius-md);
+                color: var(--color-text);
+                font-size: var(--font-size-sm);
+              ">
+                <option value="100">100 rows</option>
+                <option value="500">500 rows</option>
+                <option value="1000" selected>1,000 rows</option>
+                <option value="5000">5,000 rows</option>
+                <option value="all">All rows</option>
+              </select>
+            </div>
+            
+            <div>
+              <label style="
+                display: block;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text);
+                margin-bottom: var(--space-8);
+              ">Export Format:</label>
+              <select name="pipeline[destination_config][export_format]" style="
+                width: 100%;
+                padding: var(--space-12);
+                background: rgba(var(--color-surface-rgb), 0.8);
+                border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                border-radius: var(--radius-md);
+                color: var(--color-text);
+                font-size: var(--font-size-sm);
+              ">
+                <option value="csv">CSV (Recommended)</option>
+                <option value="json">JSON</option>
+                <option value="xlsx">Excel (.xlsx)</option>
+                <option value="parquet">Parquet</option>
+              </select>
+            </div>
+          </div>
+          
+          <div style="margin-top: var(--space-16);">
+            <label style="display: flex; align-items: center; gap: var(--space-8);">
+              <input type="checkbox" 
+                     name="pipeline[destination_config][include_metadata]" 
+                     checked
+                     style="
+                       width: 16px;
+                       height: 16px;
+                       accent-color: #22c55e;
+                     ">
+              <span style="font-size: var(--font-size-sm); color: var(--color-text);">Include transformation metadata in export</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    `
   }
 
   // File Upload Handling
@@ -1194,5 +1541,218 @@ export default class extends Controller {
         transformationsList.appendChild(transformationElement)
       }
     }
+  }
+
+  // Draft and Export Methods for SMEs
+  saveDraft(event) {
+    console.log('Save draft requested')
+    event.preventDefault()
+    
+    const pipelineData = this.collectPipelineData()
+    
+    // Show saving indicator
+    this.showSaveIndicator('draft')
+    
+    // Use existing draft save endpoint
+    fetch('/etl_pipeline_builders/save_draft', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      },
+      body: JSON.stringify({
+        step: this.currentStep,
+        pipeline_data: pipelineData,
+        transformations: this.transformations || []
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        this.showSuccessMessage('Draft saved successfully! You can continue later from where you left off.')
+      } else {
+        this.showErrorMessage('Failed to save draft: ' + (data.error || 'Unknown error'))
+      }
+    })
+    .catch(error => {
+      console.error('Draft save error:', error)
+      this.showErrorMessage('Network error while saving draft')
+    })
+    .finally(() => {
+      this.hideSaveIndicator()
+    })
+  }
+
+  exportConfiguration(event) {
+    console.log('Export configuration requested')
+    event.preventDefault()
+    
+    const pipelineData = this.collectPipelineData()
+    const exportData = {
+      pipeline_configuration: {
+        name: pipelineData.name || 'Untitled Pipeline',
+        description: pipelineData.description || '',
+        pipeline_type: pipelineData.pipeline_type || 'etl',
+        source_config: pipelineData.source_config || {},
+        destination_config: pipelineData.destination_config || {},
+        transformations: this.transformations || [],
+        created_at: new Date().toISOString(),
+        version: '1.0',
+        created_by: 'SME User'
+      },
+      metadata: {
+        export_format: 'json',
+        export_timestamp: new Date().toISOString(),
+        platform: 'Data Refinery Platform'
+      }
+    }
+    
+    // Show export indicator
+    this.showSaveIndicator('export')
+    
+    // Create and download file
+    setTimeout(() => {
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `pipeline-config-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+      
+      this.showSuccessMessage('Configuration exported successfully! You can import this file later or share it with your team.')
+      this.hideSaveIndicator()
+    }, 1000)
+  }
+
+  collectPipelineData() {
+    const form = this.element.closest('form')
+    const formData = new FormData(form)
+    
+    const pipelineData = {
+      name: formData.get('pipeline[name]') || '',
+      description: formData.get('pipeline[description]') || '',
+      pipeline_type: formData.get('pipeline_type') || 'etl',
+      source_config: {},
+      destination_config: {}
+    }
+    
+    // Collect source configuration
+    for (const [key, value] of formData.entries()) {
+      if (key.startsWith('pipeline[source_config]')) {
+        const configKey = key.match(/\[([^\]]+)\]$/)?.[1]
+        if (configKey) {
+          pipelineData.source_config[configKey] = value
+        }
+      } else if (key.startsWith('pipeline[destination_config]')) {
+        const configKey = key.match(/\[([^\]]+)\]$/)?.[1]
+        if (configKey) {
+          pipelineData.destination_config[configKey] = value
+        }
+      }
+    }
+    
+    return pipelineData
+  }
+
+  showSaveIndicator(type) {
+    const message = type === 'draft' ? 'Saving draft...' : 'Exporting configuration...'
+    const color = type === 'draft' ? '#6366f1' : '#f59e0b'
+    
+    const indicator = document.createElement('div')
+    indicator.id = 'save-indicator'
+    indicator.style.cssText = `
+      position: fixed;
+      top: var(--space-20);
+      right: var(--space-20);
+      background: linear-gradient(135deg, ${color} 0%, ${color}cc 100%);
+      color: white;
+      padding: var(--space-12) var(--space-16);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      z-index: 9999;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      animation: slideInFromRight 0.3s ease-out;
+    `
+    
+    indicator.innerHTML = `
+      <div style="
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      "></div>
+      ${message}
+    `
+    
+    document.body.appendChild(indicator)
+  }
+
+  hideSaveIndicator() {
+    const indicator = document.getElementById('save-indicator')
+    if (indicator) {
+      indicator.style.animation = 'slideOutToRight 0.3s ease-in'
+      setTimeout(() => {
+        if (indicator.parentNode) {
+          indicator.parentNode.removeChild(indicator)
+        }
+      }, 300)
+    }
+  }
+
+  showSuccessMessage(message) {
+    this.showMessage(message, 'success')
+  }
+
+  showErrorMessage(message) {
+    this.showMessage(message, 'error')
+  }
+
+  showMessage(message, type) {
+    const colors = {
+      success: { bg: '#22c55e', border: '#16a34a' },
+      error: { bg: '#ef4444', border: '#dc2626' }
+    }
+    
+    const messageDiv = document.createElement('div')
+    messageDiv.style.cssText = `
+      position: fixed;
+      top: var(--space-20);
+      right: var(--space-20);
+      background: linear-gradient(135deg, ${colors[type].bg} 0%, ${colors[type].border} 100%);
+      color: white;
+      padding: var(--space-16) var(--space-20);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      max-width: 400px;
+      z-index: 9999;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      animation: slideInFromRight 0.3s ease-out;
+    `
+    
+    messageDiv.textContent = message
+    document.body.appendChild(messageDiv)
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      messageDiv.style.animation = 'slideOutToRight 0.3s ease-in'
+      setTimeout(() => {
+        if (messageDiv.parentNode) {
+          messageDiv.parentNode.removeChild(messageDiv)
+        }
+      }, 300)
+    }, 5000)
   }
 }
