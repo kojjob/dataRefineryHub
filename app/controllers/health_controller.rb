@@ -434,14 +434,12 @@ class HealthController < ActionController::API
         status: status,
         details: {
           usage_percentage: usage_percentage,
-          mount_point: df_output.split.last
+          mount_point: Rails.root.to_s
         }
       }
-    else
-      { status: 'unknown', details: {} }
+    rescue
+      { status: 'unknown', error: 'Unable to check disk usage' }
     end
-  rescue
-    { status: 'unknown', error: 'Unable to check disk usage' }
   end
 
   def calculate_uptime
