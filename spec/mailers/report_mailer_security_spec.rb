@@ -10,7 +10,7 @@ RSpec.describe ReportMailer, type: :mailer do
     describe "#html_report" do
       it "sanitizes HTML content to prevent XSS attacks" do
         malicious_html = "<script>alert('xss')</script><p>Safe content</p>"
-        
+
         mail = ReportMailer.with(
           user: user,
           organization: organization,
@@ -25,7 +25,7 @@ RSpec.describe ReportMailer, type: :mailer do
 
       it "sanitizes subject line" do
         malicious_subject = "<script>alert('xss')</script>Safe Subject"
-        
+
         mail = ReportMailer.with(
           user: user,
           organization: organization,
@@ -42,7 +42,7 @@ RSpec.describe ReportMailer, type: :mailer do
     describe "#report_with_attachment" do
       it "validates PDF content" do
         invalid_pdf = "This is not a PDF"
-        
+
         expect {
           ReportMailer.with(
             user: user,
@@ -57,7 +57,7 @@ RSpec.describe ReportMailer, type: :mailer do
 
       it "accepts valid PDF content" do
         valid_pdf = "%PDF-1.4\n%Valid PDF content here"
-        
+
         expect {
           ReportMailer.with(
             user: user,
@@ -72,7 +72,7 @@ RSpec.describe ReportMailer, type: :mailer do
 
       it "sanitizes filename to prevent path traversal" do
         malicious_filename = "../../../etc/passwd"
-        
+
         mail = ReportMailer.with(
           user: user,
           organization: organization,
@@ -90,22 +90,22 @@ RSpec.describe ReportMailer, type: :mailer do
     end
 
     describe "#presentation_delivery" do
-      let(:temp_file) { Tempfile.new(['test', '.pdf']) }
-      
+      let(:temp_file) { Tempfile.new([ 'test', '.pdf' ]) }
+
       before do
         temp_file.write("%PDF-1.4\nValid PDF content")
         temp_file.close
         # Create allowed directory
         FileUtils.mkdir_p(Rails.root.join('tmp', 'presentations'))
       end
-      
+
       after do
         temp_file.unlink
       end
 
       it "prevents path traversal attacks" do
         malicious_path = "/etc/passwd"
-        
+
         expect {
           ReportMailer.with(
             user: user,
@@ -120,10 +120,10 @@ RSpec.describe ReportMailer, type: :mailer do
 
       it "validates file size limits" do
         # Create a large file (simulate > 10MB)
-        large_file = Tempfile.new(['large', '.pdf'])
+        large_file = Tempfile.new([ 'large', '.pdf' ])
         large_file.write('a' * (11 * 1024 * 1024)) # 11MB
         large_file.close
-        
+
         expect {
           ReportMailer.with(
             user: user,
@@ -134,7 +134,7 @@ RSpec.describe ReportMailer, type: :mailer do
             attachment_name: "large.pdf"
           ).presentation_delivery.deliver_now
         }.to raise_error(ArgumentError, /File too large/)
-        
+
         large_file.unlink
       end
     end
@@ -146,7 +146,7 @@ RSpec.describe ReportMailer, type: :mailer do
         it "removes dangerous script tags" do
           dangerous_html = "<script>alert('xss')</script><p>Safe</p><style>body{}</style>"
           result = subject.send(:sanitize_html_content, dangerous_html)
-          
+
           expect(result).not_to include("<script>")
           expect(result).not_to include("<style>")
           expect(result).to include("<p>Safe</p>")
@@ -155,7 +155,7 @@ RSpec.describe ReportMailer, type: :mailer do
         it "allows safe HTML tags" do
           safe_html = "<h1>Title</h1><p><strong>Bold</strong> and <em>italic</em></p><ul><li>Item</li></ul>"
           result = subject.send(:sanitize_html_content, safe_html)
-          
+
           expect(result).to include("<h1>Title</h1>")
           expect(result).to include("<strong>Bold</strong>")
           expect(result).to include("<em>italic</em>")
@@ -166,7 +166,7 @@ RSpec.describe ReportMailer, type: :mailer do
         it "removes dangerous characters" do
           dangerous_name = "../../../evil<script>.pdf"
           result = subject.send(:sanitize_filename, dangerous_name)
-          
+
           expect(result).not_to include("../")
           expect(result).not_to include("<")
           expect(result).not_to include(">")
@@ -175,7 +175,7 @@ RSpec.describe ReportMailer, type: :mailer do
         it "limits filename length" do
           long_name = "a" * 200 + ".pdf"
           result = subject.send(:sanitize_filename, long_name)
-          
+
           expect(result.length).to be <= 100
         end
       end
@@ -184,14 +184,14 @@ RSpec.describe ReportMailer, type: :mailer do
         it "only allows files in allowed directories" do
           temp_dir = Rails.root.join('tmp', 'reports')
           FileUtils.mkdir_p(temp_dir)
-          
+
           safe_file = temp_dir.join('test.pdf')
           File.write(safe_file, 'test content')
-          
+
           expect {
             subject.send(:validate_attachment_path!, safe_file.to_s)
           }.not_to raise_error
-          
+
           File.delete(safe_file)
         end
       end

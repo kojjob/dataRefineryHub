@@ -48,7 +48,7 @@ module DataRefineryPlatform
 
     # Add security middleware
     config.middleware.use Rack::Attack
-    
+
     # Add API rate limiting middleware
     require_relative "../app/middleware/api_rate_limiter"
     config.middleware.use ApiRateLimiter

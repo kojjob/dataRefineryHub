@@ -25,7 +25,7 @@ RSpec.describe "Rate Limiting", type: :request do
       it "throttles excessive requests" do
         # Configure a low limit for testing
         allow(Rack::Attack).to receive(:throttled_responder).and_wrap_original do |original, *args|
-          [429, { 'Content-Type' => 'application/json' }, ['{"error": "Too Many Requests"}']]
+          [ 429, { 'Content-Type' => 'application/json' }, [ '{"error": "Too Many Requests"}' ] ]
         end
 
         # Mock the throttle to trigger after 5 requests for testing
@@ -63,7 +63,7 @@ RSpec.describe "Rate Limiting", type: :request do
         5.times do
           patch "/api/v1/notifications/#{notification.id}/mark_as_read"
           expect(response).not_to have_http_status(:too_many_requests)
-          
+
           # Reset notification for next request
           notification.update!(read_at: nil)
         end
@@ -81,7 +81,7 @@ RSpec.describe "Rate Limiting", type: :request do
     describe "notification deletion rate limiting" do
       it "allows normal deletion rate" do
         notifications = create_list(:notification, 3, user: user, organization: organization)
-        
+
         notifications.each do |notification|
           delete "/api/v1/notifications/#{notification.id}"
           expect(response).not_to have_http_status(:too_many_requests)
@@ -92,7 +92,7 @@ RSpec.describe "Rate Limiting", type: :request do
     describe "rate limit headers" do
       it "includes rate limit information in response headers" do
         get "/api/v1/notifications"
-        
+
         # Should include rate limit headers (may not be present in test environment)
         # but should not error if throttled
         if response.headers.key?('X-RateLimit-Limit')
@@ -115,17 +115,17 @@ RSpec.describe "Rate Limiting", type: :request do
 
     it "differentiates between users" do
       other_user = create(:user, organization: organization)
-      
+
       # User 1 makes requests
       5.times do
         get "/api/v1/notifications"
         expect(response).not_to have_http_status(:too_many_requests)
       end
-      
+
       # User 2 should have their own rate limit
       sign_out user
       sign_in other_user
-      
+
       5.times do
         get "/api/v1/notifications"
         expect(response).not_to have_http_status(:too_many_requests)
@@ -144,7 +144,7 @@ RSpec.describe "Rate Limiting", type: :request do
         }
         # Should allow a few attempts
       end
-      
+
       # Should eventually throttle excessive login attempts
       # (This test may need adjustment based on actual Rack::Attack configuration)
     end
@@ -185,8 +185,8 @@ RSpec.describe "Rate Limiting", type: :request do
 
   describe "security blocking" do
     it "blocks requests with malicious user agents" do
-      bad_agents = ['sqlmap', 'nikto', 'masscan']
-      
+      bad_agents = [ 'sqlmap', 'nikto', 'masscan' ]
+
       bad_agents.each do |agent|
         get "/api/v1/notifications", headers: { 'User-Agent' => agent }
         expect(response).to have_http_status(:forbidden)
@@ -200,7 +200,7 @@ RSpec.describe "Rate Limiting", type: :request do
         '/config/database.yml',
         '/wp-admin'
       ]
-      
+
       sensitive_paths.each do |path|
         get path
         expect(response).to have_http_status(:forbidden)
@@ -217,15 +217,15 @@ RSpec.describe "Rate Limiting", type: :request do
     it "returns properly formatted error response when throttled", skip: "Requires rate limit to be triggered" do
       # This test would require actually triggering a rate limit
       # which is difficult in the test environment
-      
+
       # Mock a throttled response
       allow_any_instance_of(described_class).to receive(:call).and_return(
-        [429, {
+        [ 429, {
           'Content-Type' => 'application/json',
           'X-RateLimit-Limit' => '100',
           'X-RateLimit-Remaining' => '0',
           'X-RateLimit-Reset' => (Time.now + 1.hour).to_i.to_s
-        }, ['{"error": "Too Many Requests", "message": "Rate limit exceeded. Please try again later."}']]
+        }, [ '{"error": "Too Many Requests", "message": "Rate limit exceeded. Please try again later."}' ] ]
       )
     end
   end
@@ -233,7 +233,7 @@ RSpec.describe "Rate Limiting", type: :request do
   describe "rate limit logging" do
     it "logs throttled requests" do
       allow(Rails.logger).to receive(:warn)
-      
+
       # This would require actually triggering a throttle to test logging
       # For now, we verify the logging configuration exists
       expect(ActiveSupport::Notifications).to be_subscribed('rack_attack.throttled')

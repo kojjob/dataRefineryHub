@@ -46,7 +46,7 @@ class AuditLog < ApplicationRecord
     # Safely resolve resource class using whitelist
     resource_class = SafeClassResolver.resolve(resource_type, raise_on_error: false)
     return nil unless resource_class
-    
+
     resource_class.find_by(id: resource_id)
   rescue ActiveRecord::RecordNotFound
     nil

@@ -41,10 +41,10 @@ class ReportMailer < ApplicationMailer
     # SECURITY FIX: Validate PDF filename and content
     pdf_filename = sanitize_filename(params[:pdf_filename])
     pdf_content = params[:pdf_content]
-    
+
     # Validate PDF content
     validate_pdf_content!(pdf_content) if pdf_content
-    
+
     attachments[pdf_filename] = {
       mime_type: "application/pdf",
       content: pdf_content
@@ -65,7 +65,7 @@ class ReportMailer < ApplicationMailer
     # SECURITY FIX: Secure file attachment handling - prevent path traversal
     attachment_path = validate_attachment_path!(params[:attachment_path])
     attachment_name = sanitize_filename(params[:attachment_name])
-    
+
     attachments[attachment_name] = File.read(attachment_path)
 
     mail(
@@ -116,10 +116,10 @@ class ReportMailer < ApplicationMailer
   end
 
   # SECURITY METHODS: Sanitization and validation
-  
+
   def sanitize_html_content(html)
     return "" if html.blank?
-    
+
     # Allow only safe HTML tags and attributes
     ActionController::Base.helpers.sanitize(
       html,
@@ -129,70 +129,70 @@ class ReportMailer < ApplicationMailer
       whitespace: :normalize
     )
   end
-  
+
   def sanitize_text_content(text)
     return "" if text.blank?
-    
+
     # Strip HTML tags and normalize whitespace
     ActionController::Base.helpers.strip_tags(text).squish.truncate(10000)
   end
-  
+
   def sanitize_subject(subject)
     return "Data Refinery Report" if subject.blank?
-    
+
     # Strip HTML tags and limit length
     sanitized = ActionController::Base.helpers.strip_tags(subject).squish
     sanitized.truncate(255)
   end
-  
+
   def sanitize_filename(filename)
     return "report.pdf" if filename.blank?
-    
+
     # Remove dangerous characters and normalize
-    safe_name = filename.gsub(/[^a-zA-Z0-9\-_\.]/, '_')
-    safe_name = safe_name.gsub(/_{2,}/, '_') # Remove multiple underscores
+    safe_name = filename.gsub(/[^a-zA-Z0-9\-_\.]/, "_")
+    safe_name = safe_name.gsub(/_{2,}/, "_") # Remove multiple underscores
     safe_name.truncate(100)
   end
-  
+
   def validate_attachment_path!(file_path)
     return nil if file_path.blank?
-    
+
     # Define allowed directories for file attachments
     allowed_dirs = [
-      Rails.root.join('tmp', 'reports').to_s,
-      Rails.root.join('tmp', 'presentations').to_s,
-      Rails.root.join('storage').to_s
+      Rails.root.join("tmp", "reports").to_s,
+      Rails.root.join("tmp", "presentations").to_s,
+      Rails.root.join("storage").to_s
     ]
-    
+
     # Resolve absolute path to prevent path traversal
     resolved_path = File.expand_path(file_path)
-    
+
     # Check if path is within allowed directories
     unless allowed_dirs.any? { |dir| resolved_path.start_with?(File.expand_path(dir)) }
       raise SecurityError, "File access denied: path outside allowed directories"
     end
-    
+
     # Check if file exists and is a regular file
     unless File.exist?(resolved_path) && File.file?(resolved_path)
       raise ArgumentError, "Invalid file: #{file_path}"
     end
-    
+
     # Check file size (10MB limit)
     if File.size(resolved_path) > 10.megabytes
       raise ArgumentError, "File too large: #{file_path}"
     end
-    
+
     resolved_path
   end
-  
+
   def validate_pdf_content!(content)
     return if content.blank?
-    
+
     # Check if content starts with PDF magic number
-    unless content.start_with?('%PDF-')
+    unless content.start_with?("%PDF-")
       raise ArgumentError, "Invalid PDF content"
     end
-    
+
     # Check content size
     if content.bytesize > 10.megabytes
       raise ArgumentError, "PDF content too large"

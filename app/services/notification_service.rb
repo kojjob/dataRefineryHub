@@ -243,20 +243,20 @@ class NotificationService
 
     def sanitize_for_log(text)
       return "" if text.blank?
-      
+
       # Strip HTML tags, limit length, and remove sensitive patterns
       sanitized = ActionController::Base.helpers.strip_tags(text.to_s).squish
-      sanitized = sanitized.gsub(/password[\s]*[:=]\s*\S+/i, 'password=[REDACTED]')
-      sanitized = sanitized.gsub(/token[\s]*[:=]\s*\S+/i, 'token=[REDACTED]')
-      sanitized = sanitized.gsub(/key[\s]*[:=]\s*\S+/i, 'key=[REDACTED]')
-      sanitized = sanitized.gsub(/secret[\s]*[:=]\s*\S+/i, 'secret=[REDACTED]')
-      sanitized = sanitized.gsub(/api_key[\s]*[:=]\s*\S+/i, 'api_key=[REDACTED]')
+      sanitized = sanitized.gsub(/password[\s]*[:=]\s*\S+/i, "password=[REDACTED]")
+      sanitized = sanitized.gsub(/token[\s]*[:=]\s*\S+/i, "token=[REDACTED]")
+      sanitized = sanitized.gsub(/key[\s]*[:=]\s*\S+/i, "key=[REDACTED]")
+      sanitized = sanitized.gsub(/secret[\s]*[:=]\s*\S+/i, "secret=[REDACTED]")
+      sanitized = sanitized.gsub(/api_key[\s]*[:=]\s*\S+/i, "api_key=[REDACTED]")
       sanitized.truncate(500)
     end
 
     def sanitize_for_broadcast(text)
       return "" if text.blank?
-      
+
       # Strip HTML tags and sanitize for client-side display
       ActionController::Base.helpers.sanitize(
         text.to_s,
@@ -269,7 +269,7 @@ class NotificationService
 
     def sanitize_metadata_for_log(data)
       return {} if data.blank?
-      
+
       case data
       when Hash
         sanitized = {}
@@ -288,13 +288,13 @@ class NotificationService
 
     def sanitize_metadata_for_broadcast(data)
       return {} if data.blank?
-      
+
       case data
       when Hash
         sanitized = {}
         data.each do |key, value|
           next if sensitive_key?(key) # Skip sensitive keys entirely
-          sanitized_key = key.to_s.gsub(/[^a-zA-Z0-9_]/, '_')
+          sanitized_key = key.to_s.gsub(/[^a-zA-Z0-9_]/, "_")
           sanitized_value = sanitize_value_for_broadcast(value)
           sanitized[sanitized_key] = sanitized_value
         end
@@ -307,7 +307,7 @@ class NotificationService
     end
 
     def sanitize_key_for_log(key)
-      key.to_s.gsub(/[^a-zA-Z0-9_]/, '_').truncate(50)
+      key.to_s.gsub(/[^a-zA-Z0-9_]/, "_").truncate(50)
     end
 
     def sanitize_value_for_log(value)

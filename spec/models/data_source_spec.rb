@@ -334,14 +334,14 @@ RSpec.describe DataSource, type: :model do
         source = create(:data_source)
         source.credentials = 'secret_api_key'
         source.save!
-        
+
         # Credentials should be encrypted in database
         raw_value = DataSource.connection.select_value(
           "SELECT credentials FROM data_sources WHERE id = #{source.id}"
         )
         expect(raw_value).not_to eq('secret_api_key')
         expect(raw_value).to be_present
-        
+
         # But should be decrypted when accessed
         expect(source.reload.credentials).to eq('secret_api_key')
       end

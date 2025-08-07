@@ -36,15 +36,15 @@ class CacheManager
     namespace = extract_namespace(key)
     strategy = options[:strategy] || get_strategy(namespace)
     cache_options = build_cache_options(strategy, options)
-    
+
     # Track cache metrics
     start_time = Time.current
     hit = exists?(key)
-    
+
     result = @cache.fetch(key, cache_options) do
       @metrics.record_miss(namespace)
       value = block.call
-      
+
       # Optionally compress large values
       if should_compress?(value)
         compress(value)
@@ -52,40 +52,40 @@ class CacheManager
         value
       end
     end
-    
+
     # Record metrics
     duration = Time.current - start_time
     if hit
       @metrics.record_hit(namespace, duration)
     end
-    
+
     # Check if we should refresh cache in background
     if should_refresh_cache?(key, strategy)
       RefreshCacheJob.perform_later(key, options)
     end
-    
+
     decompress_if_needed(result)
   end
 
   # Multi-fetch for batch operations
   def fetch_multi(*keys, &block)
     options = keys.extract_options!
-    
+
     # Read all keys at once
     cached_results = @cache.read_multi(*keys)
     missing_keys = keys - cached_results.keys
-    
+
     # Fetch missing values
     if missing_keys.any? && block_given?
       new_values = block.call(missing_keys)
-      
+
       # Write new values to cache
       new_values.each do |key, value|
         write(key, value, options)
         cached_results[key] = value
       end
     end
-    
+
     cached_results
   end
 
@@ -94,21 +94,21 @@ class CacheManager
     namespace = extract_namespace(key)
     strategy = options[:strategy] || get_strategy(namespace)
     cache_options = build_cache_options(strategy, options)
-    
+
     # Add version to key for cache busting
     versioned_key = versioned_key(key, options[:version])
-    
+
     # Compress if needed
     final_value = should_compress?(value) ? compress(value) : value
-    
+
     @cache.write(versioned_key, final_value, cache_options)
     @metrics.record_write(namespace, object_size(value))
-    
+
     # Set expiration marker for background refresh
     if strategy[:refresh_threshold]
       set_refresh_marker(versioned_key, cache_options[:expires_in])
     end
-    
+
     true
   end
 
@@ -162,19 +162,19 @@ class CacheManager
   def setup_default_strategies
     # Data source caching - moderate
     @strategies[:data_sources] = CACHE_STRATEGIES[:moderate]
-    
+
     # Analytics caching - aggressive for historical data
     @strategies[:analytics] = CACHE_STRATEGIES[:aggressive]
-    
+
     # Real-time data - conservative
     @strategies[:extraction_jobs] = CACHE_STRATEGIES[:conservative]
-    
+
     # API responses - moderate
     @strategies[:api_responses] = CACHE_STRATEGIES[:moderate]
   end
 
   def extract_namespace(key)
-    key.to_s.split(':').first.to_sym
+    key.to_s.split(":").first.to_sym
   end
 
   def get_strategy(namespace)
@@ -219,14 +219,14 @@ class CacheManager
 
   def should_refresh_cache?(key, strategy)
     return false unless strategy[:refresh_threshold]
-    
+
     marker_key = "#{key}:refresh_marker"
     marker = @cache.read(marker_key)
     return false unless marker
-    
+
     elapsed = Time.current - marker[:created_at]
     ttl = marker[:ttl]
-    
+
     elapsed > (ttl * strategy[:refresh_threshold])
   end
 
@@ -271,7 +271,7 @@ class CacheManager
     @strategies.each_with_object({}) do |(name, strategy), effectiveness|
       stats = @metrics.namespace_stats(name)
       hit_rate = stats[:hits].to_f / (stats[:hits] + stats[:misses] + 1)
-      
+
       effectiveness[name] = {
         hit_rate: (hit_rate * 100).round(2),
         avg_response_time: stats[:avg_response_time],
@@ -317,7 +317,7 @@ class CacheMetrics
   def summary
     total_hits = @stats.values.sum { |s| s[:hits] }
     total_misses = @stats.values.sum { |s| s[:misses] }
-    
+
     {
       total_hits: total_hits,
       total_misses: total_misses,

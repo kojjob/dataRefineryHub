@@ -4,11 +4,11 @@ RSpec.describe EtlPipelineBuildersController, type: :request do
   let(:user) { create(:user, role: :admin) }
   let(:organization) { user.organization }
   let(:pipeline) { create(:pipeline, organization: organization, created_by: user) }
-  
+
   before do
     sign_in user
   end
-  
+
   describe "Security Tests" do
     describe "XXE Protection" do
       it "prevents XXE attacks in XML file uploads" do
@@ -23,23 +23,23 @@ RSpec.describe EtlPipelineBuildersController, type: :request do
             <pipeline_type>etl</pipeline_type>
           </pipeline>
         XML
-        
+
         file = fixture_file_upload(
           StringIO.new(malicious_xml),
           'text/xml'
         )
-        
+
         post :import_pipeline, params: { file: file }
-        
+
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be_falsey
         expect(response).to have_http_status(:unprocessable_entity)
-        
+
         # Ensure no pipeline was created with external entity content
         expect(Pipeline.where("name LIKE ?", "%root%")).to be_empty
         expect(Pipeline.where("name LIKE ?", "%passwd%")).to be_empty
       end
-      
+
       it "safely parses valid XML files" do
         valid_xml = <<~XML
           <?xml version="1.0" encoding="UTF-8"?>
@@ -48,21 +48,21 @@ RSpec.describe EtlPipelineBuildersController, type: :request do
             <pipeline_type>etl</pipeline_type>
           </pipeline>
         XML
-        
+
         file = fixture_file_upload(
           StringIO.new(valid_xml),
           'text/xml'
         )
-        
+
         expect {
           post :import_pipeline, params: { file: file }
         }.to change(Pipeline, :count).by(1)
-        
+
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be_truthy
       end
     end
-    
+
     describe "File Upload Security" do
       it "rejects files larger than 10MB" do
         # Create a mock file that reports size > 10MB
@@ -70,49 +70,49 @@ RSpec.describe EtlPipelineBuildersController, type: :request do
         allow(large_file).to receive(:size).and_return(11.megabytes)
         allow(large_file).to receive(:present?).and_return(true)
         allow(large_file).to receive(:content_type).and_return("application/json")
-        
+
         post :import_pipeline, params: { file: large_file }
-        
+
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be_falsey
         expect(json_response['error']).to include("too large")
         expect(response).to have_http_status(:bad_request)
       end
-      
+
       it "rejects unsupported file types" do
         file = fixture_file_upload(
           StringIO.new("malicious content"),
           'application/x-executable'
         )
-        
+
         post :import_pipeline, params: { file: file }
-        
+
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be_falsey
         expect(json_response['error']).to include("Invalid file type")
         expect(response).to have_http_status(:bad_request)
       end
-      
+
       it "handles missing file gracefully" do
         post :import_pipeline, params: {}
-        
+
         json_response = JSON.parse(response.body)
         expect(json_response['success']).to be_falsey
         expect(json_response['error']).to include("No file provided")
         expect(response).to have_http_status(:bad_request)
       end
     end
-    
+
     describe "Input Validation" do
       describe "#available_extractors" do
         it "validates source_type parameter" do
           get :available_extractors, params: { source_type: "malicious_type" }
-          
+
           json_response = JSON.parse(response.body)
           expect(json_response['error']).to eq("Invalid source type")
           expect(response).to have_http_status(:bad_request)
         end
-        
+
         it "accepts valid source types" do
           %w[database api cloud_storage streaming file_upload].each do |valid_type|
             get :available_extractors, params: { source_type: valid_type }
@@ -120,7 +120,7 @@ RSpec.describe EtlPipelineBuildersController, type: :request do
           end
         end
       end
-      
+
       describe "#transformation_preview" do
         it "rejects invalid transformation types" do
           post :transformation_preview, params: {
@@ -130,15 +130,15 @@ RSpec.describe EtlPipelineBuildersController, type: :request do
             },
             sample_data: []
           }
-          
+
           json_response = JSON.parse(response.body)
           expect(json_response['error']).to eq("Invalid transformation type")
           expect(response).to have_http_status(:bad_request)
         end
-        
+
         it "limits sample data size" do
           large_sample = Array.new(1001) { { id: 1 } }
-          
+
           post :transformation_preview, params: {
             rule: {
               type: "field_mapping",
@@ -146,30 +146,30 @@ RSpec.describe EtlPipelineBuildersController, type: :request do
             },
             sample_data: large_sample
           }
-          
+
           json_response = JSON.parse(response.body)
           expect(json_response['error']).to include("too large")
           expect(response).to have_http_status(:bad_request)
         end
-        
+
         it "accepts valid transformation rules" do
           allow_any_instance_of(TransformationRulesEngine).to receive(:apply_transformations)
             .and_return({ data: [], row_count: 0 })
-          
+
           post :transformation_preview, params: {
             rule: {
               type: "field_mapping",
               name: "Valid Transform",
               config: { from: "old_field", to: "new_field" }
             },
-            sample_data: [{ old_field: "value" }]
+            sample_data: [ { old_field: "value" } ]
           }
-          
+
           expect(response).to have_http_status(:ok)
         end
       end
     end
-    
+
     describe "Mass Assignment Protection" do
       it "rejects unauthorized parameters in pipeline_params" do
         post :create, params: {
@@ -197,7 +197,7 @@ RSpec.describe EtlPipelineBuildersController, type: :request do
             status: "active"
           }
         }
-        
+
         if Pipeline.last
           created_pipeline = Pipeline.last
           # Ensure malicious params were not saved
@@ -212,20 +212,20 @@ RSpec.describe EtlPipelineBuildersController, type: :request do
         end
       end
     end
-    
+
     describe "Error Message Sanitization" do
       it "sanitizes sensitive information from logs" do
         # Mock a database error with connection string
         allow_any_instance_of(Pipeline).to receive(:save).and_raise(
           StandardError.new("Connection failed: postgresql://user:secret123@localhost/db")
         )
-        
+
         # Capture logs
         expect(Rails.logger).to receive(:error) do |message|
           expect(message).not_to include("secret123")
           expect(message).to include("[REDACTED]")
         end
-        
+
         post :create, params: {
           pipeline: {
             name: "Test Pipeline",
@@ -233,27 +233,27 @@ RSpec.describe EtlPipelineBuildersController, type: :request do
           }
         }
       end
-      
+
       it "does not expose internal errors to users" do
         allow_any_instance_of(TransformationRulesEngine).to receive(:apply_transformations)
           .and_raise(StandardError.new("Internal database connection failed with credentials"))
-        
+
         post :transformation_preview, params: {
           rule: { type: "field_mapping", name: "Test" },
           sample_data: []
         }
-        
+
         json_response = JSON.parse(response.body)
         expect(json_response['error']).not_to include("database")
         expect(json_response['error']).not_to include("credentials")
         expect(json_response['error']).to eq("Transformation preview failed")
       end
     end
-    
+
     describe "Security Headers" do
       it "sets security headers on responses" do
         get :index
-        
+
         expect(response.headers['X-Content-Type-Options']).to eq('nosniff')
         expect(response.headers['X-Frame-Options']).to eq('SAMEORIGIN')
         expect(response.headers['X-XSS-Protection']).to eq('1; mode=block')
@@ -261,39 +261,39 @@ RSpec.describe EtlPipelineBuildersController, type: :request do
         expect(response.headers['Permissions-Policy']).to include('geolocation=()')
         expect(response.headers['Content-Security-Policy']).to include("default-src 'self'")
       end
-      
+
       it "sets HSTS header in production" do
         allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new("production"))
-        
+
         get :index
-        
+
         expect(response.headers['Strict-Transport-Security']).to include('max-age=31536000')
       end
     end
-    
+
     describe "Authorization" do
       context "when user is not authenticated" do
         before { sign_out user }
-        
+
         it "redirects to login for protected actions" do
           get :index
           expect(response).to redirect_to(new_user_session_path)
         end
-        
+
         it "prevents access to sensitive actions" do
           post :execute, params: { id: pipeline.id }
           expect(response).to redirect_to(new_user_session_path)
         end
       end
-      
+
       context "when user lacks permissions" do
         let(:viewer_user) { create(:user, organization: organization, role: :viewer) }
-        
+
         before do
           sign_out user
           sign_in viewer_user
         end
-        
+
         it "prevents unauthorized pipeline creation" do
           post :create, params: {
             pipeline: {
@@ -301,20 +301,20 @@ RSpec.describe EtlPipelineBuildersController, type: :request do
               pipeline_type: "etl"
             }
           }
-          
+
           expect(response).to redirect_to(root_path)
           expect(flash[:alert]).to include("not authorized")
         end
-        
+
         it "prevents unauthorized pipeline deletion" do
           delete :destroy, params: { id: pipeline.id }
-          
+
           expect(response).to redirect_to(root_path)
           expect(flash[:alert]).to include("not authorized")
         end
       end
     end
-    
+
     describe "CSRF Protection" do
       it "is enabled for state-changing operations" do
         # CSRF protection is tested by Rails by default

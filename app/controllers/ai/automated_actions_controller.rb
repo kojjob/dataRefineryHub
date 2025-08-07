@@ -4,12 +4,12 @@ module Ai
   class AutomatedActionsController < ApplicationController
     before_action :authenticate_user!
     before_action :ensure_organization_member
-    before_action :set_automated_action, only: [:show]
+    before_action :set_automated_action, only: [ :show ]
 
     def index
       @page_title = "AI Automated Actions"
       @page_subtitle = "Intelligent automation for your data workflows"
-      
+
       # Sample automated actions for demonstration
       @automated_actions = [
         {
@@ -96,7 +96,7 @@ module Ai
         action: {
           type: "notification",
           details: "Send email notification to data team and create dashboard alert",
-          recipients: ["data-team@company.com"]
+          recipients: [ "data-team@company.com" ]
         },
         execution_history: [
           { date: 2.hours.ago, status: "success", duration: "0.8s" },

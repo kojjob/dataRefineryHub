@@ -15,7 +15,7 @@ module SecureInputHandling
     # Automatically sanitize common parameters
     if params[:q].present?
       params[:q] = InputValidatorService.sanitize_string(
-        params[:q], 
+        params[:q],
         max_length: 200,
         prevent_sql_injection: true,
         prevent_xss: true
@@ -44,14 +44,14 @@ module SecureInputHandling
 
   def validate_sort_params
     allowed_sort_columns = controller_allowed_sort_columns
-    
+
     unless allowed_sort_columns.include?(params[:sort_by].to_s)
       params[:sort_by] = allowed_sort_columns.first
     end
 
     if params[:sort_direction].present?
       unless %w[asc desc].include?(params[:sort_direction].to_s.downcase)
-        params[:sort_direction] = 'asc'
+        params[:sort_direction] = "asc"
       end
     end
   end
@@ -84,9 +84,9 @@ module SecureInputHandling
         redirect_back(fallback_location: root_path)
       end
       format.json do
-        render json: { 
-          error: 'Validation Error', 
-          message: exception.message 
+        render json: {
+          error: "Validation Error",
+          message: exception.message
         }, status: :unprocessable_entity
       end
     end
@@ -127,20 +127,20 @@ module SecureInputHandling
   # Strong parameters with validation
   def validated_params_for(model_name, allowed_attributes)
     raw_params = params.require(model_name).permit(*allowed_attributes)
-    
+
     # Apply validation to each parameter
     validated = {}
     raw_params.each do |key, value|
       validated[key] = case value
-                      when String
+      when String
                         sanitize_text_input(value, max_length: 10_000)
-                      when ActionDispatch::Http::UploadedFile
+      when ActionDispatch::Http::UploadedFile
                         validate_file_upload(value)
-                      else
+      else
                         value
-                      end
+      end
     end
-    
+
     ActionController::Parameters.new(validated).permit!
   end
 end

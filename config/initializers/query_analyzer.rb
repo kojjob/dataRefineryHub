@@ -5,10 +5,10 @@ if defined?(QueryAnalyzer)
   QueryAnalyzer.configure do |config|
     # Enable in development and staging
     config.enabled = Rails.env.development? || Rails.env.staging?
-    
+
     # Set threshold for slow queries (in milliseconds)
     config.slow_query_threshold = Rails.env.production? ? 200 : 100
-    
+
     # Use Rails logger
     config.logger = Rails.logger
   end

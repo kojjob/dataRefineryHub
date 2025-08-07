@@ -202,7 +202,7 @@ class OrganizationsController < DataflowProController
 
   def sanitize_plan_name(plan)
     return "unknown" if plan.blank?
-    
+
     # Whitelist allowed plan names
     allowed_plans = %w[free free_trial starter growth scale enterprise]
     allowed_plans.include?(plan.to_s) ? plan.to_s : "unknown"
@@ -210,7 +210,7 @@ class OrganizationsController < DataflowProController
 
   def sanitize_billing_status(status)
     return "unknown" if status.blank?
-    
+
     # Whitelist allowed status values
     allowed_statuses = %w[paid pending failed processing cancelled refunded]
     allowed_statuses.include?(status.to_s) ? status.to_s : "unknown"

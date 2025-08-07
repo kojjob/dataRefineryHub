@@ -528,10 +528,10 @@ class TransformationRulesEngine
   def evaluate_expression(expression, record, context)
     # Safe expression evaluator that doesn't use eval()
     # Uses a proper parser to prevent code injection
-    
+
     # Build evaluation context with record fields
     eval_context = record.merge(context)
-    
+
     begin
       SafeExpressionEvaluator.evaluate(expression, eval_context)
     rescue SafeExpressionEvaluator::ExpressionError => e

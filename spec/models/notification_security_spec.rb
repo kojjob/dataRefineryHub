@@ -9,12 +9,12 @@ RSpec.describe Notification, type: :model do
   describe "security validations" do
     describe "content sanitization" do
       it "sanitizes title before saving" do
-        notification = build(:notification, 
+        notification = build(:notification,
           user: user,
           organization: organization,
           title: "Alert <script>alert('xss')</script> Test"
         )
-        
+
         notification.save!
         expect(notification.title).not_to include("<script>")
         expect(notification.title).to include("Alert")
@@ -27,7 +27,7 @@ RSpec.describe Notification, type: :model do
           organization: organization,
           message: "Message with <iframe src='evil.com'></iframe> content"
         )
-        
+
         notification.save!
         expect(notification.message).not_to include("<iframe>")
         expect(notification.message).to include("Message with")
@@ -44,7 +44,7 @@ RSpec.describe Notification, type: :model do
             records_count: 100
           }
         )
-        
+
         notification.save!
         expect(notification.metadata["description"]).not_to include("<script>")
         expect(notification.metadata).not_to have_key("password")
@@ -59,7 +59,7 @@ RSpec.describe Notification, type: :model do
           organization: organization,
           title: "<script>alert('xss')</script>"
         )
-        
+
         expect(notification).not_to be_valid
         expect(notification.errors[:title]).to include("contains invalid or potentially dangerous content")
       end
@@ -70,7 +70,7 @@ RSpec.describe Notification, type: :model do
           organization: organization,
           message: "Click <a href='javascript:alert()'>here</a>"
         )
-        
+
         expect(notification).not_to be_valid
         expect(notification.errors[:message]).to include("contains invalid or potentially dangerous content")
       end
@@ -84,7 +84,7 @@ RSpec.describe Notification, type: :model do
             records_count: 100
           }
         )
-        
+
         expect(notification).not_to be_valid
         expect(notification.errors[:metadata]).to include("contains invalid content")
       end
@@ -96,7 +96,7 @@ RSpec.describe Notification, type: :model do
           organization: organization,
           metadata: { large_field: large_data }
         )
-        
+
         expect(notification).not_to be_valid
         expect(notification.errors[:metadata]).to include("is too large (maximum 10KB)")
       end
@@ -110,7 +110,7 @@ RSpec.describe Notification, type: :model do
           organization: organization,
           title: long_title
         )
-        
+
         expect(notification).not_to be_valid
         expect(notification.errors[:title]).to include("is too long")
       end
@@ -122,7 +122,7 @@ RSpec.describe Notification, type: :model do
           organization: organization,
           message: long_message
         )
-        
+
         expect(notification).not_to be_valid
         expect(notification.errors[:message]).to include("is too long")
       end
@@ -141,9 +141,9 @@ RSpec.describe Notification, type: :model do
             malicious_script: "<script>alert()</script>" # Not allowed
           }
         )
-        
+
         notification.save!
-        
+
         expect(notification.metadata).to have_key("records_count")
         expect(notification.metadata).to have_key("error_message")
         expect(notification.metadata).not_to have_key("password")
@@ -162,7 +162,7 @@ RSpec.describe Notification, type: :model do
             items: large_array
           }
         )
-        
+
         notification.save!
         expect(notification.metadata["items"].length).to be <= 10
       end
@@ -180,7 +180,7 @@ RSpec.describe Notification, type: :model do
             "<ScRiPt>alert('xss')</ScRiPt>",
             "<script src='evil.js'></script>"
           ]
-          
+
           patterns.each do |pattern|
             notification = notification_base.dup
             notification.title = pattern
@@ -196,7 +196,7 @@ RSpec.describe Notification, type: :model do
             "JaVaScRiPt:alert('xss')",
             "&#x6A;&#x61;&#x76;&#x61;&#x73;&#x63;&#x72;&#x69;&#x70;&#x74;&#x3A;alert('xss')"
           ]
-          
+
           patterns.each do |pattern|
             notification = notification_base.dup
             notification.message = pattern
@@ -213,7 +213,7 @@ RSpec.describe Notification, type: :model do
             "onerror=alert('xss')",
             "onmouseover=alert('xss')"
           ]
-          
+
           patterns.each do |pattern|
             notification = notification_base.dup
             notification.title = "Test #{pattern}"
@@ -231,7 +231,7 @@ RSpec.describe Notification, type: :model do
             "<link rel='stylesheet' href='evil.css'>",
             "<meta http-equiv='refresh' content='0;url=evil.com'>"
           ]
-          
+
           patterns.each do |pattern|
             notification = notification_base.dup
             notification.message = pattern
@@ -250,7 +250,7 @@ RSpec.describe Notification, type: :model do
         title: "Test\u0000\u0001\u0002 Title",
         message: "Message\u000B\u000C\u000E content"
       )
-      
+
       expect(notification.title).not_to match(/[\u0000-\u001F]/)
       expect(notification.message).not_to match(/[\u0000-\u001F]/)
     end
@@ -263,7 +263,7 @@ RSpec.describe Notification, type: :model do
         organization: organization,
         metadata: "string_value"
       )
-      
+
       notification.save!
       expect(notification.metadata).to be_a(Hash)
       expect(notification.metadata["data"]).to eq("string_value")
@@ -275,13 +275,13 @@ RSpec.describe Notification, type: :model do
         secret: "hidden",
         nested: { deep: "value" }
       )
-      
+
       notification = build(:notification,
         user: user,
         organization: organization,
         metadata: { object: complex_object }
       )
-      
+
       notification.save!
       # Complex objects should be converted to strings and truncated
       expect(notification.metadata["object"]).to be_a(String)

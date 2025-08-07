@@ -14,7 +14,7 @@ module Admin
 
     def queries
       return redirect_to admin_performance_path, alert: "Query Analyzer not enabled" unless QueryAnalyzer.enabled
-      
+
       @report = QueryAnalyzer.report
       @slow_queries = @report[:slowest_queries]
       @n_plus_one_queries = @report[:n_plus_one_queries]
@@ -25,7 +25,7 @@ module Admin
       @cache_stats = CacheManager.stats
       @namespace_stats = @cache_stats[:namespace_stats]
       @strategy_effectiveness = @cache_stats[:strategy_effectiveness]
-      
+
       respond_to do |format|
         format.html
         format.json { render json: @cache_stats }
@@ -34,7 +34,7 @@ module Admin
 
     def circuit_breakers
       @circuit_breakers = CircuitBreakerFactory.status_all
-      
+
       respond_to do |format|
         format.html
         format.json { render json: @circuit_breakers }
@@ -43,7 +43,7 @@ module Admin
 
     def clear_cache
       namespace = params[:namespace]
-      
+
       if namespace.present?
         CacheManager.clear(namespace)
         message = "Cache cleared for namespace: #{namespace}"
@@ -51,13 +51,13 @@ module Admin
         CacheManager.clear
         message = "All cache cleared"
       end
-      
+
       redirect_to admin_performance_cache_path, notice: message
     end
 
     def reset_circuit_breaker
       name = params[:name]
-      
+
       if name.present?
         circuit_breaker = CircuitBreakerFactory.get(name)
         circuit_breaker.reset!
@@ -66,7 +66,7 @@ module Admin
         CircuitBreakerFactory.reset_all
         message = "All circuit breakers reset"
       end
-      
+
       redirect_to admin_performance_circuit_breakers_path, notice: message
     end
 
@@ -80,12 +80,12 @@ module Admin
     def job_queue_stats
       @queue_stats = {
         enqueued: SolidQueue::Job.where(finished_at: nil).count,
-        failed: SolidQueue::Job.where('failed_at IS NOT NULL').count,
+        failed: SolidQueue::Job.where("failed_at IS NOT NULL").count,
         processing: SolidQueue::Job.where(finished_at: nil, failed_at: nil)
-                                  .where('started_at IS NOT NULL').count,
-        scheduled: SolidQueue::Job.where('scheduled_at > ?', Time.current).count
+                                  .where("started_at IS NOT NULL").count,
+        scheduled: SolidQueue::Job.where("scheduled_at > ?", Time.current).count
       }
-      
+
       @queue_performance = calculate_queue_performance
       @job_types = job_type_breakdown
     end
@@ -113,7 +113,7 @@ module Admin
     def check_system_health
       health_controller = HealthController.new
       health_controller.request = request
-      
+
       # Call the private method through send (only for internal use)
       checks = health_controller.send(:perform_readiness_checks)
       health_controller.send(:calculate_overall_status, checks)
@@ -133,7 +133,7 @@ module Admin
 
     def calculate_table_sizes
       query = <<-SQL
-        SELECT 
+        SELECT#{' '}
           schemaname,
           tablename,
           pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size,
@@ -143,7 +143,7 @@ module Admin
         ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC
         LIMIT 20
       SQL
-      
+
       ActiveRecord::Base.connection.execute(query).to_a
     rescue
       []
@@ -151,7 +151,7 @@ module Admin
 
     def analyze_index_usage
       query = <<-SQL
-        SELECT 
+        SELECT#{' '}
           schemaname,
           tablename,
           indexname,
@@ -164,7 +164,7 @@ module Admin
         ORDER BY idx_scan DESC
         LIMIT 20
       SQL
-      
+
       ActiveRecord::Base.connection.execute(query).to_a
     rescue
       []
@@ -182,15 +182,15 @@ module Admin
 
     def calculate_request_rate
       # Calculate from logs or APM tool
-      Rails.cache.read('metrics:request_rate') || 0
+      Rails.cache.read("metrics:request_rate") || 0
     end
 
     def calculate_average_response_time
-      Rails.cache.read('metrics:avg_response_time') || 0
+      Rails.cache.read("metrics:avg_response_time") || 0
     end
 
     def calculate_error_rate
-      Rails.cache.read('metrics:error_rate') || 0
+      Rails.cache.read("metrics:error_rate") || 0
     end
 
     def memory_usage_stats
@@ -217,10 +217,10 @@ module Admin
     end
 
     def calculate_queue_performance
-      jobs = SolidQueue::Job.where('finished_at IS NOT NULL')
-                           .where('created_at > ?', 1.hour.ago)
+      jobs = SolidQueue::Job.where("finished_at IS NOT NULL")
+                           .where("created_at > ?", 1.hour.ago)
                            .limit(100)
-      
+
       if jobs.any?
         processing_times = jobs.map { |j| (j.finished_at - j.started_at).to_f }
         {
@@ -237,7 +237,7 @@ module Admin
 
     def job_type_breakdown
       SolidQueue::Job.group(:queue_name)
-                    .where('created_at > ?', 1.day.ago)
+                    .where("created_at > ?", 1.day.ago)
                     .count
     rescue
       {}

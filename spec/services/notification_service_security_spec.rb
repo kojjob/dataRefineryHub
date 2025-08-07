@@ -11,9 +11,9 @@ RSpec.describe NotificationService, type: :service do
       it "sanitizes title and message for logging" do
         malicious_title = "Alert <script>alert('xss')</script>"
         malicious_message = "Message with password=secret123 and token=abc123"
-        
+
         allow(Rails.logger).to receive(:info)
-        
+
         NotificationService.create_notification(
           user: user,
           type: "data_sync_success",
@@ -21,7 +21,7 @@ RSpec.describe NotificationService, type: :service do
           message: malicious_message,
           data: { key: "value" }
         )
-        
+
         expect(Rails.logger).to have_received(:info) do |&block|
           log_message = block.call
           expect(log_message).not_to include("<script>")
@@ -36,9 +36,9 @@ RSpec.describe NotificationService, type: :service do
           api_key: "key_12345",
           token: "token_67890"
         }
-        
+
         allow(Rails.logger).to receive(:info)
-        
+
         NotificationService.create_notification(
           user: user,
           type: "data_sync_success",
@@ -46,7 +46,7 @@ RSpec.describe NotificationService, type: :service do
           message: "Test message",
           data: sensitive_data
         )
-        
+
         expect(Rails.logger).to have_received(:info) do |&block|
           log_message = block.call
           expect(log_message).to include("password=[REDACTED]")
@@ -66,13 +66,13 @@ RSpec.describe NotificationService, type: :service do
           message: "Message with <iframe src='evil.com'></iframe>",
           metadata: { password: "secret123" }
         )
-        
+
         expect(ActionCable.server).to receive(:broadcast) do |channel, data|
           expect(data[:title]).not_to include("<script>")
           expect(data[:message]).not_to include("<iframe>")
           expect(data[:data]).not_to have_key("password")
         end
-        
+
         NotificationService.broadcast_notification(user, notification)
       end
     end
@@ -84,7 +84,7 @@ RSpec.describe NotificationService, type: :service do
         it "removes HTML tags and sensitive patterns" do
           text = "Alert <script>alert()</script> with password=secret123"
           result = subject.send(:sanitize_for_log, text)
-          
+
           expect(result).not_to include("<script>")
           expect(result).to include("password=[REDACTED]")
         end
@@ -92,7 +92,7 @@ RSpec.describe NotificationService, type: :service do
         it "truncates long text" do
           long_text = "a" * 1000
           result = subject.send(:sanitize_for_log, long_text)
-          
+
           expect(result.length).to be <= 500
         end
       end
@@ -101,7 +101,7 @@ RSpec.describe NotificationService, type: :service do
         it "allows safe HTML tags only" do
           html = "<strong>Bold</strong><script>alert()</script><p>Text</p>"
           result = subject.send(:sanitize_for_broadcast, html)
-          
+
           expect(result).to include("<strong>Bold</strong>")
           expect(result).not_to include("<script>")
           expect(result).not_to include("<p>") # p tag not in allowed list
@@ -116,7 +116,7 @@ RSpec.describe NotificationService, type: :service do
             nested: { api_key: "key123" }
           }
           result = subject.send(:sanitize_metadata_for_log, metadata)
-          
+
           expect(result[:user_id]).to eq(123)
           expect(result[:password]).to eq("[REDACTED]")
           expect(result[:nested][:api_key]).to eq("[REDACTED]")
@@ -125,7 +125,7 @@ RSpec.describe NotificationService, type: :service do
         it "limits array size" do
           large_array = (1..20).to_a
           result = subject.send(:sanitize_metadata_for_log, large_array)
-          
+
           expect(result.length).to be <= 10
         end
       end
@@ -138,7 +138,7 @@ RSpec.describe NotificationService, type: :service do
             public_info: "visible"
           }
           result = subject.send(:sanitize_metadata_for_broadcast, metadata)
-          
+
           expect(result).to have_key("user_id")
           expect(result).to have_key("public_info")
           expect(result).not_to have_key("password")
@@ -149,11 +149,11 @@ RSpec.describe NotificationService, type: :service do
         it "identifies sensitive keys" do
           sensitive_keys = %w[password token secret api_key auth_token]
           safe_keys = %w[user_id name status count]
-          
+
           sensitive_keys.each do |key|
             expect(subject.send(:sensitive_key?, key)).to be true
           end
-          
+
           safe_keys.each do |key|
             expect(subject.send(:sensitive_key?, key)).to be false
           end
@@ -170,15 +170,15 @@ RSpec.describe NotificationService, type: :service do
     describe "logging security" do
       it "does not log sensitive information in error messages" do
         allow(Rails.logger).to receive(:error)
-        
+
         # Simulate high priority notification with sensitive data
         notification = double(
           title: "System alert with password=secret123",
           metadata: { api_key: "key123" }
         )
-        
+
         NotificationService.send(:send_additional_alerts, user, notification)
-        
+
         expect(Rails.logger).to have_received(:error) do |message|
           expect(message).to include("password=[REDACTED]")
           expect(message).not_to include("secret123")

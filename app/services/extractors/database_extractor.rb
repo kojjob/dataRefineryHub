@@ -175,7 +175,7 @@ class DatabaseExtractor < BaseExtractor
         begin
           # TinyTDS supports parameterized queries through exec_sp or properly escaped queries
           # Convert PostgreSQL-style $1, $2 parameters to SQL Server ? placeholders
-          param_query = query.gsub(/\$\d+/, '?')
+          param_query = query.gsub(/\$\d+/, "?")
           result = connection.execute(param_query, *params)
         rescue => e
           Rails.logger.error "SQL Server parameterized query failed: #{e.message}"

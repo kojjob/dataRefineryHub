@@ -404,7 +404,7 @@ class EtlOrchestrationService
   def execute_job_stage(stage, execution_context)
     # Safely resolve job class using whitelist
     job_class = SafeClassResolver.resolve!(stage[:job_class])
-    
+
     unless job_class
       raise "Unauthorized job class: #{stage[:job_class]}"
     end
@@ -422,16 +422,16 @@ class EtlOrchestrationService
   def execute_service_stage(stage, execution_context)
     # Safely resolve service class using whitelist
     service_class = SafeClassResolver.resolve!(stage[:service_class])
-    
+
     unless service_class
       raise "Unauthorized service class: #{stage[:service_class]}"
     end
-    
+
     service_instance = service_class.new
     method_name = stage[:method]
-    
+
     # Validate method name against whitelist
-    allowed_methods = [:extract, :transform, :load, :validate, :process, :execute, :run]
+    allowed_methods = [ :extract, :transform, :load, :validate, :process, :execute, :run ]
     unless allowed_methods.include?(method_name.to_sym)
       raise "Unauthorized method: #{method_name}"
     end

@@ -14,25 +14,25 @@ class AIChatHistoryTester
   def run_tests
     puts "\n🤖 AI Chat History Functionality Test Suite"
     puts "=" * 50
-    
+
     test_history_endpoint
     test_chat_create_endpoint
     test_suggestions_endpoint
     test_database_records
     test_websocket_channel
-    
+
     puts "\n" + "=" * 50
     puts "📊 Test Results Summary:"
     puts "=" * 50
-    
+
     passed = @results.count { |r| r[:status] == :pass }
     failed = @results.count { |r| r[:status] == :fail }
-    
+
     @results.each do |result|
       status_icon = result[:status] == :pass ? "✅" : "❌"
       puts "#{status_icon} #{result[:test]}: #{result[:message]}"
     end
-    
+
     puts "\n" + "=" * 50
     puts "Total: #{@results.count} tests | Passed: #{passed} | Failed: #{failed}"
     puts "=" * 50
@@ -42,11 +42,11 @@ class AIChatHistoryTester
 
   def test_history_endpoint
     puts "\n🔍 Testing History Endpoint..."
-    
+
     begin
       uri = URI("#{@base_url}/ai/chat/history")
       response = Net::HTTP.get_response(uri)
-      
+
       if response.code == '302' || response.code == '401'
         log_result(:fail, "History Endpoint", "Authentication required (#{response.code})")
         puts "  ⚠️  Need to be logged in to test this endpoint"
@@ -68,7 +68,7 @@ class AIChatHistoryTester
 
   def test_chat_create_endpoint
     puts "\n🔍 Testing Chat Create Endpoint..."
-    
+
     begin
       uri = URI("#{@base_url}/ai/chat/create")
       http = Net::HTTP.new(uri.host, uri.port)
@@ -78,9 +78,9 @@ class AIChatHistoryTester
         query: "Test message",
         context: {}
       }.to_json
-      
+
       response = http.request(request)
-      
+
       if response.code == '302' || response.code == '401'
         log_result(:fail, "Chat Create Endpoint", "Authentication required (#{response.code})")
         puts "  ⚠️  Need to be logged in to test this endpoint"
@@ -97,11 +97,11 @@ class AIChatHistoryTester
 
   def test_suggestions_endpoint
     puts "\n🔍 Testing Suggestions Endpoint..."
-    
+
     begin
       uri = URI("#{@base_url}/ai/chat/suggestions?query=revenue")
       response = Net::HTTP.get_response(uri)
-      
+
       if response.code == '302' || response.code == '401'
         log_result(:fail, "Suggestions Endpoint", "Authentication required (#{response.code})")
       elsif response.code == '200'
@@ -118,11 +118,11 @@ class AIChatHistoryTester
 
   def test_database_records
     puts "\n🔍 Testing Database Records..."
-    
+
     begin
       # Run Rails console command to check database
       result = `cd #{File.dirname(__FILE__)} && rails runner "puts Ai::Query.count" 2>&1`
-      
+
       if result.include?("NameError") || result.include?("uninitialized constant")
         log_result(:fail, "Database Model", "Ai::Query model not found")
         puts "  ⚠️  Model may not be loaded or table doesn't exist"
@@ -140,11 +140,11 @@ class AIChatHistoryTester
 
   def test_websocket_channel
     puts "\n🔍 Testing WebSocket Channel..."
-    
+
     begin
       # Check if AiChatChannel exists
       result = `cd #{File.dirname(__FILE__)} && rails runner "puts defined?(AiChatChannel) ? 'exists' : 'missing'" 2>&1`
-      
+
       if result.include?("exists")
         log_result(:pass, "WebSocket Channel", "AiChatChannel exists")
       else
@@ -166,7 +166,7 @@ end
 if __FILE__ == $0
   tester = AIChatHistoryTester.new
   tester.run_tests
-  
+
   puts "\n💡 Recommendations:"
   puts "  1. Ensure you're logged in to test authenticated endpoints"
   puts "  2. Check browser console for JavaScript errors"

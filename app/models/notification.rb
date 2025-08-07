@@ -21,12 +21,12 @@ class Notification < ApplicationRecord
   validates :message, presence: true, length: { maximum: 5000 }
   validates :notification_type, inclusion: { in: TYPES }
   validates :priority, inclusion: { in: PRIORITIES.values }
-  
+
   # Security validations
   validate :title_safe_content
   validate :message_safe_content
   validate :metadata_safe_content
-  
+
   # Sanitize content before saving
   before_validation :sanitize_content
 
@@ -172,24 +172,24 @@ class Notification < ApplicationRecord
 
   def sanitize_text(text)
     return nil if text.blank?
-    
+
     # Strip HTML tags, normalize whitespace, and remove dangerous content
     sanitized = ActionController::Base.helpers.strip_tags(text.to_s).squish
-    
+
     # Remove common injection patterns
-    sanitized = sanitized.gsub(/javascript:/i, '')
-    sanitized = sanitized.gsub(/data:/i, '')
-    sanitized = sanitized.gsub(/vbscript:/i, '')
-    sanitized = sanitized.gsub(/<script[^>]*>.*?<\/script>/mi, '')
-    sanitized = sanitized.gsub(/on\w+\s*=/i, '')
-    
+    sanitized = sanitized.gsub(/javascript:/i, "")
+    sanitized = sanitized.gsub(/data:/i, "")
+    sanitized = sanitized.gsub(/vbscript:/i, "")
+    sanitized = sanitized.gsub(/<script[^>]*>.*?<\/script>/mi, "")
+    sanitized = sanitized.gsub(/on\w+\s*=/i, "")
+
     # Limit character sets to prevent encoding attacks
-    sanitized.gsub(/[^\p{L}\p{N}\p{P}\p{S}\p{Z}]/u, '')
+    sanitized.gsub(/[^\p{L}\p{N}\p{P}\p{S}\p{Z}]/u, "")
   end
 
   def sanitize_metadata_hash(data)
     return {} if data.blank?
-    
+
     case data
     when Hash
       sanitized = {}
@@ -206,7 +206,7 @@ class Notification < ApplicationRecord
   end
 
   def sanitize_metadata_key(key)
-    key.to_s.gsub(/[^a-zA-Z0-9_]/, '_').truncate(50)
+    key.to_s.gsub(/[^a-zA-Z0-9_]/, "_").truncate(50)
   end
 
   def sanitize_metadata_value(value)
@@ -236,7 +236,7 @@ class Notification < ApplicationRecord
   # Validation methods for security
   def title_safe_content
     return unless title.present?
-    
+
     if contains_dangerous_content?(title)
       errors.add(:title, "contains invalid or potentially dangerous content")
     end
@@ -244,7 +244,7 @@ class Notification < ApplicationRecord
 
   def message_safe_content
     return unless message.present?
-    
+
     if contains_dangerous_content?(message)
       errors.add(:message, "contains invalid or potentially dangerous content")
     end
@@ -252,7 +252,7 @@ class Notification < ApplicationRecord
 
   def metadata_safe_content
     return unless metadata.present?
-    
+
     if metadata.is_a?(Hash)
       metadata.each do |key, value|
         if contains_dangerous_content?(value.to_s)
@@ -261,7 +261,7 @@ class Notification < ApplicationRecord
         end
       end
     end
-    
+
     # Check metadata size
     if metadata.to_json.bytesize > 10.kilobytes
       errors.add(:metadata, "is too large (maximum 10KB)")
@@ -270,7 +270,7 @@ class Notification < ApplicationRecord
 
   def contains_dangerous_content?(text)
     return false if text.blank?
-    
+
     dangerous_patterns = [
       /<script[^>]*>/i,
       /javascript:/i,
@@ -286,7 +286,7 @@ class Notification < ApplicationRecord
       /url\s*\(/i, # CSS url() functions
       /@import/i # CSS imports
     ]
-    
+
     dangerous_patterns.any? { |pattern| text.match?(pattern) }
   end
 end
