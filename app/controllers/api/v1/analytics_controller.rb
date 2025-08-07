@@ -217,16 +217,28 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
 
   # GET /api/v1/analytics/download_export/:job_id
   def download_export
-    job_id = params[:job_id]
+    job_id = sanitize_job_id(params[:job_id])
 
     # Find and serve the export file
     export_file = find_export_file(job_id)
 
     if export_file && File.exist?(export_file[:path])
-      send_file export_file[:path],
-                filename: export_file[:filename],
-                type: export_file[:content_type],
-                disposition: "attachment"
+      begin
+        # SECURITY FIX: Validate file path to prevent directory traversal
+        safe_file_path = validate_export_file_path!(export_file[:path])
+        safe_filename = sanitize_export_filename(export_file[:filename])
+        
+        send_file safe_file_path,
+                  filename: safe_filename,
+                  type: export_file[:content_type],
+                  disposition: "attachment"
+      rescue SecurityError => e
+        Rails.logger.warn "Export file access denied: #{e.message}"
+        render_forbidden("File access denied")
+      rescue ArgumentError => e
+        Rails.logger.warn "Invalid export file: #{e.message}"
+        render_not_found("Export file")
+      end
     else
       render_not_found("Export file")
     end
@@ -478,5 +490,54 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
 
   def find_export_file(job_id)
     nil
+  end
+
+  # SECURITY METHODS: File validation
+
+  def sanitize_job_id(job_id)
+    return nil if job_id.blank?
+    
+    # Allow only alphanumeric characters, hyphens and underscores
+    job_id.to_s.gsub(/[^a-zA-Z0-9\-_]/, "").truncate(50)
+  end
+
+  def validate_export_file_path!(file_path)
+    return nil if file_path.blank?
+
+    # Define allowed directories for export files
+    allowed_dirs = [
+      Rails.root.join("tmp", "exports").to_s,
+      Rails.root.join("storage", "exports").to_s,
+      Rails.root.join("public", "exports").to_s
+    ]
+
+    # Resolve absolute path to prevent path traversal
+    resolved_path = File.expand_path(file_path)
+
+    # Check if path is within allowed directories
+    unless allowed_dirs.any? { |dir| resolved_path.start_with?(File.expand_path(dir)) }
+      raise SecurityError, "File access denied: path outside allowed directories"
+    end
+
+    # Check if file exists and is a regular file
+    unless File.exist?(resolved_path) && File.file?(resolved_path)
+      raise ArgumentError, "Invalid file: #{file_path}"
+    end
+
+    # Check file size (100MB limit for exports)
+    if File.size(resolved_path) > 100.megabytes
+      raise ArgumentError, "File too large: #{file_path}"
+    end
+
+    resolved_path
+  end
+
+  def sanitize_export_filename(filename)
+    return "export.csv" if filename.blank?
+
+    # Remove dangerous characters and normalize
+    safe_name = filename.gsub(/[^a-zA-Z0-9\-_\.]/, "_")
+    safe_name = safe_name.gsub(/_{2,}/, "_") # Remove multiple underscores
+    safe_name.truncate(100)
   end
 end

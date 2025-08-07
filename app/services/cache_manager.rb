@@ -200,21 +200,107 @@ class CacheManager
   end
 
   def compress(value)
+    # SECURITY FIX: Use JSON instead of Marshal to prevent code execution
     {
       compressed: true,
-      data: ActiveSupport::Gzip.compress(Marshal.dump(value))
+      data: ActiveSupport::Gzip.compress(safe_serialize(value)),
+      format: "json"
     }
   end
 
   def decompress_if_needed(value)
     return value unless value.is_a?(Hash) && value[:compressed]
-    Marshal.load(ActiveSupport::Gzip.decompress(value[:data]))
+    
+    decompressed_data = ActiveSupport::Gzip.decompress(value[:data])
+    
+    case value[:format]
+    when "json"
+      safe_deserialize(decompressed_data)
+    else
+      # Legacy format - handle carefully
+      Rails.logger.warn "Legacy Marshal format detected - consider cache invalidation"
+      begin
+        # Only allow if we trust the source and it's simple data
+        JSON.parse(decompressed_data)
+      rescue
+        nil
+      end
+    end
   end
 
   def object_size(obj)
-    Marshal.dump(obj).bytesize
+    safe_serialize(obj).bytesize
   rescue
     0
+  end
+
+  private
+
+  # SECURITY METHODS: Safe serialization
+
+  def safe_serialize(obj)
+    # Use JSON serialization instead of Marshal for security
+    JSON.generate(serialize_for_json(obj))
+  end
+
+  def safe_deserialize(data)
+    # Deserialize from JSON safely
+    parsed = JSON.parse(data)
+    deserialize_from_json(parsed)
+  rescue JSON::ParserError
+    Rails.logger.error "Failed to parse cached JSON data"
+    nil
+  end
+
+  def serialize_for_json(obj)
+    # Convert object to JSON-safe structure
+    case obj
+    when Hash
+      obj.transform_values { |v| serialize_for_json(v) }
+    when Array
+      obj.map { |v| serialize_for_json(v) }
+    when String, Numeric, TrueClass, FalseClass, NilClass
+      obj
+    when Time, DateTime, Date
+      { "_type" => "time", "_value" => obj.iso8601 }
+    when Symbol
+      { "_type" => "symbol", "_value" => obj.to_s }
+    else
+      # For complex objects, store serializable attributes
+      if obj.respond_to?(:attributes)
+        { "_type" => "attributes", "_value" => obj.attributes }
+      else
+        # Fallback to string representation
+        { "_type" => "string", "_value" => obj.to_s }
+      end
+    end
+  end
+
+  def deserialize_from_json(obj)
+    # Convert JSON structure back to Ruby objects
+    case obj
+    when Hash
+      if obj.key?("_type")
+        case obj["_type"]
+        when "time"
+          Time.parse(obj["_value"])
+        when "symbol"
+          obj["_value"].to_sym
+        when "attributes"
+          obj["_value"]
+        when "string"
+          obj["_value"]
+        else
+          obj
+        end
+      else
+        obj.transform_values { |v| deserialize_from_json(v) }
+      end
+    when Array
+      obj.map { |v| deserialize_from_json(v) }
+    else
+      obj
+    end
   end
 
   def should_refresh_cache?(key, strategy)

@@ -100,10 +100,23 @@ module Ai
     end
 
     def download
+      # SECURITY FIX: Validate file path to prevent directory traversal
       if @presentation.file_path.present? && File.exist?(@presentation.file_path)
-        send_file(@presentation.file_path,
-                  filename: "#{@presentation.title.parameterize}.#{@presentation.output_format}",
-                  type: content_type_for_format(@presentation.output_format))
+        begin
+          # Validate file path is within allowed directories
+          safe_file_path = validate_presentation_file_path!(@presentation.file_path)
+          safe_filename = sanitize_filename("#{@presentation.title.parameterize}.#{@presentation.output_format}")
+          
+          send_file(safe_file_path,
+                    filename: safe_filename,
+                    type: content_type_for_format(@presentation.output_format))
+        rescue SecurityError => e
+          Rails.logger.warn "File access denied: #{e.message}"
+          redirect_to ai_presentations_path, alert: "File access denied for security reasons."
+        rescue ArgumentError => e
+          Rails.logger.warn "Invalid file: #{e.message}"
+          redirect_to ai_presentations_path, alert: "Presentation file not found."
+        end
       else
         redirect_to ai_presentations_path, alert: "Presentation file not found."
       end
@@ -183,6 +196,47 @@ module Ai
       else
         "Unknown status"
       end
+    end
+
+    # SECURITY METHODS: File validation
+    def validate_presentation_file_path!(file_path)
+      return nil if file_path.blank?
+
+      # Define allowed directories for presentation files
+      allowed_dirs = [
+        Rails.root.join("tmp", "presentations").to_s,
+        Rails.root.join("storage", "presentations").to_s,
+        Rails.root.join("public", "presentations").to_s
+      ]
+
+      # Resolve absolute path to prevent path traversal
+      resolved_path = File.expand_path(file_path)
+
+      # Check if path is within allowed directories
+      unless allowed_dirs.any? { |dir| resolved_path.start_with?(File.expand_path(dir)) }
+        raise SecurityError, "File access denied: path outside allowed directories"
+      end
+
+      # Check if file exists and is a regular file
+      unless File.exist?(resolved_path) && File.file?(resolved_path)
+        raise ArgumentError, "Invalid file: #{file_path}"
+      end
+
+      # Check file size (50MB limit)
+      if File.size(resolved_path) > 50.megabytes
+        raise ArgumentError, "File too large: #{file_path}"
+      end
+
+      resolved_path
+    end
+
+    def sanitize_filename(filename)
+      return "presentation" if filename.blank?
+
+      # Remove dangerous characters and normalize
+      safe_name = filename.gsub(/[^a-zA-Z0-9\-_\.]/, "_")
+      safe_name = safe_name.gsub(/_{2,}/, "_") # Remove multiple underscores
+      safe_name.truncate(100)
     end
   end
 end

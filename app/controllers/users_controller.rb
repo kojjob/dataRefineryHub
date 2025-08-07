@@ -78,6 +78,22 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :first_name, :last_name, :role, :avatar, :password, :password_confirmation)
+    # SECURITY FIX: Remove :role from mass assignment to prevent privilege escalation
+    # Role changes should be handled separately by administrators
+    base_params = params.require(:user).permit(:email, :first_name, :last_name, :avatar, :password, :password_confirmation)
+    
+    # Only allow role changes if current user is an admin and it's not their own account
+    if can_modify_user_roles? && params[:id] != current_user.id.to_s
+      base_params[:role] = params[:user][:role] if params[:user][:role].present?
+    end
+    
+    base_params
+  end
+
+  private
+
+  def can_modify_user_roles?
+    # Only organization owners and system admins can modify roles
+    current_user&.owner? || current_user&.admin?
   end
 end

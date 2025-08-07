@@ -137,13 +137,37 @@ module PerformanceOptimized
 
   # Use database views for complex queries
   def use_materialized_view(view_name, refresh: false)
+    # SECURITY FIX: Validate view_name to prevent SQL injection
+    validate_view_name!(view_name)
+    
     if refresh
       ActiveRecord::Base.connection.execute(
-        "REFRESH MATERIALIZED VIEW CONCURRENTLY #{view_name}"
+        ActiveRecord::Base.sanitize_sql_array(["REFRESH MATERIALIZED VIEW CONCURRENTLY %s", view_name])
       )
     end
 
-    ActiveRecord::Base.connection.execute("SELECT * FROM #{view_name}")
+    ActiveRecord::Base.connection.execute(
+      ActiveRecord::Base.sanitize_sql_array(["SELECT * FROM %s", view_name])
+    )
+  end
+
+  private
+
+  def validate_view_name!(view_name)
+    # Allow only alphanumeric characters and underscores for view names
+    unless view_name.match?(/\A[a-zA-Z_][a-zA-Z0-9_]*\z/)
+      raise ArgumentError, "Invalid view name: #{view_name}"
+    end
+    
+    # Define allowed view names (whitelist approach)
+    allowed_views = %w[
+      analytics_summary_view user_activity_view revenue_summary_view
+      data_quality_view pipeline_performance_view organization_metrics_view
+    ]
+    
+    unless allowed_views.include?(view_name)
+      raise ArgumentError, "View not allowed: #{view_name}"
+    end
   end
 
   # Optimize JSON rendering with includes
