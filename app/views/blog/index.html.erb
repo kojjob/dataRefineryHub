@@ -1,0 +1,353 @@
+<% seo_meta_tags(@seo_data) %>
+<% structured_data(:organization) %>
+<% structured_data(:breadcrumbs, @breadcrumbs) %>
+
+<div class="blog-index">
+
+  <!-- Enhanced Hero Section -->
+  <section class="blog-hero">
+    <div class="container">
+
+      <!-- Breadcrumbs -->
+      <div class="blog-breadcrumbs">
+        <%= breadcrumb_navigation(@breadcrumbs) %>
+      </div>
+
+      <div class="blog-hero__content">
+        <div class="blog-hero__text">
+          <h1 class="blog-hero__title">Data Reflow Blog</h1>
+          <p class="blog-hero__subtitle">
+            Expert insights on business intelligence, data analytics, and making data-driven decisions.
+            Learn from industry professionals and real customer success stories.
+          </p>
+        </div>
+
+        <!-- Enhanced Search Bar -->
+        <div class="blog-search">
+          <div class="blog-search__wrapper">
+            <div class="blog-search__icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </div>
+            <input type="text"
+                   placeholder="Search articles..."
+                   class="blog-search__input"
+                   data-controller="search"
+                   data-search-target="input">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="blog-content">
+    <div class="container">
+
+      <!-- Featured Posts Section -->
+      <section class="blog-featured">
+        <div class="blog-section__header">
+          <h2 class="blog-section__title">Featured Articles</h2>
+          <p class="blog-section__subtitle">Discover our most popular insights and expert analysis</p>
+        </div>
+
+        <div class="blog-featured__grid">
+          <% @featured_posts.each do |post| %>
+            <article class="blog-card blog-card--featured">
+              <div class="blog-card__image">
+                <img src="<%= asset_path(post[:featured_image]) %>"
+                     alt="<%= post[:title] %>"
+                     class="blog-card__img">
+                <div class="blog-card__category">
+                  <span class="blog-category-badge">
+                    <%= post[:category] %>
+                  </span>
+                </div>
+                <div class="blog-card__overlay"></div>
+              </div>
+
+              <div class="blog-card__content">
+                <div class="blog-card__meta">
+                  <div class="blog-author">
+                    <img src="<%= asset_path(post[:author][:avatar]) %>"
+                         alt="<%= post[:author][:name] %>"
+                         class="blog-author__avatar">
+                    <div class="blog-author__info">
+                      <div class="blog-author__name"><%= post[:author][:name] %></div>
+                      <div class="blog-meta">
+                        <span class="blog-meta__item">
+                          <svg class="blog-meta__icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                          </svg>
+                          <%= time_ago_in_words(post[:published_at]) %> ago
+                        </span>
+                        <span class="blog-meta__separator">•</span>
+                        <span class="blog-meta__item">
+                          <svg class="blog-meta__icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                          </svg>
+                          <%= post[:read_time] %>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <h3 class="blog-card__title">
+                  <%= link_to post[:title], blog_post_path(post[:slug]), class: "blog-card__title-link" %>
+                </h3>
+
+                <p class="blog-card__excerpt">
+                  <%= post[:excerpt] %>
+                </p>
+
+                <div class="blog-card__footer">
+                  <%= link_to blog_post_path(post[:slug]), class: "blog-read-more" do %>
+                    <span class="blog-read-more__text">Read Article</span>
+                    <svg class="blog-read-more__icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                  <% end %>
+
+                  <div class="blog-tags">
+                    <% post[:tags].first(3).each do |tag| %>
+                      <span class="blog-tag">
+                        <%= tag %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      </section>
+
+      <div class="blog-main">
+
+        <!-- Recent Posts -->
+        <div class="blog-recent">
+          <div class="blog-section__header">
+            <h2 class="blog-section__title">Recent Articles</h2>
+            <p class="blog-section__subtitle">Stay up to date with our latest insights and analysis</p>
+          </div>
+
+          <div class="blog-recent__list">
+            <% @recent_posts.each do |post| %>
+              <article class="blog-card blog-card--horizontal">
+                <div class="blog-card__image blog-card__image--horizontal">
+                  <img src="<%= asset_path(post[:featured_image]) %>"
+                       alt="<%= post[:title] %>"
+                       class="blog-card__img">
+                  <div class="blog-card__overlay"></div>
+                </div>
+
+                <div class="blog-card__content">
+                  <div class="blog-card__meta">
+                    <span class="blog-category-badge blog-category-badge--small">
+                      <%= post[:category] %>
+                    </span>
+                    <div class="blog-meta">
+                      <span class="blog-meta__item">
+                        <svg class="blog-meta__icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <%= time_ago_in_words(post[:published_at]) %> ago
+                      </span>
+                      <span class="blog-meta__separator">•</span>
+                      <span class="blog-meta__item">
+                        <svg class="blog-meta__icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                        <%= post[:read_time] %>
+                      </span>
+                    </div>
+                  </div>
+
+                  <h3 class="blog-card__title">
+                    <%= link_to post[:title], blog_post_path(post[:slug]), class: "blog-card__title-link" %>
+                  </h3>
+
+                  <p class="blog-card__excerpt">
+                    <%= post[:excerpt] %>
+                  </p>
+
+                  <div class="blog-card__footer">
+                    <%= link_to blog_post_path(post[:slug]), class: "blog-read-more blog-read-more--small" do %>
+                      <span class="blog-read-more__text">Read More</span>
+                      <svg class="blog-read-more__icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                      </svg>
+                    <% end %>
+
+                    <div class="blog-author blog-author--small">
+                      <span class="blog-author__label">By</span>
+                      <span class="blog-author__name"><%= post[:author][:name] %></span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            <% end %>
+          </div>
+
+          <!-- Enhanced Load More Button -->
+          <div class="blog-load-more">
+            <button class="btn-blog btn-blog--primary">
+              <span class="btn-blog__text">Load More Articles</span>
+              <svg class="btn-blog__icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Enhanced Sidebar -->
+        <div class="blog-sidebar">
+
+          <!-- Categories Widget -->
+          <div class="blog-widget">
+            <div class="blog-widget__header">
+              <h3 class="blog-widget__title">
+                <svg class="blog-widget__icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+                Categories
+              </h3>
+            </div>
+            <div class="blog-widget__content">
+              <div class="blog-categories">
+                <% @categories.each do |category| %>
+                  <div class="blog-category-item">
+                    <%= link_to category[:name], blog_category_path(category[:slug]),
+                        class: "blog-category-link" %>
+                    <span class="blog-category-count">
+                      <%= category[:count] %>
+                    </span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Popular Posts Widget -->
+          <div class="blog-widget">
+            <div class="blog-widget__header">
+              <h3 class="blog-widget__title">
+                <svg class="blog-widget__icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+                Popular Articles
+              </h3>
+            </div>
+            <div class="blog-widget__content">
+              <div class="blog-popular-posts">
+                <% @popular_posts.each do |post| %>
+                  <div class="blog-popular-item">
+                    <div class="blog-popular-indicator"></div>
+                    <div class="blog-popular-content">
+                      <h4 class="blog-popular-title">
+                        <%= link_to post[:title], blog_post_path(post[:slug]), class: "blog-popular-link" %>
+                      </h4>
+                      <div class="blog-popular-meta">
+                        <span class="blog-popular-meta__item">
+                          <svg class="blog-popular-meta__icon" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                          </svg>
+                          <%= post[:read_time] %>
+                        </span>
+                        <span class="blog-popular-meta__separator">•</span>
+                        <span class="blog-popular-meta__item">
+                          <svg class="blog-popular-meta__icon" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                          </svg>
+                          <%= post[:views] %>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Newsletter Signup Widget -->
+          <div class="blog-widget blog-widget--newsletter">
+            <div class="blog-newsletter">
+              <div class="blog-newsletter__header">
+                <div class="blog-newsletter__icon">
+                  <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                </div>
+                <h3 class="blog-newsletter__title">Stay Updated</h3>
+                <p class="blog-newsletter__subtitle">
+                  Get the latest insights on business intelligence and data analytics delivered to your inbox.
+                </p>
+              </div>
+
+              <div class="blog-newsletter__form">
+                <div class="blog-newsletter__input-wrapper">
+                  <input type="email"
+                         placeholder="Enter your email"
+                         class="blog-newsletter__input">
+                </div>
+                <button class="blog-newsletter__button">
+                  <span class="blog-newsletter__button-text">Subscribe</span>
+                  <svg class="blog-newsletter__button-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                  </svg>
+                </button>
+              </div>
+
+              <p class="blog-newsletter__disclaimer">
+                No spam. Unsubscribe anytime.
+              </p>
+            </div>
+          </div>
+
+          <!-- Featured Resources Widget -->
+          <div class="blog-widget">
+            <div class="blog-widget__header">
+              <h3 class="blog-widget__title">
+                <svg class="blog-widget__icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                Featured Resources
+              </h3>
+            </div>
+            <div class="blog-widget__content">
+              <div class="blog-resources">
+                <div class="blog-resource-item blog-resource-item--primary">
+                  <div class="blog-resource-indicator"></div>
+                  <div class="blog-resource-content">
+                    <%= link_to "Business Intelligence Platform", business_intelligence_platform_path,
+                        class: "blog-resource-link" %>
+                    <p class="blog-resource-description">Complete BI solution for growing businesses</p>
+                  </div>
+                </div>
+                <div class="blog-resource-item blog-resource-item--success">
+                  <div class="blog-resource-indicator"></div>
+                  <div class="blog-resource-content">
+                    <%= link_to "ETL Pipeline Tool", etl_pipeline_tool_path,
+                        class: "blog-resource-link" %>
+                    <p class="blog-resource-description">Build data pipelines without code</p>
+                  </div>
+                </div>
+                <div class="blog-resource-item blog-resource-item--accent">
+                  <div class="blog-resource-indicator"></div>
+                  <div class="blog-resource-content">
+                    <%= link_to "Analytics Dashboard", data_analytics_dashboard_path,
+                        class: "blog-resource-link" %>
+                    <p class="blog-resource-description">Real-time dashboards and visualizations</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
