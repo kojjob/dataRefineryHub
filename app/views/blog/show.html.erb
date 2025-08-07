@@ -1,0 +1,300 @@
+<% seo_meta_tags(@seo_data) %>
+<% structured_data(:article, {
+  title: @blog_post[:title],
+  description: @blog_post[:excerpt],
+  content: @blog_post[:content],
+  published_at: @blog_post[:published_at],
+  updated_at: @blog_post[:updated_at],
+  image: @blog_post[:featured_image],
+  keywords: @blog_post[:keywords],
+  category: @blog_post[:category]
+}) %>
+<% structured_data(:breadcrumbs, @breadcrumbs) %>
+
+<div class="blog-post">
+
+  <!-- Enhanced Article Header -->
+  <section class="blog-post-hero">
+    <div class="container">
+
+      <!-- Breadcrumbs -->
+      <nav class="blog-breadcrumbs">
+        <%= breadcrumb_navigation(@breadcrumbs) %>
+      </nav>
+
+      <!-- Article Meta and Header -->
+      <div class="blog-post-header">
+        <div class="blog-post-meta">
+          <span class="blog-category-badge">
+            <%= @blog_post[:category] %>
+          </span>
+          <div class="blog-meta">
+            <span class="blog-meta__item">
+              <svg class="blog-meta__icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <%= @blog_post[:published_at].strftime("%B %d, %Y") %>
+            </span>
+            <span class="blog-meta__separator">•</span>
+            <span class="blog-meta__item">
+              <svg class="blog-meta__icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <%= @blog_post[:read_time] %>
+            </span>
+            <% if @blog_post[:updated_at] != @blog_post[:published_at] %>
+              <span class="blog-meta__separator">•</span>
+              <span class="blog-meta__item">
+                <svg class="blog-meta__icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                Updated <%= time_ago_in_words(@blog_post[:updated_at]) %> ago
+              </span>
+            <% end %>
+          </div>
+        </div>
+
+        <h1 class="blog-post-title">
+          <%= @blog_post[:title] %>
+        </h1>
+
+        <p class="blog-post-excerpt">
+          <%= @blog_post[:excerpt] %>
+        </p>
+
+        <!-- Author Info and Social Sharing -->
+        <div class="blog-post-author-section">
+          <div class="blog-post-author">
+            <div class="blog-author">
+              <div class="blog-author__avatar">
+                <%= @author[:name].split.map(&:first).join %>
+              </div>
+              <div class="blog-author__info">
+                <div class="blog-author__name"><%= @author[:name] %></div>
+                <div class="blog-author__title"><%= @author[:title] %></div>
+                <div class="blog-author__bio"><%= @author[:bio] %></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enhanced Social Share Buttons -->
+          <div class="blog-social-share">
+            <span class="blog-social-share__label">Share this article:</span>
+            <div class="blog-social-share__buttons">
+              <button class="blog-social-btn blog-social-btn--twitter"
+                      onclick="shareToTwitter()" title="Share on Twitter">
+                <svg class="blog-social-btn__icon" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                </svg>
+              </button>
+              <button class="blog-social-btn blog-social-btn--linkedin"
+                      onclick="shareToLinkedIn()" title="Share on LinkedIn">
+                <svg class="blog-social-btn__icon" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </button>
+              <button class="blog-social-btn blog-social-btn--copy"
+                      onclick="copyLink()" title="Copy link">
+                <svg class="blog-social-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Article Content Section -->
+  <section class="blog-post-content">
+    <div class="container">
+      <div class="blog-post-layout">
+
+        <!-- Main Content -->
+        <article class="blog-post-main">
+
+          <!-- Featured Image -->
+          <div class="blog-post-image">
+            <img src="<%= @blog_post[:featured_image] %>"
+                 alt="<%= @blog_post[:title] %>"
+                 class="blog-post-featured-img">
+          </div>
+
+          <!-- Article Content -->
+          <div class="blog-post-body">
+            <%= raw @blog_post[:content] %>
+          </div>
+
+          <!-- Article Tags -->
+          <div class="blog-post-tags">
+            <h3 class="blog-post-tags__title">
+              <svg class="blog-post-tags__icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+              </svg>
+              Tags
+            </h3>
+            <div class="blog-tags">
+              <% @blog_post[:tags].each do |tag| %>
+                <span class="blog-tag">
+                  <%= tag %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Enhanced Author Bio -->
+          <div class="blog-author-bio">
+            <div class="blog-author-bio__content">
+              <div class="blog-author-bio__avatar">
+                <%= @author[:name].split.map(&:first).join %>
+              </div>
+              <div class="blog-author-bio__info">
+                <h3 class="blog-author-bio__title">About <%= @author[:name] %></h3>
+                <p class="blog-author-bio__role"><%= @author[:title] %></p>
+                <p class="blog-author-bio__description"><%= @author[:bio] %></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contextual Internal Links -->
+          <div class="blog-contextual-links">
+            <%= contextual_internal_links(@blog_post[:category].downcase) %>
+          </div>
+
+        </article>
+
+        <!-- Sidebar (for future enhancements) -->
+        <aside class="blog-post-sidebar">
+          <!-- Table of Contents, Related Links, etc. can go here -->
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Enhanced Related Articles -->
+  <% if @related_posts.any? %>
+    <section class="blog-related-articles">
+      <div class="container">
+        <div class="blog-section__header">
+          <h2 class="blog-section__title">Related Articles</h2>
+          <p class="blog-section__subtitle">Continue exploring insights on <%= @blog_post[:category].downcase %></p>
+        </div>
+
+        <div class="blog-related-grid">
+          <% @related_posts.each do |post| %>
+            <article class="blog-card blog-card--related">
+              <div class="blog-card__image">
+                <img src="<%= post[:featured_image] %>"
+                     alt="<%= post[:title] %>"
+                     class="blog-card__img">
+                <div class="blog-card__overlay"></div>
+              </div>
+
+              <div class="blog-card__content">
+                <div class="blog-card__meta">
+                  <span class="blog-category-badge blog-category-badge--small">
+                    <%= post[:category] %>
+                  </span>
+                  <div class="blog-meta">
+                    <span class="blog-meta__item">
+                      <svg class="blog-meta__icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                      </svg>
+                      <%= post[:read_time] %>
+                    </span>
+                  </div>
+                </div>
+
+                <h3 class="blog-card__title">
+                  <%= link_to post[:title], blog_post_path(post[:slug]), class: "blog-card__title-link" %>
+                </h3>
+
+                <p class="blog-card__excerpt">
+                  <%= post[:excerpt] %>
+                </p>
+
+                <div class="blog-card__footer">
+                  <%= link_to blog_post_path(post[:slug]), class: "blog-read-more blog-read-more--small" do %>
+                    <span class="blog-read-more__text">Read Article</span>
+                    <svg class="blog-read-more__icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                  <% end %>
+                </div>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
+  <!-- Enhanced Newsletter CTA -->
+  <section class="blog-newsletter-cta">
+    <div class="container">
+      <div class="blog-newsletter-cta__content">
+        <div class="blog-newsletter-cta__header">
+          <div class="blog-newsletter-cta__icon">
+            <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h2 class="blog-newsletter-cta__title">
+            Get More Data Analytics Insights
+          </h2>
+          <p class="blog-newsletter-cta__subtitle">
+            Subscribe to our newsletter for the latest articles on business intelligence,
+            data analytics, and making data-driven decisions.
+          </p>
+        </div>
+
+        <div class="blog-newsletter-cta__form">
+          <div class="blog-newsletter-cta__input-wrapper">
+            <input type="email"
+                   placeholder="Enter your email"
+                   class="blog-newsletter-cta__input">
+          </div>
+          <button class="blog-newsletter-cta__button">
+            <span class="blog-newsletter-cta__button-text">Subscribe</span>
+            <svg class="blog-newsletter-cta__button-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+            </svg>
+          </button>
+        </div>
+
+        <p class="blog-newsletter-cta__disclaimer">
+          Join 5,000+ data professionals. No spam, unsubscribe anytime.
+        </p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Social Sharing Scripts -->
+<script>
+  function shareToTwitter() {
+    const text = '<%= j @blog_post[:title] %>';
+    const url = window.location.href;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+  }
+
+  function shareToLinkedIn() {
+    const url = window.location.href;
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      // Show success message
+      const button = event.target.closest('button');
+      const original = button.innerHTML;
+      button.innerHTML = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+      setTimeout(() => {
+        button.innerHTML = original;
+      }, 2000);
+    });
+  }
+</script>
