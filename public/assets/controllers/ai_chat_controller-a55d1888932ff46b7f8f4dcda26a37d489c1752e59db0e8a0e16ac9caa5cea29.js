@@ -671,4 +671,4 @@ export default class extends Controller {
     
     return icons[actionType] || icons.generate_report
   }
-}
+};
