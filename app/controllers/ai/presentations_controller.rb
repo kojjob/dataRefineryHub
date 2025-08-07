@@ -106,7 +106,7 @@ module Ai
           # Validate file path is within allowed directories
           safe_file_path = validate_presentation_file_path!(@presentation.file_path)
           safe_filename = sanitize_filename("#{@presentation.title.parameterize}.#{@presentation.output_format}")
-          
+
           send_file(safe_file_path,
                     filename: safe_filename,
                     type: content_type_for_format(@presentation.output_format))

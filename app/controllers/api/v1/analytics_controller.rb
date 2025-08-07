@@ -227,7 +227,7 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
         # SECURITY FIX: Validate file path to prevent directory traversal
         safe_file_path = validate_export_file_path!(export_file[:path])
         safe_filename = sanitize_export_filename(export_file[:filename])
-        
+
         send_file safe_file_path,
                   filename: safe_filename,
                   type: export_file[:content_type],
@@ -496,7 +496,7 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
 
   def sanitize_job_id(job_id)
     return nil if job_id.blank?
-    
+
     # Allow only alphanumeric characters, hyphens and underscores
     job_id.to_s.gsub(/[^a-zA-Z0-9\-_]/, "").truncate(50)
   end
