@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include RequestLogging
+  include SecureInputHandling
 
   protect_from_forgery with: :exception
   before_action :authenticate_user!
