@@ -149,7 +149,12 @@ class DeliveryPreference < ApplicationRecord
   end
 
   def channel_service
-    "DeliveryChannels::#{channel.camelize}Channel".constantize
+    # Safely resolve delivery channel class using whitelist
+    class_name = "DeliveryChannels::#{channel.camelize}Channel"
+    SafeClassResolver.resolve!(class_name)
+  rescue SafeClassResolver::UnauthorizedClassError => e
+    Rails.logger.error "Unauthorized delivery channel: #{class_name}"
+    raise "Invalid delivery channel: #{channel}"
   end
 
   def delivery_options

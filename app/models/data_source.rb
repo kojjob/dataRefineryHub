@@ -1,6 +1,6 @@
 class DataSource < ApplicationRecord
   include OptimizedScopes
-  
+
   belongs_to :organization
 
   SOURCE_TYPES = %w[

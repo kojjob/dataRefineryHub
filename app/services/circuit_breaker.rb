@@ -31,14 +31,14 @@ class CircuitBreaker
     @half_open_start = nil
     @mutex = Mutex.new
     @metrics = CircuitBreakerMetrics.new(name)
-    
+
     # Load state from cache if available
     load_state_from_cache
   end
 
   # Execute a block with circuit breaker protection
   def call(&block)
-    raise ArgumentError, 'Block required' unless block_given?
+    raise ArgumentError, "Block required" unless block_given?
 
     @mutex.synchronize do
       case state
@@ -115,15 +115,15 @@ class CircuitBreaker
     begin
       start_time = Time.current
       result = yield
-      
+
       record_success
       metrics.record_success(Time.current - start_time)
-      
+
       # Check if we should close the circuit
       if @success_count >= options[:success_threshold]
         transition_to_closed
       end
-      
+
       result
     rescue => e
       handle_error(e)
@@ -136,18 +136,18 @@ class CircuitBreaker
     begin
       start_time = Time.current
       result = yield
-      
+
       record_success
       metrics.record_success(Time.current - start_time)
       result
     rescue => e
       handle_error(e)
-      
+
       # Check if we should open the circuit
       if should_open_circuit?
         transition_to_open
       end
-      
+
       raise
     end
   end
@@ -155,7 +155,7 @@ class CircuitBreaker
   def handle_error(error)
     # Don't count excluded exceptions as failures
     return if options[:excluded_exceptions].include?(error.class)
-    
+
     record_failure(error)
     metrics.record_failure(error)
   end
@@ -163,7 +163,7 @@ class CircuitBreaker
   def record_success
     @success_count += 1
     @last_success_time = Time.current
-    
+
     # Reset failure count on success in closed state
     @failure_count = 0 if state == :closed
   end
@@ -171,7 +171,7 @@ class CircuitBreaker
   def record_failure(error)
     @failure_count += 1
     @last_failure_time = Time.current
-    
+
     Rails.logger.warn(
       "Circuit breaker '#{name}' failure ##{@failure_count}: #{error.class} - #{error.message}"
     )
@@ -180,20 +180,20 @@ class CircuitBreaker
   def should_open_circuit?
     # Check absolute failure threshold
     return true if @failure_count >= options[:failure_threshold]
-    
+
     # Check percentage-based threshold
     if metrics.request_count >= options[:request_volume_threshold]
       error_percentage = metrics.error_percentage
       return true if error_percentage >= options[:error_threshold_percentage]
     end
-    
+
     false
   end
 
   def should_attempt_reset?
     return false unless state == :open
     return false if @last_failure_time.nil?
-    
+
     Time.current - @last_failure_time >= options[:timeout]
   end
 
@@ -202,7 +202,7 @@ class CircuitBreaker
     @failure_count = 0
     @success_count = 0
     save_state_to_cache
-    
+
     Rails.logger.error("Circuit breaker '#{name}' opened")
     notify_state_change(:open)
   end
@@ -213,7 +213,7 @@ class CircuitBreaker
     @success_count = 0
     @failure_count = 0
     save_state_to_cache
-    
+
     Rails.logger.info("Circuit breaker '#{name}' half-open")
     notify_state_change(:half_open)
   end
@@ -224,7 +224,7 @@ class CircuitBreaker
     @success_count = 0
     @half_open_start = nil
     save_state_to_cache
-    
+
     Rails.logger.info("Circuit breaker '#{name}' closed")
     notify_state_change(:closed)
   end
@@ -232,10 +232,10 @@ class CircuitBreaker
   def notify_state_change(new_state)
     # Send notifications about state changes
     CircuitBreakerNotifier.notify(name, new_state) if defined?(CircuitBreakerNotifier)
-    
+
     # Record metrics
     metrics.record_state_change(new_state)
-    
+
     # Trigger any callbacks
     if options[:on_state_change]
       options[:on_state_change].call(name, new_state)
@@ -264,14 +264,14 @@ class CircuitBreaker
   def load_state_from_cache
     cached_state = Rails.cache.read(cache_key)
     return unless cached_state
-    
+
     @state = cached_state[:state].to_sym
     @failure_count = cached_state[:failure_count] || 0
     @success_count = cached_state[:success_count] || 0
     @last_failure_time = cached_state[:last_failure_time]
     @last_success_time = cached_state[:last_success_time]
     @half_open_start = cached_state[:half_open_start]
-    
+
     # Check if we should auto-transition based on timeouts
     if @state == :open && should_attempt_reset?
       transition_to_half_open
@@ -296,31 +296,31 @@ class CircuitBreakerMetrics
   def record_success(duration)
     key = "circuit_metrics:#{name}:success"
     timestamp = Time.current.to_i
-    
+
     # Store in sorted set with timestamp as score
     Rails.cache.write(
       "#{key}:#{timestamp}",
       { duration: duration, timestamp: timestamp },
       expires_in: @window_size.seconds
     )
-    
+
     increment_counter(:success)
   end
 
   def record_failure(error)
     key = "circuit_metrics:#{name}:failure"
     timestamp = Time.current.to_i
-    
+
     Rails.cache.write(
       "#{key}:#{timestamp}",
-      { 
+      {
         error_class: error.class.name,
         error_message: error.message,
         timestamp: timestamp
       },
       expires_in: @window_size.seconds
     )
-    
+
     increment_counter(:failure)
   end
 
@@ -331,7 +331,7 @@ class CircuitBreakerMetrics
   def record_state_change(new_state)
     key = "circuit_metrics:#{name}:state_changes"
     timestamp = Time.current.to_i
-    
+
     Rails.cache.write(
       "#{key}:#{timestamp}",
       { state: new_state, timestamp: timestamp },
@@ -358,14 +358,14 @@ class CircuitBreakerMetrics
   def error_percentage
     total = request_count
     return 0.0 if total.zero?
-    
+
     (failure_count.to_f / total * 100).round(2)
   end
 
   def success_rate
     total = request_count
     return 0.0 if total.zero?
-    
+
     (success_count.to_f / total * 100).round(2)
   end
 

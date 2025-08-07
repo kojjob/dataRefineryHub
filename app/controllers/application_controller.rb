@@ -10,10 +10,36 @@ class ApplicationController < ActionController::Base
   before_action :set_system_status, unless: :devise_controller?
   before_action :set_manual_tasks_count, unless: :devise_controller?
   before_action :set_running_pipelines_count, unless: :devise_controller?
+  after_action :set_security_headers
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   private
+
+  def set_security_headers
+    # Prevent MIME type sniffing
+    response.headers["X-Content-Type-Options"] = "nosniff"
+
+    # Prevent clickjacking attacks
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+
+    # Enable XSS protection (though modern browsers have this by default)
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+
+    # Force HTTPS for all future requests (only in production)
+    if Rails.env.production?
+      response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
+    end
+
+    # Content Security Policy - adjust based on your needs
+    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' data:; img-src 'self' data: https:; connect-src 'self'"
+
+    # Referrer Policy
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+    # Permissions Policy (formerly Feature Policy)
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+  end
 
   def structured_logger
     @structured_logger ||= StructuredLogger.new

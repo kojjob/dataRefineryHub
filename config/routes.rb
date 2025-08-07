@@ -34,7 +34,7 @@ Rails.application.routes.draw do
   get "health/live", to: "health#live"
   get "health/ready", to: "health#ready"
   get "health/detailed", to: "health#detailed"
-  
+
   # Legacy monitoring endpoints (kept for backward compatibility)
   get "health", to: "health#live"
   get "metrics", to: "monitoring#metrics"

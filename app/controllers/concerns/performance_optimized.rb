@@ -22,18 +22,18 @@ module PerformanceOptimized
 
     QueryAnalyzer.reset_stats
     result = yield
-    
+
     report = QueryAnalyzer.report
     if report[:slow_queries] > 0 || report[:n_plus_one_detected] > 0
       logger.warn "Performance issues detected in #{controller_name}##{action_name}"
       logger.warn "  Slow queries: #{report[:slow_queries]}"
       logger.warn "  N+1 queries: #{report[:n_plus_one_detected]}"
-      
+
       report[:recommendations].each do |rec|
         logger.warn "  #{rec[:severity].upcase}: #{rec[:message]}"
       end
     end
-    
+
     result
   end
 
@@ -46,8 +46,8 @@ module PerformanceOptimized
       collection.maximum(:updated_at)&.to_i,
       collection.count
     ].compact
-    
-    key_parts.join(':')
+
+    key_parts.join(":")
   end
 
   # Generate cache key for single record with associations
@@ -55,7 +55,7 @@ module PerformanceOptimized
     key_parts = [
       record.cache_key_with_version
     ]
-    
+
     associations.each do |assoc|
       if record.respond_to?(assoc)
         associated = record.send(assoc)
@@ -66,14 +66,14 @@ module PerformanceOptimized
         end
       end
     end
-    
-    key_parts.compact.join(':')
+
+    key_parts.compact.join(":")
   end
 
   # Optimized data fetching with caching
   def fetch_with_cache(cache_key, options = {}, &block)
     expires_in = options[:expires_in] || determine_cache_duration
-    
+
     CacheManager.fetch(cache_key, expires_in: expires_in) do
       ActiveRecord::Base.connection_pool.with_connection do
         result = yield
@@ -96,11 +96,11 @@ module PerformanceOptimized
   # Determine appropriate cache duration based on data type
   def determine_cache_duration
     case action_name
-    when 'index'
+    when "index"
       5.minutes
-    when 'show'
+    when "show"
       10.minutes
-    when 'dashboard', 'analytics'
+    when "dashboard", "analytics"
       15.minutes
     else
       2.minutes
@@ -120,9 +120,9 @@ module PerformanceOptimized
   def paginate_with_cache(scope, page_param = :page)
     page = params[page_param] || 1
     per_page = params[:per_page] || 25
-    
+
     cache_key = "#{cache_key_for_collection(scope)}:page:#{page}:per:#{per_page}"
-    
+
     fetch_with_cache(cache_key, expires_in: 5.minutes) do
       scope.page(page).per(per_page).load
     end
@@ -137,13 +137,37 @@ module PerformanceOptimized
 
   # Use database views for complex queries
   def use_materialized_view(view_name, refresh: false)
+    # SECURITY FIX: Validate view_name to prevent SQL injection
+    validate_view_name!(view_name)
+
     if refresh
       ActiveRecord::Base.connection.execute(
-        "REFRESH MATERIALIZED VIEW CONCURRENTLY #{view_name}"
+        ActiveRecord::Base.sanitize_sql_array([ "REFRESH MATERIALIZED VIEW CONCURRENTLY %s", view_name ])
       )
     end
-    
-    ActiveRecord::Base.connection.execute("SELECT * FROM #{view_name}")
+
+    ActiveRecord::Base.connection.execute(
+      ActiveRecord::Base.sanitize_sql_array([ "SELECT * FROM %s", view_name ])
+    )
+  end
+
+  private
+
+  def validate_view_name!(view_name)
+    # Allow only alphanumeric characters and underscores for view names
+    unless view_name.match?(/\A[a-zA-Z_][a-zA-Z0-9_]*\z/)
+      raise ArgumentError, "Invalid view name: #{view_name}"
+    end
+
+    # Define allowed view names (whitelist approach)
+    allowed_views = %w[
+      analytics_summary_view user_activity_view revenue_summary_view
+      data_quality_view pipeline_performance_view organization_metrics_view
+    ]
+
+    unless allowed_views.include?(view_name)
+      raise ArgumentError, "View not allowed: #{view_name}"
+    end
   end
 
   # Optimize JSON rendering with includes
@@ -152,7 +176,7 @@ module PerformanceOptimized
     if options[:include]
       records = records.includes(options[:include])
     end
-    
+
     # Use fast_jsonapi or similar for serialization
     render json: serialize_optimized(records, options)
   end
@@ -176,8 +200,8 @@ module OptimizedScopes
     scope :with_associations, -> { includes(default_includes) if respond_to?(:default_includes) }
     scope :recent, -> { order(created_at: :desc) }
     scope :by_date_range, ->(start_date, end_date) { where(created_at: start_date..end_date) }
-    scope :active, -> { where(active: true) if column_names.include?('active') }
-    
+    scope :active, -> { where(active: true) if column_names.include?("active") }
+
     # Batch loading scope
     scope :in_batches_of, ->(size) { find_in_batches(batch_size: size) }
   end
@@ -196,7 +220,7 @@ module OptimizedScopes
     # Optimized count with caching
     def cached_count(cache_key = nil, expires_in: 5.minutes)
       cache_key ||= "#{table_name}:count:#{maximum(:updated_at)&.to_i}"
-      
+
       Rails.cache.fetch(cache_key, expires_in: expires_in) do
         count
       end

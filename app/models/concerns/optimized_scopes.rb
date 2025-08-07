@@ -7,21 +7,21 @@ module OptimizedScopes
     # Scope for eager loading latest extraction job
     scope :with_latest_extraction_job, -> {
       left_joins(:extraction_jobs)
-        .select('data_sources.*, extraction_jobs.id as latest_job_id, extraction_jobs.status as latest_job_status')
-        .where('extraction_jobs.id = (SELECT id FROM extraction_jobs WHERE data_source_id = data_sources.id ORDER BY created_at DESC LIMIT 1) OR extraction_jobs.id IS NULL')
+        .select("data_sources.*, extraction_jobs.id as latest_job_id, extraction_jobs.status as latest_job_status")
+        .where("extraction_jobs.id = (SELECT id FROM extraction_jobs WHERE data_source_id = data_sources.id ORDER BY created_at DESC LIMIT 1) OR extraction_jobs.id IS NULL")
     }
 
     # Scope for including quality reports
     scope :with_quality_reports, -> {
       left_joins(:data_quality_reports)
-        .select('data_sources.*, data_quality_reports.overall_score, data_quality_reports.issues_count')
-        .where('data_quality_reports.id = (SELECT id FROM data_quality_reports WHERE data_source_id = data_sources.id ORDER BY created_at DESC LIMIT 1) OR data_quality_reports.id IS NULL')
+        .select("data_sources.*, data_quality_reports.overall_score, data_quality_reports.issues_count")
+        .where("data_quality_reports.id = (SELECT id FROM data_quality_reports WHERE data_source_id = data_sources.id ORDER BY created_at DESC LIMIT 1) OR data_quality_reports.id IS NULL")
     }
 
     # Scope for sources with recent errors
     scope :with_recent_errors, -> {
       joins(:extraction_jobs)
-        .where('extraction_jobs.status = ? AND extraction_jobs.created_at > ?', 'failed', 24.hours.ago)
+        .where("extraction_jobs.status = ? AND extraction_jobs.created_at > ?", "failed", 24.hours.ago)
         .distinct
     }
 
@@ -39,7 +39,7 @@ module OptimizedScopes
               COUNT(DISTINCT CASE WHEN extraction_jobs.status = \'completed\' THEN extraction_jobs.id END) as successful_jobs_count,
               COUNT(DISTINCT CASE WHEN extraction_jobs.status = \'failed\' THEN extraction_jobs.id END) as failed_jobs_count')
         .left_joins(:extraction_jobs)
-        .group('data_sources.id')
+        .group("data_sources.id")
     }
 
     # Scope for recently updated
@@ -64,8 +64,8 @@ module OptimizedScopes
               extraction_jobs.started_at as current_job_started_at,
               data_quality_reports.overall_score as current_quality_score')
         .left_joins(:extraction_jobs, :data_quality_reports)
-        .where('extraction_jobs.id = (SELECT id FROM extraction_jobs WHERE data_source_id = data_sources.id ORDER BY created_at DESC LIMIT 1) OR extraction_jobs.id IS NULL')
-        .where('data_quality_reports.id = (SELECT id FROM data_quality_reports WHERE data_source_id = data_sources.id ORDER BY created_at DESC LIMIT 1) OR data_quality_reports.id IS NULL')
+        .where("extraction_jobs.id = (SELECT id FROM extraction_jobs WHERE data_source_id = data_sources.id ORDER BY created_at DESC LIMIT 1) OR extraction_jobs.id IS NULL")
+        .where("data_quality_reports.id = (SELECT id FROM data_quality_reports WHERE data_source_id = data_sources.id ORDER BY created_at DESC LIMIT 1) OR data_quality_reports.id IS NULL")
     }
   end
 
@@ -85,28 +85,28 @@ module OptimizedScopes
     # Get sources requiring attention
     def requiring_attention
       with_recent_errors
-        .or(where('last_sync_at < ?', 7.days.ago))
-        .or(where('data_quality_reports.overall_score < ?', 0.7).joins(:data_quality_reports))
+        .or(where("last_sync_at < ?", 7.days.ago))
+        .or(where("data_quality_reports.overall_score < ?", 0.7).joins(:data_quality_reports))
         .distinct
     end
 
     # Search scope
     def search(query)
       return all if query.blank?
-      
-      where('name ILIKE ? OR description ILIKE ? OR source_type ILIKE ?',
+
+      where("name ILIKE ? OR description ILIKE ? OR source_type ILIKE ?",
             "%#{query}%", "%#{query}%", "%#{query}%")
     end
 
     # Filter scope
     def filter_by(filters = {})
       scope = all
-      
+
       scope = scope.by_source_type(filters[:source_type]) if filters[:source_type].present?
       scope = scope.by_sync_frequency(filters[:sync_frequency]) if filters[:sync_frequency].present?
       scope = scope.where(status: filters[:status]) if filters[:status].present?
       scope = scope.where(organization_id: filters[:organization_id]) if filters[:organization_id].present?
-      
+
       scope
     end
   end
@@ -126,7 +126,7 @@ module OptimizedScopes
         status: status,
         last_sync: last_sync_at,
         next_sync: next_sync_at,
-      is_syncing: extraction_jobs.where(status: 'processing').exists?
+      is_syncing: extraction_jobs.where(status: "processing").exists?
       }
     end
   end
