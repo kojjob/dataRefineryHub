@@ -66,6 +66,10 @@ class DataSourcesController < DataflowProController
 
   def new
     @data_source = current_organization.data_sources.build
+
+    # Pre-select source type if provided in params
+    @data_source.source_type = params[:source_type] if params[:source_type].present?
+
     authorize @data_source
 
     # Initialize wizard data for the view
@@ -83,17 +87,17 @@ class DataSourcesController < DataflowProController
         if @data_source.file_upload_source? && params[:data_source][:uploaded_files].present?
           handle_file_upload_creation
         else
-          Result.success(data: @data_source, message: "Data source was successfully created.")
+          Result.success(@data_source, { message: "Data source was successfully created." })
         end
       else
-        Result.failure(errors: @data_source.errors.full_messages)
+        Result.failure(@data_source.errors.full_messages)
       end
     end
 
     if result.success?
-      redirect_to result.data, notice: result.message
+      redirect_to result.data, notice: result.metadata[:message] || "Data source was successfully created."
     else
-      flash.now[:alert] = result.error_message
+      flash.now[:alert] = result.error_messages
       render :new, status: :unprocessable_entity
     end
   end
@@ -124,12 +128,14 @@ class DataSourcesController < DataflowProController
 
   def test_connection
     # This is a collection action, so no specific data source is set
-    # We'll test the connection with the provided parameters
+    # Authorize using DataSource class for policy check
+    authorize DataSource, :test_connection?
 
     source_type = params[:source_type]
     connection_params = params.except(:authenticity_token, :controller, :action).permit(
       :source_type, :api_key, :shop_domain, :consumer_key, :consumer_secret,
-      :access_token, :access_token_secret, :seller_id, :marketplace_id, :refresh_token
+      :access_token, :access_token_secret, :seller_id, :marketplace_id, :refresh_token,
+      :realm_id, :token_expires_at, :property_id
     )
 
     begin
@@ -140,6 +146,10 @@ class DataSourcesController < DataflowProController
         result = test_woocommerce_connection(connection_params)
       when "amazon_seller_central"
         result = test_amazon_connection(connection_params)
+      when "quickbooks"
+        result = test_quickbooks_connection(connection_params)
+      when "google_analytics"
+        result = test_google_analytics_connection(connection_params)
       when "file_upload"
         # For file upload, we just return success since no external connection is needed
         result = { success: true, message: "File upload source is ready" }
@@ -154,6 +164,9 @@ class DataSourcesController < DataflowProController
   end
 
   def auto_save
+    # Authorize using DataSource class for policy check
+    authorize DataSource, :auto_save?
+
     # Auto-save wizard data to session or temporary storage
     session[:data_source_wizard_draft] = params.except(:authenticity_token, :controller, :action)
     session[:data_source_wizard_draft][:updated_at] = Time.current
@@ -398,6 +411,7 @@ class DataSourcesController < DataflowProController
       :name, :source_type, :status, :description, :sync_frequency,
       :next_sync_at,
       config: {},
+      credentials: {},
       uploaded_files: []
     )
   end
@@ -429,26 +443,12 @@ class DataSourcesController < DataflowProController
   end
 
   def handle_file_upload_creation
-    # Use enhanced file upload service for file processing
-    upload_result = EnhancedFileUploadService.new(
-      data_source: @data_source,
-      files: params[:data_source][:uploaded_files],
-      user: current_user,
-      organization: current_organization
-    ).process
-
-    if upload_result.success?
-      Result.success(
-        data: @data_source,
-        message: "Data source created successfully. #{upload_result.message}"
-      )
-    else
-      # If file processing failed, we should still keep the data source but show the error
-      Result.success(
-        data: @data_source,
-        message: "Data source created but file processing encountered issues: #{upload_result.error_message}"
-      )
-    end
+    # Data source is already created and files are attached via Active Storage
+    # The files will be processed by background jobs when the data source is synced
+    Result.success(
+      @data_source,
+      { message: "Data source created successfully. Files uploaded and will be processed shortly." }
+    )
   end
 
   def calculate_data_source_stats(data_source)
@@ -465,8 +465,6 @@ class DataSourcesController < DataflowProController
   end
 
   def calculate_connection_health(data_source)
-    return "unknown" unless data_source.last_connection_test_at
-
     if data_source.connected?
       recent_failures = data_source.extraction_jobs.failed.where("created_at >= ?", 24.hours.ago).count
       return "poor" if recent_failures > 3
@@ -536,6 +534,62 @@ class DataSourcesController < DataflowProController
       # For now, just validate the presence of required fields
       # In a real implementation, you would make an actual API call to Amazon SP-API
       { success: true, message: "Connection test successful", details: { seller_id: params[:seller_id], marketplace_id: params[:marketplace_id] } }
+    rescue => e
+      { success: false, message: "Connection failed: #{e.message}" }
+    end
+  end
+
+  def test_quickbooks_connection(params)
+    return { success: false, message: "Realm ID is required" } if params[:realm_id].blank?
+    return { success: false, message: "Access token is required" } if params[:access_token].blank?
+
+    begin
+      # Create temporary data source for connection validation
+      data_source = current_organization.data_sources.build(
+        source_type: 'quickbooks',
+        configuration: {
+          realm_id: params[:realm_id],
+          access_token: params[:access_token],
+          refresh_token: params[:refresh_token],
+          token_expires_at: params[:token_expires_at]
+        }
+      )
+
+      # Instantiate extractor and test connection
+      extractor = QuickbooksExtractor.new(data_source)
+      extractor.validate_connection
+
+      { success: true, message: "QuickBooks connection successful", details: { realm_id: params[:realm_id] } }
+    rescue BaseExtractor::AuthenticationError => e
+      { success: false, message: "Authentication failed: #{e.message}" }
+    rescue => e
+      { success: false, message: "Connection failed: #{e.message}" }
+    end
+  end
+
+  def test_google_analytics_connection(params)
+    return { success: false, message: "Property ID is required" } if params[:property_id].blank?
+    return { success: false, message: "Access token is required" } if params[:access_token].blank?
+
+    begin
+      # Create temporary data source for connection validation
+      data_source = current_organization.data_sources.build(
+        source_type: 'google_analytics',
+        configuration: {
+          property_id: params[:property_id],
+          access_token: params[:access_token],
+          refresh_token: params[:refresh_token],
+          token_expires_at: params[:token_expires_at]
+        }
+      )
+
+      # Instantiate extractor and test connection
+      extractor = GoogleAnalyticsExtractor.new(data_source)
+      extractor.validate_connection
+
+      { success: true, message: "Google Analytics connection successful", details: { property_id: params[:property_id] } }
+    rescue BaseExtractor::AuthenticationError => e
+      { success: false, message: "Authentication failed: #{e.message}" }
     rescue => e
       { success: false, message: "Connection failed: #{e.message}" }
     end
