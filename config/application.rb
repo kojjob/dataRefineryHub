@@ -46,11 +46,15 @@ module DataRefineryPlatform
     config.assets.enabled = true
     config.assets.version = "1.0"
 
-    # Add security middleware
-    config.middleware.use Rack::Attack
+    # Add security middleware (disabled in test environment)
+    unless Rails.env.test?
+      config.middleware.use Rack::Attack
+    end
 
-    # Add API rate limiting middleware
-    require_relative "../app/middleware/api_rate_limiter"
-    config.middleware.use ApiRateLimiter
+    # Add API rate limiting middleware (disabled in test environment)
+    unless Rails.env.test?
+      require_relative "../app/middleware/api_rate_limiter"
+      config.middleware.use ApiRateLimiter
+    end
   end
 end
