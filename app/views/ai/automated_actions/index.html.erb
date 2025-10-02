@@ -1,0 +1,1540 @@
+<% content_for :page_title, "AI Automated Actions" %>
+<% content_for :page_subtitle, "Intelligent automation workflows for enhanced productivity" %>
+
+<div class="dashboard-content">
+  <!-- AI Automated Actions Header -->
+  <section class="content-section active" id="ai-actions-overview">
+
+    <!-- Executive AI Actions Header with Glass Morphism -->
+    <div class="executive-analytics-header" style="
+      background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.95) 0%, rgba(var(--color-primary-rgb), 0.05) 100%);
+      backdrop-filter: blur(var(--blur-lg, 20px));
+      -webkit-backdrop-filter: blur(var(--blur-lg, 20px));
+      border: 1px solid rgba(var(--color-border-rgb), 0.2);
+      border-radius: var(--radius-xl);
+      padding: var(--space-32);
+      margin-bottom: var(--space-32);
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    ">
+      <!-- Background Pattern -->
+      <div style="
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(50%, -50%);
+      "></div>
+
+      <div style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        z-index: 1;
+      ">
+        <div class="executive-title-section">
+          <h1 style="
+            font-size: var(--font-size-4xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text);
+            margin: 0 0 var(--space-8) 0;
+            line-height: var(--line-height-tight);
+            letter-spacing: var(--letter-spacing-tight);
+            display: flex;
+            align-items: center;
+            gap: var(--space-16);
+          ">
+            <div style="
+              width: 64px;
+              height: 64px;
+              background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+              border-radius: var(--radius-xl);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 12px 24px rgba(var(--color-primary-rgb), 0.3);
+            ">
+              <svg style="width: 32px; height: 32px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            AI Automated Actions
+          </h1>
+          <p style="
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+            margin: 0 0 var(--space-16) 0;
+            font-weight: var(--font-weight-medium);
+          ">Intelligent automation workflows for enhanced productivity and efficiency</p>
+
+          <!-- AI Actions Status Indicators -->
+          <div style="display: flex; align-items: center; gap: var(--space-16);">
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-8);
+              padding: var(--space-8) var(--space-16);
+              background: rgba(var(--color-success-rgb), 0.1);
+              border: 1px solid rgba(var(--color-success-rgb), 0.2);
+              border-radius: var(--radius-full);
+            ">
+              <div style="
+                width: 8px;
+                height: 8px;
+                background: var(--color-success);
+                border-radius: 50%;
+                animation: pulse 2s infinite;
+              "></div>
+              <span style="
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-success);
+              ">Real-time Automation</span>
+            </div>
+            <div style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+            ">Active Actions: 12 • Success Rate: 98.5% • Updated: <%= Time.current.strftime("%I:%M %p") %></div>
+          </div>
+        </div>
+
+        <!-- AI Actions Controls -->
+        <div class="executive-analytics-controls" style="
+          display: flex;
+          align-items: center;
+          gap: var(--space-16);
+          position: relative;
+          z-index: 1;
+        ">
+          <!-- Action Controls -->
+          <div style="display: flex; align-items: center; gap: var(--space-8);">
+            <button class="btn btn--outline btn--sm" style="
+              background: rgba(var(--color-surface-rgb), 0.8);
+              backdrop-filter: blur(10px);
+              border: 1px solid rgba(var(--color-border-rgb), 0.3);
+              display: inline-flex;
+              align-items: center;
+              gap: var(--space-8);
+            ">
+              <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              Settings
+            </button>
+            <button class="btn btn--primary btn--sm" style="
+              background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+              box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.3);
+              display: inline-flex;
+              align-items: center;
+              gap: var(--space-8);
+            ">
+              <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+              </svg>
+              Create Action
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- AI Actions KPI Metrics Grid -->
+    <div class="executive-analytics-metrics-section" style="margin-bottom: var(--space-48);">
+      <div style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-24);
+      ">
+        <h2 style="
+          font-size: var(--font-size-2xl);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text);
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: var(--space-12);
+        ">
+          <svg style="width: 24px; height: 24px; color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          Automation Performance Metrics
+        </h2>
+        <div style="
+          display: flex;
+          align-items: center;
+          gap: var(--space-8);
+          font-size: var(--font-size-sm);
+          color: var(--color-text-secondary);
+        ">
+          <div style="
+            width: 8px;
+            height: 8px;
+            background: var(--color-success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+          "></div>
+          Live metrics
+        </div>
+      </div>
+
+      <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-24);
+        margin-bottom: var(--space-32);
+      ">
+        <!-- Total Actions Analytics -->
+        <div style="
+          background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+          border-radius: var(--radius-xl);
+          padding: var(--space-24);
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        ">
+          <div style="
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.1) 0%, transparent 100%);
+            border-radius: 0 var(--radius-xl) 0 100%;
+          "></div>
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-16);">
+            <div style="
+              width: 56px;
+              height: 56px;
+              background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 8px 16px rgba(var(--color-primary-rgb), 0.3);
+            ">
+              <svg style="width: 28px; height: 28px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <div style="
+              padding: var(--space-4) var(--space-8);
+              background: rgba(var(--color-success-rgb), 0.1);
+              border: 1px solid rgba(var(--color-success-rgb), 0.2);
+              border-radius: var(--radius-full);
+              font-size: var(--font-size-xs);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-success);
+            ">+12%</div>
+          </div>
+          <div>
+            <h3 style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+              font-weight: var(--font-weight-medium);
+              margin: 0 0 var(--space-8) 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            ">Total Actions</h3>
+            <p style="
+              font-size: var(--font-size-4xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              line-height: 1;
+              font-variant-numeric: tabular-nums;
+            "><%= @performance_metrics[:total_actions] %></p>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-success);
+              font-weight: var(--font-weight-medium);
+              margin: 0;
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+            ">
+              <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+              </svg>
+              12% increase this month
+            </p>
+          </div>
+        </div>
+
+        <!-- Active Actions Analytics -->
+        <div style="
+          background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-success-rgb), 0.02) 100%);
+          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+          border-radius: var(--radius-xl);
+          padding: var(--space-24);
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        ">
+          <div style="
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(var(--color-success-rgb), 0.1) 0%, transparent 100%);
+            border-radius: 0 var(--radius-xl) 0 100%;
+          "></div>
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-16);">
+            <div style="
+              width: 56px;
+              height: 56px;
+              background: linear-gradient(135deg, var(--color-success) 0%, rgba(var(--color-success-rgb), 0.8) 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 8px 16px rgba(var(--color-success-rgb), 0.3);
+            ">
+              <svg style="width: 28px; height: 28px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div style="
+              padding: var(--space-4) var(--space-8);
+              background: rgba(var(--color-success-rgb), 0.1);
+              border: 1px solid rgba(var(--color-success-rgb), 0.2);
+              border-radius: var(--radius-full);
+              font-size: var(--font-size-xs);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-success);
+            ">Active</div>
+          </div>
+          <div>
+            <h3 style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+              font-weight: var(--font-weight-medium);
+              margin: 0 0 var(--space-8) 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            ">Active Actions</h3>
+            <p style="
+              font-size: var(--font-size-4xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              line-height: 1;
+              font-variant-numeric: tabular-nums;
+            "><%= @performance_metrics[:active_actions] %></p>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-success);
+              font-weight: var(--font-weight-medium);
+              margin: 0;
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+            ">
+              <div style="
+                width: 8px;
+                height: 8px;
+                background: var(--color-success);
+                border-radius: 50%;
+                animation: pulse 2s infinite;
+              "></div>
+              Running smoothly
+            </p>
+          </div>
+        </div>
+
+        <!-- Executions Analytics -->
+        <div style="
+          background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-warning-rgb), 0.02) 100%);
+          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+          border-radius: var(--radius-xl);
+          padding: var(--space-24);
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        ">
+          <div style="
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(var(--color-warning-rgb), 0.1) 0%, transparent 100%);
+            border-radius: 0 var(--radius-xl) 0 100%;
+          "></div>
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-16);">
+            <div style="
+              width: 56px;
+              height: 56px;
+              background: linear-gradient(135deg, var(--color-warning) 0%, rgba(var(--color-warning-rgb), 0.8) 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 8px 16px rgba(var(--color-warning-rgb), 0.3);
+            ">
+              <svg style="width: 28px; height: 28px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <div style="
+              padding: var(--space-4) var(--space-8);
+              background: rgba(var(--color-primary-rgb), 0.1);
+              border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+              border-radius: var(--radius-full);
+              font-size: var(--font-size-xs);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-primary);
+            ">Today</div>
+          </div>
+          <div>
+            <h3 style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+              font-weight: var(--font-weight-medium);
+              margin: 0 0 var(--space-8) 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            ">Total Executions</h3>
+            <p style="
+              font-size: var(--font-size-4xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              line-height: 1;
+              font-variant-numeric: tabular-nums;
+            "><%= number_with_delimiter(@performance_metrics[:total_executions]) %></p>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-warning);
+              font-weight: var(--font-weight-medium);
+              margin: 0;
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+            ">
+              <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+              </svg>
+              +23% from yesterday
+            </p>
+          </div>
+        </div>
+
+        <!-- Success Rate Analytics -->
+        <div style="
+          background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-success-rgb), 0.02) 100%);
+          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+          border-radius: var(--radius-xl);
+          padding: var(--space-24);
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        ">
+          <div style="
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(var(--color-success-rgb), 0.1) 0%, transparent 100%);
+            border-radius: 0 var(--radius-xl) 0 100%;
+          "></div>
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-16);">
+            <div style="
+              width: 56px;
+              height: 56px;
+              background: linear-gradient(135deg, var(--color-success) 0%, rgba(var(--color-success-rgb), 0.8) 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 8px 16px rgba(var(--color-success-rgb), 0.3);
+            ">
+              <svg style="width: 28px; height: 28px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div style="
+              padding: var(--space-4) var(--space-8);
+              background: rgba(var(--color-success-rgb), 0.1);
+              border: 1px solid rgba(var(--color-success-rgb), 0.2);
+              border-radius: var(--radius-full);
+              font-size: var(--font-size-xs);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-success);
+            ">+2.1%</div>
+          </div>
+          <div>
+            <h3 style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+              font-weight: var(--font-weight-medium);
+              margin: 0 0 var(--space-8) 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            ">Success Rate</h3>
+            <p style="
+              font-size: var(--font-size-4xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              line-height: 1;
+              font-variant-numeric: tabular-nums;
+            "><%= @performance_metrics[:success_rate] %>%</p>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-success);
+              font-weight: var(--font-weight-medium);
+              margin: 0;
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+            ">
+              <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+              </svg>
+              2.1% improvement
+            </p>
+          </div>
+        </div>
+
+        <!-- Avg Response Analytics -->
+        <div style="
+          background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-warning-rgb), 0.02) 100%);
+          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+          border-radius: var(--radius-xl);
+          padding: var(--space-24);
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        ">
+          <div style="
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(var(--color-warning-rgb), 0.1) 0%, transparent 100%);
+            border-radius: 0 var(--radius-xl) 0 100%;
+          "></div>
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-16);">
+            <div style="
+              width: 56px;
+              height: 56px;
+              background: linear-gradient(135deg, var(--color-warning) 0%, rgba(var(--color-warning-rgb), 0.8) 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 8px 16px rgba(var(--color-warning-rgb), 0.3);
+            ">
+              <svg style="width: 28px; height: 28px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div style="
+              padding: var(--space-4) var(--space-8);
+              background: rgba(var(--color-success-rgb), 0.1);
+              border: 1px solid rgba(var(--color-success-rgb), 0.2);
+              border-radius: var(--radius-full);
+              font-size: var(--font-size-xs);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-success);
+            ">-0.3s</div>
+          </div>
+          <div>
+            <h3 style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+              font-weight: var(--font-weight-medium);
+              margin: 0 0 var(--space-8) 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            ">Avg Response</h3>
+            <p style="
+              font-size: var(--font-size-4xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              line-height: 1;
+              font-variant-numeric: tabular-nums;
+            "><%= @performance_metrics[:avg_response_time] %></p>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-success);
+              font-weight: var(--font-weight-medium);
+              margin: 0;
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+            ">
+              <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
+              </svg>
+              0.3s faster
+            </p>
+          </div>
+        </div>
+
+        <!-- Cost Savings Analytics -->
+        <div style="
+          background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+          border: 1px solid rgba(var(--color-border-rgb), 0.3);
+          border-radius: var(--radius-xl);
+          padding: var(--space-24);
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        ">
+          <div style="
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.1) 0%, transparent 100%);
+            border-radius: 0 var(--radius-xl) 0 100%;
+          "></div>
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-16);">
+            <div style="
+              width: 56px;
+              height: 56px;
+              background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+              border-radius: var(--radius-lg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 8px 16px rgba(var(--color-primary-rgb), 0.3);
+            ">
+              <svg style="width: 28px; height: 28px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+              </svg>
+            </div>
+            <div style="
+              padding: var(--space-4) var(--space-8);
+              background: rgba(var(--color-success-rgb), 0.1);
+              border: 1px solid rgba(var(--color-success-rgb), 0.2);
+              border-radius: var(--radius-full);
+              font-size: var(--font-size-xs);
+              font-weight: var(--font-weight-medium);
+              color: var(--color-success);
+            ">+$2.4k</div>
+          </div>
+          <div>
+            <h3 style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+              font-weight: var(--font-weight-medium);
+              margin: 0 0 var(--space-8) 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            ">Cost Savings</h3>
+            <p style="
+              font-size: var(--font-size-4xl);
+              font-weight: var(--font-weight-bold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              line-height: 1;
+              font-variant-numeric: tabular-nums;
+            "><%= @performance_metrics[:cost_savings] %></p>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-success);
+              font-weight: var(--font-weight-medium);
+              margin: 0;
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+            ">
+              <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+              </svg>
+              $2.4k this month
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div style="
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-32);
+  " class="lg:grid-cols-4">
+    <!-- Action Categories Analytics -->
+    <div class="lg:col-span-1">
+      <div style="
+        background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-xl);
+        padding: var(--space-24);
+        position: sticky;
+        top: var(--space-32);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      ">
+        <div style="
+          display: flex;
+          align-items: center;
+          gap: var(--space-12);
+          margin-bottom: var(--space-24);
+        ">
+          <div style="
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(var(--color-primary-rgb), 0.3);
+          ">
+            <svg style="width: 24px; height: 24px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+          </div>
+          <h3 style="
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text);
+            margin: 0;
+          ">Action Categories</h3>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--space-12);">
+          <% @action_categories.each do |category| %>
+            <button style="
+              width: 100%;
+              text-align: left;
+              padding: var(--space-16);
+              border-radius: var(--radius-lg);
+              background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+              border: 1px solid rgba(var(--color-border-rgb), 0.2);
+              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+              cursor: pointer;
+              position: relative;
+              overflow: hidden;
+            " onmouseover="
+              this.style.background = 'linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.05) 0%, rgba(var(--color-primary-rgb), 0.1) 100%)';
+              this.style.borderColor = 'rgba(var(--color-primary-rgb), 0.3)';
+              this.style.transform = 'translateY(-2px)';
+              this.style.boxShadow = '0 8px 25px rgba(var(--color-primary-rgb), 0.15)';
+            " onmouseout="
+              this.style.background = 'linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(var(--color-primary-rgb), 0.02) 100%)';
+              this.style.borderColor = 'rgba(var(--color-border-rgb), 0.2)';
+              this.style.transform = 'translateY(0)';
+              this.style.boxShadow = 'none';
+            " data-category-item="<%= category[:name].downcase.gsub(' ', '_') %>">
+              <div style="
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.05) 0%, transparent 100%);
+                border-radius: 0 var(--radius-lg) 0 100%;
+              "></div>
+              <div style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                position: relative;
+                z-index: 1;
+              ">
+                <span style="
+                  font-weight: var(--font-weight-medium);
+                  color: var(--color-text);
+                  font-size: var(--font-size-sm);
+                "><%= category[:name] %></span>
+                <div style="
+                  padding: var(--space-4) var(--space-8);
+                  background: rgba(var(--color-primary-rgb), 0.1);
+                  border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+                  border-radius: var(--radius-full);
+                  font-size: var(--font-size-xs);
+                  font-weight: var(--font-weight-medium);
+                  color: var(--color-primary);
+                  font-variant-numeric: tabular-nums;
+                "><%= category[:count] %></div>
+              </div>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Automated Actions List -->
+    <div class="lg:col-span-3">
+      <div style="
+        background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+        border: 1px solid rgba(var(--color-border-rgb), 0.3);
+        border-radius: var(--radius-xl);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      ">
+        <div style="
+          padding: var(--space-24);
+          border-bottom: 1px solid rgba(var(--color-border-rgb), 0.2);
+        ">
+          <div style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-24);
+          ">
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-16);
+            ">
+              <div style="
+                width: 56px;
+                height: 56px;
+                background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+                border-radius: var(--radius-lg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 8px 16px rgba(var(--color-primary-rgb), 0.3);
+              ">
+                <svg style="width: 28px; height: 28px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <div>
+                <h2 style="
+                  font-size: var(--font-size-xl);
+                  font-weight: var(--font-weight-bold);
+                  color: var(--color-text);
+                  margin: 0 0 var(--space-4) 0;
+                ">Automated Actions</h2>
+                <p style="
+                  font-size: var(--font-size-sm);
+                  color: var(--color-text-secondary);
+                  margin: 0;
+                ">Manage and monitor your AI-powered automations</p>
+              </div>
+            </div>
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-12);
+            ">
+              <select style="
+                padding: var(--space-8) var(--space-16);
+                background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+                border: 1px solid rgba(var(--color-border-rgb), 0.3);
+                border-radius: var(--radius-lg);
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                color: var(--color-text);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+                outline: none;
+              " onfocus="
+                this.style.borderColor = 'rgba(var(--color-primary-rgb), 0.5)';
+                this.style.boxShadow = '0 0 0 3px rgba(var(--color-primary-rgb), 0.1)';
+              " onblur="
+                this.style.borderColor = 'rgba(var(--color-border-rgb), 0.3)';
+                this.style.boxShadow = 'none';
+              " data-status-dropdown>
+                <option value="all">All Status</option>
+              <option value="active">Active</option>
+              <option value="paused">Paused</option>
+              <option value="error">Error</option>
+              </select>
+              <button style="
+                padding: var(--space-8) var(--space-16);
+                background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+                color: white;
+                border: none;
+                border-radius: var(--radius-lg);
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-medium);
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                display: flex;
+                align-items: center;
+                gap: var(--space-8);
+                box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.3);
+              " onmouseover="
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 8px 25px rgba(var(--color-primary-rgb), 0.4)';
+              " onmouseout="
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 12px rgba(var(--color-primary-rgb), 0.3)';
+              ">
+                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                </svg>
+                Filter
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div style="
+          border-top: 1px solid rgba(var(--color-border-rgb), 0.2);
+        ">
+          <% @automated_actions.each do |action| %>
+            <div style="
+              padding: var(--space-24);
+              border-bottom: 1px solid rgba(var(--color-border-rgb), 0.1);
+              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+              position: relative;
+              overflow: hidden;
+            " onmouseover="
+              this.style.background = 'linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.02) 0%, rgba(var(--color-primary-rgb), 0.05) 100%)';
+            " onmouseout="
+              this.style.background = 'transparent';
+            " data-action-card data-action-category="<%= action[:category]&.downcase&.gsub(' ', '_') || 'general' %>" data-action-status="<%= action[:status] %>">
+              <div style="
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+              ">
+                <div style="flex: 1;">
+                  <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-12);
+                    margin-bottom: var(--space-8);
+                  ">
+                    <h4 style="
+                      font-size: var(--font-size-lg);
+                      font-weight: var(--font-weight-semibold);
+                      color: var(--color-text);
+                      margin: 0;
+                    ">
+                      <%= link_to action[:name], ai_automated_action_path(action[:id]), style: "color: inherit; text-decoration: none; transition: color 0.3s ease;", onmouseover: "this.style.color = 'var(--color-primary)'", onmouseout: "this.style.color = 'inherit'" %>
+                    </h4>
+                    <span style="
+                      padding: var(--space-4) var(--space-12);
+                      background: <%= action[:status] == 'active' ? 'rgba(var(--color-success-rgb), 0.1)' : action[:status] == 'paused' ? 'rgba(var(--color-warning-rgb), 0.1)' : 'rgba(var(--color-text-rgb), 0.1)' %>;
+                      border: 1px solid <%= action[:status] == 'active' ? 'rgba(var(--color-success-rgb), 0.2)' : action[:status] == 'paused' ? 'rgba(var(--color-warning-rgb), 0.2)' : 'rgba(var(--color-text-rgb), 0.2)' %>;
+                      border-radius: var(--radius-full);
+                      font-size: var(--font-size-xs);
+                      font-weight: var(--font-weight-medium);
+                      color: <%= action[:status] == 'active' ? 'var(--color-success)' : action[:status] == 'paused' ? 'var(--color-warning)' : 'var(--color-text-secondary)' %>;
+                      text-transform: capitalize;
+                    " data-status-badge>
+                      <%= action[:status] %>
+                    </span>
+                  </div>
+                  <p style="
+                    color: var(--color-text-secondary);
+                    margin: 0 0 var(--space-16) 0;
+                    font-size: var(--font-size-sm);
+                  "><%= action[:description] %></p>
+                  
+                  <div style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                    gap: var(--space-16);
+                    margin-bottom: var(--space-16);
+                  ">
+                    <div>
+                      <p style="
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-medium);
+                        color: var(--color-text);
+                        margin: 0 0 var(--space-4) 0;
+                      ">Trigger:</p>
+                      <p style="
+                        font-size: var(--font-size-sm);
+                        color: var(--color-text-secondary);
+                        margin: 0;
+                      "><%= action[:trigger] %></p>
+                    </div>
+                    <div>
+                      <p style="
+                        font-size: var(--font-size-sm);
+                        font-weight: var(--font-weight-medium);
+                        color: var(--color-text);
+                        margin: 0 0 var(--space-4) 0;
+                      ">Action:</p>
+                      <p style="
+                        font-size: var(--font-size-sm);
+                        color: var(--color-text-secondary);
+                        margin: 0;
+                      "><%= action[:action] %></p>
+                    </div>
+                  </div>
+
+                  <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-24);
+                    font-size: var(--font-size-sm);
+                    color: var(--color-text-secondary);
+                    flex-wrap: wrap;
+                  ">
+                    <span style="
+                      display: flex;
+                      align-items: center;
+                      gap: var(--space-4);
+                    ">
+                      <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      Last executed: <%= time_ago_in_words(action[:last_executed]) %> ago
+                    </span>
+                    <span style="
+                      display: flex;
+                      align-items: center;
+                      gap: var(--space-4);
+                    ">
+                      <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      <%= action[:execution_count] %> executions
+                    </span>
+                    <span style="
+                      display: flex;
+                      align-items: center;
+                      gap: var(--space-4);
+                      color: var(--color-success);
+                    ">
+                      <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      <%= action[:success_rate] %>% success rate
+                    </span>
+                  </div>
+                </div>
+
+                <div style="
+                  margin-left: var(--space-24);
+                  display: flex;
+                  flex-direction: column;
+                  gap: var(--space-8);
+                ">
+                  <button style="
+                    color: var(--color-primary);
+                    background: none;
+                    border: none;
+                    font-size: var(--font-size-sm);
+                    font-weight: var(--font-weight-medium);
+                    cursor: pointer;
+                    padding: var(--space-4) var(--space-8);
+                    border-radius: var(--radius-md);
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-4);
+                  " onmouseover="
+                    this.style.background = 'rgba(var(--color-primary-rgb), 0.1)';
+                  " onmouseout="
+                    this.style.background = 'none';
+                  " data-action-button="edit" data-action-id="<%= action[:id] %>">
+                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    <span>Edit</span>
+                  </button>
+                  <button style="
+                    color: var(--color-text-secondary);
+                    background: none;
+                    border: none;
+                    font-size: var(--font-size-sm);
+                    font-weight: var(--font-weight-medium);
+                    cursor: pointer;
+                    padding: var(--space-4) var(--space-8);
+                    border-radius: var(--radius-md);
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-4);
+                  " onmouseover="
+                    this.style.background = 'rgba(var(--color-text-rgb), 0.1)';
+                    this.style.color = 'var(--color-text)';
+                  " onmouseout="
+                    this.style.background = 'none';
+                    this.style.color = 'var(--color-text-secondary)';
+                  " data-action-button="<%= action[:status] == 'active' ? 'pause' : 'resume' %>" data-action-id="<%= action[:id] %>">
+                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M<%= action[:status] == 'active' ? '10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z' : '14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' %>"/>
+                    </svg>
+                    <span><%= action[:status] == 'active' ? 'Pause' : 'Resume' %></span>
+                  </button>
+                  <button style="
+                    color: var(--color-error);
+                    background: none;
+                    border: none;
+                    font-size: var(--font-size-sm);
+                    font-weight: var(--font-weight-medium);
+                    cursor: pointer;
+                    padding: var(--space-4) var(--space-8);
+                    border-radius: var(--radius-md);
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-4);
+                  " onmouseover="
+                    this.style.background = 'rgba(var(--color-error-rgb), 0.1)';
+                  " onmouseout="
+                    this.style.background = 'none';
+                  " data-action-button="delete" data-action-id="<%= action[:id] %>">
+                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    <span>Delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- Quick Actions Analytics Section -->
+    <div style="
+      margin-top: var(--space-48);
+      background: linear-gradient(135deg, var(--color-surface) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+      border: 1px solid rgba(var(--color-border-rgb), 0.3);
+      border-radius: var(--radius-xl);
+      padding: var(--space-32);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    ">
+      <div style="
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 200px;
+        height: 200px;
+        background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.05) 0%, transparent 100%);
+        border-radius: 0 var(--radius-xl) 0 100%;
+      "></div>
+      <div style="text-align: center; position: relative; z-index: 1;">
+        <div style="
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+          border-radius: var(--radius-xl);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto var(--space-24) auto;
+          box-shadow: 0 12px 24px rgba(var(--color-primary-rgb), 0.3);
+        ">
+          <svg style="width: 40px; height: 40px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <h3 style="
+          font-size: var(--font-size-2xl);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-text);
+          margin: 0 0 var(--space-16) 0;
+        ">Supercharge Your Workflow</h3>
+        <p style="
+          color: var(--color-text-secondary);
+          margin: 0 auto var(--space-32) auto;
+          max-width: 600px;
+          font-size: var(--font-size-base);
+          line-height: 1.6;
+        ">
+          Transform your business processes with AI-powered automation. Create intelligent workflows that adapt, learn, and optimize themselves.
+        </p>
+        <div style="
+          display: flex;
+          flex-direction: column;
+          gap: var(--space-16);
+          justify-content: center;
+          align-items: center;
+        " class="sm:flex-row">
+          <button style="
+            padding: var(--space-16) var(--space-32);
+            background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-12);
+            box-shadow: 0 8px 16px rgba(var(--color-primary-rgb), 0.3);
+            font-size: var(--font-size-base);
+          " onmouseover="
+            this.style.transform = 'translateY(-4px)';
+            this.style.boxShadow = '0 12px 32px rgba(var(--color-primary-rgb), 0.4)';
+          " onmouseout="
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 8px 16px rgba(var(--color-primary-rgb), 0.3)';
+          " data-quick-action="ai-assistant">
+            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            AI Assistant
+          </button>
+          <button style="
+            padding: var(--space-16) var(--space-32);
+            background: linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.8) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+            color: var(--color-text);
+            border: 1px solid rgba(var(--color-border-rgb), 0.3);
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-12);
+            font-size: var(--font-size-base);
+          " onmouseover="
+            this.style.transform = 'translateY(-2px)';
+            this.style.borderColor = 'rgba(var(--color-primary-rgb), 0.5)';
+            this.style.boxShadow = '0 8px 25px rgba(var(--color-primary-rgb), 0.15)';
+          " onmouseout="
+            this.style.transform = 'translateY(0)';
+            this.style.borderColor = 'rgba(var(--color-border-rgb), 0.3)';
+            this.style.boxShadow = 'none';
+          " data-quick-action="create-action">
+            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            Create Action
+          </button>
+        </div>
+        
+        <!-- Feature Highlights Analytics -->
+        <div style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: var(--space-24);
+          margin-top: var(--space-48);
+        ">
+          <div style="
+            text-align: center;
+            padding: var(--space-24);
+            background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.02) 0%, rgba(var(--color-primary-rgb), 0.05) 100%);
+            border: 1px solid rgba(var(--color-primary-rgb), 0.1);
+            border-radius: var(--radius-lg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          " onmouseover="
+            this.style.transform = 'translateY(-4px)';
+            this.style.boxShadow = '0 8px 25px rgba(var(--color-primary-rgb), 0.15)';
+          " onmouseout="
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+          ">
+            <div style="
+              width: 56px;
+              height: 56px;
+              background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-primary-rgb), 0.8) 100%);
+              border-radius: var(--radius-lg);
+              margin: 0 auto var(--space-16) auto;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 8px 16px rgba(var(--color-primary-rgb), 0.3);
+            ">
+              <svg style="width: 28px; height: 28px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+            </div>
+            <h4 style="
+              font-weight: var(--font-weight-semibold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              font-size: var(--font-size-base);
+            ">Smart Learning</h4>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+              margin: 0;
+              line-height: 1.5;
+            ">AI adapts to your patterns and improves over time</p>
+          </div>
+          <div style="
+            text-align: center;
+            padding: var(--space-24);
+            background: linear-gradient(135deg, rgba(var(--color-success-rgb), 0.02) 0%, rgba(var(--color-success-rgb), 0.05) 100%);
+            border: 1px solid rgba(var(--color-success-rgb), 0.1);
+            border-radius: var(--radius-lg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          " onmouseover="
+            this.style.transform = 'translateY(-4px)';
+            this.style.boxShadow = '0 8px 25px rgba(var(--color-success-rgb), 0.15)';
+          " onmouseout="
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+          ">
+            <div style="
+              width: 56px;
+              height: 56px;
+              background: linear-gradient(135deg, var(--color-success) 0%, rgba(var(--color-success-rgb), 0.8) 100%);
+              border-radius: var(--radius-lg);
+              margin: 0 auto var(--space-16) auto;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 8px 16px rgba(var(--color-success-rgb), 0.3);
+            ">
+              <svg style="width: 28px; height: 28px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <h4 style="
+              font-weight: var(--font-weight-semibold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              font-size: var(--font-size-base);
+            ">Lightning Fast</h4>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+              margin: 0;
+              line-height: 1.5;
+            ">Execute actions in milliseconds, not minutes</p>
+          </div>
+          <div style="
+            text-align: center;
+            padding: var(--space-24);
+            background: linear-gradient(135deg, rgba(var(--color-warning-rgb), 0.02) 0%, rgba(var(--color-warning-rgb), 0.05) 100%);
+            border: 1px solid rgba(var(--color-warning-rgb), 0.1);
+            border-radius: var(--radius-lg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          " onmouseover="
+            this.style.transform = 'translateY(-4px)';
+            this.style.boxShadow = '0 8px 25px rgba(var(--color-warning-rgb), 0.15)';
+          " onmouseout="
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+          ">
+            <div style="
+              width: 56px;
+              height: 56px;
+              background: linear-gradient(135deg, var(--color-warning) 0%, rgba(var(--color-warning-rgb), 0.8) 100%);
+              border-radius: var(--radius-lg);
+              margin: 0 auto var(--space-16) auto;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 8px 16px rgba(var(--color-warning-rgb), 0.3);
+            ">
+              <svg style="width: 28px; height: 28px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+            </div>
+            <h4 style="
+              font-weight: var(--font-weight-semibold);
+              color: var(--color-text);
+              margin: 0 0 var(--space-8) 0;
+              font-size: var(--font-size-base);
+            ">Enterprise Security</h4>
+            <p style="
+              font-size: var(--font-size-sm);
+              color: var(--color-text-secondary);
+              margin: 0;
+              line-height: 1.5;
+            ">Bank-level security with full audit trails</p>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script>
+  // Analytics Design Interactive Features
+  document.addEventListener('DOMContentLoaded', function() {
+    // Category filter functionality with analytics design
+    const categoryItems = document.querySelectorAll('[data-category-item]');
+    categoryItems.forEach(item => {
+      item.addEventListener('click', function() {
+        // Remove active state from all items
+        categoryItems.forEach(i => {
+          i.style.background = 'linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.02) 0%, rgba(var(--color-primary-rgb), 0.05) 100%)';
+          i.style.borderColor = 'rgba(var(--color-border-rgb), 0.3)';
+          i.style.transform = 'translateY(0)';
+        });
+        
+        // Add active state to clicked item
+        this.style.background = 'linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.1) 0%, rgba(var(--color-primary-rgb), 0.15) 100%)';
+        this.style.borderColor = 'rgba(var(--color-primary-rgb), 0.5)';
+        this.style.transform = 'translateY(-2px)';
+        this.style.boxShadow = '0 8px 25px rgba(var(--color-primary-rgb), 0.15)';
+        
+        // Filter actions based on category
+        const category = this.dataset.categoryItem;
+        filterActionsByCategory(category);
+      });
+    });
+
+    // Status dropdown functionality
+    const statusDropdown = document.querySelector('[data-status-dropdown]');
+    if (statusDropdown) {
+      statusDropdown.addEventListener('change', function() {
+        const selectedStatus = this.value;
+        filterActionsByStatus(selectedStatus);
+      });
+    }
+
+    // Action button functionality (Edit, Pause/Resume, Delete)
+    const actionButtons = document.querySelectorAll('[data-action-button]');
+    actionButtons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const action = this.dataset.actionButton;
+        const actionId = this.dataset.actionId;
+        
+        switch(action) {
+          case 'pause':
+          case 'resume':
+            toggleActionStatus(this, actionId);
+            break;
+          case 'edit':
+            editAction(actionId);
+            break;
+          case 'delete':
+            deleteAction(actionId);
+            break;
+        }
+      });
+    });
+
+    // Quick action buttons
+    const quickActionButtons = document.querySelectorAll('[data-quick-action]');
+    quickActionButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const action = this.dataset.quickAction;
+        handleQuickAction(action);
+      });
+    });
+
+    // Real-time status indicators
+    updateStatusIndicators();
+    setInterval(updateStatusIndicators, 30000); // Update every 30 seconds
+  });
+
+  // Filter functions
+  function filterActionsByCategory(category) {
+    const actionCards = document.querySelectorAll('[data-action-card]');
+    actionCards.forEach(card => {
+      const cardCategory = card.dataset.actionCategory;
+      if (category === 'all' || cardCategory === category) {
+        card.style.display = 'block';
+        card.style.opacity = '1';
+      } else {
+        card.style.display = 'none';
+        card.style.opacity = '0.5';
+      }
+    });
+  }
+
+  function filterActionsByStatus(status) {
+    const actionCards = document.querySelectorAll('[data-action-card]');
+    actionCards.forEach(card => {
+      const cardStatus = card.dataset.actionStatus;
+      if (status === 'all' || cardStatus === status) {
+        card.style.display = 'block';
+        card.style.opacity = '1';
+      } else {
+        card.style.display = 'none';
+        card.style.opacity = '0.5';
+      }
+    });
+  }
+
+  // Action handlers
+  function toggleActionStatus(button, actionId) {
+    const currentAction = button.dataset.actionButton;
+    const icon = button.querySelector('svg');
+    const text = button.querySelector('span');
+    
+    if (currentAction === 'pause') {
+      // Change to resume
+      button.dataset.actionButton = 'resume';
+      icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+      text.textContent = 'Resume';
+      
+      // Update action card status
+      const actionCard = button.closest('[data-action-card]');
+      const statusBadge = actionCard.querySelector('[data-status-badge]');
+      statusBadge.textContent = 'Paused';
+      statusBadge.style.background = 'rgba(var(--color-warning-rgb), 0.1)';
+      statusBadge.style.color = 'var(--color-warning)';
+      statusBadge.style.borderColor = 'rgba(var(--color-warning-rgb), 0.2)';
+    } else {
+      // Change to pause
+      button.dataset.actionButton = 'pause';
+      icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+      text.textContent = 'Pause';
+      
+      // Update action card status
+      const actionCard = button.closest('[data-action-card]');
+      const statusBadge = actionCard.querySelector('[data-status-badge]');
+      statusBadge.textContent = 'Active';
+      statusBadge.style.background = 'rgba(var(--color-success-rgb), 0.1)';
+      statusBadge.style.color = 'var(--color-success)';
+      statusBadge.style.borderColor = 'rgba(var(--color-success-rgb), 0.2)';
+    }
+  }
+
+  function editAction(actionId) {
+    // Placeholder for edit functionality
+    console.log('Editing action:', actionId);
+    // In a real implementation, this would open an edit modal or navigate to edit page
+  }
+
+  function deleteAction(actionId) {
+    if (confirm('Are you sure you want to delete this automated action?')) {
+      // Placeholder for delete functionality
+      console.log('Deleting action:', actionId);
+      // In a real implementation, this would make an API call to delete the action
+    }
+  }
+
+  function handleQuickAction(action) {
+    switch(action) {
+      case 'ai-assistant':
+        console.log('Opening AI Assistant');
+        // Placeholder for AI assistant functionality
+        break;
+      case 'create-action':
+        console.log('Creating new action');
+        // Placeholder for create action functionality
+        break;
+    }
+  }
+
+  function updateStatusIndicators() {
+    // Update real-time status indicators
+    const statusIndicators = document.querySelectorAll('[data-status-indicator]');
+    statusIndicators.forEach(indicator => {
+      // Simulate real-time updates
+      const isActive = Math.random() > 0.1; // 90% chance of being active
+      if (isActive) {
+        indicator.style.background = 'var(--color-success)';
+      } else {
+        indicator.style.background = 'var(--color-warning)';
+      }
+    });
+  }
+</script>

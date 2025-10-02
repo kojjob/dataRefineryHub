@@ -190,15 +190,31 @@ export default class extends Controller {
       ? document.getElementById('user-message-template')
       : document.getElementById('ai-message-template')
     
+    if (!template) {
+      console.error(`Template not found for sender: ${sender}`);
+      return null;
+    }
+    
     const messageElement = template.content.cloneNode(true)
     
-    // Set content
-    messageElement.querySelector('.message-content').innerHTML = this.formatMessage(content)
-    messageElement.querySelector('.message-time').textContent = this.formatTime(new Date())
+    // Set content safely
+    const contentElement = messageElement.querySelector('.message-content')
+    const timeElement = messageElement.querySelector('.message-time')
+    
+    if (contentElement) {
+      contentElement.innerHTML = this.formatMessage(content)
+    }
+    
+    if (timeElement) {
+      timeElement.textContent = this.formatTime(new Date())
+    }
     
     if (sender === 'user') {
       const initials = this.getUserInitials()
-      messageElement.querySelector('.user-initials').textContent = initials
+      const initialsElement = messageElement.querySelector('.user-initials')
+      if (initialsElement) {
+        initialsElement.textContent = initials
+      }
       this.lastUserMessage = content
     }
     
@@ -215,9 +231,16 @@ export default class extends Controller {
   addVisualizations(messageElement, visualizations) {
     const container = messageElement.querySelector('.visualizations-container')
     
+    if (!container) {
+      console.error('Visualizations container not found')
+      return
+    }
+    
     visualizations.forEach(viz => {
       const vizElement = this.createVisualizationElement(viz)
-      container.appendChild(vizElement)
+      if (vizElement) {
+        container.appendChild(vizElement)
+      }
     })
   }
   
@@ -295,22 +318,45 @@ export default class extends Controller {
   addActionButtons(messageElement, actions) {
     const container = messageElement.querySelector('.actions-container')
     
+    if (!container) {
+      console.error('Actions container not found')
+      return
+    }
+    
     actions.forEach(action => {
       const button = this.createActionButton(action)
-      container.appendChild(button)
+      if (button) {
+        container.appendChild(button)
+      }
     })
   }
   
   createActionButton(action) {
     const template = document.getElementById('action-button-template')
-    const button = template.content.cloneNode(true).querySelector('button')
     
-    button.querySelector('.action-text').textContent = action.description
+    if (!template) {
+      console.error('Action button template not found')
+      return null
+    }
+    
+    const buttonElement = template.content.cloneNode(true)
+    const button = buttonElement.querySelector('button')
+    
+    if (!button) {
+      console.error('Button element not found in template')
+      return null
+    }
+    
+    const actionText = button.querySelector('.action-text')
+    if (actionText) {
+      actionText.textContent = action.description
+    }
     
     // Add appropriate icon based on action type
     const iconPath = this.getActionIcon(action.type)
-    if (iconPath) {
-      button.querySelector('path').setAttribute('d', iconPath)
+    const pathElement = button.querySelector('path')
+    if (iconPath && pathElement) {
+      pathElement.setAttribute('d', iconPath)
     }
     
     // Add click handler
@@ -463,14 +509,34 @@ export default class extends Controller {
   
   async loadChatHistory() {
     try {
-      const response = await fetch('/ai/chat/history')
+      const response = await fetch('/ai/chat/history', {
+        headers: {
+          'Accept': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+        }
+      })
+      
+      if (!response.ok) {
+        console.error('Failed to load chat history:', response.status)
+        return
+      }
+      
       const data = await response.json()
       
-      if (data.success && data.queries.length > 0) {
+      if (data.success && data.queries && data.queries.length > 0) {
         // Show last few messages
         data.queries.slice(-3).forEach(query => {
-          this.addMessage(query.query, 'user')
-          this.addMessage(query.response, 'ai')
+          // Ensure we have valid query and response data
+          if (query.query) {
+            this.addMessage(query.query, 'user')
+          }
+          if (query.response) {
+            // Handle response which might be a string or object
+            const responseMessage = typeof query.response === 'string' 
+              ? query.response 
+              : query.response.message || JSON.stringify(query.response)
+            this.addMessage(responseMessage, 'ai')
+          }
         })
       }
     } catch (error) {

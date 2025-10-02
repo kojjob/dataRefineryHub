@@ -24,9 +24,9 @@ class OrganizationsController < DataflowProController
   def billing
     authorize @organization, :billing?
 
-    # Calculate billing metrics
+    # Calculate billing metrics with sanitized data
     @billing_data = {
-      current_plan: @organization.subscription_plan || "free",
+      current_plan: sanitize_plan_name(@organization.subscription_plan || "free"),
       monthly_cost: calculate_monthly_cost,
       usage_this_month: {
         api_calls: calculate_api_calls,
@@ -40,7 +40,7 @@ class OrganizationsController < DataflowProController
         data_sources: get_data_source_limit,
         users: get_user_limit
       },
-      billing_history: get_billing_history,
+      billing_history: get_sanitized_billing_history,
       next_billing_date: calculate_next_billing_date
     }
   end
@@ -175,6 +175,20 @@ class OrganizationsController < DataflowProController
     end.reverse
   end
 
+  def get_sanitized_billing_history
+    # Return sanitized billing history without sensitive information
+    billing_history = get_billing_history
+    billing_history.map do |record|
+      {
+        date: record[:date],
+        amount: record[:amount],
+        status: sanitize_billing_status(record[:status]),
+        # Remove actual invoice URLs in favor of generic placeholder
+        has_invoice: record[:invoice_url] != "#"
+      }
+    end
+  end
+
   def calculate_next_billing_date
     # Calculate next billing date based on organization creation
     if @organization.subscription_plan.present?
@@ -182,5 +196,23 @@ class OrganizationsController < DataflowProController
     else
       nil
     end
+  end
+
+  # SECURITY METHODS: Data sanitization for billing information
+
+  def sanitize_plan_name(plan)
+    return "unknown" if plan.blank?
+
+    # Whitelist allowed plan names
+    allowed_plans = %w[free free_trial starter growth scale enterprise]
+    allowed_plans.include?(plan.to_s) ? plan.to_s : "unknown"
+  end
+
+  def sanitize_billing_status(status)
+    return "unknown" if status.blank?
+
+    # Whitelist allowed status values
+    allowed_statuses = %w[paid pending failed processing cancelled refunded]
+    allowed_statuses.include?(status.to_s) ? status.to_s : "unknown"
   end
 end

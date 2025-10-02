@@ -1,0 +1,119 @@
+/* AI Automated Actions Styles */
+
+/* Button variants */
+.btn--warning {
+  background: var(--color-warning);
+  color: white;
+}
+
+.btn--warning:hover {
+  background: var(--color-warning-hover, #d97706);
+}
+
+.btn--warning:active {
+  background: var(--color-warning-active, #b45309);
+}
+
+.btn--success {
+  background: var(--color-success);
+  color: white;
+}
+
+.btn--success:hover {
+  background: var(--color-success-hover, #059669);
+}
+
+.btn--success:active {
+  background: var(--color-success-active, #047857);
+}
+
+/* Page header styles */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-24);
+  padding-bottom: var(--space-16);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+/* Status indicator styles */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-6) var(--space-12);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.status-indicator.active {
+  background: rgba(var(--color-success-rgb, 34, 197, 94), 0.1);
+  color: var(--color-success);
+  border: 1px solid rgba(var(--color-success-rgb, 34, 197, 94), 0.2);
+}
+
+.status-indicator.paused {
+  background: rgba(var(--color-warning-rgb, 245, 158, 11), 0.1);
+  color: var(--color-warning);
+  border: 1px solid rgba(var(--color-warning-rgb, 245, 158, 11), 0.2);
+}
+
+.status-indicator.inactive {
+  background: rgba(var(--color-error-rgb, 239, 68, 68), 0.1);
+  color: var(--color-error);
+  border: 1px solid rgba(var(--color-error-rgb, 239, 68, 68), 0.2);
+}
+
+/* Status pulse animation */
+.status-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-pulse.active {
+  background: var(--color-success);
+}
+
+.status-pulse.paused {
+  background: var(--color-warning);
+}
+
+.status-pulse.inactive {
+  background: var(--color-error);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-16);
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}

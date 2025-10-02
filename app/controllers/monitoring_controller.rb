@@ -2,8 +2,13 @@
 
 # Controller for monitoring and health check endpoints
 class MonitoringController < ApplicationController
-  skip_before_action :authenticate_user!, except: [ :dashboard ]
-  skip_before_action :verify_authenticity_token, except: [ :dashboard ]
+  # SECURITY FIX: List specific actions instead of using except
+  # Only allow unauthenticated access to health and metrics endpoints
+  skip_before_action :authenticate_user!, only: [ :health, :metrics ]
+  skip_before_action :verify_authenticity_token, only: [ :health, :metrics ]
+
+  # Add rate limiting for public endpoints
+  before_action :check_monitoring_rate_limit, only: [ :health, :metrics ]
 
   # Health check endpoint
   def health
@@ -291,5 +296,23 @@ class MonitoringController < ApplicationController
     metrics << "database_connections_idle #{db_stats[:idle]}"
 
     metrics.join("\n")
+  end
+
+  private
+
+  def check_monitoring_rate_limit
+    # Simple rate limiting for monitoring endpoints to prevent abuse
+    client_ip = request.remote_ip
+    cache_key = "monitoring_rate_limit:#{client_ip}"
+    
+    # Allow 60 requests per minute from each IP
+    current_count = Rails.cache.read(cache_key) || 0
+    
+    if current_count >= 60
+      render json: { error: "Rate limit exceeded" }, status: :too_many_requests
+      return
+    end
+    
+    Rails.cache.write(cache_key, current_count + 1, expires_in: 1.minute)
   end
 end

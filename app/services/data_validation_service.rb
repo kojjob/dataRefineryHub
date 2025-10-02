@@ -470,25 +470,92 @@ class DataValidationService
   end
 
   def evaluate_business_rule(row_data, rule)
-    # Simple business rule evaluation
-    # This can be enhanced with a proper expression parser
+    # SECURITY FIX: Replace dangerous eval with safe expression parser
     condition = rule[:condition]
 
-    # Replace field references with actual values
-    processed_condition = condition.dup
-    row_data.each do |field, value|
-      processed_condition.gsub!("{{#{field}}}", "'#{value}'")
-    end
+    # Parse and evaluate business rule safely
+    safe_evaluate_condition(condition, row_data)
+  end
 
-    # For safety, only allow simple comparisons
-    if processed_condition.match?(/^[\w\s'"\d\.<>=!]+$/)
-      begin
-        eval(processed_condition)
-      rescue
-        false
-      end
+  private
+
+  def safe_evaluate_condition(condition, row_data)
+    # Parse simple comparison expressions safely without using eval
+    # Supported formats: {{field}} operator value
+    # Examples: {{age}} > 18, {{status}} == 'active'
+    
+    return false if condition.blank?
+    
+    # Extract the pattern: {{field}} operator value
+    match = condition.match(/\{\{(\w+)\}\}\s*(==|!=|>|<|>=|<=)\s*(.+)/)
+    return false unless match
+    
+    field_name, operator, expected_value = match.captures
+    
+    # Get the actual value from row data
+    actual_value = row_data[field_name] || row_data[field_name.to_sym]
+    return false if actual_value.nil?
+    
+    # Clean and parse the expected value
+    expected_value = parse_expected_value(expected_value.strip)
+    
+    # Perform safe comparison based on operator
+    case operator
+    when "=="
+      actual_value.to_s == expected_value.to_s
+    when "!="
+      actual_value.to_s != expected_value.to_s
+    when ">"
+      compare_numeric_values(actual_value, expected_value, :>)
+    when "<"
+      compare_numeric_values(actual_value, expected_value, :<)
+    when ">="
+      compare_numeric_values(actual_value, expected_value, :>=)
+    when "<="
+      compare_numeric_values(actual_value, expected_value, :<=)
     else
       false
+    end
+  rescue
+    false
+  end
+
+  def parse_expected_value(value_str)
+    # Remove quotes if present
+    if value_str.start_with?('"') && value_str.end_with?('"')
+      return value_str[1..-2]
+    elsif value_str.start_with?("'") && value_str.end_with?("'")
+      return value_str[1..-2]
+    end
+    
+    # Try to parse as number if it looks numeric
+    if value_str.match?(/^\d+(\.\d+)?$/)
+      return value_str.include?('.') ? value_str.to_f : value_str.to_i
+    end
+    
+    value_str
+  end
+
+  def compare_numeric_values(actual, expected, operator)
+    # Convert to numbers for comparison
+    actual_num = to_numeric(actual)
+    expected_num = to_numeric(expected)
+    
+    return false if actual_num.nil? || expected_num.nil?
+    
+    actual_num.send(operator, expected_num)
+  end
+
+  def to_numeric(value)
+    return value if value.is_a?(Numeric)
+    
+    case value.to_s
+    when /^\d+$/
+      value.to_i
+    when /^\d+\.\d+$/
+      value.to_f
+    else
+      nil
     end
   end
 

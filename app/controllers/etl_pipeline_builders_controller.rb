@@ -41,7 +41,7 @@ class EtlPipelineBuildersController < ApplicationController
             @pipeline.to_orchestration_config
           )
         rescue => e
-          Rails.logger.error "Failed to register pipeline with orchestration service: #{e.message}"
+          Rails.logger.error "Failed to register pipeline with orchestration service: #{sanitize_error_message(e.message)}"
         end
 
         format.html {
@@ -98,7 +98,7 @@ class EtlPipelineBuildersController < ApplicationController
           @pipeline.to_orchestration_config
         )
       rescue => e
-        Rails.logger.error "Failed to update pipeline in orchestration service: #{e.message}"
+        Rails.logger.error "Failed to update pipeline in orchestration service: #{sanitize_error_message(e.message)}"
       end
 
       redirect_to etl_pipeline_builder_path(@pipeline),
@@ -114,7 +114,7 @@ class EtlPipelineBuildersController < ApplicationController
     begin
       EtlOrchestrationService.instance.remove_pipeline(@pipeline.name)
     rescue => e
-      Rails.logger.error "Failed to remove pipeline from orchestration service: #{e.message}"
+      Rails.logger.error "Failed to remove pipeline from orchestration service: #{sanitize_error_message(e.message)}"
     end
 
     @pipeline.destroy
@@ -150,6 +150,12 @@ class EtlPipelineBuildersController < ApplicationController
   def available_extractors
     source_type = params[:source_type]
 
+    # Whitelist validation for source types
+    valid_sources = %w[database api cloud_storage streaming file_upload]
+    unless valid_sources.include?(source_type)
+      return render json: { error: "Invalid source type" }, status: :bad_request
+    end
+
     extractors = case source_type
     when "database"
       [ "postgresql", "mysql", "sql_server", "oracle", "mongodb" ]
@@ -169,8 +175,20 @@ class EtlPipelineBuildersController < ApplicationController
   end
 
   def transformation_preview
-    rule = params[:rule]
+    # Validate and sanitize transformation rule
+    rule = params.require(:rule).permit(:type, :name, :on_error, config: {}, mapping: {})
     sample_data = params[:sample_data] || []
+
+    # Validate transformation type against whitelist
+    allowed_types = TransformationRulesEngine::RULE_TYPES
+    unless allowed_types.include?(rule[:type])
+      return render json: { error: "Invalid transformation type" }, status: :bad_request
+    end
+
+    # Limit sample data size to prevent DoS
+    if sample_data.length > 1000
+      return render json: { error: "Sample data too large (max 1000 records)" }, status: :bad_request
+    end
 
     engine = TransformationRulesEngine.instance
     result = engine.apply_transformations(sample_data, [ rule ])
@@ -180,11 +198,17 @@ class EtlPipelineBuildersController < ApplicationController
       row_count: result[:row_count]
     }
   rescue => e
-    render json: { error: e.message }, status: :unprocessable_entity
+    Rails.logger.error "Transformation preview failed: #{sanitize_error_message(e.message)}"
+    render json: { error: "Transformation preview failed" }, status: :unprocessable_entity
   end
 
   def validate_transformation
-    transformation_config = params[:transformation]
+    transformation_config = params.require(:transformation).permit(
+      :type, :name, :description, :order,
+      config: {},
+      field_mappings: [ :from, :to, :type ],
+      conditions: [ :field, :operator, :value, :condition_type ]
+    )
 
     validator = TransformationValidator.new(transformation_config)
     validation_result = validator.validate
@@ -196,9 +220,10 @@ class EtlPipelineBuildersController < ApplicationController
       suggestions: validation_result[:suggestions] || []
     }
   rescue => e
+    Rails.logger.error "Transformation validation failed: #{sanitize_error_message(e.message)}"
     render json: {
       valid: false,
-      errors: [ e.message ],
+      errors: [ "Validation failed" ],
       warnings: [],
       suggestions: []
     }, status: :unprocessable_entity
@@ -226,18 +251,36 @@ class EtlPipelineBuildersController < ApplicationController
   def import_pipeline
     file = params[:file]
 
+    # Validate file presence and type
+    unless file.present?
+      return render json: { success: false, error: "No file provided" }, status: :bad_request
+    end
+
+    # Check file size (10MB limit)
+    if file.size > 10.megabytes
+      return render json: { success: false, error: "File too large (max 10MB)" }, status: :bad_request
+    end
+
+    # Validate content type
+    allowed_types = [ "application/json", "application/x-yaml", "text/yaml", "application/xml", "text/xml" ]
+    unless allowed_types.include?(file.content_type)
+      return render json: { success: false, error: "Invalid file type" }, status: :bad_request
+    end
+
     begin
       config = parse_pipeline_file(file)
       @pipeline = current_organization.pipelines.build
       @pipeline.import_config(config)
+      @pipeline.created_by = current_user
 
       if @pipeline.save
         render json: { success: true, pipeline_id: @pipeline.id }
       else
-        render json: { success: false, errors: @pipeline.errors }
+        render json: { success: false, errors: @pipeline.errors.full_messages }
       end
     rescue => e
-      render json: { success: false, error: e.message }
+      Rails.logger.error "Pipeline import failed: #{sanitize_error_message(e.message)}"
+      render json: { success: false, error: "Import failed" }, status: :unprocessable_entity
     end
   end
 
@@ -331,9 +374,24 @@ class EtlPipelineBuildersController < ApplicationController
     params.require(:pipeline).permit(
       :name, :description, :pipeline_type, :schedule_config,
       :error_handling_strategy, :retry_policy, :notification_settings,
-      source_config: {},
-      destination_config: {},
-      transformation_rules: [],
+      # Explicitly define allowed source config keys
+      source_config: [
+        :type, :connection_string, :database_name, :table_name, :schema,
+        :host, :port, :username, :api_key, :endpoint, :bucket_name,
+        :region, :query, :collection, :topic, :subscription
+      ],
+      # Explicitly define allowed destination config keys
+      destination_config: [
+        :type, :warehouse_id, :connection_string, :database_name,
+        :table_name, :schema, :host, :port, :username, :api_key,
+        :endpoint, :bucket_name, :region, :format, :compression
+      ],
+      # Strictly control transformation rules structure
+      transformation_rules: [
+        :type, :name, :order, :enabled, :on_error,
+        config: {},
+        mapping: {}
+      ],
       dependencies: [],
       transformations: [
         :id, :type, :name, :description, :order,
@@ -428,18 +486,75 @@ class EtlPipelineBuildersController < ApplicationController
   end
 
   def parse_pipeline_file(file)
+    # Size limit already checked in import_pipeline
     content = file.read
 
     case file.content_type
     when "application/json"
-      JSON.parse(content)
+      # Parse JSON with size limit
+      parsed = JSON.parse(content)
+      validate_pipeline_config_structure(parsed)
+      parsed
     when "application/x-yaml", "text/yaml"
-      YAML.safe_load(content)
+      # Safe YAML loading
+      parsed = YAML.safe_load(content, permitted_classes: [ Date, Time, DateTime, Symbol ])
+      validate_pipeline_config_structure(parsed)
+      parsed
     when "application/xml", "text/xml"
-      Hash.from_xml(content)
+      # Secure XML parsing - prevent XXE attacks
+      require "nokogiri"
+      doc = Nokogiri::XML(content) do |config|
+        config.strict
+        config.nonet  # Disable network connections
+        config.noent  # Disable entity substitution
+        config.nodtdload  # Disable DTD loading
+      end
+      parsed = Hash.from_xml(doc.to_s)
+      validate_pipeline_config_structure(parsed)
+      parsed
     else
       raise ArgumentError, "Unsupported file format"
     end
+  rescue JSON::ParserError, Psych::SyntaxError, Nokogiri::XML::SyntaxError => e
+    raise ArgumentError, "Invalid file format or syntax"
+  end
+
+  def validate_pipeline_config_structure(config)
+    # Validate that the imported config has expected structure
+    required_keys = %w[name pipeline_type]
+    missing_keys = required_keys - config.keys.map(&:to_s)
+
+    if missing_keys.any?
+      raise ArgumentError, "Missing required fields: #{missing_keys.join(', ')}"
+    end
+
+    # Validate pipeline type
+    valid_types = Pipeline.pipeline_types.keys
+    unless valid_types.include?(config["pipeline_type"] || config[:pipeline_type])
+      raise ArgumentError, "Invalid pipeline type"
+    end
+
+    true
+  end
+
+  def sanitize_error_message(message)
+    # Remove sensitive information from error messages
+    sanitized = message.dup
+
+    # Remove passwords
+    sanitized.gsub!(/password[=:].\S+/i, "password=[REDACTED]")
+
+    # Remove API keys
+    sanitized.gsub!(/api[_-]?key[=:].\S+/i, "api_key=[REDACTED]")
+
+    # Remove tokens
+    sanitized.gsub!(/token[=:].\S+/i, "token=[REDACTED]")
+
+    # Remove connection strings with credentials
+    sanitized.gsub!(/(postgresql|mysql|mongodb):\/\/[^@]+@/, '\1://[REDACTED]@')
+
+    # Limit length to prevent log flooding
+    sanitized.truncate(500)
   end
 
   def get_file_extractors

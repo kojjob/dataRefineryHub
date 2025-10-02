@@ -1257,6 +1257,8 @@ select.form-control {
   justify-content: center;
 }
 
+
+
 /* Footer */
 .footer {
   background: #1e293b;
@@ -1526,6 +1528,8 @@ select.form-control {
     flex-direction: column;
     align-items: center;
   }
+
+
 }
 
 /* Button overrides for dark theme */
@@ -1558,6 +1562,8 @@ select.form-control {
   background: #ffffff;
   color: #1e293b;
 }
+
+
 
 /* Smooth scrolling */
 html {

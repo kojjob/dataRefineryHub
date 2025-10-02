@@ -18,9 +18,17 @@ class Notification < ApplicationRecord
   }.freeze
 
   validates :title, presence: true, length: { maximum: 255 }
-  validates :message, presence: true
+  validates :message, presence: true, length: { maximum: 5000 }
   validates :notification_type, inclusion: { in: TYPES }
   validates :priority, inclusion: { in: PRIORITIES.values }
+
+  # Security validations
+  validate :title_safe_content
+  validate :message_safe_content
+  validate :metadata_safe_content
+
+  # Sanitize content before saving
+  before_validation :sanitize_content
 
   scope :unread, -> { where(read_at: nil) }
   scope :read, -> { where.not(read_at: nil) }
@@ -150,5 +158,135 @@ class Notification < ApplicationRecord
         metadata: details.merge(file_name: file_name)
       )
     end
+  end
+
+  private
+
+  # SECURITY METHODS: Input validation and sanitization
+
+  def sanitize_content
+    self.title = sanitize_text(title) if title.present?
+    self.message = sanitize_text(message) if message.present?
+    self.metadata = sanitize_metadata_hash(metadata) if metadata.present?
+  end
+
+  def sanitize_text(text)
+    return nil if text.blank?
+
+    # Strip HTML tags, normalize whitespace, and remove dangerous content
+    sanitized = ActionController::Base.helpers.strip_tags(text.to_s).squish
+
+    # Remove common injection patterns
+    sanitized = sanitized.gsub(/javascript:/i, "")
+    sanitized = sanitized.gsub(/data:/i, "")
+    sanitized = sanitized.gsub(/vbscript:/i, "")
+    sanitized = sanitized.gsub(/<script[^>]*>.*?<\/script>/mi, "")
+    sanitized = sanitized.gsub(/on\w+\s*=/i, "")
+
+    # Limit character sets to prevent encoding attacks
+    sanitized.gsub(/[^\p{L}\p{N}\p{P}\p{S}\p{Z}]/u, "")
+  end
+
+  def sanitize_metadata_hash(data)
+    return {} if data.blank?
+
+    case data
+    when Hash
+      sanitized = {}
+      data.each do |key, value|
+        sanitized_key = sanitize_metadata_key(key)
+        sanitized_value = sanitize_metadata_value(value)
+        sanitized[sanitized_key] = sanitized_value
+      end
+      sanitized.slice(*allowed_metadata_keys) # Only keep allowed keys
+    else
+      # Convert non-hash metadata to safe hash
+      { "data" => sanitize_metadata_value(data) }
+    end
+  end
+
+  def sanitize_metadata_key(key)
+    key.to_s.gsub(/[^a-zA-Z0-9_]/, "_").truncate(50)
+  end
+
+  def sanitize_metadata_value(value)
+    case value
+    when String
+      sanitize_text(value)
+    when Hash
+      sanitize_metadata_hash(value)
+    when Array
+      value.map { |v| sanitize_metadata_value(v) }.first(10) # Limit array size
+    when Numeric, TrueClass, FalseClass, NilClass
+      value
+    else
+      value.to_s.truncate(100) # Convert complex objects to string
+    end
+  end
+
+  def allowed_metadata_keys
+    %w[
+      records_count error_message file_name retry_count duration
+      source_type sync_type organization_id user_id data_source_id
+      file_size processing_time error_code status timestamp
+      api_calls_used storage_used bandwidth_used
+    ]
+  end
+
+  # Validation methods for security
+  def title_safe_content
+    return unless title.present?
+
+    if contains_dangerous_content?(title)
+      errors.add(:title, "contains invalid or potentially dangerous content")
+    end
+  end
+
+  def message_safe_content
+    return unless message.present?
+
+    if contains_dangerous_content?(message)
+      errors.add(:message, "contains invalid or potentially dangerous content")
+    end
+  end
+
+  def metadata_safe_content
+    return unless metadata.present?
+
+    if metadata.is_a?(Hash)
+      metadata.each do |key, value|
+        if contains_dangerous_content?(value.to_s)
+          errors.add(:metadata, "contains invalid content in #{key}")
+          break
+        end
+      end
+    end
+
+    # Check metadata size
+    if metadata.to_json.bytesize > 10.kilobytes
+      errors.add(:metadata, "is too large (maximum 10KB)")
+    end
+  end
+
+  def contains_dangerous_content?(text)
+    return false if text.blank?
+
+    dangerous_patterns = [
+      /<script[^>]*>/i,
+      /javascript:/i,
+      /data:text\/html/i,
+      /vbscript:/i,
+      /<iframe[^>]*>/i,
+      /<object[^>]*>/i,
+      /<embed[^>]*>/i,
+      /<link[^>]*>/i,
+      /<meta[^>]*>/i,
+      /on\w+\s*=/i, # Event handlers like onclick, onload, etc.
+      /expression\s*\(/i, # CSS expressions
+      /url\s*\(/i, # CSS url() functions
+      /@import/i # CSS imports
+    ]
+
+    dangerous_patterns.any? { |pattern| text.match?(pattern) }
   end
 end

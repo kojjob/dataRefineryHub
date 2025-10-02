@@ -43,8 +43,12 @@ class AuditLog < ApplicationRecord
   def resource
     return nil unless resource_type && resource_id
 
-    resource_type.constantize.find_by(id: resource_id)
-  rescue NameError, ActiveRecord::RecordNotFound
+    # Safely resolve resource class using whitelist
+    resource_class = SafeClassResolver.resolve(resource_type, raise_on_error: false)
+    return nil unless resource_class
+
+    resource_class.find_by(id: resource_id)
+  rescue ActiveRecord::RecordNotFound
     nil
   end
 

@@ -202,14 +202,148 @@ RSpec.describe DataSource, type: :model do
     end
 
     describe '#mark_sync_failed!' do
-      it 'updates status to error and records error message' do
-        error = StandardError.new('Sync failed')
-        data_source.mark_sync_failed!(error)
+      it 'updates status to error with message' do
+        error_message = 'Connection timeout'
+        data_source.mark_sync_failed!(error_message)
 
         data_source.reload
         expect(data_source).to be_error
-        expect(data_source.error_message).to eq('Sync failed')
-        expect(data_source.next_sync_at).to be_present
+        expect(data_source.error_message).to eq(error_message)
+        expect(data_source.next_sync_at).not_to be_nil
+      end
+
+      it 'handles exception objects' do
+        error = StandardError.new('API rate limit exceeded')
+        data_source.mark_sync_failed!(error)
+
+        expect(data_source.reload.error_message).to eq('API rate limit exceeded')
+      end
+    end
+  end
+
+  describe 'file upload functionality' do
+    describe '#file_upload_source?' do
+      it 'returns true for file_upload source type' do
+        source = build(:data_source, source_type: 'file_upload')
+        expect(source.file_upload_source?).to be true
+      end
+
+      it 'returns false for other source types' do
+        source = build(:data_source, source_type: 'shopify')
+        expect(source.file_upload_source?).to be false
+      end
+    end
+
+    describe '#supported_file_types' do
+      it 'returns array of supported MIME types' do
+        source = build(:data_source)
+        expect(source.supported_file_types).to include('text/csv', 'application/json')
+      end
+    end
+
+    describe '#file_type_display_names' do
+      it 'returns human-readable file type names' do
+        source = build(:data_source)
+        display_names = source.file_type_display_names
+        expect(display_names['text/csv']).to eq('CSV')
+        expect(display_names['application/json']).to eq('JSON')
+      end
+    end
+  end
+
+  describe 'extractor integration' do
+    let(:data_source) { create(:data_source, source_type: 'shopify') }
+
+    describe '#extractor_supported?' do
+      it 'delegates to ExtractorFactory' do
+        expect(ExtractorFactory).to receive(:supported_source_type?).with('shopify').and_return(true)
+        expect(data_source.extractor_supported?).to be true
+      end
+    end
+
+    describe '#sync_now!' do
+      context 'when can sync' do
+        before { allow(data_source).to receive(:can_sync?).and_return(true) }
+
+        it 'enqueues extraction job' do
+          expect(ExtractionJobProcessor).to receive(:perform_later).with(data_source.id)
+          expect(data_source.sync_now!).to be true
+        end
+      end
+
+      context 'when cannot sync' do
+        before { allow(data_source).to receive(:can_sync?).and_return(false) }
+
+        it 'returns false without enqueuing job' do
+          expect(ExtractionJobProcessor).not_to receive(:perform_later)
+          expect(data_source.sync_now!).to be false
+        end
+      end
+    end
+  end
+
+  describe 'configuration handling' do
+    let(:data_source) { create(:data_source) }
+
+    describe '#configuration' do
+      it 'returns empty hash when config is nil' do
+        data_source.config = nil
+        expect(data_source.configuration).to eq({})
+      end
+
+      it 'returns config when present' do
+        config = { 'api_key' => 'test123' }
+        data_source.config = config
+        expect(data_source.configuration).to eq(config)
+      end
+    end
+
+    describe '#configuration=' do
+      it 'accepts hash configuration' do
+        config = { 'api_key' => 'test123' }
+        data_source.configuration = config
+        expect(data_source.config).to eq(config)
+      end
+
+      it 'parses JSON string configuration' do
+        config_json = '{"api_key":"test123"}'
+        data_source.configuration = config_json
+        expect(data_source.config).to eq({ 'api_key' => 'test123' })
+      end
+    end
+  end
+
+  describe 'callbacks and validations' do
+    describe 'before_validation callbacks' do
+      it 'normalizes name by stripping whitespace' do
+        source = build(:data_source, name: '  My Source  ')
+        source.valid?
+        expect(source.name).to eq('My Source')
+      end
+
+      it 'sets default values on create' do
+        source = DataSource.new(name: 'Test', source_type: 'shopify', organization: create(:organization))
+        source.valid?
+        expect(source.status).to eq('disconnected')
+        expect(source.sync_frequency).to eq('daily')
+      end
+    end
+
+    describe 'encryption' do
+      it 'encrypts credentials field' do
+        source = create(:data_source)
+        source.credentials = 'secret_api_key'
+        source.save!
+
+        # Credentials should be encrypted in database
+        raw_value = DataSource.connection.select_value(
+          "SELECT credentials FROM data_sources WHERE id = #{source.id}"
+        )
+        expect(raw_value).not_to eq('secret_api_key')
+        expect(raw_value).to be_present
+
+        # But should be decrypted when accessed
+        expect(source.reload.credentials).to eq('secret_api_key')
       end
     end
   end

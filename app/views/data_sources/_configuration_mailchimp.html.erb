@@ -1,0 +1,237 @@
+<div class="space-y-6">
+  <!-- Connection Status -->
+  <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">
+        Mailchimp Connection
+      </h3>
+      <div class="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400">
+        <p>Connect your Mailchimp account to import email marketing data including lists, campaigns, and subscriber metrics.</p>
+      </div>
+
+      <% if @data_source.persisted? %>
+        <div class="mt-5">
+          <% if @data_source.status == 'connected' %>
+            <!-- Connected State -->
+            <div class="rounded-md bg-green-50 dark:bg-green-900/20 p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-green-800 dark:text-green-200">Connected to Mailchimp</h3>
+                  <div class="mt-2 text-sm text-green-700 dark:text-green-300">
+                    <p>
+                      <% if @data_source.configuration["connected_at"] %>
+                        Connected on <%= Time.parse(@data_source.configuration["connected_at"]).strftime("%B %d, %Y at %I:%M %p") %>
+                      <% end %>
+                    </p>
+                  </div>
+                  <div class="mt-4">
+                    <%= button_to "Reconnect",
+                      oauth_authorize_path(provider: 'mailchimp', data_source_id: @data_source.id),
+                      method: :get,
+                      class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-green-700 dark:text-green-200 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500",
+                      data: { turbo_frame: "_top" } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% else %>
+            <!-- Disconnected State -->
+            <div class="rounded-md bg-yellow-50 dark:bg-yellow-900/20 p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">Not Connected</h3>
+                  <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                    <p>Connect your Mailchimp account to start importing email marketing data.</p>
+                  </div>
+                  <div class="mt-4">
+                    <%= button_to "Connect to Mailchimp",
+                      oauth_authorize_path(provider: 'mailchimp', data_source_id: @data_source.id),
+                      method: :get,
+                      class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+                      data: { turbo_frame: "_top" } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <!-- New Data Source - Show OAuth Button -->
+        <div class="mt-5">
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            After saving this data source, you'll be able to connect to your Mailchimp account.
+          </p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Data Type Selection -->
+  <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-4">
+        Data to Import
+      </h3>
+      <fieldset>
+        <legend class="sr-only">Data types</legend>
+        <div class="space-y-4">
+          <%= f.fields_for :configuration do |config_form| %>
+            <% data_types = [
+              { value: 'lists', label: 'Email Lists', description: 'Subscriber lists with stats (open rate, click rate, member count)' },
+              { value: 'campaigns', label: 'Email Campaigns', description: 'Sent email campaigns with send details and metadata' },
+              { value: 'campaign_reports', label: 'Campaign Reports', description: 'Detailed performance metrics (opens, clicks, bounces, unsubscribes)' },
+              { value: 'list_members', label: 'List Members', description: 'Individual subscribers with activity, demographics, and tags' },
+              { value: 'automations', label: 'Automations', description: 'Automated email workflows and trigger-based campaigns' }
+            ] %>
+
+            <% data_types.each do |type| %>
+              <div class="relative flex items-start">
+                <div class="flex h-6 items-center">
+                  <%= check_box_tag "data_source[configuration][data_types][]",
+                    type[:value],
+                    @data_source.configuration.dig("data_types")&.include?(type[:value]) || @data_source.new_record?,
+                    id: "data_type_#{type[:value]}",
+                    class: "h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-600 dark:bg-gray-700" %>
+                </div>
+                <div class="ml-3 text-sm leading-6">
+                  <label for="data_type_<%= type[:value] %>" class="font-medium text-gray-900 dark:text-white cursor-pointer">
+                    <%= type[:label] %>
+                  </label>
+                  <p class="text-gray-500 dark:text-gray-400"><%= type[:description] %></p>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+
+  <!-- Sync Options -->
+  <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-4">
+        Sync Settings
+      </h3>
+
+      <div class="space-y-4">
+        <!-- Sync Frequency -->
+        <div>
+          <label for="sync_frequency" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Sync Frequency
+          </label>
+          <%= f.fields_for :configuration do |config_form| %>
+            <%= select_tag "data_source[configuration][sync_frequency]",
+              options_for_select(
+                [
+                  ['Every 15 minutes', '15min'],
+                  ['Every hour', 'hourly'],
+                  ['Every 4 hours', '4hours'],
+                  ['Every 12 hours', '12hours'],
+                  ['Daily', 'daily'],
+                  ['Weekly', 'weekly']
+                ],
+                @data_source.configuration["sync_frequency"] || 'hourly'
+              ),
+              class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md dark:bg-gray-700 dark:text-white" %>
+          <% end %>
+          <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            How often to check Mailchimp for new data. More frequent syncs provide fresher data but use more API requests.
+          </p>
+        </div>
+
+        <!-- Incremental Sync -->
+        <div class="relative flex items-start">
+          <div class="flex h-6 items-center">
+            <%= f.fields_for :configuration do |config_form| %>
+              <%= check_box_tag "data_source[configuration][incremental_sync]",
+                "1",
+                @data_source.configuration["incremental_sync"] != false,
+                class: "h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-600 dark:bg-gray-700" %>
+            <% end %>
+          </div>
+          <div class="ml-3 text-sm leading-6">
+            <label for="data_source_configuration_incremental_sync" class="font-medium text-gray-900 dark:text-white">
+              Incremental Sync
+            </label>
+            <p class="text-gray-500 dark:text-gray-400">
+              Only fetch new and updated data since last sync (recommended for large accounts)
+            </p>
+          </div>
+        </div>
+
+        <!-- Include Archived -->
+        <div class="relative flex items-start">
+          <div class="flex h-6 items-center">
+            <%= f.fields_for :configuration do |config_form| %>
+              <%= check_box_tag "data_source[configuration][include_archived]",
+                "1",
+                @data_source.configuration["include_archived"] == true,
+                class: "h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-600 dark:bg-gray-700" %>
+            <% end %>
+          </div>
+          <div class="ml-3 text-sm leading-6">
+            <label for="data_source_configuration_include_archived" class="font-medium text-gray-900 dark:text-white">
+              Include Archived Campaigns
+            </label>
+            <p class="text-gray-500 dark:text-gray-400">
+              Import archived/paused campaigns in addition to active ones
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Information -->
+  <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="ml-3 flex-1">
+        <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">
+          Mailchimp Marketing API v3.0
+        </h3>
+        <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Rate Limit: 10 requests/second (600/minute)</li>
+            <li>Authentication: OAuth 2.0 with automatic token refresh</li>
+            <li>Data Types: Lists, Campaigns, Reports, Members, Automations</li>
+            <li>Incremental sync supported for campaigns (since_send_time)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Last Sync Info -->
+  <% if @data_source.persisted? && @data_source.last_synced_at.present? %>
+    <div class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
+      <div class="text-sm text-gray-700 dark:text-gray-300">
+        <strong>Last sync:</strong>
+        <%= time_ago_in_words(@data_source.last_synced_at) %> ago
+        (<%= @data_source.last_synced_at.strftime("%B %d, %Y at %I:%M %p") %>)
+      </div>
+      <% if @data_source.next_sync_at.present? %>
+        <div class="text-sm text-gray-700 dark:text-gray-300 mt-1">
+          <strong>Next sync:</strong>
+          in <%= distance_of_time_in_words(Time.current, @data_source.next_sync_at) %>
+          (<%= @data_source.next_sync_at.strftime("%B %d, %Y at %I:%M %p") %>)
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,329 @@
+<% content_for :title, "#{@automated_action[:name]} - AI Automated Action" %>
+
+<!-- Page Header -->
+<section class="page-header glass-card">
+  <div class="page-header-content">
+    <div class="header-title-group">
+      <div class="header-icon-wrapper">
+        <svg class="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1 class="page-title"><%= @automated_action[:name] %></h1>
+        <p class="page-description"><%= @automated_action[:description] %></p>
+        <div class="status-indicator status-<%= @automated_action[:status] %>">
+          <span class="status-pulse"></span>
+          <%= @automated_action[:status].humanize %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <!-- Edit functionality not yet implemented -->
+      <button class="btn btn--primary" disabled>
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+        </svg>
+        Edit Action
+      </button>
+      
+      <% if @automated_action[:status] == 'active' %>
+        <button class="btn btn--warning" data-action="pause">
+          <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Pause
+        </button>
+      <% else %>
+        <button class="btn btn--success" data-action="activate">
+          <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9 3h10a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+          </svg>
+          Activate
+        </button>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- Main Content -->
+<div class="main-content">
+  <!-- Performance Metrics -->
+  <section class="metrics-section">
+    <h2 class="section-title">Performance Metrics</h2>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon text-primary">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3>Total Executions</h3>
+          <div class="metric-value"><%= @automated_action[:metrics][:total_executions] %></div>
+          <div class="metric-change positive">+12% this week</div>
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-icon text-success">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3>Success Rate</h3>
+          <div class="metric-value"><%= @automated_action[:metrics][:success_rate] %>%</div>
+          <div class="metric-change positive">+2.3% improvement</div>
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-icon text-secondary">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3>Avg Response Time</h3>
+          <div class="metric-value"><%= @automated_action[:metrics][:avg_response_time] %></div>
+          <div class="metric-change negative">+0.2s slower</div>
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-icon text-warning">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <h3>Last Executed</h3>
+          <div class="metric-value"><%= time_ago_in_words(@automated_action[:metrics][:last_executed]) %></div>
+          <div class="metric-change">ago</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content Grid -->
+  <div class="content-grid">
+    <!-- Configuration Details -->
+    <div class="content-card configuration-section">
+      <div class="content-card-header">
+        <h3 class="content-card-title">
+          <svg class="content-card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Configuration
+        </h3>
+      </div>
+      
+      <div class="content-card-body">
+        <!-- Trigger Configuration -->
+        <div class="config-section">
+          <h4 class="config-section-title">Trigger Conditions</h4>
+          <div class="config-item config-item--warning">
+            <div class="config-item-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <div class="config-item-content">
+              <h5><%= @automated_action[:trigger][:type].humanize %> Trigger</h5>
+              <p><%= @automated_action[:trigger][:condition] %></p>
+              <div class="config-meta">
+                <svg class="config-meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Frequency: <%= @automated_action[:trigger][:frequency].humanize %>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Action Configuration -->
+        <div class="config-section">
+          <h4 class="config-section-title">Action Details</h4>
+          <div class="config-item config-item--primary">
+            <div class="config-item-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <div class="config-item-content">
+              <h5><%= @automated_action[:action][:type].humanize %> Action</h5>
+              <p><%= @automated_action[:action][:details] %></p>
+              <% if @automated_action[:action][:recipients].present? %>
+                <div class="recipients-list">
+                  <h6>Recipients:</h6>
+                  <div class="recipients-tags">
+                    <% @automated_action[:action][:recipients].each do |recipient| %>
+                      <span class="recipient-tag"><%= recipient %></span>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Metadata -->
+        <div class="config-section">
+          <h4 class="config-section-title">Metadata</h4>
+          <div class="metadata-grid">
+            <div class="metadata-item">
+              <h6>Created</h6>
+              <p><%= @automated_action[:created_at].strftime("%B %d, %Y at %I:%M %p") %></p>
+            </div>
+            <div class="metadata-item">
+              <h6>Last Updated</h6>
+              <p><%= @automated_action[:updated_at].strftime("%B %d, %Y at %I:%M %p") %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Execution History -->
+    <div class="content-card execution-history-section">
+      <div class="content-card-header">
+        <h3 class="content-card-title">
+          <svg class="content-card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          Recent Executions
+        </h3>
+      </div>
+      
+      <div class="content-card-body">
+        <div class="execution-list">
+          <% @automated_action[:execution_history].each do |execution| %>
+            <div class="execution-item execution-item--<%= execution[:status] %>">
+              <div class="execution-status">
+                <div class="execution-status-icon">
+                  <% if execution[:status] == 'success' %>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                  <% else %>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                  <% end %>
+                </div>
+                <div class="execution-details">
+                  <h5><%= execution[:status].humanize %></h5>
+                  <p><%= time_ago_in_words(execution[:date]) %> ago</p>
+                </div>
+              </div>
+              <div class="execution-meta">
+                <p><%= execution[:duration] %></p>
+                <% if execution[:error].present? %>
+                  <div class="execution-error" title="<%= execution[:error] %>">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        
+        <div class="execution-actions">
+          <button class="btn btn--outline btn--sm" data-action="view-history">
+            View Full History
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Action Controls -->
+  <section class="action-controls-section">
+    <div class="content-card">
+      <div class="action-controls-content">
+        <div class="action-controls-header">
+          <h3 class="action-controls-title">
+            <svg class="action-controls-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"/>
+            </svg>
+            Action Controls
+          </h3>
+          <p class="action-controls-description">Manage this automated action</p>
+        </div>
+        
+        <div class="action-controls-buttons">
+          <button class="btn btn--primary" data-action="test">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9 3h10a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            </svg>
+            Test Action
+          </button>
+          
+          <button class="btn btn--secondary" data-action="duplicate">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+            Duplicate
+          </button>
+          
+          <button class="btn btn--danger" data-action="delete">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<%= content_for :javascript do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Test Action Button Functionality
+      const testButton = document.querySelector('[data-action="test"]');
+      if (testButton) {
+        testButton.addEventListener('click', function() {
+          const originalHTML = this.innerHTML;
+          
+          // Show loading state
+          this.innerHTML = `
+            <svg class="btn-icon animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            Testing...
+          `;
+          this.disabled = true;
+          
+          // Simulate test execution
+          setTimeout(() => {
+            this.innerHTML = `
+              <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Test Completed
+            `;
+            this.classList.remove('btn--primary');
+            this.classList.add('btn--success');
+            
+            // Reset after 3 seconds
+            setTimeout(() => {
+              this.innerHTML = originalHTML;
+              this.classList.remove('btn--success');
+              this.classList.add('btn--primary');
+              this.disabled = false;
+            }, 3000);
+          }, 2000);
+        });
+      }
+    });
+  </script>
+<% end %>

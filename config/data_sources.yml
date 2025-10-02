@@ -48,8 +48,8 @@ default: &default
   quickbooks:
     name: 'QuickBooks'
     description: 'Sync your accounting data from QuickBooks'
-    status: 'coming_soon'
-    implemented: false
+    status: 'available'
+    implemented: true
     sync_type: 'scheduled'
     category: 'accounting'
     icon: 'quickbooks'
@@ -97,9 +97,9 @@ default: &default
 
   google_analytics:
     name: 'Google Analytics'
-    description: 'Import your website analytics data'
-    status: 'coming_soon'
-    implemented: false
+    description: 'Connect your Google Analytics 4 (GA4) property for website traffic and user behavior data'
+    status: 'available'
+    implemented: true
     sync_type: 'scheduled'
     category: 'analytics'
     icon: 'google-analytics'
@@ -110,6 +110,33 @@ default: &default
       timeout: 120
       oauth_required: true
       sync_frequency: 'daily'
+      features:
+        - 'Traffic and user metrics'
+        - 'Acquisition analysis'
+        - 'Engagement tracking'
+        - 'Conversion data'
+
+  mailchimp:
+    name: 'Mailchimp'
+    description: 'Connect your Mailchimp account for email marketing data including campaigns, lists, and subscriber metrics'
+    status: 'available'
+    implemented: true
+    sync_type: 'scheduled'
+    category: 'marketing'
+    icon: 'mailchimp'
+    priority: 8
+    settings:
+      webhook_support: false
+      rate_limit: 600
+      timeout: 60
+      oauth_required: true
+      sync_frequency: 'hourly'
+      features:
+        - 'Email lists and subscribers'
+        - 'Campaign performance metrics'
+        - 'Email engagement tracking'
+        - 'Automation workflows'
+        - 'Subscriber activity'
 
 development:
   <<: *default

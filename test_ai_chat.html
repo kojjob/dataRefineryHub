@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat History Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status { 
+            padding: 5px 10px; 
+            border-radius: 4px; 
+            display: inline-block;
+            margin: 5px 0;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .test-results {
+            margin-top: 20px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Chat History Functionality Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Template Check</h2>
+        <button onclick="checkTemplates()">Check Templates</button>
+        <div id="template-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. API Endpoint Test</h2>
+        <button onclick="testHistoryEndpoint()">Test History API</button>
+        <button onclick="testChatEndpoint()">Test Chat API</button>
+        <div id="api-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Controller Check</h2>
+        <button onclick="checkController()">Check Stimulus Controller</button>
+        <div id="controller-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. WebSocket Connection</h2>
+        <button onclick="testWebSocket()">Test WebSocket</button>
+        <div id="websocket-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Console Errors</h2>
+        <button onclick="checkConsoleErrors()">Check for Errors</button>
+        <div id="console-results"></div>
+    </div>
+
+    <script>
+        // Store original console methods
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const consoleErrors = [];
+        const consoleWarnings = [];
+
+        // Override console methods to capture errors
+        console.error = function(...args) {
+            consoleErrors.push(args.join(' '));
+            originalError.apply(console, args);
+        };
+        
+        console.warn = function(...args) {
+            consoleWarnings.push(args.join(' '));
+            originalWarn.apply(console, args);
+        };
+
+        function checkTemplates() {
+            const results = document.getElementById('template-results');
+            results.innerHTML = '<h3>Template Check Results:</h3>';
+            
+            const templates = [
+                'user-message-template',
+                'ai-message-template',
+                'action-button-template'
+            ];
+            
+            templates.forEach(templateId => {
+                const template = document.getElementById(templateId);
+                if (template) {
+                    results.innerHTML += `<div class="status success">✓ Template "${templateId}" found</div>`;
+                    
+                    // Check template content
+                    const content = template.content;
+                    const elements = content.querySelectorAll('*');
+                    results.innerHTML += `<div class="status info">  - Contains ${elements.length} elements</div>`;
+                    
+                    // Check for required classes
+                    const requiredClasses = {
+                        'user-message-template': ['.message-content', '.message-time', '.user-initials'],
+                        'ai-message-template': ['.message-content', '.message-time', '.visualizations-container', '.actions-container'],
+                        'action-button-template': ['.action-text']
+                    };
+                    
+                    if (requiredClasses[templateId]) {
+                        requiredClasses[templateId].forEach(selector => {
+                            const element = content.querySelector(selector);
+                            if (element) {
+                                results.innerHTML += `<div class="status success">  ✓ Found ${selector}</div>`;
+                            } else {
+                                results.innerHTML += `<div class="status error">  ✗ Missing ${selector}</div>`;
+                            }
+                        });
+                    }
+                } else {
+                    results.innerHTML += `<div class="status error">✗ Template "${templateId}" not found</div>`;
+                }
+            });
+        }
+
+        async function testHistoryEndpoint() {
+            const results = document.getElementById('api-results');
+            results.innerHTML = '<h3>History API Test:</h3>';
+            
+            try {
+                const response = await fetch('/ai/chat/history', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    results.innerHTML += `<div class="status success">✓ History endpoint responded (${response.status})</div>`;
+                    results.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    results.innerHTML += `<div class="status error">✗ History endpoint error: ${response.status}</div>`;
+                    const text = await response.text();
+                    results.innerHTML += `<pre>${text}</pre>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<div class="status error">✗ Failed to fetch history: ${error.message}</div>`;
+            }
+        }
+
+        async function testChatEndpoint() {
+            const results = document.getElementById('api-results');
+            results.innerHTML += '<h3>Chat API Test:</h3>';
+            
+            try {
+                const response = await fetch('/ai/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    },
+                    body: JSON.stringify({
+                        query: 'Test message',
+                        context: {}
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    results.innerHTML += `<div class="status success">✓ Chat endpoint responded (${response.status})</div>`;
+                    results.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    results.innerHTML += `<div class="status error">✗ Chat endpoint error: ${response.status}</div>`;
+                    const text = await response.text();
+                    results.innerHTML += `<pre>${text}</pre>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<div class="status error">✗ Failed to send message: ${error.message}</div>`;
+            }
+        }
+
+        function checkController() {
+            const results = document.getElementById('controller-results');
+            results.innerHTML = '<h3>Stimulus Controller Check:</h3>';
+            
+            // Check if Stimulus is available
+            if (typeof Stimulus !== 'undefined' || window.Stimulus) {
+                results.innerHTML += `<div class="status success">✓ Stimulus framework detected</div>`;
+            } else {
+                results.innerHTML += `<div class="status warning">⚠ Stimulus framework not detected in global scope</div>`;
+            }
+            
+            // Check for AI chat widget
+            const chatWidget = document.querySelector('[data-controller="ai-chat"]');
+            if (chatWidget) {
+                results.innerHTML += `<div class="status success">✓ AI chat widget found</div>`;
+                
+                // Check data attributes
+                const orgId = chatWidget.dataset.aiChatOrganizationIdValue;
+                const userId = chatWidget.dataset.aiChatUserIdValue;
+                
+                if (orgId) {
+                    results.innerHTML += `<div class="status success">✓ Organization ID: ${orgId}</div>`;
+                } else {
+                    results.innerHTML += `<div class="status error">✗ Organization ID not set</div>`;
+                }
+                
+                if (userId) {
+                    results.innerHTML += `<div class="status success">✓ User ID: ${userId}</div>`;
+                } else {
+                    results.innerHTML += `<div class="status error">✗ User ID not set</div>`;
+                }
+                
+                // Check targets
+                const targets = [
+                    'toggleButton',
+                    'chatWindow',
+                    'messagesContainer',
+                    'messageInput',
+                    'sendButton',
+                    'voiceButton',
+                    'voiceIndicator',
+                    'loadingIndicator',
+                    'suggestions'
+                ];
+                
+                targets.forEach(target => {
+                    const element = chatWidget.querySelector(`[data-ai-chat-target="${target}"]`);
+                    if (element) {
+                        results.innerHTML += `<div class="status success">  ✓ Target "${target}" found</div>`;
+                    } else {
+                        results.innerHTML += `<div class="status warning">  ⚠ Target "${target}" not found</div>`;
+                    }
+                });
+            } else {
+                results.innerHTML += `<div class="status error">✗ AI chat widget not found</div>`;
+            }
+        }
+
+        function testWebSocket() {
+            const results = document.getElementById('websocket-results');
+            results.innerHTML = '<h3>WebSocket Test:</h3>';
+            
+            // Check if ActionCable is available
+            if (typeof App !== 'undefined' && App.cable) {
+                results.innerHTML += `<div class="status success">✓ ActionCable detected</div>`;
+                
+                // Check subscriptions
+                if (App.cable.subscriptions) {
+                    const subscriptions = App.cable.subscriptions.subscriptions;
+                    results.innerHTML += `<div class="status info">Active subscriptions: ${subscriptions.length}</div>`;
+                    
+                    subscriptions.forEach((sub, index) => {
+                        results.innerHTML += `<div class="status info">  - Subscription ${index + 1}: ${JSON.stringify(sub.identifier)}</div>`;
+                    });
+                }
+            } else {
+                results.innerHTML += `<div class="status warning">⚠ ActionCable not detected</div>`;
+            }
+        }
+
+        function checkConsoleErrors() {
+            const results = document.getElementById('console-results');
+            results.innerHTML = '<h3>Console Check:</h3>';
+            
+            if (consoleErrors.length > 0) {
+                results.innerHTML += `<div class="status error">✗ Found ${consoleErrors.length} console errors:</div>`;
+                consoleErrors.forEach(error => {
+                    results.innerHTML += `<div class="status error">  - ${error}</div>`;
+                });
+            } else {
+                results.innerHTML += `<div class="status success">✓ No console errors detected</div>`;
+            }
+            
+            if (consoleWarnings.length > 0) {
+                results.innerHTML += `<div class="status warning">⚠ Found ${consoleWarnings.length} console warnings:</div>`;
+                consoleWarnings.forEach(warning => {
+                    results.innerHTML += `<div class="status warning">  - ${warning}</div>`;
+                });
+            } else {
+                results.innerHTML += `<div class="status success">✓ No console warnings detected</div>`;
+            }
+            
+            // Check for specific AI chat errors
+            const aiChatErrors = consoleErrors.filter(e => 
+                e.includes('ai-chat') || 
+                e.includes('AI') || 
+                e.includes('chat') ||
+                e.includes('template') ||
+                e.includes('message')
+            );
+            
+            if (aiChatErrors.length > 0) {
+                results.innerHTML += `<div class="status error">✗ AI Chat specific errors found:</div>`;
+                aiChatErrors.forEach(error => {
+                    results.innerHTML += `<div class="status error">  - ${error}</div>`;
+                });
+            }
+        }
+
+        // Run all tests on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('AI Chat Test Page Loaded');
+            
+            // Auto-run basic checks
+            setTimeout(() => {
+                checkTemplates();
+                checkController();
+                checkConsoleErrors();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

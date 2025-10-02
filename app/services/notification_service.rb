@@ -17,10 +17,10 @@ class NotificationService
         priority: priority_value
       )
 
-      # Log the notification with structured data
+      # Log the notification with sanitized structured data
       Rails.logger.info do
-        "NOTIFICATION_CREATED: #{type} for user #{user.id} - #{title}: #{message} | " \
-        "Data: #{data.to_json} | Priority: #{notification.priority_name}"
+        "NOTIFICATION_CREATED: #{type} for user #{user.id} - #{sanitize_for_log(title)}: #{sanitize_for_log(message)} | " \
+        "Data: #{sanitize_metadata_for_log(data).to_json} | Priority: #{notification.priority_name}"
       end
 
       # Broadcast real-time notification
@@ -37,9 +37,9 @@ class NotificationService
         type: "notification",
         id: notification.id,
         notification_type: notification.notification_type,
-        title: notification.title,
-        message: notification.message,
-        data: notification.metadata,
+        title: sanitize_for_broadcast(notification.title),
+        message: sanitize_for_broadcast(notification.message),
+        data: sanitize_metadata_for_broadcast(notification.metadata),
         timestamp: notification.created_at.iso8601,
         read: notification.read?,
         priority: notification.priority_name,
@@ -152,7 +152,7 @@ class NotificationService
       case category
       when "system"
         # System alerts could trigger external monitoring
-        Rails.logger.error "HIGH_PRIORITY_SYSTEM_ALERT: #{notification.title} for user #{user.id}"
+        Rails.logger.error "HIGH_PRIORITY_SYSTEM_ALERT: #{sanitize_for_log(notification.title)} for user #{user.id}"
 
         # Could integrate with external alerting (Slack, PagerDuty, etc.)
         send_external_alert(user, notification) if Rails.env.production?
@@ -162,7 +162,7 @@ class NotificationService
         if notification.notification_type == "file_processing_failed"
           retry_count = notification.metadata&.dig("retry_count") || 0
           if retry_count >= 3
-            Rails.logger.error "PROCESSING_FAILURE_THRESHOLD_EXCEEDED: #{notification.title} for user #{user.id}"
+            Rails.logger.error "PROCESSING_FAILURE_THRESHOLD_EXCEEDED: #{sanitize_for_log(notification.title)} for user #{user.id}"
           end
         end
       end
@@ -181,8 +181,8 @@ class NotificationService
         notification: {
           id: notification.id,
           type: notification.notification_type,
-          title: notification.title,
-          message: notification.message,
+          title: sanitize_for_broadcast(notification.title),
+          message: sanitize_for_broadcast(notification.message),
           category: categorize_notification(notification.notification_type)
         },
         timestamp: Time.current.iso8601
@@ -200,7 +200,7 @@ class NotificationService
     def send_external_alert(user, notification)
       # Placeholder for external alerting integrations
       # Could integrate with Slack, Teams, PagerDuty, etc.
-      Rails.logger.info "EXTERNAL_ALERT_TRIGGERED: #{notification[:title]} for user #{user.id}"
+      Rails.logger.info "EXTERNAL_ALERT_TRIGGERED: #{sanitize_for_log(notification[:title])} for user #{user.id}"
     end
 
     def update_notification_counters(user, notification)
@@ -237,6 +237,115 @@ class NotificationService
       else
         nil
       end
+    end
+
+    # SECURITY METHODS: Sanitization for logging and broadcasting
+
+    def sanitize_for_log(text)
+      return "" if text.blank?
+
+      # Strip HTML tags, limit length, and remove sensitive patterns
+      sanitized = ActionController::Base.helpers.strip_tags(text.to_s).squish
+      sanitized = sanitized.gsub(/password[\s]*[:=]\s*\S+/i, "password=[REDACTED]")
+      sanitized = sanitized.gsub(/token[\s]*[:=]\s*\S+/i, "token=[REDACTED]")
+      sanitized = sanitized.gsub(/key[\s]*[:=]\s*\S+/i, "key=[REDACTED]")
+      sanitized = sanitized.gsub(/secret[\s]*[:=]\s*\S+/i, "secret=[REDACTED]")
+      sanitized = sanitized.gsub(/api_key[\s]*[:=]\s*\S+/i, "api_key=[REDACTED]")
+      sanitized.truncate(500)
+    end
+
+    def sanitize_for_broadcast(text)
+      return "" if text.blank?
+
+      # Strip HTML tags and sanitize for client-side display
+      ActionController::Base.helpers.sanitize(
+        text.to_s,
+        tags: %w[strong em b i],
+        attributes: [],
+        remove_contents: %w[script style],
+        whitespace: :normalize
+      ).truncate(1000)
+    end
+
+    def sanitize_metadata_for_log(data)
+      return {} if data.blank?
+
+      case data
+      when Hash
+        sanitized = {}
+        data.each do |key, value|
+          sanitized_key = sanitize_key_for_log(key)
+          sanitized_value = sanitize_value_for_log(value)
+          sanitized[sanitized_key] = sanitized_value
+        end
+        sanitized
+      when Array
+        data.map { |item| sanitize_metadata_for_log(item) }.first(10) # Limit array size
+      else
+        sanitize_for_log(data.to_s)
+      end
+    end
+
+    def sanitize_metadata_for_broadcast(data)
+      return {} if data.blank?
+
+      case data
+      when Hash
+        sanitized = {}
+        data.each do |key, value|
+          next if sensitive_key?(key) # Skip sensitive keys entirely
+          sanitized_key = key.to_s.gsub(/[^a-zA-Z0-9_]/, "_")
+          sanitized_value = sanitize_value_for_broadcast(value)
+          sanitized[sanitized_key] = sanitized_value
+        end
+        sanitized
+      when Array
+        data.map { |item| sanitize_metadata_for_broadcast(item) }.first(5) # Limit array size
+      else
+        sanitize_for_broadcast(data.to_s)
+      end
+    end
+
+    def sanitize_key_for_log(key)
+      key.to_s.gsub(/[^a-zA-Z0-9_]/, "_").truncate(50)
+    end
+
+    def sanitize_value_for_log(value)
+      case value
+      when String
+        sanitize_for_log(value)
+      when Hash
+        sanitize_metadata_for_log(value)
+      when Array
+        value.map { |v| sanitize_value_for_log(v) }.first(5)
+      when Numeric, TrueClass, FalseClass, NilClass
+        value
+      else
+        "[#{value.class}]" # Just show the class for complex objects
+      end
+    end
+
+    def sanitize_value_for_broadcast(value)
+      case value
+      when String
+        sanitize_for_broadcast(value)
+      when Hash
+        sanitize_metadata_for_broadcast(value)
+      when Array
+        value.map { |v| sanitize_value_for_broadcast(v) }.first(5)
+      when Numeric, TrueClass, FalseClass, NilClass
+        value
+      else
+        value.to_s.truncate(100) # Convert to string and limit
+      end
+    end
+
+    def sensitive_key?(key)
+      key_str = key.to_s.downcase
+      %w[password token secret api_key auth_token access_token refresh_token
+         private_key public_key certificate ssn social_security tax_id
+         credit_card card_number cvv billing_address phone_number email_password
+         database_url connection_string].any? { |pattern| key_str.include?(pattern) }
     end
   end
 end
