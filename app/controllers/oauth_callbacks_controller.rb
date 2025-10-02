@@ -18,6 +18,8 @@ class OauthCallbacksController < ApplicationController
       redirect_to quickbooks_authorization_url, allow_other_host: true
     when 'google_analytics'
       redirect_to google_authorization_url, allow_other_host: true
+    when 'mailchimp'
+      redirect_to mailchimp_authorization_url, allow_other_host: true
     else
       redirect_to data_sources_path, alert: "Unsupported OAuth provider: #{params[:provider]}"
     end
@@ -31,6 +33,8 @@ class OauthCallbacksController < ApplicationController
       handle_quickbooks_callback
     when 'google_analytics'
       handle_google_callback
+    when 'mailchimp'
+      handle_mailchimp_callback
     else
       redirect_to data_sources_path, alert: "Unsupported OAuth provider: #{params[:provider]}"
     end
@@ -44,6 +48,8 @@ class OauthCallbacksController < ApplicationController
       refresh_quickbooks_token
     when 'google_analytics'
       refresh_google_token
+    when 'mailchimp'
+      refresh_mailchimp_token
     else
       render json: { success: false, message: "Unsupported OAuth provider: #{params[:provider]}" },
              status: :unprocessable_entity
@@ -434,5 +440,161 @@ class OauthCallbacksController < ApplicationController
     Rails.application.credentials.dig(:google, :client_secret) ||
       ENV['GOOGLE_CLIENT_SECRET'] ||
       raise("Google Client Secret not configured")
+  end
+
+  # Mailchimp OAuth Methods
+
+  def mailchimp_authorization_url
+    # Store state in session for CSRF protection
+    state = SecureRandom.urlsafe_base64(32)
+    session[:oauth_state] = state
+    session[:oauth_data_source_id] = @data_source.id
+    session[:oauth_provider] = 'mailchimp'
+
+    # Mailchimp OAuth 2.0 authorization endpoint
+    params = {
+      client_id: mailchimp_client_id,
+      redirect_uri: oauth_callback_url(provider: 'mailchimp'),
+      response_type: 'code',
+      state: state
+    }
+
+    "https://login.mailchimp.com/oauth2/authorize?#{params.to_query}"
+  end
+
+  def handle_mailchimp_callback
+    # Verify state parameter to prevent CSRF attacks
+    unless params[:state] == session[:oauth_state]
+      redirect_to data_sources_path, alert: "Invalid OAuth state. Please try connecting again."
+      return
+    end
+
+    # Verify authorization code is present
+    unless params[:code].present?
+      error_message = params[:error] || "Authorization denied"
+      redirect_to data_sources_path, alert: "Mailchimp authorization failed: #{error_message}"
+      return
+    end
+
+    begin
+      # Exchange authorization code for access token
+      token_response = exchange_mailchimp_code(params[:code])
+
+      # Get server prefix from metadata
+      metadata_response = fetch_mailchimp_metadata(token_response['access_token'])
+      server_prefix = extract_server_prefix(metadata_response['api_endpoint'])
+
+      # Update data source with OAuth credentials
+      @data_source.update!(
+        configuration: @data_source.configuration.merge(
+          access_token: token_response['access_token'],
+          token_expires_at: (Time.current + 180.days).iso8601, # Mailchimp tokens don't expire
+          token_type: token_response['token_type'] || 'bearer',
+          server_prefix: server_prefix,
+          api_endpoint: metadata_response['api_endpoint'],
+          connected_at: Time.current.iso8601
+        ),
+        status: 'connected'
+      )
+
+      # Clear OAuth session data
+      clear_oauth_session
+
+      # Log successful connection
+      Rails.logger.info "Mailchimp OAuth successful for DataSource ##{@data_source.id}, Server: #{server_prefix}"
+
+      redirect_to data_source_path(@data_source), notice: "Mailchimp connected successfully!"
+    rescue StandardError => e
+      Rails.logger.error "Mailchimp OAuth callback error: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+
+      redirect_to data_sources_path, alert: "Failed to connect Mailchimp: #{e.message}"
+    end
+  end
+
+  def exchange_mailchimp_code(code)
+    require 'net/http'
+    require 'json'
+
+    uri = URI('https://login.mailchimp.com/oauth2/token')
+
+    request = Net::HTTP::Post.new(uri)
+    request['Content-Type'] = 'application/x-www-form-urlencoded'
+
+    request.set_form_data(
+      grant_type: 'authorization_code',
+      client_id: mailchimp_client_id,
+      client_secret: mailchimp_client_secret,
+      code: code,
+      redirect_uri: oauth_callback_url(provider: 'mailchimp')
+    )
+
+    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      http.request(request)
+    end
+
+    unless response.is_a?(Net::HTTPSuccess)
+      error_body = JSON.parse(response.body) rescue { 'error' => 'unknown' }
+      raise "Mailchimp token exchange failed: #{error_body['error']} - #{error_body['error_description']}"
+    end
+
+    JSON.parse(response.body)
+  end
+
+  def fetch_mailchimp_metadata(access_token)
+    require 'net/http'
+    require 'json'
+
+    uri = URI('https://login.mailchimp.com/oauth2/metadata')
+
+    request = Net::HTTP::Get.new(uri)
+    request['Authorization'] = "Bearer #{access_token}"
+
+    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      http.request(request)
+    end
+
+    unless response.is_a?(Net::HTTPSuccess)
+      raise "Failed to fetch Mailchimp metadata: #{response.code}"
+    end
+
+    JSON.parse(response.body)
+  end
+
+  def extract_server_prefix(api_endpoint)
+    # api_endpoint format: "https://us19.api.mailchimp.com"
+    # Extract "us19" from the endpoint
+    match = api_endpoint.match(/https:\/\/([^.]+)\.api\.mailchimp\.com/)
+    match ? match[1] : 'us1'
+  end
+
+  def refresh_mailchimp_token
+    # Mailchimp OAuth tokens don't expire, so refresh is not needed
+    # However, we'll provide this method for consistency
+
+    begin
+      render json: {
+        success: true,
+        message: "Mailchimp tokens do not expire and do not need refresh",
+        expires_at: @data_source.configuration['token_expires_at']
+      }
+    rescue StandardError => e
+      Rails.logger.error "Mailchimp token refresh error: #{e.message}"
+
+      render json: { success: false, message: "Failed to refresh token: #{e.message}" },
+             status: :unprocessable_entity
+    end
+  end
+
+  def mailchimp_client_id
+    Rails.application.credentials.dig(:mailchimp, :client_id) ||
+      ENV['MAILCHIMP_CLIENT_ID'] ||
+      raise("Mailchimp Client ID not configured")
+  end
+
+  def mailchimp_client_secret
+    Rails.application.credentials.dig(:mailchimp, :client_secret) ||
+      ENV['MAILCHIMP_CLIENT_SECRET'] ||
+      raise("Mailchimp Client Secret not configured")
   end
 end

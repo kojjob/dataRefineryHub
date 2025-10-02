@@ -116,6 +116,28 @@ default: &default
         - 'Engagement tracking'
         - 'Conversion data'
 
+  mailchimp:
+    name: 'Mailchimp'
+    description: 'Connect your Mailchimp account for email marketing data including campaigns, lists, and subscriber metrics'
+    status: 'available'
+    implemented: true
+    sync_type: 'scheduled'
+    category: 'marketing'
+    icon: 'mailchimp'
+    priority: 8
+    settings:
+      webhook_support: false
+      rate_limit: 600
+      timeout: 60
+      oauth_required: true
+      sync_frequency: 'hourly'
+      features:
+        - 'Email lists and subscribers'
+        - 'Campaign performance metrics'
+        - 'Email engagement tracking'
+        - 'Automation workflows'
+        - 'Subscriber activity'
+
 development:
   <<: *default
   # Development-specific overrides
