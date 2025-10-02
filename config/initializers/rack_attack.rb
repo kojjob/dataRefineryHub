@@ -3,11 +3,20 @@
 # Enhanced Rack::Attack configuration for comprehensive rate limiting and security
 # Prevents abuse, DoS attacks, and various security threats
 
-class Rack::Attack
+# Skip all Rack::Attack configuration in test environment
+unless Rails.env.test?
+  class Rack::Attack
   ### Configure Cache ###
   Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
 
   ### Safelist Configuration ###
+
+  # Disable rate limiting in test environment
+  if Rails.env.test?
+    Rack::Attack.safelist("allow-all-in-test") do |req|
+      true
+    end
+  end
 
   # Always allow requests from localhost in development
   if Rails.env.development?
@@ -252,9 +261,9 @@ class Rack::Attack
       }.to_json ]
     ]
   end
-end
+  end
 
-### Notification Subscriptions ###
+  ### Notification Subscriptions ###
 
 # Log blocked and throttled requests
 ActiveSupport::Notifications.subscribe(/rack_attack/) do |name, start, finish, request_id, payload|
@@ -270,14 +279,14 @@ ActiveSupport::Notifications.subscribe(/rack_attack/) do |name, start, finish, r
   end
 end
 
-# Enable enhanced monitoring
-ActiveSupport::Notifications.subscribe("throttle.rack_attack") do |name, start, finish, request_id, payload|
-  Rails.logger.warn "Rate limit hit: #{payload[:request].env['rack.attack.matched']} for IP: #{payload[:request].ip}"
-end
+  # Enable enhanced monitoring
+  ActiveSupport::Notifications.subscribe("throttle.rack_attack") do |name, start, finish, request_id, payload|
+    Rails.logger.warn "Rate limit hit: #{payload[:request].env['rack.attack.matched']} for IP: #{payload[:request].ip}"
+  end
 
-ActiveSupport::Notifications.subscribe("blocklist.rack_attack") do |name, start, finish, request_id, payload|
-  Rails.logger.error "Blocked request: #{payload[:request].env['rack.attack.matched']} for IP: #{payload[:request].ip}"
-end
+  ActiveSupport::Notifications.subscribe("blocklist.rack_attack") do |name, start, finish, request_id, payload|
+    Rails.logger.error "Blocked request: #{payload[:request].env['rack.attack.matched']} for IP: #{payload[:request].ip}"
+  end
 
-# Enable Rack::Attack middleware
-Rails.application.config.middleware.use Rack::Attack
+  # Note: Rack::Attack middleware is loaded in config/application.rb
+end
