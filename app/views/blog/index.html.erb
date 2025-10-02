@@ -2,118 +2,313 @@
 <% structured_data(:organization) %>
 <% structured_data(:breadcrumbs, @breadcrumbs) %>
 
-<div class="blog-index">
+<!-- Blog Index - Ultra Premium Design -->
+<div class="relative min-h-screen bg-white">
 
-  <!-- Enhanced Hero Section -->
-  <section class="blog-hero">
-    <div class="container">
+  <!-- Hero Section - Premium Dark Design with Animated Gradients -->
+  <section class="relative overflow-hidden bg-slate-950">
+    <!-- Animated Gradient Orbs -->
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute -top-40 -right-40 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+      <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+    </div>
 
-      <!-- Breadcrumbs -->
-      <div class="blog-breadcrumbs">
-        <%= breadcrumb_navigation(@breadcrumbs) %>
+    <!-- Grid Pattern Overlay -->
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:64px_64px]"></div>
+
+    <!-- Gradient Overlay -->
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/50 to-slate-950"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32 lg:pt-32 lg:pb-40">
+      <!-- Breadcrumbs with Glass Effect -->
+      <div class="mb-12">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-xl border border-white/10">
+          <%= breadcrumb_navigation(@breadcrumbs) %>
+        </div>
       </div>
 
-      <div class="blog-hero__content">
-        <div class="blog-hero__text">
-          <h1 class="blog-hero__title">Data Reflow Blog</h1>
-          <p class="blog-hero__subtitle">
-            Expert insights on business intelligence, data analytics, and making data-driven decisions.
-            Learn from industry professionals and real customer success stories.
-          </p>
+      <div class="max-w-4xl mx-auto text-center">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 backdrop-blur-xl mb-8">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-400"></span>
+          </span>
+          <span class="text-sm font-semibold bg-gradient-to-r from-indigo-200 to-purple-200 bg-clip-text text-transparent">
+            Latest Insights & Industry Expertise
+          </span>
         </div>
 
-        <!-- Enhanced Search Bar -->
-        <div class="blog-search">
-          <div class="blog-search__wrapper">
-            <div class="blog-search__icon">
-              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-              </svg>
+        <!-- Main Heading -->
+        <h1 class="text-6xl lg:text-7xl xl:text-8xl font-black mb-8 leading-none">
+          <span class="block text-white mb-2">Transform Data</span>
+          <span class="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 animate-gradient">
+            Into Intelligence
+          </span>
+        </h1>
+
+        <!-- Subheading -->
+        <p class="text-xl lg:text-2xl text-slate-300 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
+          Expert insights, proven strategies, and real-world case studies to help you master
+          <span class="text-indigo-400 font-medium">business intelligence</span> and
+          <span class="text-purple-400 font-medium">data analytics</span>.
+        </p>
+
+        <!-- Search Bar - Ultra Premium -->
+        <div class="max-w-3xl mx-auto mb-12">
+          <div class="relative group">
+            <!-- Glow Effect -->
+            <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
+
+            <!-- Search Container -->
+            <div class="relative bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
+              <div class="flex items-center px-8 py-6">
+                <!-- Search Icon -->
+                <div class="flex-shrink-0 mr-4">
+                  <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- Input -->
+                <input
+                  type="text"
+                  placeholder="Search articles, topics, or keywords..."
+                  class="flex-1 bg-transparent border-0 text-white text-lg placeholder-slate-400 focus:outline-none focus:ring-0"
+                  data-controller="search"
+                  data-search-target="input">
+
+                <!-- Keyboard Shortcut -->
+                <div class="hidden lg:flex items-center gap-2 ml-4">
+                  <kbd class="px-3 py-2 text-sm font-semibold text-slate-400 bg-white/10 border border-white/20 rounded-lg shadow-inner">
+                    <span class="text-base">⌘</span>
+                  </kbd>
+                  <kbd class="px-3 py-2 text-sm font-semibold text-slate-400 bg-white/10 border border-white/20 rounded-lg shadow-inner">
+                    K
+                  </kbd>
+                </div>
+              </div>
+
+              <!-- Popular Searches -->
+              <div class="px-8 pb-6 flex flex-wrap gap-2">
+                <span class="text-xs text-slate-400 mr-2">Popular:</span>
+                <% ['Business Intelligence', 'ETL Pipeline', 'Data Analytics', 'Dashboard Design'].each do |topic| %>
+                  <button class="px-3 py-1.5 text-xs font-medium text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 rounded-lg transition-all">
+                    <%= topic %>
+                  </button>
+                <% end %>
+              </div>
             </div>
-            <input type="text"
-                   placeholder="Search articles..."
-                   class="blog-search__input"
-                   data-controller="search"
-                   data-search-target="input">
+          </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-white mb-1">50+</div>
+            <div class="text-sm text-slate-400">Expert Articles</div>
+          </div>
+          <div class="text-center border-x border-white/10">
+            <div class="text-3xl font-bold text-white mb-1">25K+</div>
+            <div class="text-sm text-slate-400">Monthly Readers</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-white mb-1">5</div>
+            <div class="text-sm text-slate-400">Categories</div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Bottom Fade -->
+    <div class="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
   </section>
 
-  <div class="blog-content">
-    <div class="container">
+  <!-- Main Content -->
+  <div class="relative -mt-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
 
-      <!-- Featured Posts Section -->
-      <section class="blog-featured">
-        <div class="blog-section__header">
-          <h2 class="blog-section__title">Featured Articles</h2>
-          <p class="blog-section__subtitle">Discover our most popular insights and expert analysis</p>
+    <!-- Featured Articles - Magazine Style -->
+    <section class="mb-24">
+      <div class="flex items-end justify-between mb-12">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-100 text-indigo-700 text-sm font-semibold mb-3">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            Featured
+          </div>
+          <h2 class="text-4xl lg:text-5xl font-bold text-slate-900">Must-Read Articles</h2>
         </div>
+      </div>
 
-        <div class="blog-featured__grid">
-          <% @featured_posts.each do |post| %>
-            <article class="blog-card blog-card--featured">
-              <div class="blog-card__image">
-                <img src="<%= asset_path(post[:featured_image]) %>"
+      <div class="grid lg:grid-cols-2 gap-8">
+        <% @featured_posts.each_with_index do |post, index| %>
+          <!-- Featured Card - Ultra Premium -->
+          <article class="group relative">
+            <!-- Hover Glow -->
+            <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-3xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500"></div>
+
+            <div class="relative bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-slate-200">
+              <!-- Image Section -->
+              <div class="relative h-80 overflow-hidden">
+                <!-- Image -->
+                <img src="<%= post[:featured_image] %>"
                      alt="<%= post[:title] %>"
-                     class="blog-card__img">
-                <div class="blog-card__category">
-                  <span class="blog-category-badge">
-                    <%= post[:category] %>
+                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+
+                <!-- Gradient Overlay -->
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
+
+                <!-- Category Badge -->
+                <div class="absolute top-6 left-6">
+                  <span class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/95 backdrop-blur-sm shadow-lg">
+                    <div class="w-2 h-2 rounded-full bg-indigo-500"></div>
+                    <span class="text-sm font-bold text-slate-900"><%= post[:category] %></span>
                   </span>
                 </div>
-                <div class="blog-card__overlay"></div>
+
+                <!-- Reading Time -->
+                <div class="absolute top-6 right-6">
+                  <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900/80 backdrop-blur-sm">
+                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span class="text-sm font-semibold text-white"><%= post[:read_time] %></span>
+                  </div>
+                </div>
+
+                <!-- Title Overlay -->
+                <div class="absolute bottom-6 left-6 right-6">
+                  <h3 class="text-2xl lg:text-3xl font-bold text-white leading-tight mb-3">
+                    <%= link_to post[:title], blog_post_path(post[:slug]), class: "hover:text-indigo-300 transition-colors" %>
+                  </h3>
+                </div>
               </div>
 
-              <div class="blog-card__content">
-                <div class="blog-card__meta">
-                  <div class="blog-author">
-                    <img src="<%= asset_path(post[:author][:avatar]) %>"
-                         alt="<%= post[:author][:name] %>"
-                         class="blog-author__avatar">
-                    <div class="blog-author__info">
-                      <div class="blog-author__name"><%= post[:author][:name] %></div>
-                      <div class="blog-meta">
-                        <span class="blog-meta__item">
-                          <svg class="blog-meta__icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                          </svg>
-                          <%= time_ago_in_words(post[:published_at]) %> ago
-                        </span>
-                        <span class="blog-meta__separator">•</span>
-                        <span class="blog-meta__item">
-                          <svg class="blog-meta__icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                          </svg>
-                          <%= post[:read_time] %>
-                        </span>
-                      </div>
+              <!-- Content Section -->
+              <div class="p-8">
+                <!-- Author Info -->
+                <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+                  <img src="<%= post[:author][:avatar] %>"
+                       alt="<%= post[:author][:name] %>"
+                       class="w-12 h-12 rounded-full ring-4 ring-indigo-100">
+                  <div class="flex-1">
+                    <div class="font-semibold text-slate-900"><%= post[:author][:name] %></div>
+                    <div class="flex items-center gap-2 text-sm text-slate-600">
+                      <span><%= post[:author][:title] %></span>
+                      <span>•</span>
+                      <span><%= time_ago_in_words(post[:published_at]) %> ago</span>
                     </div>
                   </div>
                 </div>
 
-                <h3 class="blog-card__title">
-                  <%= link_to post[:title], blog_post_path(post[:slug]), class: "blog-card__title-link" %>
-                </h3>
-
-                <p class="blog-card__excerpt">
+                <!-- Excerpt -->
+                <p class="text-slate-600 leading-relaxed mb-6">
                   <%= post[:excerpt] %>
                 </p>
 
-                <div class="blog-card__footer">
-                  <%= link_to blog_post_path(post[:slug]), class: "blog-read-more" do %>
-                    <span class="blog-read-more__text">Read Article</span>
-                    <svg class="blog-read-more__icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                <!-- Footer -->
+                <div class="flex items-center justify-between">
+                  <!-- Tags -->
+                  <div class="flex flex-wrap gap-2">
+                    <% post[:tags].first(2).each do |tag| %>
+                      <span class="px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 rounded-lg">
+                        #<%= tag %>
+                      </span>
+                    <% end %>
+                  </div>
+
+                  <!-- Read More Arrow -->
+                  <%= link_to blog_post_path(post[:slug]), class: "flex items-center justify-center w-12 h-12 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 group/arrow" do %>
+                    <svg class="w-5 h-5 group-hover/arrow:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                     </svg>
                   <% end %>
+                </div>
+              </div>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    </section>
 
-                  <div class="blog-tags">
-                    <% post[:tags].first(3).each do |tag| %>
-                      <span class="blog-tag">
-                        <%= tag %>
-                      </span>
+    <!-- Main Grid Layout -->
+    <div class="grid lg:grid-cols-12 gap-12">
+
+      <!-- Recent Articles Column -->
+      <div class="lg:col-span-8">
+        <div class="mb-12">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold mb-3">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+            </svg>
+            Latest
+          </div>
+          <h2 class="text-4xl font-bold text-slate-900">Recent Articles</h2>
+        </div>
+
+        <div class="space-y-6">
+          <% @recent_posts.each do |post| %>
+            <!-- Recent Article Card - Clean Modern -->
+            <article class="group relative bg-white rounded-2xl border border-slate-200 hover:border-indigo-200 hover:shadow-xl transition-all duration-300 overflow-hidden">
+              <div class="flex flex-col sm:flex-row">
+                <!-- Image -->
+                <div class="relative sm:w-72 h-56 sm:h-auto flex-shrink-0 overflow-hidden">
+                  <img src="<%= post[:featured_image] %>"
+                       alt="<%= post[:title] %>"
+                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+
+                  <!-- Category Badge on Image -->
+                  <div class="absolute top-4 left-4">
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-lg bg-white/95 backdrop-blur-sm shadow-lg text-xs font-bold text-slate-900">
+                      <%= post[:category] %>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 p-8">
+                  <!-- Meta -->
+                  <div class="flex items-center gap-4 text-sm text-slate-600 mb-4">
+                    <div class="flex items-center gap-2">
+                      <div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+                      <%= time_ago_in_words(post[:published_at]) %> ago
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                      </svg>
+                      <%= post[:read_time] %>
+                    </div>
+                  </div>
+
+                  <!-- Title -->
+                  <h3 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors leading-tight">
+                    <%= link_to post[:title], blog_post_path(post[:slug]) %>
+                  </h3>
+
+                  <!-- Excerpt -->
+                  <p class="text-slate-600 leading-relaxed mb-6">
+                    <%= post[:excerpt] %>
+                  </p>
+
+                  <!-- Footer -->
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <div class="text-sm">
+                        <span class="text-slate-500">By</span>
+                        <span class="font-semibold text-slate-900"> <%= post[:author][:name] %></span>
+                      </div>
+                    </div>
+
+                    <%= link_to blog_post_path(post[:slug]), class: "inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-indigo-600 text-white font-semibold rounded-xl transition-all duration-300 group/btn" do %>
+                      <span>Read Article</span>
+                      <svg class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                      </svg>
                     <% end %>
                   </div>
                 </div>
@@ -121,233 +316,216 @@
             </article>
           <% end %>
         </div>
-      </section>
 
-      <div class="blog-main">
-
-        <!-- Recent Posts -->
-        <div class="blog-recent">
-          <div class="blog-section__header">
-            <h2 class="blog-section__title">Recent Articles</h2>
-            <p class="blog-section__subtitle">Stay up to date with our latest insights and analysis</p>
-          </div>
-
-          <div class="blog-recent__list">
-            <% @recent_posts.each do |post| %>
-              <article class="blog-card blog-card--horizontal">
-                <div class="blog-card__image blog-card__image--horizontal">
-                  <img src="<%= asset_path(post[:featured_image]) %>"
-                       alt="<%= post[:title] %>"
-                       class="blog-card__img">
-                  <div class="blog-card__overlay"></div>
-                </div>
-
-                <div class="blog-card__content">
-                  <div class="blog-card__meta">
-                    <span class="blog-category-badge blog-category-badge--small">
-                      <%= post[:category] %>
-                    </span>
-                    <div class="blog-meta">
-                      <span class="blog-meta__item">
-                        <svg class="blog-meta__icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <%= time_ago_in_words(post[:published_at]) %> ago
-                      </span>
-                      <span class="blog-meta__separator">•</span>
-                      <span class="blog-meta__item">
-                        <svg class="blog-meta__icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                        <%= post[:read_time] %>
-                      </span>
-                    </div>
-                  </div>
-
-                  <h3 class="blog-card__title">
-                    <%= link_to post[:title], blog_post_path(post[:slug]), class: "blog-card__title-link" %>
-                  </h3>
-
-                  <p class="blog-card__excerpt">
-                    <%= post[:excerpt] %>
-                  </p>
-
-                  <div class="blog-card__footer">
-                    <%= link_to blog_post_path(post[:slug]), class: "blog-read-more blog-read-more--small" do %>
-                      <span class="blog-read-more__text">Read More</span>
-                      <svg class="blog-read-more__icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                      </svg>
-                    <% end %>
-
-                    <div class="blog-author blog-author--small">
-                      <span class="blog-author__label">By</span>
-                      <span class="blog-author__name"><%= post[:author][:name] %></span>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            <% end %>
-          </div>
-
-          <!-- Enhanced Load More Button -->
-          <div class="blog-load-more">
-            <button class="btn-blog btn-blog--primary">
-              <span class="btn-blog__text">Load More Articles</span>
-              <svg class="btn-blog__icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Enhanced Sidebar -->
-        <div class="blog-sidebar">
-
-          <!-- Categories Widget -->
-          <div class="blog-widget">
-            <div class="blog-widget__header">
-              <h3 class="blog-widget__title">
-                <svg class="blog-widget__icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                </svg>
-                Categories
-              </h3>
-            </div>
-            <div class="blog-widget__content">
-              <div class="blog-categories">
-                <% @categories.each do |category| %>
-                  <div class="blog-category-item">
-                    <%= link_to category[:name], blog_category_path(category[:slug]),
-                        class: "blog-category-link" %>
-                    <span class="blog-category-count">
-                      <%= category[:count] %>
-                    </span>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          </div>
-
-          <!-- Popular Posts Widget -->
-          <div class="blog-widget">
-            <div class="blog-widget__header">
-              <h3 class="blog-widget__title">
-                <svg class="blog-widget__icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                </svg>
-                Popular Articles
-              </h3>
-            </div>
-            <div class="blog-widget__content">
-              <div class="blog-popular-posts">
-                <% @popular_posts.each do |post| %>
-                  <div class="blog-popular-item">
-                    <div class="blog-popular-indicator"></div>
-                    <div class="blog-popular-content">
-                      <h4 class="blog-popular-title">
-                        <%= link_to post[:title], blog_post_path(post[:slug]), class: "blog-popular-link" %>
-                      </h4>
-                      <div class="blog-popular-meta">
-                        <span class="blog-popular-meta__item">
-                          <svg class="blog-popular-meta__icon" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                          </svg>
-                          <%= post[:read_time] %>
-                        </span>
-                        <span class="blog-popular-meta__separator">•</span>
-                        <span class="blog-popular-meta__item">
-                          <svg class="blog-popular-meta__icon" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                          </svg>
-                          <%= post[:views] %>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          </div>
-
-          <!-- Newsletter Signup Widget -->
-          <div class="blog-widget blog-widget--newsletter">
-            <div class="blog-newsletter">
-              <div class="blog-newsletter__header">
-                <div class="blog-newsletter__icon">
-                  <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                  </svg>
-                </div>
-                <h3 class="blog-newsletter__title">Stay Updated</h3>
-                <p class="blog-newsletter__subtitle">
-                  Get the latest insights on business intelligence and data analytics delivered to your inbox.
-                </p>
-              </div>
-
-              <div class="blog-newsletter__form">
-                <div class="blog-newsletter__input-wrapper">
-                  <input type="email"
-                         placeholder="Enter your email"
-                         class="blog-newsletter__input">
-                </div>
-                <button class="blog-newsletter__button">
-                  <span class="blog-newsletter__button-text">Subscribe</span>
-                  <svg class="blog-newsletter__button-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                  </svg>
-                </button>
-              </div>
-
-              <p class="blog-newsletter__disclaimer">
-                No spam. Unsubscribe anytime.
-              </p>
-            </div>
-          </div>
-
-          <!-- Featured Resources Widget -->
-          <div class="blog-widget">
-            <div class="blog-widget__header">
-              <h3 class="blog-widget__title">
-                <svg class="blog-widget__icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                </svg>
-                Featured Resources
-              </h3>
-            </div>
-            <div class="blog-widget__content">
-              <div class="blog-resources">
-                <div class="blog-resource-item blog-resource-item--primary">
-                  <div class="blog-resource-indicator"></div>
-                  <div class="blog-resource-content">
-                    <%= link_to "Business Intelligence Platform", business_intelligence_platform_path,
-                        class: "blog-resource-link" %>
-                    <p class="blog-resource-description">Complete BI solution for growing businesses</p>
-                  </div>
-                </div>
-                <div class="blog-resource-item blog-resource-item--success">
-                  <div class="blog-resource-indicator"></div>
-                  <div class="blog-resource-content">
-                    <%= link_to "ETL Pipeline Tool", etl_pipeline_tool_path,
-                        class: "blog-resource-link" %>
-                    <p class="blog-resource-description">Build data pipelines without code</p>
-                  </div>
-                </div>
-                <div class="blog-resource-item blog-resource-item--accent">
-                  <div class="blog-resource-indicator"></div>
-                  <div class="blog-resource-content">
-                    <%= link_to "Analytics Dashboard", data_analytics_dashboard_path,
-                        class: "blog-resource-link" %>
-                    <p class="blog-resource-description">Real-time dashboards and visualizations</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+        <!-- Load More -->
+        <div class="mt-12 text-center">
+          <button class="group inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-slate-900 to-slate-800 hover:from-indigo-600 hover:to-purple-600 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+            <span class="text-lg">Load More Articles</span>
+            <svg class="w-6 h-6 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+          </button>
         </div>
       </div>
+
+      <!-- Sidebar -->
+      <aside class="lg:col-span-4 space-y-8">
+
+        <!-- Newsletter - Premium Gradient -->
+        <div class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-8 shadow-2xl">
+          <!-- Animated Background -->
+          <div class="absolute inset-0">
+            <div class="absolute inset-0" style="background-image: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);"></div>
+          </div>
+
+          <div class="relative">
+            <!-- Icon -->
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-6 shadow-xl">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
+
+            <h3 class="text-2xl font-bold text-white mb-2">Never Miss an Update</h3>
+            <p class="text-indigo-100 mb-8 leading-relaxed">
+              Get weekly insights on business intelligence, data analytics, and industry trends delivered to your inbox.
+            </p>
+
+            <!-- Form -->
+            <div class="space-y-4">
+              <input
+                type="email"
+                placeholder="Enter your email address"
+                class="w-full px-5 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all text-lg">
+
+              <button class="w-full px-6 py-4 bg-white hover:bg-indigo-50 text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 font-bold rounded-xl transition-all duration-300 shadow-2xl hover:shadow-white/25 hover:scale-105 text-lg">
+                Subscribe Now
+              </button>
+            </div>
+
+            <p class="text-xs text-white/80 mt-6 text-center flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+              </svg>
+              100% secure. Unsubscribe anytime.
+            </p>
+          </div>
+        </div>
+
+        <!-- Categories Widget -->
+        <div class="bg-white rounded-3xl p-8 shadow-lg border border-slate-200">
+          <div class="flex items-center gap-3 mb-8">
+            <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900">Categories</h3>
+          </div>
+
+          <div class="space-y-3">
+            <% @categories.each do |category| %>
+              <%= link_to blog_category_path(category[:slug]), class: "group flex items-center justify-between p-4 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 border border-transparent hover:border-indigo-200 transition-all duration-300" do %>
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+                  <span class="font-semibold text-slate-900 group-hover:text-indigo-600"><%= category[:name] %></span>
+                </div>
+                <span class="flex items-center justify-center min-w-[2rem] h-8 px-3 text-sm font-bold text-slate-600 bg-slate-100 group-hover:bg-gradient-to-r group-hover:from-indigo-500 group-hover:to-purple-500 group-hover:text-white rounded-lg transition-all">
+                  <%= category[:count] %>
+                </span>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Popular Posts -->
+        <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-3xl p-8 border border-slate-200">
+          <div class="flex items-center gap-3 mb-8">
+            <div class="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900">Trending</h3>
+          </div>
+
+          <div class="space-y-6">
+            <% @popular_posts.each_with_index do |post, index| %>
+              <div class="group flex gap-4">
+                <!-- Number Badge -->
+                <div class="flex-shrink-0">
+                  <div class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <span class="text-lg font-black text-white"><%= index + 1 %></span>
+                  </div>
+                </div>
+
+                <div class="flex-1 min-w-0">
+                  <h4 class="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-snug mb-2">
+                    <%= link_to post[:title], blog_post_path(post[:slug]) %>
+                  </h4>
+                  <div class="flex items-center gap-4 text-xs text-slate-600">
+                    <div class="flex items-center gap-1.5">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                      </svg>
+                      <span class="font-medium"><%= post[:read_time] %></span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                      </svg>
+                      <span class="font-medium"><%= post[:views] %></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% if index < @popular_posts.length - 1 %>
+                <div class="border-b border-slate-300"></div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Resources CTA -->
+        <div class="bg-white rounded-3xl p-8 shadow-lg border-2 border-indigo-200">
+          <h3 class="text-2xl font-bold text-slate-900 mb-6">Explore Our Platform</h3>
+
+          <div class="space-y-4">
+            <%= link_to business_intelligence_platform_path, class: "group block p-5 bg-gradient-to-br from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 rounded-2xl border-2 border-indigo-200 hover:border-indigo-300 transition-all duration-300" do %>
+              <div class="flex items-start gap-4">
+                <div class="w-3 h-3 mt-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+                <div class="flex-1">
+                  <div class="font-bold text-slate-900 group-hover:text-indigo-600 mb-1 text-lg">Business Intelligence</div>
+                  <p class="text-sm text-slate-600">Complete BI solution for growing businesses</p>
+                </div>
+                <svg class="w-5 h-5 text-indigo-600 group-hover:translate-x-1 transition-transform flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+            <% end %>
+
+            <%= link_to etl_pipeline_tool_path, class: "group block p-5 bg-gradient-to-br from-emerald-50 to-teal-50 hover:from-emerald-100 hover:to-teal-100 rounded-2xl border-2 border-emerald-200 hover:border-emerald-300 transition-all duration-300" do %>
+              <div class="flex items-start gap-4">
+                <div class="w-3 h-3 mt-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+                <div class="flex-1">
+                  <div class="font-bold text-slate-900 group-hover:text-emerald-600 mb-1 text-lg">ETL Pipeline</div>
+                  <p class="text-sm text-slate-600">Build data pipelines without code</p>
+                </div>
+                <svg class="w-5 h-5 text-emerald-600 group-hover:translate-x-1 transition-transform flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+            <% end %>
+
+            <%= link_to data_analytics_dashboard_path, class: "group block p-5 bg-gradient-to-br from-pink-50 to-rose-50 hover:from-pink-100 hover:to-rose-100 rounded-2xl border-2 border-pink-200 hover:border-pink-300 transition-all duration-300" do %>
+              <div class="flex items-start gap-4">
+                <div class="w-3 h-3 mt-1.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-500"></div>
+                <div class="flex-1">
+                  <div class="font-bold text-slate-900 group-hover:text-pink-600 mb-1 text-lg">Analytics Dashboard</div>
+                  <p class="text-sm text-slate-600">Real-time dashboards and visualizations</p>
+                </div>
+                <svg class="w-5 h-5 text-pink-600 group-hover:translate-x-1 transition-transform flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+      </aside>
     </div>
   </div>
 </div>
+
+<!-- Custom Animations -->
+<style>
+  @keyframes blob {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(20px, -50px) scale(1.1); }
+    50% { transform: translate(-20px, 20px) scale(0.9); }
+    75% { transform: translate(50px, 50px) scale(1.05); }
+  }
+
+  @keyframes gradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+  }
+</style>
