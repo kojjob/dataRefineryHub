@@ -1,0 +1,247 @@
+<% seo_meta_tags(@seo_data) %>
+<% structured_data(:breadcrumbs, @breadcrumbs) %>
+
+<div class="min-h-screen bg-gray-50">
+  
+  <!-- Category Header -->
+  <section class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Breadcrumbs -->
+      <%= breadcrumb_navigation(@breadcrumbs) %>
+      
+      <div class="text-center">
+        <h1 class="text-4xl lg:text-5xl font-bold mb-6"><%= @category %> Articles</h1>
+        <p class="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+          Expert insights and best practices on <%= @category.downcase %>. 
+          Learn from industry professionals and real-world case studies.
+        </p>
+        
+        <!-- Article Count -->
+        <div class="mt-6">
+          <span class="bg-white/20 text-blue-100 px-4 py-2 rounded-full text-sm font-medium">
+            <%= pluralize(@posts.length, 'article') %> in this category
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    
+    <!-- Featured Post (if available) -->
+    <% if @featured_post %>
+      <section class="mb-16">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8">Featured Article</h2>
+        
+        <article class="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div class="lg:flex">
+            <div class="lg:w-1/2">
+              <img src="<%= asset_path(@featured_post[:featured_image]) %>" 
+                   alt="<%= @featured_post[:title] %>"
+                   class="w-full h-64 lg:h-full object-cover">
+            </div>
+            <div class="lg:w-1/2 p-8 lg:p-12">
+              <div class="flex items-center text-sm text-gray-500 mb-4">
+                <img src="<%= asset_path(@featured_post[:author][:avatar]) %>" 
+                     alt="<%= @featured_post[:author][:name] %>"
+                     class="w-8 h-8 rounded-full mr-3">
+                <div class="flex items-center space-x-2">
+                  <span><%= @featured_post[:author][:name] %></span>
+                  <span>•</span>
+                  <span><%= time_ago_in_words(@featured_post[:published_at]) %> ago</span>
+                  <span>•</span>
+                  <span><%= @featured_post[:read_time] %></span>
+                </div>
+              </div>
+              
+              <h3 class="text-3xl font-bold text-gray-900 mb-4 hover:text-blue-600 transition-colors">
+                <%= link_to @featured_post[:title], blog_post_path(@featured_post[:slug]) %>
+              </h3>
+              
+              <p class="text-gray-600 leading-relaxed mb-6 text-lg">
+                <%= @featured_post[:excerpt] %>
+              </p>
+              
+              <div class="flex items-center justify-between">
+                <%= link_to "Read Full Article", blog_post_path(@featured_post[:slug]), 
+                    class: "inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors" %>
+                
+                <div class="flex space-x-2">
+                  <% @featured_post[:tags].first(3).each do |tag| %>
+                    <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                      <%= tag %>
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+    <% end %>
+
+    <!-- All Category Posts -->
+    <section>
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-3xl font-bold text-gray-900">All <%= @category %> Articles</h2>
+        
+        <!-- Sort/Filter Options -->
+        <div class="flex items-center space-x-4">
+          <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
+            <option>Most Recent</option>
+            <option>Most Popular</option>
+            <option>Alphabetical</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% @posts.each do |post| %>
+          <article class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+            <div class="relative">
+              <img src="<%= asset_path(post[:featured_image]) %>" 
+                   alt="<%= post[:title] %>"
+                   class="w-full h-48 object-cover">
+              <div class="absolute top-3 left-3">
+                <span class="bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
+                  <%= post[:read_time] %>
+                </span>
+              </div>
+            </div>
+            
+            <div class="p-6">
+              <div class="flex items-center text-sm text-gray-500 mb-3">
+                <img src="<%= asset_path(post[:author][:avatar]) %>" 
+                     alt="<%= post[:author][:name] %>"
+                     class="w-6 h-6 rounded-full mr-2">
+                <span class="mr-2"><%= post[:author][:name] %></span>
+                <span>•</span>
+                <span class="ml-2"><%= time_ago_in_words(post[:published_at]) %> ago</span>
+              </div>
+              
+              <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition-colors line-clamp-2">
+                <%= link_to post[:title], blog_post_path(post[:slug]) %>
+              </h3>
+              
+              <p class="text-gray-600 leading-relaxed mb-4 line-clamp-3">
+                <%= post[:excerpt] %>
+              </p>
+              
+              <div class="flex items-center justify-between">
+                <%= link_to "Read More", blog_post_path(post[:slug]), 
+                    class: "text-blue-600 hover:text-blue-700 font-semibold text-sm" %>
+                
+                <!-- Reading Progress Indicator -->
+                <div class="flex items-center space-x-1 text-xs text-gray-400">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  <span>Quick read</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Load More / Pagination -->
+    <div class="text-center mt-12">
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+        Load More Articles
+      </button>
+    </div>
+
+    <!-- Category-Specific Resources -->
+    <section class="mt-16 bg-white rounded-2xl shadow-lg p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">
+        <%= @category %> Resources
+      </h2>
+      
+      <div class="grid md:grid-cols-3 gap-6">
+        <% case @category.downcase
+           when 'business intelligence' %>
+          <div class="text-center p-6 bg-blue-50 rounded-xl">
+            <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <h3 class="font-semibold text-gray-900 mb-2">BI Platform</h3>
+            <p class="text-gray-600 text-sm mb-4">Complete business intelligence solution</p>
+            <%= link_to "Learn More", business_intelligence_platform_path, 
+                class: "text-blue-600 hover:text-blue-700 font-semibold text-sm" %>
+          </div>
+          
+          <div class="text-center p-6 bg-green-50 rounded-xl">
+            <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+              </svg>
+            </div>
+            <h3 class="font-semibold text-gray-900 mb-2">Analytics Dashboard</h3>
+            <p class="text-gray-600 text-sm mb-4">Real-time data visualizations</p>
+            <%= link_to "Explore", data_analytics_dashboard_path, 
+                class: "text-green-600 hover:text-green-700 font-semibold text-sm" %>
+          </div>
+          
+        <% when 'etl' %>
+          <div class="text-center p-6 bg-purple-50 rounded-xl">
+            <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <h3 class="font-semibold text-gray-900 mb-2">ETL Pipeline Tool</h3>
+            <p class="text-gray-600 text-sm mb-4">No-code data transformation</p>
+            <%= link_to "Get Started", etl_pipeline_tool_path, 
+                class: "text-purple-600 hover:text-purple-700 font-semibold text-sm" %>
+          </div>
+          
+        <% end %>
+        
+        <!-- Generic Resource -->
+        <div class="text-center p-6 bg-gray-50 rounded-xl">
+          <div class="w-12 h-12 bg-gray-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+          </div>
+          <h3 class="font-semibold text-gray-900 mb-2">Documentation</h3>
+          <p class="text-gray-600 text-sm mb-4">Complete platform guides</p>
+          <%= link_to "View Docs", "#docs", 
+              class: "text-gray-600 hover:text-gray-700 font-semibold text-sm" %>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- CTA Section -->
+  <section class="bg-gradient-to-r from-blue-600 to-indigo-700 py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-bold text-white mb-6">
+        Ready to Put These Insights into Action?
+      </h2>
+      <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+        Start transforming your business data into actionable insights with DataReflow's 
+        comprehensive analytics platform.
+      </p>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <%= link_to "Start Free Trial", new_user_registration_path, 
+            class: "inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-blue-700 bg-white rounded-lg hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1" %>
+        <%= link_to "View Platform", dashboard_path, 
+            class: "inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white border-2 border-white/30 rounded-lg hover:bg-white/10 transition-all duration-200" %>
+      </div>
+      
+      <div class="flex items-center justify-center space-x-8 mt-8 text-blue-200 text-sm">
+        <span>✓ 14-day free trial</span>
+        <span>✓ No credit card required</span>
+        <span>✓ Setup in 15 minutes</span>
+      </div>
+    </div>
+  </section>
+
+</div>

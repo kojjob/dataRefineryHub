@@ -1,0 +1,428 @@
+<% seo_meta_tags(@seo_data) %>
+<% structured_data(:article, {
+  title: @blog_post[:title],
+  description: @blog_post[:excerpt],
+  content: @blog_post[:content],
+  published_at: @blog_post[:published_at],
+  updated_at: @blog_post[:updated_at],
+  image: @blog_post[:featured_image],
+  keywords: @blog_post[:keywords],
+  category: @blog_post[:category]
+}) %>
+<% structured_data(:breadcrumbs, @breadcrumbs) %>
+
+<!-- Magazine-Quality Editorial Experience -->
+<div class="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+
+  <!-- Minimal Premium Header -->
+  <nav class="border-b border-slate-200 bg-white/80 backdrop-blur-xl sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3 text-sm">
+          <%= link_to root_path, class: "text-slate-600 hover:text-indigo-600 transition-colors font-medium" do %>
+            Home
+          <% end %>
+          <span class="text-slate-400">/</span>
+          <%= link_to blog_index_path, class: "text-slate-600 hover:text-indigo-600 transition-colors font-medium" do %>
+            Blog
+          <% end %>
+        </div>
+        <div class="flex items-center gap-4">
+          <button onclick="shareToTwitter()" class="p-2 text-slate-600 hover:text-indigo-600 transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+          </button>
+          <button onclick="shareToLinkedIn()" class="p-2 text-slate-600 hover:text-indigo-600 transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </button>
+          <button onclick="copyLink()" class="p-2 text-slate-600 hover:text-indigo-600 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Article Header -->
+  <article class="relative">
+    <!-- Article Meta & Title -->
+    <header class="max-w-4xl mx-auto px-6 pt-16 pb-12">
+      <!-- Category Badge -->
+      <div class="mb-6">
+        <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30">
+          <%= @blog_post[:category] %>
+        </span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[1.1] mb-8 tracking-tight">
+        <%= @blog_post[:title] %>
+      </h1>
+
+      <!-- Excerpt -->
+      <p class="text-2xl md:text-3xl text-slate-600 leading-relaxed mb-12 font-light">
+        <%= @blog_post[:excerpt] %>
+      </p>
+
+      <!-- Author & Meta -->
+      <div class="flex flex-wrap items-center gap-8 pt-8 border-t border-slate-200">
+        <!-- Author -->
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-xl">
+              <%= @author[:name].split.map(&:first).join %>
+            </div>
+            <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-white"></div>
+          </div>
+          <div>
+            <div class="text-lg font-bold text-slate-900"><%= @author[:name] %></div>
+            <div class="text-sm text-slate-600"><%= @author[:title] %></div>
+          </div>
+        </div>
+
+        <!-- Meta Info -->
+        <div class="flex flex-wrap items-center gap-6 text-sm text-slate-600">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span><%= @blog_post[:published_at].strftime("%B %d, %Y") %></span>
+          </div>
+          <span class="text-slate-400">·</span>
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span><%= @blog_post[:read_time] %></span>
+          </div>
+          <% if @blog_post[:updated_at] != @blog_post[:published_at] %>
+            <span class="text-slate-400">·</span>
+            <div class="flex items-center gap-2 text-amber-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+              <span>Updated <%= time_ago_in_words(@blog_post[:updated_at]) %> ago</span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </header>
+
+    <!-- Featured Image - Full Bleed -->
+    <div class="relative h-[70vh] mb-16">
+      <div class="absolute inset-0">
+        <img src="<%= @blog_post[:featured_image] %>"
+             alt="<%= @blog_post[:title] %>"
+             class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+      </div>
+    </div>
+
+    <!-- Article Content -->
+    <div class="max-w-3xl mx-auto px-6 pb-24">
+
+      <!-- Main Content -->
+      <div class="prose prose-lg prose-slate max-w-none mb-16">
+        <%= raw @blog_post[:content] %>
+      </div>
+
+      <!-- Tags -->
+      <div class="mb-16 pt-12 border-t border-slate-200">
+        <div class="flex items-center gap-3 mb-6">
+          <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+          </svg>
+          <span class="text-sm font-bold text-slate-900 uppercase tracking-wide">Tagged</span>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <% @blog_post[:tags].each do |tag| %>
+            <span class="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium transition-colors cursor-pointer">
+              <%= tag %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Author Bio Card -->
+      <div class="mb-16 p-8 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-3xl border border-indigo-100">
+        <div class="flex flex-col md:flex-row gap-6 items-start">
+          <div class="flex-shrink-0">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-2xl shadow-xl">
+              <%= @author[:name].split.map(&:first).join %>
+            </div>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-2xl font-bold text-slate-900 mb-2">About <%= @author[:name] %></h3>
+            <p class="text-indigo-700 font-semibold mb-3"><%= @author[:title] %></p>
+            <p class="text-slate-700 leading-relaxed"><%= @author[:bio] %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Share Buttons -->
+      <div class="mb-16 py-8 border-y border-slate-200">
+        <div class="flex items-center justify-between">
+          <div class="text-sm font-bold text-slate-900 uppercase tracking-wide">Share this article</div>
+          <div class="flex items-center gap-3">
+            <button onclick="shareToTwitter()" class="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium transition-all duration-300 hover:scale-105 shadow-lg">
+              Twitter
+            </button>
+            <button onclick="shareToLinkedIn()" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-all duration-300 hover:scale-105 shadow-lg">
+              LinkedIn
+            </button>
+            <button onclick="copyLink()" class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-900 text-sm font-medium transition-all duration-300 hover:scale-105">
+              Copy Link
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Newsletter CTA -->
+      <div class="mb-16 relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-12 text-center shadow-2xl">
+        <div class="absolute inset-0 opacity-10">
+          <div class="absolute inset-0" style="background-image: radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 80%, white 1px, transparent 1px); background-size: 50px 50px;"></div>
+        </div>
+        <div class="relative">
+          <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-xl mb-6 shadow-lg">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 class="text-3xl md:text-4xl font-black text-white mb-4">Stay in the Loop</h3>
+          <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto">Get the latest insights on data analytics and business intelligence delivered to your inbox.</p>
+          <form class="max-w-md mx-auto flex gap-3">
+            <input type="email" placeholder="your@email.com" class="flex-1 px-6 py-4 rounded-xl bg-white/10 backdrop-blur-xl border-2 border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/30">
+            <button type="submit" class="px-8 py-4 rounded-xl bg-white text-indigo-600 font-bold hover:bg-slate-100 transition-all shadow-xl hover:shadow-2xl hover:scale-105">
+              Subscribe
+            </button>
+          </form>
+          <p class="text-white/70 text-sm mt-4">Join 25,000+ readers · No spam, ever</p>
+        </div>
+      </div>
+
+      <!-- Contextual Links -->
+      <div class="mb-16">
+        <%= contextual_internal_links(@blog_post[:category].downcase) %>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- Related Articles -->
+  <% if @related_posts.any? %>
+    <section class="bg-slate-50 py-24 border-t border-slate-200">
+      <div class="max-w-7xl mx-auto px-6">
+
+        <!-- Section Header -->
+        <div class="max-w-3xl mb-16">
+          <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-4">Continue Reading</h2>
+          <p class="text-xl text-slate-600">More insights on <%= @blog_post[:category].downcase %> and related topics</p>
+        </div>
+
+        <!-- Articles Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <% @related_posts.each do |post| %>
+            <article class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+              <!-- Image -->
+              <div class="relative h-64 overflow-hidden">
+                <img src="<%= post[:featured_image] %>" alt="<%= post[:title] %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                <div class="absolute top-4 left-4">
+                  <span class="px-3 py-1 rounded-full text-xs font-bold uppercase bg-white/90 backdrop-blur text-slate-900 shadow-lg">
+                    <%= post[:category] %>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Content -->
+              <div class="p-6">
+                <div class="flex items-center gap-2 text-xs text-slate-600 mb-3">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  <span><%= post[:read_time] %></span>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                  <%= link_to post[:title], blog_post_path(post[:slug]) %>
+                </h3>
+
+                <p class="text-slate-600 mb-4 line-clamp-3 leading-relaxed">
+                  <%= post[:excerpt] %>
+                </p>
+
+                <%= link_to blog_post_path(post[:slug]), class: "inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 group/link" do %>
+                  <span>Read More</span>
+                  <svg class="w-4 h-4 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                  </svg>
+                <% end %>
+              </div>
+            </article>
+          <% end %>
+        </div>
+
+      </div>
+    </section>
+  <% end %>
+
+</div>
+
+<!-- Enhanced Typography Styles -->
+<style>
+  /* Premium Editorial Typography */
+  .prose {
+    color: #334155;
+    font-size: 1.125rem;
+    line-height: 2;
+  }
+
+  .prose h2 {
+    color: #0f172a;
+    font-weight: 900;
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.025em;
+  }
+
+  .prose h3 {
+    color: #1e293b;
+    font-weight: 800;
+    font-size: 1.875rem;
+    line-height: 1.3;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .prose h4 {
+    color: #334155;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose p {
+    margin-bottom: 1.75rem;
+  }
+
+  .prose a {
+    color: #4f46e5;
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 2px solid #e0e7ff;
+    transition: all 0.2s;
+  }
+
+  .prose a:hover {
+    color: #6366f1;
+    border-bottom-color: #c7d2fe;
+  }
+
+  .prose strong {
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  .prose ul, .prose ol {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-left: 1.75rem;
+  }
+
+  .prose li {
+    margin-bottom: 0.75rem;
+    padding-left: 0.5rem;
+  }
+
+  .prose li::marker {
+    color: #6366f1;
+    font-weight: 700;
+  }
+
+  .prose blockquote {
+    border-left: 4px solid #6366f1;
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: #475569;
+    font-size: 1.25rem;
+    line-height: 1.8;
+    background: linear-gradient(to right, #f1f5f9, transparent);
+    padding: 1.5rem 1.5rem 1.5rem 2rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+  }
+
+  .prose code {
+    background: #f1f5f9;
+    color: #be123c;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.9em;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+  }
+
+  .prose pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 1rem;
+    padding: 2rem;
+    overflow-x: auto;
+    margin: 2rem 0;
+    border: 1px solid #1e293b;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .prose pre code {
+    background: transparent;
+    color: #e2e8f0;
+    padding: 0;
+    border: none;
+    font-weight: 400;
+  }
+
+  .prose img {
+    border-radius: 1rem;
+    margin: 2.5rem 0;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .prose hr {
+    border: none;
+    border-top: 2px solid #e2e8f0;
+    margin: 3rem 0;
+  }
+</style>
+
+<!-- Social Sharing Scripts -->
+<script>
+  function shareToTwitter() {
+    const text = '<%= j @blog_post[:title] %>';
+    const url = window.location.href;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank', 'width=600,height=400');
+  }
+
+  function shareToLinkedIn() {
+    const url = window.location.href;
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank', 'width=600,height=400');
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      const button = event.target.closest('button');
+      const originalText = button.textContent;
+      button.innerHTML = `
+        <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Copied!
+      `;
+      setTimeout(() => {
+        button.textContent = originalText;
+      }, 2000);
+    });
+  }
+</script>
